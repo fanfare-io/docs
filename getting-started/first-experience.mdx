@@ -1,0 +1,667 @@
+---
+title: First Experience
+description: Create your first queue, draw, auction, or timed release experience with the Fanfare SDK.
+---
+
+# First Experience
+
+This guide walks you through implementing different experience types with the Fanfare SDK. You will learn how to create queues, draws, auctions, and timed releases.
+
+## Before You Start
+
+Ensure you have:
+
+1. Installed the SDK (see [Installation](/getting-started/installation))
+2. Configured the provider (see [Configuration](/getting-started/configuration))
+3. Created an experience in your Fanfare dashboard
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page/Component: Fanfare Dashboard - Create Experience
+Shows: The experience creation form with name, description, and type selection
+Alt text: "Fanfare dashboard showing experience creation form"
+*/}
+
+## Using the Experience Journey
+
+The recommended way to implement any experience is using the `useExperienceJourney` hook. This hook manages the entire customer journey through your experience, handling:
+
+- Session creation and restoration
+- Sequence routing (general admission, VIP, etc.)
+- Distribution entry (queue, draw, auction, or timed release)
+- State updates and admission notifications
+
+```tsx
+import { useExperienceJourney } from "@fanfare/react";
+
+function ProductPage() {
+  const {
+    journey, // The journey state machine
+    state, // Current state with snapshot
+    status, // Simplified status string
+    error, // Error message if any
+    start, // Function to start the journey
+  } = useExperienceJourney("exp_your_experience_id");
+
+  // Render based on status...
+}
+```
+
+### Journey Status Values
+
+| Status                  | Description                                  |
+| ----------------------- | -------------------------------------------- |
+| `idle`                  | Journey not started                          |
+| `entering_experience`   | Entering the experience                      |
+| `routing_sequence`      | Determining which sequence to use            |
+| `needs_authentication`  | User must authenticate to continue           |
+| `needs_access_code`     | User must provide an access code             |
+| `validating_access`     | Validating access code                       |
+| `loading_distributions` | Loading available distributions              |
+| `entering_waitlist`     | Joining a waitlist for upcoming distribution |
+| `waiting`               | In queue or waiting for draw/auction         |
+| `ready`                 | Admitted and ready to proceed                |
+| `no_sequence_available` | No sequence matches this user                |
+| `error`                 | An error occurred                            |
+
+## Creating a Queue Experience
+
+Queues are first-in-first-out waiting lines. Customers join and wait for their turn.
+
+### Basic Queue Implementation
+
+```tsx
+import { useExperienceJourney } from "@fanfare/react";
+
+function QueueExperience() {
+  const { status, state, start, error } = useExperienceJourney("exp_queue_experience_id");
+
+  if (status === "idle") {
+    return (
+      <div className="queue-landing">
+        <h1>Exclusive Product Launch</h1>
+        <p>Join the queue to get access to our limited release.</p>
+        <button onClick={() => start()}>Join Queue</button>
+      </div>
+    );
+  }
+
+  if (status === "entering_experience" || status === "routing_sequence") {
+    return <p>Setting up your spot...</p>;
+  }
+
+  if (status === "waiting") {
+    const snapshot = state?.snapshot;
+    const participation = snapshot?.context.distributions?.activeParticipation;
+
+    return (
+      <div className="queue-waiting">
+        <h2>You are in the queue</h2>
+        {participation?.type === "queue" && (
+          <>
+            <p className="position">
+              Position: <strong>{participation.position ?? "Calculating..."}</strong>
+            </p>
+            {participation.estimatedWaitTimeInSeconds && (
+              <p className="wait-time">
+                Estimated wait: {Math.ceil(participation.estimatedWaitTimeInSeconds / 60)} minutes
+              </p>
+            )}
+          </>
+        )}
+        <p>Please keep this page open. You will be automatically admitted.</p>
+      </div>
+    );
+  }
+
+  if (status === "ready") {
+    const admission = state?.snapshot?.context.admission;
+    return (
+      <div className="queue-admitted">
+        <h2>You are in!</h2>
+        <p>You have been admitted. Complete your purchase now.</p>
+        <a href={`/checkout?token=${admission?.admissionToken}`}>Proceed to Checkout</a>
+      </div>
+    );
+  }
+
+  if (status === "error") {
+    return (
+      <div className="queue-error">
+        <h2>Something went wrong</h2>
+        <p>{error}</p>
+        <button onClick={() => start()}>Try Again</button>
+      </div>
+    );
+  }
+
+  return null;
+}
+```
+
+### Using the Queue Widget
+
+For a faster implementation, use the pre-built `QueueWidget`:
+
+```tsx
+import { QueueWidget, useExperienceJourney } from "@fanfare/react";
+import "@fanfare/react/styles";
+
+function QueueExperience() {
+  const { status } = useExperienceJourney("exp_queue_experience_id", {
+    autoStart: true,
+  });
+
+  if (status === "ready") {
+    return <CheckoutPage />;
+  }
+
+  return (
+    <div className="product-page">
+      <h1>Limited Edition Release</h1>
+      <QueueWidget experienceId="exp_queue_experience_id" />
+    </div>
+  );
+}
+```
+
+### Direct Queue Hook
+
+For maximum control, use the `useQueue` hook directly:
+
+```tsx
+import { useQueue } from "@fanfare/react";
+
+function QueueComponent() {
+  const {
+    queue, // Queue details
+    status, // Consumer's queue state
+    position, // Current position
+    isLoading,
+    error,
+    enter, // Join the queue
+    leave, // Leave the queue
+  } = useQueue("queue_123");
+
+  const handleJoin = async () => {
+    try {
+      const result = await enter();
+      console.log("Joined at position:", result.position);
+    } catch (err) {
+      console.error("Failed to join queue:", err);
+    }
+  };
+
+  return (
+    <div>
+      <p>Queue: {queue?.name}</p>
+      {position && <p>Your position: {position}</p>}
+      {!status && <button onClick={handleJoin}>Join Queue</button>}
+      {status && <button onClick={leave}>Leave Queue</button>}
+    </div>
+  );
+}
+```
+
+## Creating a Draw Experience
+
+Draws randomly select winners from entrants. Everyone who enters before the deadline has an equal chance.
+
+### Basic Draw Implementation
+
+```tsx
+import { useExperienceJourney } from "@fanfare/react";
+
+function DrawExperience() {
+  const { status, state, start, error } = useExperienceJourney("exp_draw_experience_id");
+
+  if (status === "idle") {
+    return (
+      <div className="draw-landing">
+        <h1>Limited Sneaker Raffle</h1>
+        <p>Enter for a chance to purchase these exclusive sneakers.</p>
+        <button onClick={() => start()}>Enter Draw</button>
+      </div>
+    );
+  }
+
+  if (status === "waiting") {
+    const snapshot = state?.snapshot;
+    const participation = snapshot?.context.distributions?.activeParticipation;
+
+    if (participation?.type === "draw") {
+      const drawTime = participation.drawAt ? new Date(participation.drawAt) : null;
+
+      return (
+        <div className="draw-entered">
+          <h2>You are entered!</h2>
+          <p>Good luck! Winners will be selected randomly.</p>
+          {drawTime && <p>Draw time: {drawTime.toLocaleString()}</p>}
+          <p>You will be notified if you win.</p>
+        </div>
+      );
+    }
+  }
+
+  if (status === "ready") {
+    const admission = state?.snapshot?.context.admission;
+    return (
+      <div className="draw-won">
+        <h2>Congratulations!</h2>
+        <p>You won! Complete your purchase now.</p>
+        <a href={`/checkout?token=${admission?.admissionToken}`}>Buy Now</a>
+      </div>
+    );
+  }
+
+  if (status === "error") {
+    return (
+      <div className="draw-error">
+        <h2>Something went wrong</h2>
+        <p>{error}</p>
+        <button onClick={() => start()}>Try Again</button>
+      </div>
+    );
+  }
+
+  return <p>Loading...</p>;
+}
+```
+
+### Using the Draw Widget
+
+```tsx
+import { DrawWidget, useExperienceJourney } from "@fanfare/react";
+import "@fanfare/react/styles";
+
+function DrawExperience() {
+  const { status } = useExperienceJourney("exp_draw_experience_id", {
+    autoStart: true,
+  });
+
+  if (status === "ready") {
+    return <CheckoutPage />;
+  }
+
+  return (
+    <div className="product-page">
+      <h1>Sneaker Raffle</h1>
+      <DrawWidget experienceId="exp_draw_experience_id" />
+    </div>
+  );
+}
+```
+
+### Direct Draw Hook
+
+```tsx
+import { useDraw } from "@fanfare/react";
+
+function DrawComponent() {
+  const {
+    draw, // Draw details
+    status, // "idle" | "entered" | "won" | etc.
+    isEntered, // Whether user is entered
+    isWinner, // Whether user won
+    admissionToken, // Token if won
+    enter, // Enter the draw
+    withdraw, // Withdraw from draw
+    checkResult, // Manually check result
+  } = useDraw("draw_123");
+
+  return (
+    <div>
+      {!isEntered && <button onClick={() => enter()}>Enter Draw</button>}
+      {isEntered && !isWinner && <p>You are entered. Good luck!</p>}
+      {isWinner && (
+        <div>
+          <p>You won!</p>
+          <a href={`/checkout?token=${admissionToken}`}>Complete Purchase</a>
+        </div>
+      )}
+    </div>
+  );
+}
+```
+
+## Creating an Auction Experience
+
+Auctions award products to the highest bidder.
+
+### Basic Auction Implementation
+
+```tsx
+import { useExperienceJourney } from "@fanfare/react";
+import { useAuction } from "@fanfare/react";
+import { useState } from "react";
+
+function AuctionExperience() {
+  const { status, state } = useExperienceJourney("exp_auction_experience_id", {
+    autoStart: true,
+  });
+
+  // Get the auction ID from the journey state
+  const auctionId = state?.snapshot?.context.distributions?.active?.id;
+
+  if (status === "ready") {
+    return <CheckoutPage />;
+  }
+
+  if (status === "waiting" && auctionId) {
+    return <AuctionBidding auctionId={auctionId} />;
+  }
+
+  return <p>Loading auction...</p>;
+}
+
+function AuctionBidding({ auctionId }: { auctionId: string }) {
+  const [bidAmount, setBidAmount] = useState("");
+  const {
+    details,
+    status,
+    currentBid,
+    myBid,
+    minNextBid,
+    timeRemaining,
+    isWinning,
+    placeBid,
+    enter,
+    isLoading,
+    error,
+  } = useAuction(auctionId);
+
+  const handleBid = async () => {
+    try {
+      await placeBid(bidAmount);
+      setBidAmount("");
+    } catch (err) {
+      console.error("Bid failed:", err);
+    }
+  };
+
+  const formatTime = (ms: number | null) => {
+    if (!ms) return "--:--";
+    const minutes = Math.floor(ms / 60000);
+    const seconds = Math.floor((ms % 60000) / 1000);
+    return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+  };
+
+  return (
+    <div className="auction">
+      <h2>{details?.name ?? "Auction"}</h2>
+
+      <div className="auction-stats">
+        <div className="stat">
+          <span className="label">Current Bid</span>
+          <span className="value">${currentBid ?? "0.00"}</span>
+        </div>
+        <div className="stat">
+          <span className="label">Time Remaining</span>
+          <span className="value">{formatTime(timeRemaining)}</span>
+        </div>
+      </div>
+
+      {myBid && (
+        <p className={isWinning ? "winning" : "outbid"}>
+          {isWinning ? "You are the highest bidder!" : "You have been outbid."}
+        </p>
+      )}
+
+      {status !== "ended" && status !== "won" && (
+        <div className="bid-form">
+          <input
+            type="number"
+            value={bidAmount}
+            onChange={(e) => setBidAmount(e.target.value)}
+            placeholder={`Min bid: $${minNextBid}`}
+            step="0.01"
+          />
+          <button onClick={handleBid} disabled={isLoading}>
+            {isLoading ? "Placing bid..." : "Place Bid"}
+          </button>
+        </div>
+      )}
+
+      {status === "won" && (
+        <div className="auction-won">
+          <h3>You won the auction!</h3>
+          <p>Your winning bid: ${myBid}</p>
+        </div>
+      )}
+
+      {error && <p className="error">{error.message}</p>}
+    </div>
+  );
+}
+```
+
+### Using the Auction Widget
+
+```tsx
+import { AuctionWidget, useExperienceJourney } from "@fanfare/react";
+import "@fanfare/react/styles";
+
+function AuctionExperience() {
+  const { status } = useExperienceJourney("exp_auction_experience_id", {
+    autoStart: true,
+  });
+
+  if (status === "ready") {
+    return <CheckoutPage />;
+  }
+
+  return (
+    <div className="product-page">
+      <h1>Vintage Watch Auction</h1>
+      <AuctionWidget experienceId="exp_auction_experience_id" />
+    </div>
+  );
+}
+```
+
+## Creating a Timed Release Experience
+
+Timed releases open access at a specific time. When the time comes, customers can proceed immediately.
+
+### Basic Timed Release Implementation
+
+```tsx
+import { useExperienceJourney } from "@fanfare/react";
+import { useTimedRelease } from "@fanfare/react";
+import { useEffect, useState } from "react";
+
+function TimedReleaseExperience() {
+  const { status, state, start } = useExperienceJourney("exp_timed_release_experience_id");
+
+  const timedReleaseId = state?.snapshot?.context.distributions?.active?.id;
+
+  if (status === "idle") {
+    return (
+      <div className="timed-release-landing">
+        <h1>Product Drop</h1>
+        <p>Get ready for our exclusive release.</p>
+        <button onClick={() => start()}>Enter</button>
+      </div>
+    );
+  }
+
+  if (status === "waiting" && timedReleaseId) {
+    return <TimedReleaseCountdown timedReleaseId={timedReleaseId} />;
+  }
+
+  if (status === "ready") {
+    return <CheckoutPage />;
+  }
+
+  return <p>Loading...</p>;
+}
+
+function TimedReleaseCountdown({ timedReleaseId }: { timedReleaseId: string }) {
+  const { status, enter } = useTimedRelease(timedReleaseId);
+  const [countdown, setCountdown] = useState<string>("");
+
+  // You would calculate countdown based on the release time
+  // This is a simplified example
+
+  return (
+    <div className="timed-release-waiting">
+      <h2>Get Ready</h2>
+      <div className="countdown">{countdown || "Coming Soon"}</div>
+      {status === "entered" && <p>You are registered. Stay on this page.</p>}
+    </div>
+  );
+}
+```
+
+## Handling Authentication
+
+Some experiences require user authentication. The journey handles this automatically:
+
+```tsx
+import { useExperienceJourney, AuthForm } from "@fanfare/react";
+
+function AuthenticatedExperience() {
+  const { status, journey, start } = useExperienceJourney("exp_authenticated_experience_id");
+
+  if (status === "needs_authentication") {
+    return (
+      <div className="auth-required">
+        <h2>Sign in to continue</h2>
+        <AuthForm
+          onSuccess={() => {
+            // Journey will automatically continue after auth
+            journey?.perform("authenticate");
+          }}
+        />
+      </div>
+    );
+  }
+
+  // ... rest of the experience
+}
+```
+
+## Handling Access Codes
+
+For VIP or restricted sequences, handle access code requirements:
+
+```tsx
+import { useExperienceJourney } from "@fanfare/react";
+import { useState } from "react";
+
+function VIPExperience() {
+  const [accessCode, setAccessCode] = useState("");
+  const { status, start, error } = useExperienceJourney("exp_vip_experience_id");
+
+  if (status === "idle" || status === "needs_access_code") {
+    return (
+      <div className="vip-entry">
+        <h2>VIP Access</h2>
+        <p>Enter your access code to continue.</p>
+        <input
+          type="text"
+          value={accessCode}
+          onChange={(e) => setAccessCode(e.target.value)}
+          placeholder="Enter access code"
+        />
+        <button onClick={() => start({ accessCode })}>Submit</button>
+        {error && <p className="error">{error}</p>}
+      </div>
+    );
+  }
+
+  // ... rest of the experience
+}
+```
+
+## Waitlists for Upcoming Experiences
+
+If an experience has not started yet, customers can join a waitlist:
+
+```tsx
+import { useExperienceJourney } from "@fanfare/react";
+
+function UpcomingExperience() {
+  const { status, state, start } = useExperienceJourney("exp_upcoming_experience_id", {
+    autoEnterWaitlist: true, // Automatically join waitlist if available
+  });
+
+  if (status === "waiting") {
+    const snapshot = state?.snapshot;
+    const isOnWaitlist = snapshot?.context.waitlist?.isEntered;
+
+    if (isOnWaitlist) {
+      return (
+        <div className="waitlist-joined">
+          <h2>You are on the waitlist</h2>
+          <p>We will notify you when the experience begins.</p>
+        </div>
+      );
+    }
+  }
+
+  // ... rest of the experience
+}
+```
+
+## Best Practices
+
+### 1. Always Handle All States
+
+Ensure you handle all possible journey states to avoid blank screens:
+
+```tsx
+const statusHandlers: Record<string, () => JSX.Element | null> = {
+  idle: () => <LandingView />,
+  entering_experience: () => <LoadingSpinner />,
+  routing_sequence: () => <LoadingSpinner />,
+  needs_authentication: () => <AuthView />,
+  needs_access_code: () => <AccessCodeView />,
+  waiting: () => <WaitingView />,
+  ready: () => <AdmittedView />,
+  error: () => <ErrorView />,
+};
+
+return statusHandlers[status]?.() ?? <LoadingSpinner />;
+```
+
+### 2. Persist the Admission Token
+
+Always include the admission token when redirecting to checkout:
+
+```tsx
+if (status === "ready") {
+  const token = state?.snapshot?.context.admission?.admissionToken;
+  return <a href={`/checkout?admission_token=${token}`}>Complete Purchase</a>;
+}
+```
+
+### 3. Handle Token Expiration
+
+Admission tokens expire. Check the expiration and handle accordingly:
+
+```tsx
+const admission = state?.snapshot?.context.admission;
+const expiresAt = admission?.expiresAt ? new Date(admission.expiresAt) : null;
+const isExpired = expiresAt && expiresAt < new Date();
+
+if (isExpired) {
+  return <p>Your session has expired. Please try again.</p>;
+}
+```
+
+### 4. Provide Clear Feedback
+
+Always show loading states and progress indicators:
+
+```tsx
+if (isLoading) {
+  return <LoadingSpinner message="Please wait..." />;
+}
+```
+
+## Next Steps
+
+- [Testing](/getting-started/testing) - Test your integration locally
+- [Deployment](/getting-started/deployment) - Production deployment checklist
+- [SDK Reference](/sdk/react) - Complete API reference

@@ -1,0 +1,340 @@
+---
+title: "Form Configuration"
+description: "Add signup and data collection forms to landing pages"
+---
+
+{/* TODO: MISSING_FUNCTIONALITY
+Feature: Custom form builder for landing pages
+Expected behavior: Drag-and-drop form fields with validation configuration
+Current state: Forms exist in widget context; standalone form builder not implemented
+Blocking: true - Cannot create custom forms on landing pages yet
+*/}
+
+<Note>
+**Coming Soon**
+
+Custom form configuration is planned for a future release. Currently, forms are handled automatically by the experience widget based on your experience settings.
+
+</Note>
+
+## Form Types
+
+Landing pages support several form types depending on the context:
+
+| Form Type        | Purpose                           | Availability           |
+| ---------------- | --------------------------------- | ---------------------- |
+| Experience Entry | Join queue, enter draw, place bid | Automatic (via widget) |
+| Email Capture    | Collect email addresses           | Coming soon            |
+| Contact Form     | General inquiries                 | Coming soon            |
+| Survey           | Collect feedback                  | Coming soon            |
+
+## Experience Entry Forms
+
+The experience widget automatically displays the appropriate form based on authentication requirements.
+
+### Guest Entry
+
+For experiences that allow guest access:
+
+```
+┌─────────────────────────────────────────────────┐
+│  Join the Queue                                 │
+│                                                 │
+│  ┌─────────────────────────────────────────┐   │
+│  │ Email (optional)                        │   │
+│  └─────────────────────────────────────────┘   │
+│                                                 │
+│            [ Join Now ]                         │
+│                                                 │
+└─────────────────────────────────────────────────┘
+```
+
+### Authenticated Entry
+
+For experiences requiring email or phone verification:
+
+```
+┌─────────────────────────────────────────────────┐
+│  Join the Queue                                 │
+│                                                 │
+│  ┌─────────────────────────────────────────┐   │
+│  │ Email                                   │   │
+│  └─────────────────────────────────────────┘   │
+│                                                 │
+│            [ Send Code ]                        │
+│                                                 │
+│  ─────── or ───────                            │
+│                                                 │
+│  ┌─────────────────────────────────────────┐   │
+│  │ Phone Number                            │   │
+│  └─────────────────────────────────────────┘   │
+│                                                 │
+│            [ Send Code ]                        │
+│                                                 │
+└─────────────────────────────────────────────────┘
+```
+
+### OTP Verification
+
+After submitting email or phone:
+
+```
+┌─────────────────────────────────────────────────┐
+│  Verify Your Email                              │
+│                                                 │
+│  We sent a code to user@example.com             │
+│                                                 │
+│  ┌───┐ ┌───┐ ┌───┐ ┌───┐ ┌───┐ ┌───┐          │
+│  │   │ │   │ │   │ │   │ │   │ │   │          │
+│  └───┘ └───┘ └───┘ └───┘ └───┘ └───┘          │
+│                                                 │
+│            [ Verify & Join ]                    │
+│                                                 │
+│  Didn't receive it? [Resend Code]              │
+│                                                 │
+└─────────────────────────────────────────────────┘
+```
+
+## Access Code Forms
+
+For experiences with access code requirements:
+
+### Required Access Code
+
+```
+┌─────────────────────────────────────────────────┐
+│  VIP Access Required                            │
+│                                                 │
+│  Enter your access code to continue             │
+│                                                 │
+│  ┌─────────────────────────────────────────┐   │
+│  │ Access Code                             │   │
+│  └─────────────────────────────────────────┘   │
+│                                                 │
+│            [ Continue ]                         │
+│                                                 │
+└─────────────────────────────────────────────────┘
+```
+
+### Optional Access Code
+
+```
+┌─────────────────────────────────────────────────┐
+│  Join the Queue                                 │
+│                                                 │
+│  ┌─────────────────────────────────────────┐   │
+│  │ Email                                   │   │
+│  └─────────────────────────────────────────┘   │
+│                                                 │
+│  Have an access code? (optional)               │
+│  ┌─────────────────────────────────────────┐   │
+│  │ Access Code                             │   │
+│  └─────────────────────────────────────────┘   │
+│                                                 │
+│            [ Join Now ]                         │
+│                                                 │
+└─────────────────────────────────────────────────┘
+```
+
+## Auction Bidding Forms
+
+For auction experiences:
+
+```
+┌─────────────────────────────────────────────────┐
+│  Place Your Bid                                 │
+│                                                 │
+│  Current Bid: $150.00                           │
+│  Minimum Bid: $160.00                           │
+│                                                 │
+│  ┌─────────────────────────────────────────┐   │
+│  │ $ Your Bid                              │   │
+│  └─────────────────────────────────────────┘   │
+│                                                 │
+│  ☐ Enable auto-rebid up to $______            │
+│                                                 │
+│            [ Place Bid ]                        │
+│                                                 │
+└─────────────────────────────────────────────────┘
+```
+
+## Form Validation
+
+All forms include built-in validation:
+
+### Email Validation
+
+```typescript
+{
+  type: "email",
+  required: true,
+  validation: {
+    pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+    message: "Please enter a valid email address"
+  }
+}
+```
+
+### Phone Validation
+
+```typescript
+{
+  type: "phone",
+  required: true,
+  validation: {
+    international: true,
+    message: "Please enter a valid phone number"
+  }
+}
+```
+
+### Access Code Validation
+
+```typescript
+{
+  type: "accessCode",
+  required: true | false,  // Based on experience settings
+  validation: {
+    serverSide: true,  // Validated against database
+    message: "Invalid or expired access code"
+  }
+}
+```
+
+## Error Handling
+
+Forms display contextual error messages:
+
+| Error                | Display                                   |
+| -------------------- | ----------------------------------------- |
+| Required field empty | "This field is required"                  |
+| Invalid email format | "Please enter a valid email"              |
+| Invalid access code  | "Invalid or expired access code"          |
+| Rate limited         | "Too many attempts. Please wait."         |
+| Server error         | "Something went wrong. Please try again." |
+
+```
+┌─────────────────────────────────────────────────┐
+│  Join the Queue                                 │
+│                                                 │
+│  ┌─────────────────────────────────────────┐   │
+│  │ Email                                   │   │
+│  └─────────────────────────────────────────┘   │
+│  ⚠️ Please enter a valid email address         │
+│                                                 │
+│            [ Join Now ]                         │
+│                                                 │
+└─────────────────────────────────────────────────┘
+```
+
+## Form Theming
+
+Forms inherit theme settings from your landing page:
+
+| Element          | Theme Property             |
+| ---------------- | -------------------------- |
+| Input background | `--ff-color-background`    |
+| Input border     | `--ff-color-muted`         |
+| Input text       | `--ff-color-text`          |
+| Label text       | `--ff-color-muted`         |
+| Button           | `--ff-color-primary`       |
+| Error text       | System red (accessibility) |
+
+## Coming Soon: Custom Forms
+
+{/* TODO: MISSING_FUNCTIONALITY
+Feature: Custom form builder
+Expected behavior: Drag-and-drop form fields, custom validation, webhook integration
+Current state: Planned feature
+Blocking: true
+*/}
+
+Future releases will include:
+
+### Custom Field Types
+
+| Field          | Description             |
+| -------------- | ----------------------- |
+| Text           | Single-line text input  |
+| Textarea       | Multi-line text input   |
+| Email          | Email with validation   |
+| Phone          | Phone with country code |
+| Select         | Dropdown selection      |
+| Checkbox       | Single checkbox         |
+| Checkbox Group | Multiple checkboxes     |
+| Radio          | Radio button group      |
+| Date           | Date picker             |
+| File           | File upload             |
+
+### Form Actions
+
+| Action          | Description                      |
+| --------------- | -------------------------------- |
+| Submit to API   | Send data to your endpoint       |
+| Send Email      | Notify on submission             |
+| Add to Audience | Add consumer to Fanfare audience |
+| Webhook         | Trigger external integrations    |
+
+### Conditional Logic
+
+Show/hide fields based on responses:
+
+```typescript
+{
+  field: "companySize",
+  showIf: {
+    field: "customerType",
+    equals: "business"
+  }
+}
+```
+
+## Current Workarounds
+
+Until custom forms are available:
+
+### External Form Embeds
+
+Embed forms from external providers:
+
+```html
+<!-- Example: Typeform embed -->
+<div data-tf-live="01234567890"></div>
+<script src="//embed.typeform.com/next/embed.js"></script>
+```
+
+### Webhook Integration
+
+Use Fanfare webhooks to capture data when consumers join experiences:
+
+```typescript
+// Webhook payload includes consumer data
+{
+  event: "consumer.joined",
+  data: {
+    consumerId: "cons_...",
+    email: "user@example.com",
+    experienceId: "exp_...",
+    metadata: { ... }
+  }
+}
+```
+
+See [Webhooks](/integrations/webhooks/overview) for setup instructions.
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Countdown Timer" icon="clock" href="/landing-pages/customization/countdown">
+    Add countdown displays
+  </Card>
+  <Card title="Media" icon="image" href="/landing-pages/customization/media">
+    Images and video embedding
+  </Card>
+  <Card title="Authentication" icon="lock" href="/guides/authentication/email-otp">
+    Configure authentication options
+  </Card>
+  <Card title="Access Codes" icon="ticket" href="/concepts/access-codes">
+    Set up VIP access
+  </Card>
+</CardGroup>

@@ -1,0 +1,250 @@
+---
+title: Consumer Activity
+description: View the complete activity timeline and history for a consumer
+---
+
+# Consumer Activity
+
+The activity timeline provides a chronological view of all consumer interactions, including experience participation, purchases, communications, and other engagement events.
+
+## Accessing Activity Timeline
+
+The activity timeline appears on the consumer detail page, below the metrics cards.
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/customers/{customerId}
+Shows: Activity timeline section showing various events
+Annotations: Label event types and timestamps
+Alt text: "Consumer activity timeline showing chronological events"
+*/}
+
+![Activity timeline](./images/consumer-activity-timeline.png)
+_Caption: The activity timeline shows all consumer interactions_
+
+## Timeline Events
+
+The timeline displays various event types in chronological order.
+
+### Event Types
+
+| Event Type              | Icon | Description                          |
+| ----------------------- | ---- | ------------------------------------ |
+| **Experience Entry**    |      | Joined a queue, draw, or auction     |
+| **Experience Complete** |      | Completed an experience successfully |
+| **Purchase**            |      | Made a purchase                      |
+| **Email Opened**        |      | Opened a marketing email             |
+| **Email Clicked**       |      | Clicked a link in an email           |
+| **Page View**           |      | Visited a tracked page               |
+| **Account Created**     |      | Consumer profile was created         |
+| **Profile Updated**     |      | Profile information was modified     |
+
+### Event Details
+
+Each timeline event shows:
+
+| Detail          | Description                    |
+| --------------- | ------------------------------ |
+| **Timestamp**   | When the event occurred        |
+| **Event Type**  | Category of the event          |
+| **Description** | Details about what happened    |
+| **Context**     | Related experience or campaign |
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/customers/{customerId}
+Shows: Expanded timeline event with details
+Annotations: Highlight event components
+Alt text: "Timeline event showing timestamp, type, and details"
+*/}
+
+![Event detail](./images/consumer-event-detail.png)
+_Caption: Each event includes detailed information_
+
+## Experience Participation
+
+### Queue Events
+
+| Event                 | Description                        |
+| --------------------- | ---------------------------------- |
+| **Entered Queue**     | Consumer joined the virtual queue  |
+| **Position Update**   | Queue position changed             |
+| **Reached Front**     | Consumer reached front of queue    |
+| **Checkout Started**  | Began checkout process             |
+| **Checkout Complete** | Successfully completed purchase    |
+| **Timed Out**         | Session expired without completing |
+| **Left Queue**        | Consumer voluntarily left          |
+
+### Draw Events
+
+| Event            | Description                     |
+| ---------------- | ------------------------------- |
+| **Entered Draw** | Submitted entry for the draw    |
+| **Selected**     | Won the draw                    |
+| **Not Selected** | Did not win                     |
+| **Confirmed**    | Confirmed winning entry         |
+| **Forfeited**    | Did not confirm within deadline |
+
+### Auction Events
+
+| Event                | Description                       |
+| -------------------- | --------------------------------- |
+| **Bid Placed**       | Submitted a bid                   |
+| **Outbid**           | Another bidder placed higher bid  |
+| **Won Auction**      | Had the winning bid               |
+| **Payment Complete** | Completed payment for winning bid |
+
+### Appointment Events
+
+| Event           | Description               |
+| --------------- | ------------------------- |
+| **Booked**      | Scheduled an appointment  |
+| **Rescheduled** | Changed appointment time  |
+| **Cancelled**   | Cancelled the appointment |
+| **Completed**   | Attended the appointment  |
+| **No Show**     | Did not attend            |
+
+## Filtering Timeline
+
+Filter the timeline to show specific event types or time periods.
+
+### Filter by Event Type
+
+1. Click the **Filter** button
+2. Select event types to show
+3. Apply the filter
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/customers/{customerId}
+Shows: Timeline filter dropdown
+Annotations: Show filter options
+Alt text: "Timeline filter options for event types"
+*/}
+
+![Timeline filter](./images/consumer-timeline-filter.png)
+_Caption: Filter the timeline by event type_
+
+### Filter by Date Range
+
+| Option           | Description                  |
+| ---------------- | ---------------------------- |
+| **Last 7 days**  | Events from the past week    |
+| **Last 30 days** | Events from the past month   |
+| **Last 90 days** | Events from the past quarter |
+| **All time**     | Complete event history       |
+| **Custom range** | Specify start and end dates  |
+
+## Communication Events
+
+### Email Events
+
+| Event            | Description                  |
+| ---------------- | ---------------------------- |
+| **Sent**         | Email was sent to consumer   |
+| **Delivered**    | Email reached inbox          |
+| **Opened**       | Consumer opened the email    |
+| **Clicked**      | Consumer clicked a link      |
+| **Bounced**      | Email could not be delivered |
+| **Unsubscribed** | Consumer unsubscribed        |
+
+### SMS Events
+
+| Event         | Description               |
+| ------------- | ------------------------- |
+| **Sent**      | SMS was sent              |
+| **Delivered** | SMS reached phone         |
+| **Failed**    | Delivery failed           |
+| **Opted Out** | Consumer opted out of SMS |
+
+## Purchase Events
+
+Track order and transaction history.
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/customers/{customerId}
+Shows: Purchase event in timeline
+Annotations: Highlight order details and amount
+Alt text: "Purchase event showing order details and total"
+*/}
+
+![Purchase event](./images/consumer-purchase-event.png)
+_Caption: Purchase events show order details_
+
+### Purchase Details
+
+| Detail       | Description                       |
+| ------------ | --------------------------------- |
+| **Order ID** | External order reference          |
+| **Total**    | Order total amount                |
+| **Items**    | Number of items purchased         |
+| **Status**   | Order status (complete, refunded) |
+| **Source**   | Where the order originated        |
+
+## Activity Metrics
+
+Summary metrics are calculated from the activity timeline:
+
+### Engagement Summary
+
+| Metric                | Description                |
+| --------------------- | -------------------------- |
+| **Total Events**      | Number of recorded events  |
+| **First Activity**    | Date of earliest event     |
+| **Last Activity**     | Date of most recent event  |
+| **Days Since Active** | Time since last engagement |
+
+### Experience Summary
+
+| Metric                  | Description                       |
+| ----------------------- | --------------------------------- |
+| **Experiences Entered** | Total experiences joined          |
+| **Experiences Won**     | Times selected in draws/auctions  |
+| **Completion Rate**     | Percentage completed successfully |
+
+## Exporting Activity
+
+Download activity data for analysis:
+
+1. Click **Export Activity**
+2. Select date range
+3. Choose event types to include
+4. Download CSV file
+
+### Export Fields
+
+| Field           | Description                        |
+| --------------- | ---------------------------------- |
+| **Timestamp**   | When the event occurred            |
+| **Event Type**  | Category of event                  |
+| **Event Name**  | Specific event name                |
+| **Description** | Event details                      |
+| **Context**     | Related entity (experience, order) |
+| **Metadata**    | Additional event data (JSON)       |
+
+## Understanding Activity Patterns
+
+Use the timeline to identify consumer patterns:
+
+### Engagement Patterns
+
+| Pattern            | Indication                     |
+| ------------------ | ------------------------------ |
+| **High frequency** | Engaged customer               |
+| **Declining**      | May be at risk of churning     |
+| **Sporadic**       | Responds to specific campaigns |
+| **Single event**   | New or one-time participant    |
+
+### Best Practices
+
+1. **Review before campaigns** - Check recent activity before targeting
+2. **Identify preferences** - Note which experiences they engage with
+3. **Track journey** - Follow the full customer lifecycle
+4. **Spot issues** - Look for failed events or drop-offs
+
+## Related Guides
+
+- [Consumer Details](/dashboard/consumers/consumer-details) - Profile information
+- [Consumers Overview](/dashboard/consumers/overview) - Manage consumers
+- [Experience Analytics](/dashboard/experiences/experience-analytics) - Aggregate metrics

@@ -1,0 +1,277 @@
+---
+title: Configure Queue
+description: Set up first-come, first-served queue experiences for product launches and limited releases
+---
+
+# Configure Queue Experience
+
+Queue experiences provide first-come, first-served access to products or services. Consumers join the queue and are served in the order they arrive, making this ideal for product launches, limited releases, and high-demand events.
+
+## When to Use Queues
+
+Queues are best for:
+
+- **Product launches** - New product releases with limited initial inventory
+- **Limited editions** - Exclusive items with controlled distribution
+- **Flash sales** - Time-limited offers with high demand
+- **Event registrations** - First-come access to event tickets
+
+## Creating a Queue Experience
+
+1. Navigate to **Experiences > Create Experience**
+2. Select **Queue** from the experience type options
+3. Complete the configuration form
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/experiences/create?type=QUEUE
+Shows: Queue creation form with all fields visible
+Annotations: Number the main sections of the form
+Alt text: "Queue experience creation form showing all configuration options"
+*/}
+
+![Queue creation](./images/queue-create.png)
+_Caption: The queue creation form with all configuration options_
+
+## Queue-Specific Settings
+
+### Queue Behavior
+
+| Setting              | Description                              | Default                  |
+| -------------------- | ---------------------------------------- | ------------------------ |
+| **Queue Mode**       | How consumers progress through the queue | First-come, first-served |
+| **Auto-advance**     | Automatically move consumers forward     | Enabled                  |
+| **Position Display** | Show consumers their position in line    | Enabled                  |
+
+### Entry Window
+
+Configure when consumers can join the queue:
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/experiences/create?type=QUEUE
+Shows: Entry window configuration section
+Annotations: Label start time, end time fields
+Alt text: "Entry window configuration for queue start and end times"
+*/}
+
+![Entry window](./images/queue-entry-window.png)
+_Caption: Set when consumers can join the queue_
+
+| Field            | Required | Description                                                     |
+| ---------------- | -------- | --------------------------------------------------------------- |
+| **Entry Opens**  | Yes      | Date/time when consumers can start joining                      |
+| **Entry Closes** | No       | Date/time when new entries stop (queue can continue processing) |
+
+### Service Window
+
+Configure when queue processing occurs:
+
+| Field              | Required | Description                             |
+| ------------------ | -------- | --------------------------------------- |
+| **Service Starts** | Yes      | When the queue begins serving consumers |
+| **Service Ends**   | No       | When queue processing stops             |
+
+<Tip>
+You can allow entries before service begins. This lets consumers join early while processing starts at a specific time.
+</Tip>
+
+### Inventory Configuration
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/experiences/create?type=QUEUE
+Shows: Inventory settings section
+Annotations: Label quantity fields
+Alt text: "Inventory configuration showing quantity and per-consumer limits"
+*/}
+
+![Inventory settings](./images/queue-inventory.png)
+_Caption: Configure how many consumers can be served_
+
+| Field                  | Required | Description                            |
+| ---------------------- | -------- | -------------------------------------- |
+| **Total Inventory**    | Yes      | Total number of successful completions |
+| **Per-Consumer Limit** | No       | Maximum purchases per consumer         |
+| **Reserve Quantity**   | No       | Inventory held back for later release  |
+
+### Timeout Settings
+
+Configure how long consumers have to complete their purchase:
+
+| Field                | Description                                            | Recommended   |
+| -------------------- | ------------------------------------------------------ | ------------- |
+| **Checkout Timeout** | Time allowed to complete purchase after reaching front | 10-15 minutes |
+| **Idle Timeout**     | Time before inactive consumers are removed             | 30 minutes    |
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/experiences/create?type=QUEUE
+Shows: Timeout configuration fields
+Annotations: None needed
+Alt text: "Timeout settings for checkout and idle consumers"
+*/}
+
+![Timeout settings](./images/queue-timeouts.png)
+_Caption: Set timeouts to keep the queue moving_
+
+## Advanced Queue Options
+
+### Position Estimation
+
+Show consumers estimated wait times based on:
+
+- Current queue length
+- Average processing time
+- Historical data
+
+| Setting              | Description                         |
+| -------------------- | ----------------------------------- |
+| **Show Position**    | Display queue position to consumers |
+| **Show Estimate**    | Display estimated wait time         |
+| **Refresh Interval** | How often to update position info   |
+
+### Fairness Controls
+
+Prevent abuse and ensure fair access:
+
+| Setting                    | Description                              |
+| -------------------------- | ---------------------------------------- |
+| **One Entry Per Consumer** | Prevent duplicate entries                |
+| **Device Fingerprinting**  | Detect multiple entries from same device |
+| **Rate Limiting**          | Limit entry attempts per IP              |
+
+### Notifications
+
+Configure when consumers receive updates:
+
+| Event                 | Notification                            |
+| --------------------- | --------------------------------------- |
+| **Entry Confirmed**   | Confirmation of queue entry             |
+| **Position Update**   | Regular position updates (configurable) |
+| **Near Front**        | Alert when approaching front of queue   |
+| **Your Turn**         | Notification to complete purchase       |
+| **Checkout Reminder** | Warning before timeout                  |
+
+## Queue States
+
+Queues progress through these states:
+
+```
+Draft → Scheduled → Entry Open → Processing → Completed
+                         ↓
+                      Paused
+```
+
+| State          | Description                         | Consumer Experience    |
+| -------------- | ----------------------------------- | ---------------------- |
+| **Draft**      | Not published                       | Not visible            |
+| **Scheduled**  | Published, waiting for entry window | See countdown          |
+| **Entry Open** | Accepting new entries               | Can join queue         |
+| **Processing** | Serving consumers                   | Active queue display   |
+| **Paused**     | Temporarily stopped                 | "Queue paused" message |
+| **Completed**  | Finished                            | "Queue closed" message |
+
+## Example: Product Launch Queue
+
+Here's a typical configuration for a product launch:
+
+### Scenario
+
+- Product: Limited edition sneakers
+- Inventory: 500 pairs
+- Launch: Saturday at 10 AM
+
+### Configuration
+
+```yaml
+Name: "Air Max 2024 Launch Queue"
+Product: Air Max Limited Edition
+Audience: All Customers
+
+Schedule:
+  Entry Opens: Friday 6 PM (day before)
+  Service Starts: Saturday 10 AM
+  Entry Closes: Saturday 2 PM
+
+Inventory:
+  Total: 500
+  Per-Consumer: 1
+
+Timeouts:
+  Checkout: 10 minutes
+  Idle: 30 minutes
+
+Notifications:
+  - Entry confirmed
+  - Near front (position < 50)
+  - Your turn
+```
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/experiences/{experienceId}
+Shows: Example queue experience detail page with the above configuration
+Annotations: None needed
+Alt text: "Configured queue experience for a product launch"
+*/}
+
+![Example queue](./images/queue-example.png)
+_Caption: A fully configured product launch queue_
+
+## Best Practices
+
+### Before Launch
+
+1. **Test with small inventory** - Create a test queue with 5-10 items
+2. **Verify notifications** - Ensure email/SMS delivery works
+3. **Check audience access** - Confirm target audience can see the queue
+4. **Set realistic timeouts** - Balance urgency with customer experience
+
+### During Active Queue
+
+1. **Monitor in real-time** - Watch the dashboard for issues
+2. **Respond to support requests** - Handle consumer questions quickly
+3. **Pause if needed** - Don't hesitate to pause if problems arise
+4. **Track completion rate** - Monitor how many complete vs. timeout
+
+### Common Mistakes to Avoid
+
+| Mistake                     | Problem                   | Solution                               |
+| --------------------------- | ------------------------- | -------------------------------------- |
+| Timeout too short           | Frustrated customers      | Allow at least 10 minutes for checkout |
+| No per-consumer limit       | Resellers grab inventory  | Set limit of 1-2 per consumer          |
+| Entry opens at service time | Server overload           | Open entries early                     |
+| No notifications            | Customers miss their turn | Enable all key notifications           |
+
+## Troubleshooting
+
+### High Drop-off Rate
+
+If many consumers are timing out:
+
+- Increase checkout timeout
+- Simplify the checkout process
+- Send reminder notifications earlier
+
+### Queue Moving Slowly
+
+If the queue seems stuck:
+
+- Check if consumers are completing purchases
+- Verify inventory is available
+- Look for payment processing issues
+
+### Suspected Abuse
+
+If you notice suspicious activity:
+
+- Enable device fingerprinting
+- Review entries for patterns
+- Consider pausing and investigating
+
+## Related Guides
+
+- [Experience Lifecycle](/dashboard/experiences/experience-lifecycle) - Managing active queues
+- [Experience Analytics](/dashboard/experiences/experience-analytics) - Understanding queue metrics
+- [Create Experience](/dashboard/experiences/create-experience) - General creation guide

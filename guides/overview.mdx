@@ -1,0 +1,110 @@
+---
+title: Implementation Guides
+description: Step-by-step tutorials for integrating Fanfare into your application.
+---
+
+# Implementation Guides
+
+Welcome to the Fanfare implementation guides. These step-by-step tutorials show you how to integrate Fanfare into your application for specific use cases.
+
+## Guide Categories
+
+### Integration Patterns
+
+Choose the right integration pattern for your application architecture:
+
+| Guide                                                                     | Best For                  | Complexity   |
+| ------------------------------------------------------------------------- | ------------------------- | ------------ |
+| [SPA Integration](/guides/integration-patterns/spa-integration)           | React, Vue, Angular apps  | Beginner     |
+| [SSR Integration](/guides/integration-patterns/ssr-integration)           | Next.js, Remix, Nuxt apps | Intermediate |
+| [Headless Integration](/guides/integration-patterns/headless-integration) | Custom UI, mobile apps    | Advanced     |
+| [Mobile WebView](/guides/integration-patterns/mobile-webview)             | iOS/Android WebView apps  | Intermediate |
+
+### Authentication
+
+Understand how to authenticate consumers in your Fanfare integration:
+
+| Guide                                                               | Description                        | Complexity   |
+| ------------------------------------------------------------------- | ---------------------------------- | ------------ |
+| [Anonymous Consumers](/guides/authentication/anonymous-consumers)   | Guest checkout flows               | Beginner     |
+| [Identified Consumers](/guides/authentication/identified-consumers) | Logged-in user flows               | Intermediate |
+| [Consumer Linking](/guides/authentication/consumer-linking)         | Converting anonymous to identified | Intermediate |
+| [JWT Tokens](/guides/authentication/jwt-tokens)                     | Server-side authentication         | Advanced     |
+
+### Checkout Integration
+
+Connect Fanfare with your checkout flow:
+
+| Guide                                                                 | Description                         | Complexity   |
+| --------------------------------------------------------------------- | ----------------------------------- | ------------ |
+| [Checkout Overview](/guides/checkout-integration/checkout-overview)   | Understanding checkout flows        | Beginner     |
+| [Cart Reservation](/guides/checkout-integration/cart-reservation)     | Reserving inventory during checkout | Intermediate |
+| [Payment Processing](/guides/checkout-integration/payment-processing) | Integrating with payment providers  | Intermediate |
+| [Order Completion](/guides/checkout-integration/order-completion)     | Handling order webhooks             | Intermediate |
+
+### Platform Integrations
+
+Platform-specific integration guides:
+
+| Guide                                                            | Platform              | Complexity   |
+| ---------------------------------------------------------------- | --------------------- | ------------ |
+| [Shopify](/guides/platform-integrations/shopify)                 | Shopify stores        | Beginner     |
+| [WooCommerce](/guides/platform-integrations/woocommerce)         | WordPress/WooCommerce | Intermediate |
+| [Custom Platform](/guides/platform-integrations/custom-platform) | Custom e-commerce     | Advanced     |
+
+### Use Cases
+
+End-to-end implementation guides for common scenarios:
+
+| Guide                                                        | Scenario                    | Distribution Type |
+| ------------------------------------------------------------ | --------------------------- | ----------------- |
+| [Product Launch](/guides/use-cases/product-launch)           | High-demand product release | Queue             |
+| [Flash Sale](/guides/use-cases/flash-sale)                   | Time-limited sale event     | Draw (Lottery)    |
+| [Limited Edition](/guides/use-cases/limited-edition)         | Exclusive item release      | Auction           |
+| [Appointment Booking](/guides/use-cases/appointment-booking) | Service scheduling          | Appointment       |
+| [Event Ticketing](/guides/use-cases/event-ticketing)         | Concert/event tickets       | Queue + Draw      |
+
+### Advanced Topics
+
+Deep dives into advanced integration patterns:
+
+| Guide                                                   | Topic                      | Complexity   |
+| ------------------------------------------------------- | -------------------------- | ------------ |
+| [Webhooks](/guides/advanced/webhooks-guide)             | Server-side event handling | Intermediate |
+| [Real-time Updates](/guides/advanced/real-time-updates) | Live UI updates            | Intermediate |
+| [Error Handling](/guides/advanced/error-handling)       | Robust error management    | Advanced     |
+
+## Prerequisites
+
+Before starting any guide, ensure you have:
+
+1. **A Fanfare account** - [Sign up](https://fanfare.io/signup) if you don't have one
+2. **API credentials** - Your `organizationId` and `publishableKey` from the dashboard
+3. **Development environment** - Node.js 18+ and your preferred package manager
+
+## Guide Structure
+
+Each guide follows a consistent structure:
+
+- **Overview** - What you'll build and learn
+- **Prerequisites** - Required setup and knowledge
+- **Step-by-step instructions** - Numbered implementation steps
+- **Code examples** - Complete, working code samples
+- **Testing** - How to verify your implementation
+- **Troubleshooting** - Common issues and solutions
+- **Next steps** - Related guides and resources
+
+## Quick Start Path
+
+If you're new to Fanfare, we recommend this learning path:
+
+1. **Start here**: [SPA Integration](/guides/integration-patterns/spa-integration) - Basic SDK setup
+2. **Add auth**: [Anonymous Consumers](/guides/authentication/anonymous-consumers) - Guest flow
+3. **Connect checkout**: [Checkout Overview](/guides/checkout-integration/checkout-overview) - Checkout basics
+4. **Go live**: [Product Launch](/guides/use-cases/product-launch) - Complete example
+
+## Getting Help
+
+- **API Reference** - Detailed endpoint documentation in [API Reference](/api)
+- **SDK Reference** - Component and hook docs in [SDK Reference](/sdk)
+- **Support** - Contact us at support@fanfare.io

@@ -1,0 +1,86 @@
+node_modules
+dist
+.data
+.nitro
+.cache
+.output
+
+# Repomix Output
+repomix-output.*
+
+/rust-version
+
+# Environment variables
+.env
+.env.*.local
+.env.local
+.env.backup-*
+.env.*.ci
+
+# IDE and editor files
+.idea/
+*.swp
+*.swo
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Terraform
+.terraform
+*.tfstate
+*.tfstate.*
+.terraformrc
+terraform.rc
+crash.log
+crash.*.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Package specific patterns
+/packages/*/.env
+/packages/*/.env.local
+/packages/*/.env.*.local
+/packages/*/stats.html
+/packages/*/tsconfig.tsbuildinfo
+*.tsbuildinfo
+/packages/consumer-client/build/
+/packages/consumer-client/public/client/
+/k6/entity-ids.json
+/k6/mock-data.json
+/k6/bin/k6
+/packages/email-templates/.storybook/middleware*.js
+
+# Generated types
+*.generated.ts
+*.generated.tsx
+*.generated.d.ts
+**/types/index.d.ts
+
+/packages/consumer-app/external
+
+# Bun
+bun.lockb
+
+.agent/
+.roomodes
+**/CLAUDE.local.md
+**/.claude/settings.local.json
+**/vite.config.mts.timestamp-*
+
+# CommonJS files (ESM-only project)
+*.cjs
+
+# Stripe IDs
+/scripts/stripe/.stripe_ids*.env
+
+db_dump.sql
+*storybook.log

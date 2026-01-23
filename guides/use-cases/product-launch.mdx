@@ -1,0 +1,786 @@
+---
+title: Product Launch Use Case
+description: Manage high-demand product launches with virtual queues and controlled access.
+---
+
+# Product Launch Use Case
+
+Learn how to use Fanfare to manage high-demand product launches with virtual queues and controlled access.
+
+## Overview
+
+Product launches often generate traffic spikes that can overwhelm your infrastructure. Fanfare helps you manage demand by creating a fair, orderly queue that protects your site while delivering a great customer experience.
+
+**What you'll learn:**
+
+- Planning your product launch strategy
+- Configuring a queue-based experience
+- Building the launch landing page
+- Managing the launch day workflow
+- Analyzing post-launch metrics
+
+**Complexity:** Intermediate
+**Time to complete:** 45 minutes
+
+## Prerequisites
+
+- Fanfare account with queue feature enabled
+- Product page ready for launch
+- Understanding of expected traffic levels
+- Integration with your e-commerce platform
+
+## When to Use Queues for Product Launches
+
+| Scenario                                 | Recommended Approach       |
+| ---------------------------------------- | -------------------------- |
+| Expected demand > 2x available inventory | Queue recommended          |
+| Traffic spike > 10x normal               | Queue strongly recommended |
+| High-value items with limited stock      | Queue with authentication  |
+| Fair access is brand priority            | Queue essential            |
+| First-come-first-served required         | Queue required             |
+
+## Step 1: Plan Your Launch
+
+### Define Launch Parameters
+
+```typescript
+// Example launch configuration
+const launchConfig = {
+  // Timing
+  scheduledStart: new Date("2024-06-15T10:00:00Z"),
+  preQueueStart: new Date("2024-06-15T09:30:00Z"), // 30 min early access
+  admissionWindowMinutes: 15,
+
+  // Capacity
+  totalInventory: 1000,
+  concurrentAdmissions: 50, // Users shopping at once
+  admissionRatePerMinute: 100,
+
+  // Experience
+  showPosition: true,
+  showEstimatedWait: true,
+  allowRequeue: false,
+};
+```
+
+### Calculate Queue Settings
+
+```typescript
+function calculateQueueSettings(config: {
+  totalInventory: number;
+  expectedDemand: number;
+  avgCheckoutTime: number;
+  admissionWindow: number;
+}) {
+  const { totalInventory, expectedDemand, avgCheckoutTime, admissionWindow } =
+    config;
+
+  // How many users can complete checkout in the admission window
+  const checkoutsPerWindow = admissionWindow / avgCheckoutTime;
+
+  // Concurrent admissions to maintain flow
+  const concurrentAdmissions = Math.ceil(totalInventory / checkoutsPerWindow);
+
+  // Rate to process the expected demand
+  const totalLaunchDuration =
+    (expectedDemand / concurrentAdmissions) * avgCheckoutTime;
+  const admissionRate = Math.ceil(expectedDemand / totalLaunchDuration);
+
+  return {
+    concurrentAdmissions,
+    admissionRatePerMinute: admissionRate,
+    estimatedLaunchDuration: totalLaunchDuration,
+  };
+}
+
+// Example calculation
+const settings = calculateQueueSettings({
+  totalInventory: 1000,
+  expectedDemand: 50000,
+  avgCheckoutTime: 3, // minutes
+  admissionWindow: 15, // minutes
+});
+
+console.log(settings);
+// { concurrentAdmissions: 200, admissionRatePerMinute: 100, estimatedLaunchDuration: 500 }
+```
+
+## Step 2: Create the Queue Experience
+
+### Admin API Configuration
+
+```typescript
+import { FanfareAdminClient } from "@waitify-io/fanfare-admin-sdk";
+
+const adminClient = new FanfareAdminClient({
+  apiKey: process.env.FANFARE_ADMIN_API_KEY!,
+  organizationId: process.env.FANFARE_ORGANIZATION_ID!,
+});
+
+async function createProductLaunchQueue() {
+  const queue = await adminClient.queues.create({
+    name: "Summer Sneaker Drop 2024",
+    slug: "summer-sneaker-drop-2024",
+
+    // Scheduling
+    scheduledStart: new Date("2024-06-15T10:00:00Z"),
+    scheduledEnd: new Date("2024-06-15T18:00:00Z"),
+
+    // Capacity settings
+    config: {
+      maxConcurrentAdmissions: 50,
+      admissionWindowSeconds: 900, // 15 minutes
+      admissionRatePerMinute: 100,
+
+      // Queue behavior
+      allowRequeue: false,
+      requireAuthentication: false,
+      fairnessMode: "strict", // First-come-first-served
+
+      // Display settings
+      showPosition: true,
+      showEstimatedWait: true,
+      showQueueLength: false, // Don't show total to avoid discouraging users
+    },
+
+    // Metadata for your system
+    metadata: {
+      productId: "sneaker-summer-2024",
+      campaign: "summer-launch",
+      inventoryCount: 1000,
+    },
+
+    // Branding
+    branding: {
+      primaryColor: "#FF5722",
+      logoUrl: "https://your-brand.com/logo.png",
+      backgroundImageUrl: "https://your-brand.com/launch-bg.jpg",
+    },
+  });
+
+  return queue;
+}
+```
+
+### Enable Pre-Queue (Waiting Room)
+
+```typescript
+async function enablePreQueue(queueId: string) {
+  await adminClient.queues.update(queueId, {
+    config: {
+      preQueueEnabled: true,
+      preQueueStartTime: new Date("2024-06-15T09:30:00Z"),
+      preQueueMessage:
+        "The launch begins at 10:00 AM ET. Stay on this page to secure your spot.",
+    },
+  });
+}
+```
+
+## Step 3: Build the Launch Page
+
+### React Launch Page Component
+
+```tsx
+// pages/launch/[slug].tsx
+import { FanfareProvider } from "@waitify-io/fanfare-sdk-react";
+import { ProductLaunchExperience } from "@/components/ProductLaunchExperience";
+import { ProductInfo } from "@/components/ProductInfo";
+import { LaunchCountdown } from "@/components/LaunchCountdown";
+
+interface LaunchPageProps {
+  queueId: string;
+  product: Product;
+  launchTime: string;
+}
+
+export default function LaunchPage({
+  queueId,
+  product,
+  launchTime,
+}: LaunchPageProps) {
+  return (
+    <FanfareProvider
+      organizationId={process.env.NEXT_PUBLIC_FANFARE_ORG_ID!}
+      options={{ environment: "production" }}
+    >
+      <div className="launch-page">
+        <header className="launch-header">
+          <h1>{product.name}</h1>
+          <LaunchCountdown targetTime={launchTime} />
+        </header>
+
+        <main className="launch-content">
+          <div className="product-preview">
+            <ProductInfo product={product} />
+          </div>
+
+          <div className="experience-container">
+            <ProductLaunchExperience queueId={queueId} product={product} />
+          </div>
+        </main>
+      </div>
+    </FanfareProvider>
+  );
+}
+
+export async function getServerSideProps({
+  params,
+}: {
+  params: { slug: string };
+}) {
+  const launch = await getLaunchBySlug(params.slug);
+
+  return {
+    props: {
+      queueId: launch.queueId,
+      product: launch.product,
+      launchTime: launch.scheduledStart,
+    },
+  };
+}
+```
+
+### Launch Experience Component
+
+```tsx
+// components/ProductLaunchExperience.tsx
+import {
+  useExperienceJourney,
+  useFanfare,
+} from "@waitify-io/fanfare-sdk-react";
+import { useState, useEffect } from "react";
+
+interface ProductLaunchExperienceProps {
+  queueId: string;
+  product: Product;
+}
+
+export function ProductLaunchExperience({
+  queueId,
+  product,
+}: ProductLaunchExperienceProps) {
+  const { journey, state, start } = useExperienceJourney(queueId, {
+    autoStart: true,
+  });
+
+  const snapshot = state?.snapshot;
+  const stage = snapshot?.sequenceStage;
+
+  // Track analytics
+  useEffect(() => {
+    if (stage) {
+      analytics.track("launch_stage_change", {
+        queueId,
+        productId: product.id,
+        stage,
+      });
+    }
+  }, [stage, queueId, product.id]);
+
+  return (
+    <div className="launch-experience">
+      {stage === "not_started" && <PreLaunchState snapshot={snapshot} />}
+
+      {stage === "entering" && <EnteringState />}
+
+      {stage === "waiting" && (
+        <QueueState snapshot={snapshot} product={product} />
+      )}
+
+      {stage === "admitted" && (
+        <AdmittedState snapshot={snapshot} product={product} />
+      )}
+
+      {stage === "completed" && <CompletedState />}
+
+      {stage === "error" && <ErrorState error={state?.error} onRetry={start} />}
+    </div>
+  );
+}
+
+function PreLaunchState({ snapshot }: { snapshot: JourneySnapshot }) {
+  const startsAt = snapshot?.context?.startsAt;
+  const preQueueMessage = snapshot?.context?.preQueueMessage;
+
+  return (
+    <div className="pre-launch-state">
+      <div className="countdown-container">
+        <h2>Launch Countdown</h2>
+        <CountdownTimer targetTime={startsAt} />
+      </div>
+
+      {preQueueMessage && (
+        <p className="pre-queue-message">{preQueueMessage}</p>
+      )}
+
+      <div className="launch-tips">
+        <h3>Tips for Launch Day</h3>
+        <ul>
+          <li>Keep this page open - do not refresh</li>
+          <li>Have your payment info ready</li>
+          <li>Know your size before you enter</li>
+          <li>You will have 15 minutes to complete checkout</li>
+        </ul>
+      </div>
+    </div>
+  );
+}
+
+function QueueState({
+  snapshot,
+  product,
+}: {
+  snapshot: JourneySnapshot;
+  product: Product;
+}) {
+  const position = snapshot?.context?.position;
+  const estimatedWait = snapshot?.context?.estimatedWaitSeconds;
+
+  return (
+    <div className="queue-state">
+      <div className="queue-header">
+        <h2>You're in the Queue</h2>
+        <p>Please keep this page open</p>
+      </div>
+
+      <div className="queue-stats">
+        <div className="stat position">
+          <span className="label">Your Position</span>
+          <span className="value">
+            {position?.toLocaleString() || "Calculating..."}
+          </span>
+        </div>
+
+        <div className="stat wait-time">
+          <span className="label">Estimated Wait</span>
+          <span className="value">{formatWaitTime(estimatedWait)}</span>
+        </div>
+      </div>
+
+      <QueueProgress position={position} />
+
+      <div className="product-reminder">
+        <img src={product.imageUrl} alt={product.name} />
+        <div className="product-details">
+          <h4>{product.name}</h4>
+          <p className="price">${product.price}</p>
+        </div>
+      </div>
+
+      <div className="queue-tips">
+        <p>While you wait:</p>
+        <ul>
+          <li>Review product details and sizing</li>
+          <li>Prepare your payment method</li>
+          <li>Do not close or refresh this page</li>
+        </ul>
+      </div>
+    </div>
+  );
+}
+
+function AdmittedState({
+  snapshot,
+  product,
+}: {
+  snapshot: JourneySnapshot;
+  product: Product;
+}) {
+  const expiresAt = snapshot?.context?.admittanceExpiresAt;
+  const [timeRemaining, setTimeRemaining] = useState(0);
+
+  useEffect(() => {
+    if (!expiresAt) return;
+
+    const interval = setInterval(() => {
+      const remaining = Math.max(0, expiresAt - Date.now());
+      setTimeRemaining(remaining);
+
+      if (remaining <= 0) {
+        clearInterval(interval);
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [expiresAt]);
+
+  const handleCheckout = () => {
+    // Navigate to checkout with admission context
+    const admissionData = {
+      token: snapshot?.context?.admittanceToken,
+      consumerId: snapshot?.context?.consumerId,
+      experienceId: snapshot?.context?.experienceId,
+      distributionId: snapshot?.context?.distributionId,
+      distributionType: "queue",
+    };
+
+    sessionStorage.setItem("fanfare_admission", JSON.stringify(admissionData));
+    window.location.href = `/checkout/${product.id}`;
+  };
+
+  return (
+    <div className="admitted-state">
+      <div className="success-banner">
+        <div className="success-icon">✓</div>
+        <h2>You're In!</h2>
+        <p>Complete your purchase before time runs out</p>
+      </div>
+
+      <div className="admission-timer">
+        <span className="timer-value">{formatTime(timeRemaining)}</span>
+        <span className="timer-label">remaining</span>
+      </div>
+
+      <div className="product-card">
+        <img src={product.imageUrl} alt={product.name} />
+        <div className="details">
+          <h3>{product.name}</h3>
+          <p className="price">${product.price}</p>
+        </div>
+      </div>
+
+      <button onClick={handleCheckout} className="checkout-btn">
+        Complete Purchase
+      </button>
+
+      <p className="checkout-warning">
+        Do not close this page until checkout is complete
+      </p>
+    </div>
+  );
+}
+
+function QueueProgress({ position }: { position?: number }) {
+  // Visual progress indicator
+  const progress = position ? Math.max(0, 100 - Math.log10(position) * 25) : 0;
+
+  return (
+    <div className="queue-progress">
+      <div className="progress-bar">
+        <div className="progress-fill" style={{ width: `${progress}%` }} />
+      </div>
+      <div className="progress-labels">
+        <span>Waiting</span>
+        <span>Almost there</span>
+        <span>Your turn</span>
+      </div>
+    </div>
+  );
+}
+
+function formatWaitTime(seconds?: number): string {
+  if (!seconds) return "Calculating...";
+
+  if (seconds < 60) return "Less than a minute";
+  if (seconds < 120) return "About 1 minute";
+
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 60) return `About ${minutes} minutes`;
+
+  const hours = Math.floor(minutes / 60);
+  const remainingMins = minutes % 60;
+  return `${hours}h ${remainingMins}m`;
+}
+
+function formatTime(ms: number): string {
+  const totalSeconds = Math.floor(ms / 1000);
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+}
+```
+
+## Step 4: Launch Day Operations
+
+### Monitoring Dashboard
+
+```typescript
+// Admin monitoring interface
+interface QueueMetrics {
+  currentQueueSize: number;
+  totalEntered: number;
+  totalAdmitted: number;
+  totalCompleted: number;
+  avgWaitTime: number;
+  currentAdmissionRate: number;
+  inventoryRemaining: number;
+}
+
+async function getQueueMetrics(queueId: string): Promise<QueueMetrics> {
+  const response = await adminClient.queues.getMetrics(queueId);
+  return response;
+}
+
+// Real-time updates via webhook or polling
+function MonitoringDashboard({ queueId }: { queueId: string }) {
+  const [metrics, setMetrics] = useState<QueueMetrics | null>(null);
+
+  useEffect(() => {
+    const interval = setInterval(async () => {
+      const data = await getQueueMetrics(queueId);
+      setMetrics(data);
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [queueId]);
+
+  if (!metrics) return <Loading />;
+
+  return (
+    <div className="monitoring-dashboard">
+      <MetricCard label="Queue Size" value={metrics.currentQueueSize} />
+      <MetricCard label="Total Entered" value={metrics.totalEntered} />
+      <MetricCard label="Admitted" value={metrics.totalAdmitted} />
+      <MetricCard label="Completed" value={metrics.totalCompleted} />
+      <MetricCard label="Avg Wait Time" value={formatDuration(metrics.avgWaitTime)} />
+      <MetricCard label="Admission Rate" value={`${metrics.currentAdmissionRate}/min`} />
+      <MetricCard label="Inventory Left" value={metrics.inventoryRemaining} />
+    </div>
+  );
+}
+```
+
+### Emergency Controls
+
+```typescript
+// Pause queue if issues arise
+async function pauseQueue(queueId: string) {
+  await adminClient.queues.update(queueId, {
+    status: "paused",
+  });
+}
+
+// Resume queue
+async function resumeQueue(queueId: string) {
+  await adminClient.queues.update(queueId, {
+    status: "active",
+  });
+}
+
+// Adjust admission rate dynamically
+async function adjustAdmissionRate(queueId: string, newRate: number) {
+  await adminClient.queues.update(queueId, {
+    config: {
+      admissionRatePerMinute: newRate,
+    },
+  });
+}
+
+// End queue early (e.g., sold out)
+async function endQueueEarly(queueId: string, reason: string) {
+  await adminClient.queues.update(queueId, {
+    status: "ended",
+    endReason: reason,
+  });
+
+  // Notify remaining users
+  await adminClient.queues.notifyWaiting(queueId, {
+    type: "experience_ended",
+    message: "This product has sold out. Thank you for your interest.",
+  });
+}
+```
+
+## Step 5: Inventory Sync
+
+### Track Purchases in Real-Time
+
+```typescript
+// Webhook handler for order completion
+async function handleOrderCompleted(orderId: string, queueId: string) {
+  // Update inventory count
+  const remainingInventory = await decrementInventory(orderId);
+
+  // Check if sold out
+  if (remainingInventory <= 0) {
+    await endQueueEarly(queueId, "sold_out");
+  }
+
+  // Update queue display if showing remaining stock
+  await adminClient.queues.updateMetadata(queueId, {
+    inventoryRemaining: remainingInventory,
+  });
+}
+
+// Sync inventory periodically
+async function syncInventoryWithQueue(queueId: string) {
+  const actualInventory = await getActualInventoryCount();
+  const queueMetadata = await adminClient.queues.get(queueId);
+
+  if (actualInventory !== queueMetadata.metadata.inventoryRemaining) {
+    await adminClient.queues.updateMetadata(queueId, {
+      inventoryRemaining: actualInventory,
+    });
+
+    if (actualInventory <= 0 && queueMetadata.status === "active") {
+      await endQueueEarly(queueId, "sold_out");
+    }
+  }
+}
+```
+
+## Step 6: Post-Launch Analytics
+
+### Generate Launch Report
+
+```typescript
+interface LaunchReport {
+  summary: {
+    totalVisitors: number;
+    totalEntered: number;
+    totalAdmitted: number;
+    totalPurchased: number;
+    conversionRate: number;
+    avgWaitTime: number;
+    peakQueueSize: number;
+    revenue: number;
+  };
+  timeline: Array<{
+    timestamp: Date;
+    entered: number;
+    admitted: number;
+    purchased: number;
+  }>;
+  dropoffAnalysis: {
+    leftBeforeAdmission: number;
+    expiredAdmissions: number;
+    abandonedCart: number;
+  };
+}
+
+async function generateLaunchReport(queueId: string): Promise<LaunchReport> {
+  const analytics = await adminClient.analytics.getQueueReport(queueId);
+
+  return {
+    summary: {
+      totalVisitors: analytics.uniqueVisitors,
+      totalEntered: analytics.totalEntered,
+      totalAdmitted: analytics.totalAdmitted,
+      totalPurchased: analytics.totalCompleted,
+      conversionRate: (analytics.totalCompleted / analytics.totalEntered) * 100,
+      avgWaitTime: analytics.avgWaitTimeSeconds,
+      peakQueueSize: analytics.peakQueueSize,
+      revenue: analytics.totalRevenue,
+    },
+    timeline: analytics.hourlyBreakdown,
+    dropoffAnalysis: {
+      leftBeforeAdmission:
+        analytics.totalEntered -
+        analytics.totalAdmitted -
+        analytics.currentlyWaiting,
+      expiredAdmissions: analytics.totalAdmitted - analytics.totalCompleted,
+      abandonedCart: analytics.checkoutStarted - analytics.totalCompleted,
+    },
+  };
+}
+```
+
+## Best Practices
+
+### 1. Communicate Clearly
+
+```tsx
+// Show clear messaging at each stage
+const stageMessages = {
+  preQueue:
+    "You're early! The launch begins at {time}. Stay on this page to automatically enter the queue when it opens.",
+  entering: "Connecting you to the queue. This should only take a moment.",
+  waiting:
+    "You're in line! Your position: {position}. Estimated wait: {time}. Do not close this page.",
+  admitted: "It's your turn! You have {time} to complete your purchase.",
+  completed:
+    "Thank you for your purchase! Order confirmation has been sent to your email.",
+  expired:
+    "Your checkout window has expired. The product may still be available - return to the product page to try again.",
+};
+```
+
+### 2. Mobile Optimization
+
+```css
+/* Ensure experience works well on mobile */
+.launch-experience {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.queue-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.checkout-btn {
+  width: 100%;
+  padding: 16px;
+  font-size: 18px;
+  position: sticky;
+  bottom: 20px;
+}
+
+@media (max-width: 480px) {
+  .queue-stats {
+    grid-template-columns: 1fr;
+  }
+}
+```
+
+### 3. Handle Edge Cases
+
+```typescript
+// Handle page visibility changes
+useEffect(() => {
+  const handleVisibilityChange = () => {
+    if (document.visibilityState === "visible" && stage === "waiting") {
+      // Refresh position when returning to page
+      journey.refreshState();
+    }
+  };
+
+  document.addEventListener("visibilitychange", handleVisibilityChange);
+  return () =>
+    document.removeEventListener("visibilitychange", handleVisibilityChange);
+}, [journey, stage]);
+
+// Handle network reconnection
+useEffect(() => {
+  const handleOnline = () => {
+    if (stage === "waiting" || stage === "admitted") {
+      journey.refreshState();
+    }
+  };
+
+  window.addEventListener("online", handleOnline);
+  return () => window.removeEventListener("online", handleOnline);
+}, [journey, stage]);
+```
+
+## Troubleshooting
+
+### Queue Not Starting on Time
+
+1. Verify scheduled start time includes timezone
+2. Check server clock synchronization
+3. Ensure queue status is "scheduled" not "draft"
+
+### High Drop-off Rate
+
+1. Review wait time estimates - are they accurate?
+2. Check for mobile experience issues
+3. Ensure admission window is long enough
+4. Consider sending browser notifications
+
+### Inventory Mismatch
+
+1. Implement real-time inventory sync
+2. Add safety buffer (e.g., hold back 5%)
+3. Monitor webhook delivery for order completion
+
+## What's Next
+
+- [Flash Sale Guide](/guides/use-cases/flash-sale) - Time-limited sales events
+- [Limited Edition](/guides/use-cases/limited-edition) - Exclusive product drops
+- [Webhooks Guide](/guides/advanced/webhooks-guide) - Real-time event handling

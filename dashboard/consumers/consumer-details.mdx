@@ -1,0 +1,254 @@
+---
+title: Consumer Details
+description: View and manage individual consumer profiles with detailed metrics
+---
+
+# Consumer Details
+
+The consumer detail page provides a comprehensive view of an individual consumer, including their profile information, engagement metrics, and participation history.
+
+## Accessing Consumer Details
+
+Click on any consumer in the consumers list to view their detail page.
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/customers/{customerId}
+Shows: Consumer detail page with header and metrics cards
+Annotations: Label the main sections (header, metrics grid, timeline)
+Alt text: "Consumer detail page showing profile header with RFM chart and metrics cards"
+*/}
+
+![Consumer detail](./images/consumer-detail.png)
+_Caption: The consumer detail page shows comprehensive profile information_
+
+## Profile Header
+
+The header section displays key consumer information at a glance.
+
+### Contact Information
+
+| Field      | Description                |
+| ---------- | -------------------------- |
+| **Name**   | Consumer's full name       |
+| **Email**  | Primary email address      |
+| **Phone**  | Phone number (if provided) |
+| **Status** | Active or Inactive badge   |
+
+### RFM Engagement Chart
+
+The radar chart visualizes the consumer's engagement across three dimensions:
+
+| Dimension     | Description                             |
+| ------------- | --------------------------------------- |
+| **Activity**  | How recently and frequently they engage |
+| **Frequency** | How often they make purchases           |
+| **Monetary**  | Their total spend and value             |
+
+The chart shows percentile rankings compared to other consumers in your organization.
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/customers/{customerId}
+Shows: RFM radar chart in the header
+Annotations: Label the three dimensions
+Alt text: "RFM radar chart showing activity, frequency, and monetary scores"
+*/}
+
+![RFM chart](./images/consumer-rfm-chart.png)
+_Caption: The RFM chart shows engagement relative to other consumers_
+
+## Metrics Cards
+
+Six metric cards provide insights into different aspects of the consumer:
+
+### Customer Value Card
+
+| Metric         | Description                         |
+| -------------- | ----------------------------------- |
+| **LTV**        | Lifetime value (total spend)        |
+| **AOV**        | Average order value                 |
+| **Percentile** | Ranking compared to other consumers |
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/customers/{customerId}
+Shows: Customer value metric card
+Annotations: Highlight LTV amount and percentile bar
+Alt text: "Customer value card showing LTV and AOV metrics"
+*/}
+
+![Value card](./images/consumer-value-card.png)
+_Caption: Track lifetime value and average order value_
+
+### Purchase Recency Card
+
+| Metric             | Description                        |
+| ------------------ | ---------------------------------- |
+| **Last Order**     | Time since last purchase           |
+| **Order Cadence**  | Average days between orders        |
+| **Recency Status** | Fresh, Active, At Risk, or Dormant |
+
+### Recency Status Definitions
+
+| Status      | Criteria   | Description              |
+| ----------- | ---------- | ------------------------ |
+| **Fresh**   | < 7 days   | Recently engaged         |
+| **Active**  | 7-30 days  | Regular engagement       |
+| **At Risk** | 30-60 days | May be churning          |
+| **Dormant** | > 60 days  | Has not engaged recently |
+
+### Engagement Health Card
+
+| Metric            | Description                    |
+| ----------------- | ------------------------------ |
+| **Response Rate** | Percentage of messages engaged |
+| **Last Engaged**  | Date of most recent engagement |
+
+### Location Context Card
+
+| Metric             | Description                         |
+| ------------------ | ----------------------------------- |
+| **Location**       | City, region, or country            |
+| **Timezone**       | Consumer's local timezone           |
+| **Best Send Time** | Recommended time for communications |
+
+The best send time is calculated based on when the consumer typically engages, bucketed into standard windows:
+
+| Window    | Time Range | Recommendation |
+| --------- | ---------- | -------------- |
+| Morning   | 6am-10am   | 8am            |
+| Midday    | 10am-2pm   | 12pm           |
+| Afternoon | 2pm-6pm    | 3pm            |
+| Evening   | 6pm-10pm   | 7pm            |
+
+### Account Health Card
+
+| Metric          | Description                                 |
+| --------------- | ------------------------------------------- |
+| **Bot Risk**    | Likelihood of being a bot (Low/Medium/High) |
+| **Return Rate** | Percentage of orders returned               |
+| **Churn Risk**  | Likelihood of churning                      |
+
+### Bot Risk Levels
+
+| Level      | Score Range | Description                     |
+| ---------- | ----------- | ------------------------------- |
+| **Low**    | 0-30%       | Likely a real customer          |
+| **Medium** | 30-70%      | Some suspicious patterns        |
+| **High**   | 70-100%     | High likelihood of bot activity |
+
+### Loyalty Card
+
+| Metric             | Description                    |
+| ------------------ | ------------------------------ |
+| **Loyalty Score**  | Overall loyalty points         |
+| **Activity Rank**  | Activity score (1-5)           |
+| **Frequency Rank** | Purchase frequency score (1-5) |
+| **Monetary Rank**  | Spending score (1-5)           |
+
+## Editing Consumer Information
+
+To update consumer details:
+
+1. Click the **Edit** button on the detail page
+2. Modify the desired fields
+3. Click **Save** to apply changes
+
+### Editable Fields
+
+| Field             | Editable | Notes                    |
+| ----------------- | -------- | ------------------------ |
+| **Full Name**     | Yes      | Consumer's display name  |
+| **Email**         | Yes      | Primary identifier       |
+| **Phone**         | Yes      | E.164 format recommended |
+| **Status**        | Yes      | Active or Inactive       |
+| **Loyalty Score** | Yes      | Manual adjustment        |
+| **Tags**          | Yes      | Add or remove tags       |
+
+### Non-Editable Fields
+
+| Field                | Reason                        |
+| -------------------- | ----------------------------- |
+| **LTV**              | Calculated from order history |
+| **AOV**              | Calculated automatically      |
+| **Activity Metrics** | Derived from engagement data  |
+| **Created At**       | System timestamp              |
+
+## Consumer Tags
+
+Tags help categorize and segment consumers.
+
+### Adding Tags
+
+1. Click the **Tags** section
+2. Type a new tag name
+3. Press Enter to add
+
+### Common Tags
+
+| Tag Type       | Examples                   |
+| -------------- | -------------------------- |
+| **VIP Status** | VIP, Premium, Gold         |
+| **Source**     | Import, Klaviyo, Shopify   |
+| **Behavior**   | High-Value, Frequent-Buyer |
+| **Campaign**   | Spring-Sale, Beta-Tester   |
+
+## Sync Sources
+
+View external integrations linked to this consumer:
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/customers/{customerId}
+Shows: Sync source information on consumer detail
+Annotations: Highlight sync status and source
+Alt text: "Consumer sync sources showing Klaviyo integration status"
+*/}
+
+![Sync sources](./images/consumer-sync-sources.png)
+_Caption: View integration sync status for the consumer_
+
+| Information     | Description                       |
+| --------------- | --------------------------------- |
+| **Source**      | Integration name (e.g., Klaviyo)  |
+| **External ID** | ID in the external system         |
+| **Last Synced** | When data was last synchronized   |
+| **Status**      | Sync status (synced, error, etc.) |
+
+## Deleting Consumers
+
+To delete a consumer:
+
+1. Navigate to the consumer detail page
+2. Click the **Actions** menu
+3. Select **Delete**
+4. Confirm the deletion
+
+<Warning>
+Deleting a consumer removes all associated data including activity history, audience memberships, and experience participation records. This action cannot be undone.
+</Warning>
+
+## Data Privacy Actions
+
+### Export Consumer Data
+
+Download all data associated with a consumer:
+
+1. Click **Actions** > **Export Data**
+2. Select data to include
+3. Download the file
+
+### Delete Consumer Data
+
+For GDPR/CCPA compliance:
+
+1. Click **Actions** > **Delete Data**
+2. Confirm the deletion request
+3. Data is permanently removed
+
+## Related Guides
+
+- [Consumer Activity](/dashboard/consumers/consumer-activity) - View activity timeline
+- [Consumers Overview](/dashboard/consumers/overview) - Manage consumer list
+- [Audiences](/dashboard/audiences/overview) - Segment consumers

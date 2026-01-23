@@ -1,0 +1,540 @@
+---
+title: SSR Integration Guide
+description: Integrate Fanfare into server-side rendered applications using Next.js, Remix, or Nuxt.
+---
+
+# SSR Integration Guide
+
+Learn how to integrate Fanfare into server-side rendered applications using Next.js, Remix, or Nuxt.
+
+## Overview
+
+This guide covers integrating Fanfare into applications that use server-side rendering (SSR). The key challenge with SSR is that the SDK runs in the browser, but your pages may render on the server first.
+
+**What you'll learn:**
+
+- Handling client/server rendering boundaries
+- Hydration-safe SDK initialization
+- Server-side consumer identification
+- Session management across requests
+
+**Complexity:** Intermediate
+**Time to complete:** 45 minutes
+
+## Prerequisites
+
+- A Fanfare account with API credentials
+- A Next.js 14+, Remix, or Nuxt application
+- Understanding of SSR concepts and hydration
+
+## Key Concepts
+
+### Client-Only SDK
+
+The Fanfare SDK is a browser-only library. It uses:
+
+- `localStorage` for session persistence
+- `BroadcastChannel` for cross-tab sync
+- Browser fingerprinting for device identification
+
+This means SDK initialization must happen client-side after hydration.
+
+### Server-Side Consumer Identification
+
+For SSR apps, you may want to identify consumers server-side using:
+
+- JWT tokens from your authentication provider
+- External authentication exchange
+
+## Next.js Integration
+
+### Step 1: Create a Client Provider
+
+Create a client-only provider component:
+
+```tsx
+// src/components/FanfareClientProvider.tsx
+"use client";
+
+import {
+  FanfareProvider,
+  type FanfareProviderProps,
+} from "@waitify-io/fanfare-sdk-react";
+import { type ReactNode } from "react";
+
+interface FanfareClientProviderProps
+  extends Omit<FanfareProviderProps, "children"> {
+  children: ReactNode;
+}
+
+export function FanfareClientProvider({
+  children,
+  ...props
+}: FanfareClientProviderProps) {
+  return <FanfareProvider {...props}>{children}</FanfareProvider>;
+}
+```
+
+### Step 2: Add Provider to Layout
+
+Add the provider to your root layout:
+
+```tsx
+// src/app/layout.tsx
+import { FanfareClientProvider } from "@/components/FanfareClientProvider";
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <html lang="en">
+      <body>
+        <FanfareClientProvider
+          organizationId={process.env.NEXT_PUBLIC_FANFARE_ORG_ID!}
+          publishableKey={process.env.NEXT_PUBLIC_FANFARE_PUBLISHABLE_KEY!}
+          loadingComponent={<LoadingSpinner />}
+        >
+          {children}
+        </FanfareClientProvider>
+      </body>
+    </html>
+  );
+}
+
+function LoadingSpinner() {
+  return (
+    <div className="flex min-h-screen items-center justify-center">
+      <div className="border-primary h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" />
+    </div>
+  );
+}
+```
+
+### Step 3: Create a Client Experience Component
+
+Experience components must be client components:
+
+```tsx
+// src/components/ExperienceClient.tsx
+"use client";
+
+import {
+  useExperienceJourney,
+  useFanfareAuth,
+} from "@waitify-io/fanfare-sdk-react";
+import { useEffect } from "react";
+
+interface ExperienceClientProps {
+  experienceId: string;
+  productName: string;
+}
+
+export function ExperienceClient({
+  experienceId,
+  productName,
+}: ExperienceClientProps) {
+  const { isAuthenticated, guest } = useFanfareAuth();
+  const { journey, state, status, start } = useExperienceJourney(experienceId);
+
+  // Initialize auth
+  useEffect(() => {
+    if (!isAuthenticated) {
+      guest();
+    }
+  }, [isAuthenticated, guest]);
+
+  // Start journey
+  useEffect(() => {
+    if (isAuthenticated && status === "idle") {
+      start();
+    }
+  }, [isAuthenticated, status, start]);
+
+  return (
+    <div className="experience-widget">
+      <h2>{productName}</h2>
+      <ExperienceUI status={status} journey={journey} state={state} />
+    </div>
+  );
+}
+```
+
+### Step 4: Use in Server Component Page
+
+Fetch product data server-side, render experience client-side:
+
+```tsx
+// src/app/products/[slug]/page.tsx
+import { ExperienceClient } from "@/components/ExperienceClient";
+import { getProduct } from "@/lib/products";
+
+interface ProductPageProps {
+  params: { slug: string };
+}
+
+export default async function ProductPage({ params }: ProductPageProps) {
+  // Server-side data fetching
+  const product = await getProduct(params.slug);
+
+  if (!product) {
+    notFound();
+  }
+
+  return (
+    <main>
+      <h1>{product.name}</h1>
+      <p>{product.description}</p>
+
+      {/* Client-side experience widget */}
+      {product.experienceId && (
+        <ExperienceClient
+          experienceId={product.experienceId}
+          productName={product.name}
+        />
+      )}
+    </main>
+  );
+}
+
+// Generate static params for popular products
+export async function generateStaticParams() {
+  const products = await getPopularProducts();
+  return products.map((p) => ({ slug: p.slug }));
+}
+```
+
+## Remix Integration
+
+### Step 1: Client-Only Provider
+
+Create a client-only module:
+
+```tsx
+// app/components/fanfare.client.tsx
+import { FanfareProvider } from "@waitify-io/fanfare-sdk-react";
+import type { ReactNode } from "react";
+
+interface FanfareWrapperProps {
+  organizationId: string;
+  publishableKey: string;
+  children: ReactNode;
+}
+
+export function FanfareWrapper({
+  organizationId,
+  publishableKey,
+  children,
+}: FanfareWrapperProps) {
+  return (
+    <FanfareProvider
+      organizationId={organizationId}
+      publishableKey={publishableKey}
+    >
+      {children}
+    </FanfareProvider>
+  );
+}
+```
+
+### Step 2: Lazy Load in Root
+
+Use `ClientOnly` pattern or lazy loading:
+
+```tsx
+// app/root.tsx
+import {
+  Links,
+  Meta,
+  Outlet,
+  Scripts,
+  ScrollRestoration,
+  useLoaderData,
+} from "@remix-run/react";
+import { lazy, Suspense } from "react";
+
+const FanfareWrapper = lazy(() =>
+  import("./components/fanfare.client").then((m) => ({
+    default: m.FanfareWrapper,
+  })),
+);
+
+export async function loader() {
+  return {
+    fanfareOrgId: process.env.FANFARE_ORG_ID,
+    fanfareKey: process.env.FANFARE_PUBLISHABLE_KEY,
+  };
+}
+
+export default function App() {
+  const { fanfareOrgId, fanfareKey } = useLoaderData<typeof loader>();
+
+  return (
+    <html lang="en">
+      <head>
+        <Meta />
+        <Links />
+      </head>
+      <body>
+        <Suspense fallback={<LoadingState />}>
+          {typeof window !== "undefined" && fanfareOrgId && fanfareKey ? (
+            <FanfareWrapper
+              organizationId={fanfareOrgId}
+              publishableKey={fanfareKey}
+            >
+              <Outlet />
+            </FanfareWrapper>
+          ) : (
+            <Outlet />
+          )}
+        </Suspense>
+        <ScrollRestoration />
+        <Scripts />
+      </body>
+    </html>
+  );
+}
+```
+
+### Step 3: Use in Route Component
+
+```tsx
+// app/routes/products.$slug.tsx
+import { json, type LoaderFunctionArgs } from "@remix-run/node";
+import { useLoaderData } from "@remix-run/react";
+import { ExperienceWidget } from "~/components/ExperienceWidget.client";
+
+export async function loader({ params }: LoaderFunctionArgs) {
+  const product = await getProduct(params.slug);
+  if (!product) throw new Response("Not Found", { status: 404 });
+  return json({ product });
+}
+
+export default function ProductRoute() {
+  const { product } = useLoaderData<typeof loader>();
+
+  return (
+    <main>
+      <h1>{product.name}</h1>
+
+      {/* Renders only on client */}
+      {typeof window !== "undefined" && product.experienceId && (
+        <ExperienceWidget experienceId={product.experienceId} />
+      )}
+    </main>
+  );
+}
+```
+
+## Server-Side Consumer Linking
+
+When users are logged into your platform, link their identity to Fanfare:
+
+### Step 1: Create Exchange Endpoint
+
+```typescript
+// app/api/fanfare/link/route.ts (Next.js)
+import { NextResponse } from "next/server";
+import { auth } from "@/lib/auth";
+
+export async function POST() {
+  const session = await auth();
+  if (!session?.user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  // Call Fanfare's external authorize endpoint
+  const response = await fetch(
+    "https://api.fanfare.io/auth/external/authorize",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Organization-Id": process.env.FANFARE_ORG_ID!,
+        "X-Secret-Key": process.env.FANFARE_SECRET_KEY!,
+      },
+      body: JSON.stringify({
+        provider: "your-platform",
+        issuer: "https://your-domain.com",
+        subject: session.user.id,
+        claims: {
+          email: session.user.email,
+          name: session.user.name,
+        },
+      }),
+    },
+  );
+
+  if (!response.ok) {
+    return NextResponse.json({ error: "Failed to link" }, { status: 500 });
+  }
+
+  const { exchangeCode, expiresAt } = await response.json();
+  return NextResponse.json({ exchangeCode, expiresAt });
+}
+```
+
+### Step 2: Exchange Code on Client
+
+```tsx
+// src/hooks/useFanfareIdentity.ts
+"use client";
+
+import { useFanfare, useFanfareAuth } from "@waitify-io/fanfare-sdk-react";
+import { useEffect } from "react";
+
+export function useFanfareIdentity(isLoggedIn: boolean) {
+  const fanfare = useFanfare();
+  const { isAuthenticated, isGuest, session } = useFanfareAuth();
+
+  useEffect(() => {
+    async function linkIdentity() {
+      // Only link if user is logged in but Fanfare session is guest
+      if (!isLoggedIn || !isGuest) return;
+
+      try {
+        // Get exchange code from your backend
+        const res = await fetch("/api/fanfare/link", { method: "POST" });
+        if (!res.ok) return;
+
+        const { exchangeCode } = await res.json();
+
+        // Exchange for authenticated session
+        await fanfare.auth.exchangeExternal({ exchangeCode });
+      } catch (error) {
+        console.error("Failed to link identity:", error);
+      }
+    }
+
+    linkIdentity();
+  }, [isLoggedIn, isGuest, fanfare]);
+
+  return { session, isLinked: isAuthenticated && !isGuest };
+}
+```
+
+## Handling Hydration Mismatches
+
+Prevent hydration errors by conditionally rendering client content:
+
+```tsx
+// src/components/ClientOnly.tsx
+"use client";
+
+import { useEffect, useState, type ReactNode } from "react";
+
+interface ClientOnlyProps {
+  children: ReactNode;
+  fallback?: ReactNode;
+}
+
+export function ClientOnly({ children, fallback = null }: ClientOnlyProps) {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return <>{fallback}</>;
+  }
+
+  return <>{children}</>;
+}
+
+// Usage
+function ProductPage() {
+  return (
+    <div>
+      <h1>Product Name</h1>
+      <ClientOnly fallback={<QueuePlaceholder />}>
+        <ExperienceWidget experienceId="exp_xxx" />
+      </ClientOnly>
+    </div>
+  );
+}
+```
+
+## Session Persistence Across Routes
+
+The SDK automatically persists sessions in `localStorage`. For SSR apps:
+
+1. **Initial page load**: SDK initializes, restores session from storage
+2. **Client navigation**: Session persists, no re-initialization needed
+3. **Full page reload**: Session restored from storage on hydration
+
+```tsx
+// The FanfareProvider handles this automatically
+<FanfareProvider
+  autoRestore={true}  // Restore session on mount (default)
+  autoResume={true}   // Resume polling/watching (default)
+>
+```
+
+## Environment Variables
+
+Configure environment variables for SSR:
+
+```bash
+# .env.local (Next.js)
+NEXT_PUBLIC_FANFARE_ORG_ID=org_xxx
+NEXT_PUBLIC_FANFARE_PUBLISHABLE_KEY=pk_live_xxx
+FANFARE_SECRET_KEY=sk_live_xxx  # Server-only, for external auth
+```
+
+```bash
+# .env (Remix)
+FANFARE_ORG_ID=org_xxx
+FANFARE_PUBLISHABLE_KEY=pk_live_xxx
+FANFARE_SECRET_KEY=sk_live_xxx
+```
+
+## Testing SSR Integration
+
+### Verify Client-Only Rendering
+
+1. Disable JavaScript in your browser
+2. Load the page - experience widget should show loading/placeholder
+3. Enable JavaScript - widget should hydrate and function
+
+### Check Hydration
+
+```tsx
+// Add hydration debugging
+useEffect(() => {
+  console.log("Fanfare SDK hydrated", { isAuthenticated, session });
+}, [isAuthenticated, session]);
+```
+
+### Test Server-Side Identity Linking
+
+1. Log into your platform
+2. Check that exchange code is generated
+3. Verify consumer ID matches across sessions
+
+## Troubleshooting
+
+### Hydration Mismatch Errors
+
+- Ensure SDK components are client-only
+- Use `ClientOnly` wrapper or `"use client"` directive
+- Check for conditional rendering based on `typeof window`
+
+### Session Not Persisting
+
+- Verify `localStorage` is available
+- Check for privacy mode/incognito restrictions
+- Ensure same origin for all pages
+
+### Identity Not Linking
+
+- Verify secret key permissions
+- Check exchange code hasn't expired (60 seconds)
+- Confirm user is logged into your platform
+
+## What's Next
+
+- [JWT Tokens](/guides/authentication/jwt-tokens) - Advanced authentication
+- [Identified Consumers](/guides/authentication/identified-consumers) - Linking platform accounts
+- [Checkout Integration](/guides/checkout-integration/checkout-overview) - SSR checkout flows

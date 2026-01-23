@@ -1,0 +1,286 @@
+---
+title: Bot Protection
+description: How Fanfare protects against bots and fraudulent access to your experiences.
+---
+
+# Bot Protection
+
+Fanfare includes comprehensive protection against bots, automated scripts, and fraudulent access attempts to ensure fair distribution to legitimate consumers.
+
+<Note>
+  This documentation describes bot protection features at a high level. Specific detection methods and thresholds are
+  not disclosed to maintain their effectiveness.
+</Note>
+
+## Why Bot Protection Matters
+
+High-demand product launches attract automated abuse:
+
+- **Reseller bots** attempting to purchase inventory for resale
+- **Credential stuffing** using stolen account lists
+- **Scalping scripts** that bypass queue mechanisms
+- **DDoS attacks** attempting to disrupt launches
+
+Fanfare's protection ensures your products reach real consumers.
+
+## Protection Layers
+
+### Device Fingerprinting
+
+Every consumer interaction includes a device fingerprint that helps identify unique devices:
+
+```typescript
+// Fingerprinting is enabled by default
+const client = new FanfareClient({
+  publishableKey: "pk_live_...",
+});
+
+// The SDK automatically includes fingerprint data
+// No additional code required
+```
+
+**What fingerprinting provides**:
+
+- Identifies unique devices across sessions
+- Detects device spoofing attempts
+- Links multiple accounts to single devices
+- Prevents "ghost" accounts from bots
+
+**Privacy-focused design**:
+
+- Fingerprints are hashed, not raw device data
+- Cannot reverse-engineer device specifications
+- Compliant with privacy regulations
+- Consumers can clear by clearing browser data
+
+### Rate Limiting
+
+All endpoints are rate-limited to prevent automated abuse:
+
+| Action           | Limit      | Window    |
+| ---------------- | ---------- | --------- |
+| Experience entry | Per-device | Per event |
+| Queue join       | Per-device | Per event |
+| Authentication   | Per-IP     | Rolling   |
+| API calls        | Per-key    | Rolling   |
+
+Rate limits are adaptive and may vary based on threat level.
+
+### Behavioral Analysis
+
+Fanfare analyzes interaction patterns to distinguish humans from bots:
+
+<CardGroup cols={2}>
+  <Card title="Timing Analysis" icon="clock">
+    Evaluates request timing patterns
+  </Card>
+  <Card title="Interaction Patterns" icon="hand-pointer">
+    Analyzes how users interact with the page
+  </Card>
+  <Card title="Navigation Flow" icon="route">
+    Tracks expected vs. anomalous paths
+  </Card>
+  <Card title="Session Behavior" icon="chart-line">
+    Monitors session-level patterns
+  </Card>
+</CardGroup>
+
+### Challenge Systems
+
+When suspicious activity is detected, consumers may be presented with challenges:
+
+- **Invisible challenges**: Resolved automatically for legitimate users
+- **Interactive challenges**: Require human interaction
+- **Escalation**: Progressive challenges based on risk level
+
+## Configuring Protection
+
+### Protection Levels
+
+Configure protection strength for your organization:
+
+| Level    | Description                            | Use Case       |
+| -------- | -------------------------------------- | -------------- |
+| Standard | Balanced protection and UX             | Most launches  |
+| Enhanced | Stricter checks, may affect some users | High-demand    |
+| Maximum  | Strictest protection                   | Extreme demand |
+
+Configure in your dashboard under **Settings > Security**.
+
+### Per-Experience Settings
+
+Different experiences may need different protection:
+
+```typescript
+// Experience configuration (via dashboard or API)
+const experienceSettings = {
+  security: {
+    protectionLevel: "enhanced",
+    requireFingerprint: true,
+    allowGuests: true, // Set false for authenticated-only
+  },
+};
+```
+
+### Purchase Limits
+
+Combine bot protection with purchase limits:
+
+```typescript
+const orderLimits = {
+  maxPerConsumer: 1, // Per verified consumer
+  maxPerDevice: 2, // Per device fingerprint
+  enforcementLevel: "strict",
+};
+```
+
+## Handling Bot Challenges
+
+### Consumer Experience
+
+When a consumer is challenged:
+
+1. **Seamless path**: Most legitimate users proceed without interruption
+2. **Challenge path**: Some users see a brief verification step
+3. **Blocked path**: Clear bots are denied access
+
+### SDK Events
+
+Listen for protection events in your integration:
+
+```typescript
+// Handle challenge events
+client.on("security:challenge-required", (challenge) => {
+  // SDK handles this automatically
+  // Custom UI can be provided if needed
+});
+
+client.on("security:access-denied", (reason) => {
+  // Consumer was blocked
+  showBlockedMessage();
+});
+```
+
+### Error Handling
+
+Handle protection-related errors gracefully:
+
+```typescript
+try {
+  await client.experiences.enter(experienceId);
+} catch (error) {
+  if (error.code === "ACCESS_DENIED") {
+    showMessage(
+      "We couldn't verify your access. " + "Please ensure you're using a supported browser " + "and try again."
+    );
+  }
+}
+```
+
+## Best Practices
+
+### For High-Demand Launches
+
+<AccordionGroup>
+  <Accordion title="Enable enhanced protection">
+    Increase protection level before high-profile launches.
+  </Accordion>
+
+<Accordion title="Require authentication">Authenticated consumers are harder for bots to impersonate.</Accordion>
+
+<Accordion title="Set purchase limits">Limit quantities per consumer and per device.</Accordion>
+
+<Accordion title="Use draws for fairness">Random selection eliminates speed-based bot advantages.</Accordion>
+
+  <Accordion title="Monitor in real-time">
+    Watch your dashboard during launches for anomalies.
+  </Accordion>
+</AccordionGroup>
+
+### Integration Recommendations
+
+1. **Keep SDK updated**: Latest SDK has latest protections
+2. **Don't bypass fingerprinting**: Required for protection
+3. **Implement server-side validation**: Always validate handoffs
+4. **Monitor error rates**: Spikes may indicate attack attempts
+
+## Monitoring & Alerts
+
+### Dashboard Metrics
+
+Monitor bot protection effectiveness:
+
+- **Challenge rate**: Percentage of users challenged
+- **Block rate**: Percentage of users blocked
+- **False positive rate**: Legitimate users incorrectly blocked
+
+### Alert Configuration
+
+Set up alerts for unusual activity:
+
+```typescript
+// Alert configuration example
+const alerts = {
+  highBlockRate: {
+    threshold: 10, // Percent
+    action: "notify",
+  },
+  suspectedAttack: {
+    threshold: 100, // Blocks per minute
+    action: "escalate",
+  },
+};
+```
+
+## Support for Blocked Users
+
+### Legitimate User Appeals
+
+If a legitimate consumer is blocked:
+
+1. **Retry**: Clear browser data and try again
+2. **Different device**: Try from a different device
+3. **Contact support**: Provide error code for investigation
+
+### Error Codes
+
+When consumers are blocked, provide the error code:
+
+| Code  | Meaning                    | User Action          |
+| ----- | -------------------------- | -------------------- |
+| BP001 | Device verification failed | Clear browser, retry |
+| BP002 | Unusual activity detected  | Wait, retry          |
+| BP003 | Access limit reached       | Contact support      |
+
+### Support Requests
+
+When consumers contact you about being blocked:
+
+1. Collect the error code
+2. Note the approximate time
+3. Forward to Fanfare support with organization ID
+4. We'll investigate and adjust if needed
+
+## Limitations
+
+### What Protection Cannot Prevent
+
+- **Dedicated human resellers**: Real people acting quickly
+- **Shared household devices**: Legitimate multi-user scenarios
+- **Corporate networks**: Many users behind one IP
+
+These are addressed through purchase limits and fair distribution methods like draws.
+
+### Balancing Security and Experience
+
+More aggressive protection may impact some legitimate users. We recommend:
+
+- **Standard** for most launches
+- **Enhanced** for known high-demand events
+- **Maximum** only for extreme situations
+
+## Related Resources
+
+- [Fairness Guide](/resources/best-practices/fairness) - Fair distribution strategies
+- [Security Overview](/resources/security/overview) - Security architecture
+- [Contact Support](/resources/support/contact) - Report issues

@@ -1,0 +1,373 @@
+---
+title: Primitives
+description: SolidJS primitive components for building custom UIs
+---
+
+# Primitives
+
+The Solid SDK provides primitive components that can be used to build custom UIs while maintaining consistent styling with Fanfare widgets.
+
+## Available Primitives
+
+| Component    | Description                  |
+| ------------ | ---------------------------- |
+| `Button`     | Styled button with variants  |
+| `Card`       | Card container with sections |
+| `Input`      | Form input component         |
+| `Badge`      | Status badge component       |
+| `Spinner`    | Loading spinner animation    |
+| `Countdown`  | Countdown timer display      |
+| `Progress`   | Progress bar component       |
+| `Skeleton`   | Loading placeholder          |
+| `Transition` | Animated transitions         |
+
+## Button
+
+```tsx
+import { Button } from "@waitify-io/fanfare-sdk-solid";
+
+function MyComponent() {
+  return (
+    <div>
+      <Button variant="default" onClick={handleClick}>
+        Default Button
+      </Button>
+      <Button variant="primary" size="lg">
+        Primary Large
+      </Button>
+      <Button variant="secondary" size="sm">
+        Secondary Small
+      </Button>
+      <Button variant="destructive" disabled>
+        Destructive Disabled
+      </Button>
+      <Button variant="outline">Outline</Button>
+      <Button variant="ghost">Ghost</Button>
+    </div>
+  );
+}
+```
+
+### Button Props
+
+| Prop       | Type                                                                             | Default     |
+| ---------- | -------------------------------------------------------------------------------- | ----------- |
+| `variant`  | `"default" \| "primary" \| "secondary" \| "destructive" \| "outline" \| "ghost"` | `"default"` |
+| `size`     | `"sm" \| "md" \| "lg"`                                                           | `"md"`      |
+| `disabled` | `boolean`                                                                        | `false`     |
+| `loading`  | `boolean`                                                                        | `false`     |
+
+## Card
+
+```tsx
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@waitify-io/fanfare-sdk-solid";
+
+function MyCard() {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Card Title</CardTitle>
+        <CardDescription>A description of the card content</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <p>Main content goes here</p>
+      </CardContent>
+      <CardFooter>
+        <Button>Action</Button>
+      </CardFooter>
+    </Card>
+  );
+}
+```
+
+### Card Components
+
+| Component         | Description               |
+| ----------------- | ------------------------- |
+| `Card`            | Card container            |
+| `CardHeader`      | Header section            |
+| `CardTitle`       | Title text                |
+| `CardDescription` | Subtitle/description text |
+| `CardContent`     | Main content area         |
+| `CardFooter`      | Footer with actions       |
+
+## Input
+
+```tsx
+import { Input } from "@waitify-io/fanfare-sdk-solid";
+
+function MyForm() {
+  const [value, setValue] = createSignal("");
+
+  return (
+    <div>
+      <Input
+        type="text"
+        placeholder="Enter your name"
+        value={value()}
+        onInput={(e) => setValue(e.currentTarget.value)}
+      />
+
+      <Input type="email" placeholder="Email address" disabled />
+
+      <Input type="number" placeholder="Amount" min={0} step={10} />
+    </div>
+  );
+}
+```
+
+### Input Props
+
+| Prop          | Type                                     | Default  |
+| ------------- | ---------------------------------------- | -------- |
+| `type`        | `"text" \| "email" \| "number" \| "tel"` | `"text"` |
+| `placeholder` | `string`                                 | -        |
+| `value`       | `string`                                 | -        |
+| `disabled`    | `boolean`                                | `false`  |
+| `error`       | `boolean`                                | `false`  |
+
+## Badge
+
+```tsx
+import { Badge } from "@waitify-io/fanfare-sdk-solid";
+
+function StatusDisplay() {
+  return (
+    <div>
+      <Badge variant="default">Default</Badge>
+      <Badge variant="success">Success</Badge>
+      <Badge variant="warning">Warning</Badge>
+      <Badge variant="destructive">Error</Badge>
+      <Badge variant="outline">Outline</Badge>
+    </div>
+  );
+}
+```
+
+### Badge Props
+
+| Prop      | Type                                                                | Default     |
+| --------- | ------------------------------------------------------------------- | ----------- |
+| `variant` | `"default" \| "success" \| "warning" \| "destructive" \| "outline"` | `"default"` |
+
+## Spinner
+
+```tsx
+import { Spinner } from "@waitify-io/fanfare-sdk-solid";
+
+function LoadingState() {
+  return (
+    <div>
+      <Spinner size="sm" />
+      <Spinner size="md" />
+      <Spinner size="lg" />
+    </div>
+  );
+}
+```
+
+### Spinner Props
+
+| Prop   | Type                   | Default |
+| ------ | ---------------------- | ------- |
+| `size` | `"sm" \| "md" \| "lg"` | `"md"`  |
+
+## Countdown
+
+```tsx
+import { Countdown } from "@waitify-io/fanfare-sdk-solid";
+
+function TimerDisplay() {
+  const targetDate = new Date(Date.now() + 3600000); // 1 hour from now
+
+  return (
+    <div>
+      <Countdown targetDate={targetDate} class="text-2xl font-bold" />
+    </div>
+  );
+}
+```
+
+### Countdown Props
+
+| Prop         | Type         | Required | Description              |
+| ------------ | ------------ | -------- | ------------------------ |
+| `targetDate` | `Date`       | Yes      | Target date/time         |
+| `class`      | `string`     | No       | Additional CSS classes   |
+| `onComplete` | `() => void` | No       | Callback when timer ends |
+
+### Countdown Display Format
+
+The countdown displays time in the format:
+
+- `1d 2h 30m 15s` - When days remain
+- `2h 30m 15s` - When only hours remain
+- `30m 15s` - When only minutes remain
+- `15s` - When only seconds remain
+
+## Progress
+
+```tsx
+import { Progress } from "@waitify-io/fanfare-sdk-solid";
+
+function ProgressDisplay() {
+  const [progress, setProgress] = createSignal(45);
+
+  return (
+    <div>
+      <Progress value={progress()} max={100} />
+
+      <Progress value={75} max={100} variant="success" />
+
+      <Progress value={30} max={100} showLabel labelFormat={(value, max) => `${value}/${max}`} />
+    </div>
+  );
+}
+```
+
+### Progress Props
+
+| Prop          | Type                                  | Default     |
+| ------------- | ------------------------------------- | ----------- |
+| `value`       | `number`                              | Required    |
+| `max`         | `number`                              | `100`       |
+| `variant`     | `"default" \| "success" \| "warning"` | `"default"` |
+| `showLabel`   | `boolean`                             | `false`     |
+| `labelFormat` | `(value, max) => string`              | -           |
+
+## Skeleton
+
+```tsx
+import { Skeleton } from "@waitify-io/fanfare-sdk-solid";
+
+function LoadingCard() {
+  return (
+    <Card>
+      <CardHeader>
+        <Skeleton class="h-6 w-3/4" />
+        <Skeleton class="h-4 w-1/2" />
+      </CardHeader>
+      <CardContent>
+        <Skeleton class="h-20 w-full" />
+      </CardContent>
+    </Card>
+  );
+}
+```
+
+### Skeleton Props
+
+| Prop    | Type     | Description          |
+| ------- | -------- | -------------------- |
+| `class` | `string` | Width/height classes |
+
+## Transition
+
+```tsx
+import { Transition } from "@waitify-io/fanfare-sdk-solid";
+import { createSignal } from "solid-js";
+
+function AnimatedContent() {
+  const [key, setKey] = createSignal("state-1");
+
+  return (
+    <Transition transitionKey={key()}>
+      <div>Content for {key()}</div>
+    </Transition>
+  );
+}
+```
+
+### Transition Props
+
+| Prop            | Type          | Description              |
+| --------------- | ------------- | ------------------------ |
+| `transitionKey` | `string`      | Key to trigger animation |
+| `children`      | `JSX.Element` | Content to animate       |
+
+## Combining Primitives
+
+Build custom widget UIs using primitives:
+
+```tsx
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+  Button,
+  Badge,
+  Progress,
+  Spinner,
+} from "@waitify-io/fanfare-sdk-solid";
+import { useQueue } from "@waitify-io/fanfare-sdk-solid";
+
+function CustomQueueDisplay() {
+  const queue = useQueue(() => "queue_123");
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Join the Queue</CardTitle>
+        <CardDescription>
+          <Badge variant={queue.status() === "queued" ? "success" : "default"}>{queue.status()}</Badge>
+        </CardDescription>
+      </CardHeader>
+
+      <CardContent>
+        <Show when={queue.isLoading()}>
+          <div class="flex justify-center py-4">
+            <Spinner size="lg" />
+          </div>
+        </Show>
+
+        <Show when={queue.status() === "queued"}>
+          <div class="text-center">
+            <p class="text-3xl font-bold">{queue.position()}</p>
+            <p class="text-muted">in line</p>
+          </div>
+        </Show>
+      </CardContent>
+
+      <CardFooter>
+        <Show
+          when={queue.status() === "queued"}
+          fallback={
+            <Button onClick={() => queue.enter()} variant="primary" class="w-full">
+              Enter Queue
+            </Button>
+          }
+        >
+          <Button onClick={() => queue.leave()} variant="secondary" class="w-full">
+            Leave Queue
+          </Button>
+        </Show>
+      </CardFooter>
+    </Card>
+  );
+}
+```
+
+## Theming Primitives
+
+Primitives use CSS custom properties for styling:
+
+```css
+:root {
+  --fanfare-primary: #3b82f6;
+  --fanfare-primary-hover: #2563eb;
+  --fanfare-background: #ffffff;
+  --fanfare-foreground: #1f2937;
+  --fanfare-muted: #f3f4f6;
+  --fanfare-border: #e5e7eb;
+  --fanfare-radius: 0.5rem;
+}
+```
+
+## Related
+
+- [Overview](/sdk/solid/overview) - Solid SDK overview
+- [Components](/sdk/solid/components) - Widget components
+- [Theming](/sdk/react/customization/theming) - Theme customization

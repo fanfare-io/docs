@@ -1,0 +1,177 @@
+---
+title: Settings Overview
+description: Configure your organization's settings and preferences
+---
+
+# Settings Overview
+
+The Settings section allows you to configure your organization's preferences, integrations, branding, and payment processing. Access Settings from the sidebar navigation.
+
+## Accessing Settings
+
+Navigate to **Settings** in the sidebar to view the settings index. The route is `/app/settings`.
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/settings
+Shows: Settings index page with section cards
+Annotations: Label each settings section
+Alt text: "Settings index showing Organization, Brand, Integrations, and Payments sections"
+*/}
+
+![Settings index](./images/settings-index.png)
+_Caption: The settings index provides access to all configuration options_
+
+## Settings Sections
+
+| Section             | Description                             | Route                         |
+| ------------------- | --------------------------------------- | ----------------------------- |
+| **Organization**    | Company name, contact info, preferences | /app/settings/organization    |
+| **Brand**           | Logo, colors, email branding            | /app/settings/brand           |
+| **Variant Options** | Product variant configuration           | /app/settings/variant-options |
+| **Integrations**    | Third-party service connections         | /app/settings/integrations    |
+| **Payments**        | Stripe Connect payment processing       | /app/settings/payments        |
+
+## Section Cards
+
+Each settings section is presented as a card with:
+
+| Element         | Description                                 |
+| --------------- | ------------------------------------------- |
+| **Icon**        | Visual identifier for the section           |
+| **Title**       | Section name                                |
+| **Description** | Brief explanation of what can be configured |
+| **Manage Link** | Quick link to the section                   |
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/settings
+Shows: Individual settings card
+Annotations: Label card components
+Alt text: "Settings card showing icon, title, description, and manage link"
+*/}
+
+![Settings card](./images/settings-card.png)
+_Caption: Click Manage to access each settings section_
+
+## Quick Navigation
+
+From the settings index, click **Manage** on any card to navigate directly to that section.
+
+### Organization Settings
+
+Configure your company information and organization-level preferences.
+
+- Company name and display name
+- Contact information
+- Default preferences
+
+[Learn more about Organization Settings](/dashboard/settings/organization)
+
+### Brand Settings
+
+Customize how your brand appears to consumers.
+
+- Logo and imagery
+- Color themes
+- Email sender information
+- Visual branding
+
+[Learn more about Brand Settings](/dashboard/settings/branding)
+
+### Variant Options
+
+Manage product variant configurations for your experiences.
+
+- Size options
+- Color options
+- Custom variant types
+
+### Integrations
+
+Connect external services to enhance functionality.
+
+- Klaviyo for marketing automation
+- Future integrations
+
+[Learn more about Integrations](/dashboard/settings/integrations)
+
+### Payment Settings
+
+Configure payment processing for transactions.
+
+- Stripe Connect setup
+- Platform fee configuration
+- Payment method management
+
+## Access Control
+
+Settings access depends on your role:
+
+| Role       | Access Level                |
+| ---------- | --------------------------- |
+| **Owner**  | Full access to all settings |
+| **Admin**  | Full access to all settings |
+| **Editor** | View only, cannot modify    |
+| **Viewer** | No access to settings       |
+
+<Warning>
+Only organization Owners and Admins can modify settings. Contact your organization owner if you need to make changes.
+</Warning>
+
+## Settings Persistence
+
+All settings are saved automatically or require explicit save:
+
+| Setting Type        | Save Behavior                   |
+| ------------------- | ------------------------------- |
+| **Toggle switches** | Saved immediately on change     |
+| **Form fields**     | Saved when clicking Save button |
+| **Integrations**    | Saved after completing setup    |
+
+## Settings Sync
+
+Settings apply organization-wide:
+
+- Changes affect all team members
+- Settings sync across all devices
+- Some settings may require refresh to take effect
+
+## Best Practices
+
+### Before Making Changes
+
+1. **Understand the impact** - Review what the setting affects
+2. **Document current values** - Note existing settings before changing
+3. **Test in staging** - If available, test changes first
+4. **Notify team** - Inform team members of significant changes
+
+### Security Considerations
+
+1. **Limit admin access** - Only grant admin to trusted users
+2. **Review integrations** - Audit connected services regularly
+3. **Protect API keys** - Never share integration credentials
+4. **Monitor changes** - Check settings periodically
+
+## Troubleshooting
+
+### Settings Not Saving
+
+1. Check your network connection
+2. Verify you have admin permissions
+3. Try refreshing the page
+4. Clear browser cache
+
+### Integration Issues
+
+1. Verify API credentials are correct
+2. Check service status
+3. Review permissions
+4. Contact support if issues persist
+
+## Related Guides
+
+- [Organization Settings](/dashboard/settings/organization) - Company configuration
+- [Brand Settings](/dashboard/settings/branding) - Visual customization
+- [Integrations](/dashboard/settings/integrations) - External connections
+- [Billing](/dashboard/billing/overview) - Subscription management

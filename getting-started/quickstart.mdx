@@ -1,0 +1,284 @@
+---
+title: Quickstart
+description: Build your first Fanfare integration in 5 minutes with React.
+---
+
+# Quickstart
+
+This guide walks you through creating a basic Fanfare integration with React. By the end, you will have a working queue experience that customers can join.
+
+## Prerequisites
+
+Before you start, ensure you have:
+
+- Node.js 18 or later
+- A Fanfare account with API credentials
+- An experience created in your Fanfare dashboard
+
+## Step 1: Install the SDK
+
+Install the React SDK and its peer dependencies:
+
+```bash
+npm install @fanfare/react @fanfare/sdk motion
+```
+
+Or with other package managers:
+
+```bash
+# Yarn
+yarn add @fanfare/react @fanfare/sdk motion
+
+# pnpm
+pnpm add @fanfare/react @fanfare/sdk motion
+```
+
+The `motion` library powers the SDK's animations. If you prefer not to use animations, you can still install it as the SDK handles cases where motion is disabled.
+
+## Step 2: Configure the Provider
+
+Wrap your application with `FanfareProvider` and pass your credentials:
+
+```tsx
+// app.tsx
+import { FanfareProvider } from "@fanfare/react";
+import { ProductPage } from "./product-page";
+
+function App() {
+  return (
+    <FanfareProvider organizationId="org_abc123" publishableKey="pk_live_xyz789">
+      <ProductPage />
+    </FanfareProvider>
+  );
+}
+
+export default App;
+```
+
+Replace `org_abc123` and `pk_live_xyz789` with your actual credentials from the Fanfare dashboard.
+
+The provider handles:
+
+- SDK initialization
+- Session restoration on page refresh
+- Automatic reconnection after network interruptions
+- Multi-tab synchronization
+
+## Step 3: Create a Queue Experience
+
+Use the `useExperienceJourney` hook to manage the customer's journey through your experience:
+
+```tsx
+// product-page.tsx
+import { useExperienceJourney } from "@fanfare/react";
+
+export function ProductPage() {
+  const { status, journey, start, error } = useExperienceJourney("exp_your_experience_id");
+
+  // Handle different states
+  if (status === "idle") {
+    return (
+      <div>
+        <h1>Limited Edition Sneakers</h1>
+        <p>Click below to join the queue for this exclusive release.</p>
+        <button onClick={() => start()}>Join Queue</button>
+      </div>
+    );
+  }
+
+  if (status === "entering_experience" || status === "routing_sequence") {
+    return <p>Setting up your spot...</p>;
+  }
+
+  if (status === "waiting") {
+    return (
+      <div>
+        <h2>You are in the queue</h2>
+        <p>Please wait while we process customers ahead of you.</p>
+        {journey?.state && <p>Your position will update automatically.</p>}
+      </div>
+    );
+  }
+
+  if (status === "ready") {
+    return (
+      <div>
+        <h2>You are admitted!</h2>
+        <p>Proceed to checkout to complete your purchase.</p>
+        <button onClick={() => (window.location.href = "/checkout")}>Go to Checkout</button>
+      </div>
+    );
+  }
+
+  if (status === "error") {
+    return (
+      <div>
+        <h2>Something went wrong</h2>
+        <p>{error}</p>
+        <button onClick={() => start()}>Try Again</button>
+      </div>
+    );
+  }
+
+  return null;
+}
+```
+
+## Step 4: Use Pre-built Widgets (Optional)
+
+Instead of building the UI yourself, use the pre-built `QueueWidget` component:
+
+```tsx
+// product-page.tsx
+import { QueueWidget, useExperienceJourney } from "@fanfare/react";
+import "@fanfare/react/styles";
+
+export function ProductPage() {
+  const { status, journey, start } = useExperienceJourney("exp_your_experience_id", { autoStart: true });
+
+  if (status === "ready") {
+    // Customer is admitted - show your checkout
+    return <CheckoutPage />;
+  }
+
+  return (
+    <div>
+      <h1>Limited Edition Sneakers</h1>
+      <QueueWidget
+        experienceId="exp_your_experience_id"
+        onAdmitted={() => {
+          // Navigate to checkout when admitted
+          window.location.href = "/checkout";
+        }}
+      />
+    </div>
+  );
+}
+```
+
+Import the styles to get the default appearance:
+
+```tsx
+import "@fanfare/react/styles";
+```
+
+## Step 5: Test Locally
+
+Start your development server and visit your product page. Click the button to join the queue.
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page/Component: QueueWidget in waiting state
+Shows: The default queue widget showing position and estimated wait time
+Alt text: "Fanfare queue widget displaying queue position and wait time"
+*/}
+
+To test the full flow locally:
+
+1. Open your browser's developer tools
+2. Go to the Network tab
+3. Watch for requests to `api.fanfare.io`
+4. You should see session creation and queue entry requests
+
+For detailed local testing with mocks, see [Testing Your Integration](/getting-started/testing).
+
+## Complete Example
+
+Here is a complete example combining all the pieces:
+
+```tsx
+// app.tsx
+import { FanfareProvider } from "@fanfare/react";
+import "@fanfare/react/styles";
+import { ProductPage } from "./product-page";
+
+function App() {
+  return (
+    <FanfareProvider organizationId="org_abc123" publishableKey="pk_live_xyz789">
+      <ProductPage />
+    </FanfareProvider>
+  );
+}
+
+export default App;
+```
+
+```tsx
+// product-page.tsx
+import { useExperienceJourney, QueueWidget } from "@fanfare/react";
+
+export function ProductPage() {
+  const { status } = useExperienceJourney("exp_your_experience_id", {
+    autoStart: true,
+  });
+
+  if (status === "ready") {
+    return (
+      <div className="checkout-ready">
+        <h1>You are in!</h1>
+        <p>Complete your purchase now.</p>
+        <a href="/checkout" className="checkout-button">
+          Proceed to Checkout
+        </a>
+      </div>
+    );
+  }
+
+  return (
+    <div className="product-page">
+      <h1>Limited Edition Sneakers</h1>
+      <img src="/sneaker.jpg" alt="Limited edition sneaker" />
+      <p>Only 100 pairs available worldwide.</p>
+
+      <QueueWidget experienceId="exp_your_experience_id" />
+    </div>
+  );
+}
+```
+
+## What Happens Behind the Scenes
+
+When a customer clicks to join the queue:
+
+1. **Session Creation**: The SDK creates a consumer session (guest or authenticated)
+2. **Experience Entry**: The consumer enters the experience
+3. **Sequence Routing**: Fanfare determines which sequence the consumer belongs to
+4. **Distribution Entry**: The consumer joins the active queue distribution
+5. **Position Updates**: The SDK polls for position changes
+6. **Admission**: When admitted, the SDK receives an admission token
+7. **Checkout**: Your frontend redirects to checkout with the token
+
+## Troubleshooting
+
+### "organizationId is required" Error
+
+Ensure you pass valid credentials to `FanfareProvider`. Check that:
+
+- The `organizationId` starts with `org_`
+- The `publishableKey` starts with `pk_`
+- You are using your production or test credentials correctly
+
+### Queue Not Loading
+
+Check that:
+
+- Your experience ID is correct and active
+- The experience has an active queue distribution
+- Your browser is not blocking requests to `api.fanfare.io`
+
+### Consumer Not Admitted
+
+Queue admission depends on your configuration in the Fanfare dashboard:
+
+- Check the admission rate setting
+- Verify the queue is not paused
+- Ensure there is available capacity
+
+## Next Steps
+
+Now that you have a working integration:
+
+- [Installation](/getting-started/installation) - Explore installation options for other frameworks
+- [Configuration](/getting-started/configuration) - Learn about provider options
+- [First Experience](/getting-started/first-experience) - Create queues, draws, and auctions
+- [Testing](/getting-started/testing) - Set up local testing with mocks

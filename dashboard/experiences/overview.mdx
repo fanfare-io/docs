@@ -1,0 +1,288 @@
+---
+title: Experiences Overview
+description: Manage queues, auctions, draws, and appointments from the experiences dashboard
+---
+
+# Experiences Overview
+
+Experiences are the core feature of Fanfare, allowing you to manage controlled access to products and events. This guide covers the experiences list view and common management tasks.
+
+## Accessing Experiences
+
+Navigate to **Experiences** in the sidebar to view all your experiences. The route is `/app/experiences`.
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/experiences
+Shows: Experiences list with multiple experiences in different states (draft, active, completed)
+Annotations: Highlight the Create Experience button and status indicators
+Alt text: "Experiences list showing multiple experiences with different statuses"
+*/}
+
+![Experiences list](./images/experiences-list.png)
+_Caption: The experiences list shows all your queues, auctions, draws, and appointments_
+
+## Experience Types
+
+Fanfare supports four types of experiences:
+
+| Type            | Icon     | Description                     | Best For                            |
+| --------------- | -------- | ------------------------------- | ----------------------------------- |
+| **Queue**       | Users    | First-come, first-served access | Product launches, limited inventory |
+| **Draw**        | Sparkles | Random selection from entries   | Fair allocation, giveaways          |
+| **Auction**     | Trophy   | Competitive bidding             | High-value items, price discovery   |
+| **Appointment** | Calendar | Scheduled time slots            | Services, events, reservations      |
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/experiences
+Shows: Empty state with four experience type cards
+Annotations: Label each card with the experience type
+Alt text: "Four experience type options: Queue, Draw, Auction, and Appointment"
+*/}
+
+![Experience types](./images/experience-types-grid.png)
+_Caption: Choose from four experience types based on your use case_
+
+## Experiences Table
+
+When you have experiences, they're displayed in a sortable, searchable table.
+
+### Table Columns
+
+| Column         | Description                                      |
+| -------------- | ------------------------------------------------ |
+| **Name**       | Experience name (click to view details)          |
+| **Type**       | Queue, Draw, Auction, or Appointment             |
+| **Product**    | Associated product                               |
+| **Status**     | Current state (Draft, Active, Paused, Completed) |
+| **Entries**    | Number of consumer entries                       |
+| **Start Date** | When the experience begins                       |
+| **End Date**   | When the experience ends                         |
+
+### Filtering and Sorting
+
+- **Search** - Filter by experience name
+- **Sort** - Click column headers to sort ascending/descending
+- **Pagination** - Navigate through large lists
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/experiences
+Shows: Experiences table with search field active and sorting applied
+Annotations: Highlight search field and sortable column headers
+Alt text: "Experiences table with search and sort functionality"
+*/}
+
+![Experiences table](./images/experiences-table.png)
+_Caption: Search and sort experiences to find what you need_
+
+## Experience Statuses
+
+Experiences progress through several statuses:
+
+| Status         | Description                       | Actions Available     |
+| -------------- | --------------------------------- | --------------------- |
+| **Draft**      | Not yet published                 | Edit, Publish, Delete |
+| **Scheduled**  | Published, waiting for start date | Edit, Pause, Delete   |
+| **Active**     | Currently accepting entries       | Pause, End Early      |
+| **Paused**     | Temporarily stopped               | Resume, End           |
+| **Processing** | Draw/auction in progress          | View Progress         |
+| **Completed**  | Finished, no more entries         | View Results, Delete  |
+| **Cancelled**  | Manually cancelled                | Delete                |
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/experiences
+Shows: Experiences with different status badges visible
+Annotations: Circle different status badges
+Alt text: "Experience status badges showing Draft, Active, and Completed states"
+*/}
+
+![Status badges](./images/experience-statuses.png)
+_Caption: Status badges indicate the current state of each experience_
+
+## Creating Experiences
+
+Click the **Create Experience** button to launch the creation wizard.
+
+1. Select an experience type (Queue, Draw, Auction, or Appointment)
+2. Complete the configuration form
+3. Review and create
+
+See the dedicated guides for each experience type:
+
+- [Create Queue Experience](/dashboard/experiences/configure-queue)
+- [Create Draw Experience](/dashboard/experiences/configure-lottery)
+- [Create Auction Experience](/dashboard/experiences/configure-auction)
+- [Create Appointment Experience](/dashboard/experiences/configure-appointment)
+
+## Quick Actions
+
+### From the List
+
+Right-click or use the actions menu on any experience row to:
+
+- **View** - Open experience details
+- **Edit** - Modify experience settings
+- **Duplicate** - Create a copy
+- **Delete** - Remove the experience
+
+### Bulk Actions
+
+Select multiple experiences using the checkboxes to perform bulk operations:
+
+- Delete selected
+- Export selected
+
+## Experience Details
+
+Click on any experience name to view its detail page. The detail page includes:
+
+- **Header** - Product info, upcoming events, variant sales
+- **Timeline** - Visual schedule of distributions
+- **Section Cards** - Quick links to Design, Marketing, and Settings
+- **Sequences Table** - Manage distribution sequences
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/experiences/{experienceId}
+Shows: Experience detail page with header, timeline, and sections
+Annotations: Label the main sections (Header, Timeline, Section Cards, Sequences)
+Alt text: "Experience detail page showing product info, timeline, and configuration sections"
+*/}
+
+![Experience detail](./images/experience-detail.png)
+_Caption: The experience detail page provides comprehensive management options_
+
+## Experience Sections
+
+Each experience has three main configuration sections accessible from the detail page:
+
+### Design Studio
+
+Customize the visual appearance of your experience:
+
+- Theme colors
+- Custom text and messaging
+- Localization settings
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/experiences/{experienceId}/design
+Shows: Design studio interface with theme customization
+Annotations: None needed
+Alt text: "Design studio for customizing experience appearance"
+*/}
+
+![Design studio](./images/design-studio.png)
+_Caption: Customize how your experience looks to consumers_
+
+### Marketing
+
+Configure promotional settings:
+
+- UTM parameters
+- Sharing options
+- Marketing integrations
+
+### Settings
+
+Technical configuration:
+
+- SDK integration code
+- API access
+- Webhook configuration
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/experiences/{experienceId}/settings
+Shows: Settings page with SDK integration panel
+Annotations: Highlight the code snippet section
+Alt text: "Experience settings showing SDK integration code"
+*/}
+
+![Experience settings](./images/experience-settings.png)
+_Caption: Access SDK integration code and technical settings_
+
+## Sequences
+
+Sequences allow you to create multiple distribution phases within a single experience. For example:
+
+- **VIP Access** (Priority 1) - Early access for VIP customers
+- **General Access** (Priority 2) - Open to all audiences
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/experiences/{experienceId}
+Shows: Sequences table with multiple sequences
+Annotations: Highlight priority numbers and add sequence button
+Alt text: "Sequences table showing VIP and General access phases"
+*/}
+
+![Sequences table](./images/sequences-table.png)
+_Caption: Create multiple distribution sequences for phased access_
+
+### Adding a Sequence
+
+1. Click **Add Sequence** below the sequences table
+2. Set the priority (lower numbers run first)
+3. Choose a color for visual identification
+4. Configure the sequence's distributions
+
+## Deleting Experiences
+
+To delete an experience:
+
+1. Navigate to the experience detail page
+2. Click the **Delete** button in the page actions
+3. Confirm the deletion in the dialog
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/experiences/{experienceId}
+Shows: Delete confirmation dialog
+Annotations: Highlight the confirm button
+Alt text: "Delete experience confirmation dialog"
+*/}
+
+![Delete confirmation](./images/delete-experience.png)
+_Caption: Confirm before permanently deleting an experience_
+
+<Warning>
+Deleting an experience is permanent and cannot be undone. All associated entries, sequences, and distributions will be removed.
+</Warning>
+
+## Best Practices
+
+### Naming Conventions
+
+Use descriptive names that include:
+
+- Product name
+- Date or season
+- Type indicator
+
+Example: "Nike Air Max Launch - Spring 2024 Queue"
+
+### Planning Sequences
+
+For multi-phase launches:
+
+1. Create VIP/early access sequence first
+2. Add general access sequence with later start time
+3. Ensure no overlap between phases if using limited inventory
+
+### Monitoring Active Experiences
+
+During active experiences:
+
+- Check the dashboard for real-time analytics
+- Monitor entry counts on the experience detail page
+- Watch for any error alerts
+
+## Related Guides
+
+- [Create Experience](/dashboard/experiences/create-experience) - Step-by-step creation guide
+- [Experience Lifecycle](/dashboard/experiences/experience-lifecycle) - Managing active experiences
+- [Experience Analytics](/dashboard/experiences/experience-analytics) - Understanding metrics

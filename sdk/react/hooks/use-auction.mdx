@@ -1,0 +1,528 @@
+---
+title: useAuction Hook
+description: React hook for auction operations
+---
+
+# useAuction
+
+The `useAuction` hook provides reactive state and methods for interacting with a Fanfare auction.
+
+## Signature
+
+```typescript
+function useAuction(auctionId: string): UseAuctionReturn;
+```
+
+## Return Type
+
+```typescript
+interface UseAuctionReturn {
+  // State
+  details: AuctionDetails | null;
+  status: UseAuctionClientStatus;
+  currentBid: string | null;
+  myBid: string | null;
+  minNextBid: string | null;
+  bidIncrement: string | null;
+  reservePrice: string | null;
+  reserveMet: boolean;
+  bidCount: number;
+  bidHistory: Bid[];
+  autoRebidConfig: AutoRebidConfig | null;
+  endTime: Date | null;
+  timeRemaining: number | null;
+  isWinning: boolean;
+  isLoading: boolean;
+  error: Error | null;
+
+  // Actions
+  placeBid: (amount: string) => Promise<BidResult>;
+  enter: () => Promise<void>;
+  leave: () => Promise<void>;
+  refreshStatus: () => Promise<AuctionStatus | null>;
+  refreshHistory: () => Promise<Bid[]>;
+  enableAutoRebid: (maxBid: string, increment: string) => void;
+  disableAutoRebid: () => void;
+}
+```
+
+## Client Status
+
+```typescript
+type UseAuctionClientStatus =
+  | "idle" // Initial state
+  | "open" // Auction open, not participating
+  | "watching" // Entered and watching
+  | "winning" // Currently highest bidder
+  | "outbid" // Was outbid
+  | "won" // Auction ended, won
+  | "lost" // Auction ended, lost
+  | "ended" // Auction ended
+  | "loading" // Loading state
+  | "error"; // Error state
+```
+
+## State Properties
+
+### details
+
+The auction details fetched from the API.
+
+```typescript
+interface AuctionDetails {
+  id: string;
+  openAt?: string | null;
+  closeAt?: string | null;
+  settleAt: string;
+  currencyCode: string;
+  reservePrice?: string | null;
+  minBidIncrement?: string | null;
+  autoExtendSeconds?: number | null;
+  timeZone: string;
+  supportsGuest: boolean;
+}
+```
+
+### currentBid / myBid
+
+- `currentBid` - The current highest bid
+- `myBid` - Your current bid (if you have bid)
+
+### minNextBid / bidIncrement
+
+- `minNextBid` - Minimum amount for the next bid
+- `bidIncrement` - The minimum bid increment
+
+### reservePrice / reserveMet
+
+- `reservePrice` - The reserve price (if set)
+- `reserveMet` - Whether the reserve has been met
+
+### timeRemaining
+
+Milliseconds until auction ends. The hook maintains a local timer that updates every second.
+
+### bidHistory
+
+Array of bids (fetched via `refreshHistory()`).
+
+```typescript
+interface Bid {
+  id?: string;
+  amount: string;
+  timestamp: string;
+  isWinning: boolean;
+  bidderAlias?: string;
+  isYours?: boolean;
+}
+```
+
+### autoRebidConfig
+
+Configuration for automatic rebidding.
+
+```typescript
+interface AutoRebidConfig {
+  enabled: boolean;
+  maxBid: string;
+  increment: string;
+  remainingBudget?: string;
+  lastRebidAt?: string;
+  rebidCount?: number;
+}
+```
+
+## Actions
+
+### placeBid(amount)
+
+Place a bid on the auction.
+
+```typescript
+placeBid(amount: string): Promise<BidResult>
+
+interface BidResult {
+  status: "winning" | "outbid" | "accepted";
+  amount: string;
+  highestBid: string;
+  bidCount: number;
+  position?: number;
+}
+```
+
+### enter()
+
+Enter the auction and start watching.
+
+```typescript
+enter(): Promise<void>
+```
+
+### leave()
+
+Leave the auction and stop watching.
+
+```typescript
+leave(): Promise<void>
+```
+
+### refreshStatus()
+
+Refresh the auction status from the server.
+
+```typescript
+refreshStatus(): Promise<AuctionStatus | null>
+```
+
+### refreshHistory()
+
+Fetch the bid history.
+
+```typescript
+refreshHistory(): Promise<Bid[]>
+```
+
+### enableAutoRebid(maxBid, increment)
+
+Enable automatic rebidding when outbid.
+
+```typescript
+enableAutoRebid(maxBid: string, increment: string): void
+```
+
+### disableAutoRebid()
+
+Disable automatic rebidding.
+
+```typescript
+disableAutoRebid(): void
+```
+
+## Basic Usage
+
+```tsx
+import { useAuction, useFanfareAuth } from "@waitify-io/fanfare-sdk-react";
+import { useState } from "react";
+
+function AuctionPage() {
+  const { isAuthenticated, guest } = useFanfareAuth();
+  const {
+    details,
+    status,
+    currentBid,
+    myBid,
+    minNextBid,
+    timeRemaining,
+    isWinning,
+    isLoading,
+    error,
+    enter,
+    placeBid,
+  } = useAuction("auction_123");
+
+  const [bidAmount, setBidAmount] = useState("");
+
+  const handleEnter = async () => {
+    if (!isAuthenticated) {
+      await guest();
+    }
+    await enter();
+  };
+
+  const handleBid = async () => {
+    try {
+      const result = await placeBid(bidAmount);
+      console.log("Bid result:", result.status);
+      setBidAmount("");
+    } catch (err) {
+      console.error("Bid failed:", err);
+    }
+  };
+
+  if (error) {
+    return <div className="error">Error: {error.message}</div>;
+  }
+
+  return (
+    <div className="auction-page">
+      <h1>Auction</h1>
+
+      <div className="current-bid">
+        <span>Current Bid:</span>
+        <span className="amount">
+          {details?.currencyCode} {currentBid || "0.00"}
+        </span>
+      </div>
+
+      <div className="time-remaining">
+        <span>Time Left:</span>
+        <span>{formatTime(timeRemaining)}</span>
+      </div>
+
+      {status === "open" && <button onClick={handleEnter}>Enter Auction</button>}
+
+      {(status === "watching" || status === "winning" || status === "outbid") && (
+        <div className="bid-section">
+          {isWinning && <div className="winning-badge">You are winning!</div>}
+          {status === "outbid" && <div className="outbid-badge">You have been outbid!</div>}
+
+          <input
+            type="text"
+            value={bidAmount}
+            onChange={(e) => setBidAmount(e.target.value)}
+            placeholder={`Min: ${minNextBid}`}
+          />
+          <button onClick={handleBid} disabled={isLoading}>
+            Place Bid
+          </button>
+
+          {myBid && <p>Your bid: {myBid}</p>}
+        </div>
+      )}
+
+      {status === "won" && (
+        <div className="winner">
+          <h2>Congratulations! You won!</h2>
+        </div>
+      )}
+
+      {status === "lost" && <p>Auction ended. Final bid: {currentBid}</p>}
+    </div>
+  );
+}
+
+function formatTime(ms: number | null): string {
+  if (ms === null) return "--:--";
+  if (ms <= 0) return "Ended";
+
+  const hours = Math.floor(ms / (1000 * 60 * 60));
+  const minutes = Math.floor((ms % (1000 * 60 * 60)) / (1000 * 60));
+  const seconds = Math.floor((ms % (1000 * 60)) / 1000);
+
+  if (hours > 0) {
+    return `${hours}h ${minutes}m`;
+  }
+  return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+}
+```
+
+## Bid Form Component
+
+```tsx
+function BidForm({ auctionId }: { auctionId: string }) {
+  const { minNextBid, bidIncrement, details, placeBid, isLoading } = useAuction(auctionId);
+  const [amount, setAmount] = useState(minNextBid || "");
+
+  useEffect(() => {
+    if (minNextBid) {
+      setAmount(minNextBid);
+    }
+  }, [minNextBid]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      await placeBid(amount);
+    } catch (error) {
+      console.error("Bid error:", error);
+    }
+  };
+
+  const incrementBid = () => {
+    if (!amount || !bidIncrement) return;
+    const newAmount = (parseFloat(amount) + parseFloat(bidIncrement)).toFixed(2);
+    setAmount(newAmount);
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="bid-form">
+      <div className="bid-input-group">
+        <span className="currency">{details?.currencyCode}</span>
+        <input
+          type="number"
+          step="0.01"
+          min={minNextBid || "0"}
+          value={amount}
+          onChange={(e) => setAmount(e.target.value)}
+          required
+        />
+        <button type="button" onClick={incrementBid}>
+          +{bidIncrement}
+        </button>
+      </div>
+      <button type="submit" disabled={isLoading}>
+        {isLoading ? "Placing..." : "Place Bid"}
+      </button>
+    </form>
+  );
+}
+```
+
+## Auto-Rebid Feature
+
+```tsx
+function AutoRebidControl({ auctionId }: { auctionId: string }) {
+  const { autoRebidConfig, enableAutoRebid, disableAutoRebid, currentBid, bidIncrement } = useAuction(auctionId);
+
+  const [maxBid, setMaxBid] = useState("");
+  const [increment, setIncrement] = useState(bidIncrement || "5.00");
+
+  const handleEnable = () => {
+    if (maxBid) {
+      enableAutoRebid(maxBid, increment);
+    }
+  };
+
+  if (autoRebidConfig?.enabled) {
+    return (
+      <div className="auto-rebid-active">
+        <p>Auto-rebid is ON</p>
+        <p>Max bid: {autoRebidConfig.maxBid}</p>
+        <p>Increment: {autoRebidConfig.increment}</p>
+        <p>Remaining budget: {autoRebidConfig.remainingBudget}</p>
+        <button onClick={disableAutoRebid}>Disable Auto-Rebid</button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="auto-rebid-setup">
+      <h4>Auto-Rebid</h4>
+      <p>Automatically bid when outbid, up to your maximum.</p>
+
+      <div className="form-group">
+        <label>Maximum Bid</label>
+        <input
+          type="number"
+          step="0.01"
+          value={maxBid}
+          onChange={(e) => setMaxBid(e.target.value)}
+          placeholder={`e.g., ${parseFloat(currentBid || "0") + 100}`}
+        />
+      </div>
+
+      <div className="form-group">
+        <label>Bid Increment</label>
+        <input type="number" step="0.01" value={increment} onChange={(e) => setIncrement(e.target.value)} />
+      </div>
+
+      <button onClick={handleEnable} disabled={!maxBid}>
+        Enable Auto-Rebid
+      </button>
+    </div>
+  );
+}
+```
+
+## Bid History
+
+```tsx
+function BidHistory({ auctionId }: { auctionId: string }) {
+  const { bidHistory, refreshHistory, isLoading, details } = useAuction(auctionId);
+
+  useEffect(() => {
+    refreshHistory();
+  }, []);
+
+  return (
+    <div className="bid-history">
+      <h3>Bid History</h3>
+      <button onClick={refreshHistory} disabled={isLoading}>
+        Refresh
+      </button>
+
+      <ul>
+        {bidHistory.map((bid, index) => (
+          <li key={bid.id || index} className={bid.isYours ? "my-bid" : ""}>
+            <span className="bidder">{bid.bidderAlias || "Anonymous"}</span>
+            <span className="amount">
+              {details?.currencyCode} {bid.amount}
+            </span>
+            <span className="time">{new Date(bid.timestamp).toLocaleTimeString()}</span>
+            {bid.isWinning && <span className="winning">Winning</span>}
+            {bid.isYours && <span className="yours">You</span>}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+```
+
+## Live Auction Display
+
+```tsx
+function LiveAuction({ auctionId }: { auctionId: string }) {
+  const { status, currentBid, timeRemaining, isWinning, bidCount, details, reserveMet, reservePrice } =
+    useAuction(auctionId);
+
+  const formatTime = (ms: number | null) => {
+    if (!ms || ms <= 0) return "00:00";
+    const m = Math.floor(ms / 60000);
+    const s = Math.floor((ms % 60000) / 1000);
+    return `${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
+  };
+
+  return (
+    <div className={`live-auction ${isWinning ? "winning" : ""}`}>
+      <div className="timer">{formatTime(timeRemaining)}</div>
+
+      <div className="current-bid-display">
+        <span className="label">Current Bid</span>
+        <span className="value">
+          {details?.currencyCode} {currentBid || "0.00"}
+        </span>
+        <span className="bid-count">{bidCount} bids</span>
+      </div>
+
+      {reservePrice && !reserveMet && <div className="reserve-warning">Reserve not met</div>}
+
+      {status === "ended" && (
+        <div className="auction-ended">
+          <span>Auction Ended</span>
+          <span>
+            Final: {details?.currencyCode} {currentBid}
+          </span>
+        </div>
+      )}
+    </div>
+  );
+}
+```
+
+## Event Handling
+
+The hook subscribes to these events:
+
+- `auction:entered` - Entry confirmed
+- `auction:bid-placed` - Bid was placed
+- `auction:outbid` - You were outbid
+- `auction:winning` - You are now winning
+- `auction:won` - Auction ended, you won
+- `auction:lost` - Auction ended, you lost
+- `auction:left` - Left auction
+- `auction:status-updated` - Status update from polling
+- `auction:bid-updated` - New bid placed (any bidder)
+- `auction:auto-rebid-enabled` / `auction:auto-rebid-disabled`
+- `auction:error` - Error occurred
+
+## TypeScript
+
+```typescript
+import { useAuction } from "@waitify-io/fanfare-sdk-react";
+import type { AuctionDetails, BidResult, UseAuctionClientStatus } from "@waitify-io/fanfare-sdk-react";
+
+function TypedAuction({ auctionId }: { auctionId: string }) {
+  const {
+    details,
+    status,
+    placeBid,
+  }: {
+    details: AuctionDetails | null;
+    status: UseAuctionClientStatus;
+    placeBid: (amount: string) => Promise<BidResult>;
+  } = useAuction(auctionId);
+
+  return null;
+}
+```

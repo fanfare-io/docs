@@ -1,0 +1,953 @@
+---
+title: Flash Sale Use Case
+description: Run time-limited flash sales with controlled access and fair distribution.
+---
+
+# Flash Sale Use Case
+
+Learn how to use Fanfare to run time-limited flash sales with controlled access and fair distribution.
+
+## Overview
+
+Flash sales create urgency and excitement but can overwhelm your infrastructure. Fanfare helps you manage the traffic surge while ensuring a fair, positive experience for customers.
+
+**What you'll learn:**
+
+- Planning flash sale parameters
+- Setting up timed release experiences
+- Creating urgency without frustration
+- Managing sale inventory
+- Analyzing sale performance
+
+**Complexity:** Intermediate
+**Time to complete:** 40 minutes
+
+## Prerequisites
+
+- Fanfare account with timed release feature enabled
+- Products configured for the sale
+- Understanding of expected demand
+- Marketing plan to drive traffic
+
+## Flash Sale vs. Product Launch
+
+| Aspect          | Flash Sale                      | Product Launch             |
+| --------------- | ------------------------------- | -------------------------- |
+| Duration        | Hours (1-24h)                   | Days to weeks              |
+| Pricing         | Discounted                      | Full price                 |
+| Inventory       | Various products                | Single product             |
+| Goal            | Clear inventory, create urgency | Generate hype, fair access |
+| Experience Type | Timed Release                   | Queue                      |
+
+## Step 1: Plan Your Flash Sale
+
+### Define Sale Parameters
+
+```typescript
+// Flash sale configuration
+interface FlashSaleConfig {
+  // Timing
+  startTime: Date;
+  endTime: Date;
+  earlyAccessStart?: Date; // VIP early access
+
+  // Inventory
+  products: Array<{
+    productId: string;
+    originalPrice: number;
+    salePrice: number;
+    quantity: number;
+    maxPerCustomer: number;
+  }>;
+
+  // Access control
+  requireAuthentication: boolean;
+  vipOnly: boolean;
+  geoRestrictions?: string[];
+
+  // Experience settings
+  showCountdown: boolean;
+  showRemainingStock: boolean;
+  allowWaitlist: boolean;
+}
+
+const flashSaleConfig: FlashSaleConfig = {
+  startTime: new Date("2024-07-20T14:00:00Z"),
+  endTime: new Date("2024-07-20T20:00:00Z"),
+  earlyAccessStart: new Date("2024-07-20T13:00:00Z"),
+
+  products: [
+    {
+      productId: "summer-dress-001",
+      originalPrice: 150,
+      salePrice: 75,
+      quantity: 500,
+      maxPerCustomer: 2,
+    },
+    {
+      productId: "leather-bag-002",
+      originalPrice: 300,
+      salePrice: 180,
+      quantity: 200,
+      maxPerCustomer: 1,
+    },
+  ],
+
+  requireAuthentication: false,
+  vipOnly: false,
+
+  showCountdown: true,
+  showRemainingStock: true,
+  allowWaitlist: true,
+};
+```
+
+## Step 2: Create Timed Release Experience
+
+### Admin Configuration
+
+```typescript
+import { FanfareAdminClient } from "@waitify-io/fanfare-admin-sdk";
+
+const adminClient = new FanfareAdminClient({
+  apiKey: process.env.FANFARE_ADMIN_API_KEY!,
+  organizationId: process.env.FANFARE_ORGANIZATION_ID!,
+});
+
+async function createFlashSaleExperience(config: FlashSaleConfig) {
+  const experience = await adminClient.timedReleases.create({
+    name: "Summer Flash Sale - 50% Off",
+    slug: "summer-flash-sale-july",
+
+    // Timing
+    scheduledStart: config.startTime,
+    scheduledEnd: config.endTime,
+
+    // Access settings
+    config: {
+      // Admission window for each customer
+      admissionWindowSeconds: 600, // 10 minutes to shop
+
+      // Rate limiting
+      maxConcurrentAdmissions: 200,
+      admissionBurstSize: 50,
+
+      // Stock behavior
+      showRemainingStock: config.showRemainingStock,
+      reserveOnAdmission: false, // Don't reserve until cart
+
+      // Customer limits
+      maxPurchasesPerCustomer: 3,
+
+      // Authentication
+      requireAuthentication: config.requireAuthentication,
+    },
+
+    // Product configuration
+    products: config.products.map((p) => ({
+      externalProductId: p.productId,
+      quantity: p.quantity,
+      maxPerCustomer: p.maxPerCustomer,
+      metadata: {
+        originalPrice: p.originalPrice,
+        salePrice: p.salePrice,
+        discount: Math.round((1 - p.salePrice / p.originalPrice) * 100),
+      },
+    })),
+
+    // Branding
+    branding: {
+      primaryColor: "#E91E63",
+      accentColor: "#FFC107",
+      headerText: "Summer Flash Sale",
+      subheaderText: "Up to 50% off - Limited Time Only",
+    },
+  });
+
+  // Set up VIP early access if configured
+  if (config.earlyAccessStart) {
+    await setupVIPEarlyAccess(experience.id, config.earlyAccessStart);
+  }
+
+  return experience;
+}
+
+async function setupVIPEarlyAccess(
+  experienceId: string,
+  earlyAccessStart: Date,
+) {
+  // Create VIP audience
+  const vipAudience = await adminClient.audiences.create({
+    name: "VIP Early Access",
+    type: "static",
+  });
+
+  // Configure early access
+  await adminClient.timedReleases.addEarlyAccess(experienceId, {
+    audienceId: vipAudience.id,
+    startTime: earlyAccessStart,
+    message: "VIP Early Access - Shop before everyone else!",
+  });
+
+  return vipAudience;
+}
+```
+
+## Step 3: Build the Flash Sale Page
+
+### Sale Landing Page
+
+```tsx
+// pages/flash-sale/[slug].tsx
+import { FanfareProvider } from "@waitify-io/fanfare-sdk-react";
+import { FlashSaleExperience } from "@/components/FlashSaleExperience";
+import { SaleCountdown } from "@/components/SaleCountdown";
+import { ProductGrid } from "@/components/ProductGrid";
+
+interface FlashSalePageProps {
+  experienceId: string;
+  products: SaleProduct[];
+  startTime: string;
+  endTime: string;
+  isActive: boolean;
+}
+
+export default function FlashSalePage({
+  experienceId,
+  products,
+  startTime,
+  endTime,
+  isActive,
+}: FlashSalePageProps) {
+  return (
+    <FanfareProvider
+      organizationId={process.env.NEXT_PUBLIC_FANFARE_ORG_ID!}
+      options={{ environment: "production" }}
+    >
+      <div className="flash-sale-page">
+        <header className="sale-header">
+          <h1>Flash Sale</h1>
+          <p className="sale-tagline">Up to 50% off - Limited Time Only</p>
+          <SaleCountdown
+            startTime={startTime}
+            endTime={endTime}
+            isActive={isActive}
+          />
+        </header>
+
+        <FlashSaleExperience experienceId={experienceId} products={products} />
+
+        <section className="sale-products">
+          <ProductGrid products={products} saleActive={isActive} />
+        </section>
+      </div>
+    </FanfareProvider>
+  );
+}
+```
+
+### Flash Sale Experience Component
+
+```tsx
+// components/FlashSaleExperience.tsx
+import { useExperienceJourney } from "@waitify-io/fanfare-sdk-react";
+import { useState, useEffect } from "react";
+
+interface FlashSaleExperienceProps {
+  experienceId: string;
+  products: SaleProduct[];
+}
+
+export function FlashSaleExperience({
+  experienceId,
+  products,
+}: FlashSaleExperienceProps) {
+  const { journey, state, start } = useExperienceJourney(experienceId, {
+    autoStart: true,
+  });
+
+  const snapshot = state?.snapshot;
+  const stage = snapshot?.sequenceStage;
+
+  // Handle different sale states
+  switch (stage) {
+    case "not_started":
+      return <PreSaleState snapshot={snapshot} products={products} />;
+
+    case "entering":
+    case "routing":
+      return <LoadingState message="Getting you into the sale..." />;
+
+    case "admitted":
+      return <ShoppingState snapshot={snapshot} products={products} />;
+
+    case "completed":
+      return <PurchaseCompleteState />;
+
+    case "ended":
+      return <SaleEndedState />;
+
+    default:
+      return null;
+  }
+}
+
+function PreSaleState({
+  snapshot,
+  products,
+}: {
+  snapshot: JourneySnapshot;
+  products: SaleProduct[];
+}) {
+  const startsAt = snapshot?.context?.startsAt;
+  const [isVIP, setIsVIP] = useState(false);
+
+  // Check for VIP early access
+  useEffect(() => {
+    const checkVIPStatus = async () => {
+      const vip = await checkUserVIPStatus();
+      setIsVIP(vip);
+    };
+    checkVIPStatus();
+  }, []);
+
+  return (
+    <div className="pre-sale-state">
+      <div className="countdown-section">
+        <h2>Sale Starts In</h2>
+        <CountdownTimer targetTime={startsAt} />
+      </div>
+
+      {isVIP && (
+        <div className="vip-badge">
+          <span className="vip-icon">⭐</span>
+          <span>VIP Early Access</span>
+          <p>You'll get in 1 hour before everyone else!</p>
+        </div>
+      )}
+
+      <div className="sale-preview">
+        <h3>Sale Preview</h3>
+        <div className="preview-grid">
+          {products.slice(0, 4).map((product) => (
+            <ProductPreviewCard key={product.id} product={product} />
+          ))}
+        </div>
+      </div>
+
+      <div className="sale-tips">
+        <h4>Get Ready</h4>
+        <ul>
+          <li>Create an account now to save time at checkout</li>
+          <li>Add items to your wishlist</li>
+          <li>Have your payment info ready</li>
+          <li>You'll have 10 minutes to shop once admitted</li>
+        </ul>
+      </div>
+    </div>
+  );
+}
+
+function ShoppingState({
+  snapshot,
+  products,
+}: {
+  snapshot: JourneySnapshot;
+  products: SaleProduct[];
+}) {
+  const expiresAt = snapshot?.context?.admittanceExpiresAt;
+  const [timeRemaining, setTimeRemaining] = useState(0);
+  const [cart, setCart] = useState<CartItem[]>([]);
+
+  useEffect(() => {
+    if (!expiresAt) return;
+
+    const interval = setInterval(() => {
+      const remaining = Math.max(0, expiresAt - Date.now());
+      setTimeRemaining(remaining);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [expiresAt]);
+
+  const addToCart = (product: SaleProduct, quantity: number) => {
+    setCart((prev) => {
+      const existing = prev.find((item) => item.productId === product.id);
+      if (existing) {
+        return prev.map((item) =>
+          item.productId === product.id
+            ? {
+                ...item,
+                quantity: Math.min(
+                  item.quantity + quantity,
+                  product.maxPerCustomer,
+                ),
+              }
+            : item,
+        );
+      }
+      return [
+        ...prev,
+        { productId: product.id, quantity, price: product.salePrice },
+      ];
+    });
+  };
+
+  const handleCheckout = () => {
+    // Store admission and cart data
+    const admissionData = {
+      token: snapshot?.context?.admittanceToken,
+      consumerId: snapshot?.context?.consumerId,
+      experienceId: snapshot?.context?.experienceId,
+      cart,
+    };
+
+    sessionStorage.setItem(
+      "flash_sale_checkout",
+      JSON.stringify(admissionData),
+    );
+    window.location.href = "/checkout/flash-sale";
+  };
+
+  const isUrgent = timeRemaining < 120000; // Less than 2 minutes
+
+  return (
+    <div className="shopping-state">
+      <div className={`shopping-timer ${isUrgent ? "urgent" : ""}`}>
+        <span className="timer-label">Time to shop:</span>
+        <span className="timer-value">{formatTime(timeRemaining)}</span>
+        {isUrgent && (
+          <span className="urgent-warning">Hurry! Time almost up</span>
+        )}
+      </div>
+
+      <div className="sale-products-grid">
+        {products.map((product) => (
+          <SaleProductCard
+            key={product.id}
+            product={product}
+            onAddToCart={(qty) => addToCart(product, qty)}
+            cartQuantity={
+              cart.find((item) => item.productId === product.id)?.quantity || 0
+            }
+          />
+        ))}
+      </div>
+
+      {cart.length > 0 && (
+        <div className="floating-cart">
+          <div className="cart-summary">
+            <span className="item-count">
+              {cart.reduce((sum, item) => sum + item.quantity, 0)} items
+            </span>
+            <span className="cart-total">
+              ${cart.reduce((sum, item) => sum + item.price * item.quantity, 0)}
+            </span>
+          </div>
+          <button onClick={handleCheckout} className="checkout-btn">
+            Checkout Now
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function SaleProductCard({
+  product,
+  onAddToCart,
+  cartQuantity,
+}: {
+  product: SaleProduct;
+  onAddToCart: (qty: number) => void;
+  cartQuantity: number;
+}) {
+  const [selectedQuantity, setSelectedQuantity] = useState(1);
+  const remainingForCustomer = product.maxPerCustomer - cartQuantity;
+  const discount = Math.round(
+    (1 - product.salePrice / product.originalPrice) * 100,
+  );
+
+  return (
+    <div className="sale-product-card">
+      <div className="discount-badge">{discount}% OFF</div>
+
+      <img src={product.imageUrl} alt={product.name} />
+
+      <div className="product-info">
+        <h3>{product.name}</h3>
+        <div className="price-info">
+          <span className="original-price">${product.originalPrice}</span>
+          <span className="sale-price">${product.salePrice}</span>
+        </div>
+
+        {product.showStock && (
+          <div className="stock-indicator">
+            <div
+              className="stock-bar"
+              style={{
+                width: `${(product.remainingStock / product.totalStock) * 100}%`,
+              }}
+            />
+            <span>{product.remainingStock} left</span>
+          </div>
+        )}
+      </div>
+
+      <div className="add-to-cart">
+        {remainingForCustomer > 0 ? (
+          <>
+            <select
+              value={selectedQuantity}
+              onChange={(e) => setSelectedQuantity(Number(e.target.value))}
+            >
+              {Array.from(
+                { length: remainingForCustomer },
+                (_, i) => i + 1,
+              ).map((num) => (
+                <option key={num} value={num}>
+                  {num}
+                </option>
+              ))}
+            </select>
+            <button onClick={() => onAddToCart(selectedQuantity)}>
+              Add to Cart
+            </button>
+          </>
+        ) : (
+          <span className="max-reached">Max quantity in cart</span>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function SaleEndedState() {
+  return (
+    <div className="sale-ended-state">
+      <h2>Sale Has Ended</h2>
+      <p>Thank you for shopping with us!</p>
+      <p>Sign up for our newsletter to be notified about future sales.</p>
+
+      <form className="newsletter-signup">
+        <input type="email" placeholder="Enter your email" />
+        <button type="submit">Notify Me</button>
+      </form>
+    </div>
+  );
+}
+
+function formatTime(ms: number): string {
+  const totalSeconds = Math.floor(ms / 1000);
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+}
+```
+
+## Step 4: Real-Time Stock Updates
+
+### Stock Management
+
+```typescript
+// services/flash-sale-stock.ts
+import { adminClient } from "./fanfare-admin";
+
+interface StockUpdate {
+  productId: string;
+  remainingStock: number;
+  soldCount: number;
+}
+
+// Webhook handler for purchases
+export async function handlePurchaseComplete(
+  orderId: string,
+  experienceId: string,
+  items: OrderItem[],
+) {
+  for (const item of items) {
+    // Decrement stock in Fanfare
+    await adminClient.timedReleases.decrementStock(experienceId, {
+      productId: item.productId,
+      quantity: item.quantity,
+    });
+  }
+}
+
+// Get real-time stock levels
+export async function getStockLevels(
+  experienceId: string,
+): Promise<StockUpdate[]> {
+  const experience = await adminClient.timedReleases.get(experienceId);
+
+  return experience.products.map((p) => ({
+    productId: p.externalProductId,
+    remainingStock: p.remainingQuantity,
+    soldCount: p.soldQuantity,
+  }));
+}
+
+// Auto-end sale when sold out
+export async function checkSoldOut(experienceId: string) {
+  const stockLevels = await getStockLevels(experienceId);
+  const allSoldOut = stockLevels.every((s) => s.remainingStock === 0);
+
+  if (allSoldOut) {
+    await adminClient.timedReleases.end(experienceId, {
+      reason: "sold_out",
+      message: "All items have sold out! Thank you for shopping.",
+    });
+  }
+}
+```
+
+### Client-Side Stock Display
+
+```tsx
+// hooks/useStockUpdates.ts
+import { useEffect, useState } from "react";
+
+export function useStockUpdates(experienceId: string) {
+  const [stockLevels, setStockLevels] = useState<Map<string, number>>(
+    new Map(),
+  );
+
+  useEffect(() => {
+    // Poll for stock updates
+    const interval = setInterval(async () => {
+      const response = await fetch(`/api/flash-sale/${experienceId}/stock`);
+      const data = await response.json();
+
+      const newLevels = new Map<string, number>();
+      data.forEach((item: { productId: string; remainingStock: number }) => {
+        newLevels.set(item.productId, item.remainingStock);
+      });
+
+      setStockLevels(newLevels);
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [experienceId]);
+
+  return stockLevels;
+}
+
+// Usage in component
+function SaleProductsGrid({ products, experienceId }: Props) {
+  const stockLevels = useStockUpdates(experienceId);
+
+  return (
+    <div className="products-grid">
+      {products.map((product) => (
+        <ProductCard
+          key={product.id}
+          product={product}
+          remainingStock={stockLevels.get(product.id) ?? product.initialStock}
+        />
+      ))}
+    </div>
+  );
+}
+```
+
+## Step 5: Urgency Elements
+
+### Countdown Components
+
+```tsx
+// components/SaleCountdown.tsx
+interface SaleCountdownProps {
+  startTime: string;
+  endTime: string;
+  isActive: boolean;
+}
+
+export function SaleCountdown({
+  startTime,
+  endTime,
+  isActive,
+}: SaleCountdownProps) {
+  const [timeLeft, setTimeLeft] = useState(0);
+
+  useEffect(() => {
+    const targetTime = isActive ? new Date(endTime) : new Date(startTime);
+
+    const interval = setInterval(() => {
+      const now = Date.now();
+      const remaining = targetTime.getTime() - now;
+      setTimeLeft(Math.max(0, remaining));
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [startTime, endTime, isActive]);
+
+  const { days, hours, minutes, seconds } = parseTime(timeLeft);
+
+  return (
+    <div className={`sale-countdown ${isActive ? "ending" : "starting"}`}>
+      <span className="countdown-label">
+        {isActive ? "Sale Ends In" : "Sale Starts In"}
+      </span>
+
+      <div className="countdown-units">
+        {days > 0 && (
+          <div className="unit">
+            <span className="value">{days}</span>
+            <span className="label">Days</span>
+          </div>
+        )}
+        <div className="unit">
+          <span className="value">{hours.toString().padStart(2, "0")}</span>
+          <span className="label">Hours</span>
+        </div>
+        <div className="unit">
+          <span className="value">{minutes.toString().padStart(2, "0")}</span>
+          <span className="label">Min</span>
+        </div>
+        <div className="unit">
+          <span className="value">{seconds.toString().padStart(2, "0")}</span>
+          <span className="label">Sec</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function parseTime(ms: number) {
+  const seconds = Math.floor((ms / 1000) % 60);
+  const minutes = Math.floor((ms / (1000 * 60)) % 60);
+  const hours = Math.floor((ms / (1000 * 60 * 60)) % 24);
+  const days = Math.floor(ms / (1000 * 60 * 60 * 24));
+  return { days, hours, minutes, seconds };
+}
+```
+
+### Stock Urgency Indicator
+
+```tsx
+// components/StockIndicator.tsx
+interface StockIndicatorProps {
+  remaining: number;
+  total: number;
+  productName: string;
+}
+
+export function StockIndicator({
+  remaining,
+  total,
+  productName,
+}: StockIndicatorProps) {
+  const percentage = (remaining / total) * 100;
+
+  let urgencyLevel: "normal" | "low" | "critical" = "normal";
+  if (percentage <= 10) urgencyLevel = "critical";
+  else if (percentage <= 25) urgencyLevel = "low";
+
+  return (
+    <div className={`stock-indicator ${urgencyLevel}`}>
+      <div className="stock-bar-container">
+        <div className="stock-bar" style={{ width: `${percentage}%` }} />
+      </div>
+
+      <span className="stock-text">
+        {urgencyLevel === "critical" && "Almost gone! "}
+        {urgencyLevel === "low" && "Selling fast! "}
+        {remaining} left
+      </span>
+    </div>
+  );
+}
+```
+
+## Step 6: Post-Sale Analytics
+
+### Generate Sale Report
+
+```typescript
+interface FlashSaleReport {
+  overview: {
+    duration: number;
+    totalRevenue: number;
+    totalItemsSold: number;
+    uniqueCustomers: number;
+    avgOrderValue: number;
+  };
+  products: Array<{
+    productId: string;
+    name: string;
+    unitsSold: number;
+    revenue: number;
+    soldOutTime?: Date;
+    conversionRate: number;
+  }>;
+  traffic: {
+    totalVisitors: number;
+    peakConcurrent: number;
+    avgTimeOnSite: number;
+    bounceRate: number;
+  };
+  performance: {
+    avgPageLoadTime: number;
+    errorRate: number;
+    queueEfficiency: number;
+  };
+}
+
+async function generateFlashSaleReport(
+  experienceId: string,
+): Promise<FlashSaleReport> {
+  const analytics =
+    await adminClient.analytics.getTimedReleaseReport(experienceId);
+
+  return {
+    overview: {
+      duration: analytics.actualDuration,
+      totalRevenue: analytics.totalRevenue,
+      totalItemsSold: analytics.totalItemsSold,
+      uniqueCustomers: analytics.uniqueCustomers,
+      avgOrderValue: analytics.totalRevenue / analytics.orderCount,
+    },
+    products: analytics.productBreakdown.map((p) => ({
+      productId: p.productId,
+      name: p.name,
+      unitsSold: p.soldQuantity,
+      revenue: p.revenue,
+      soldOutTime: p.soldOutAt,
+      conversionRate: p.soldQuantity / p.viewCount,
+    })),
+    traffic: {
+      totalVisitors: analytics.uniqueVisitors,
+      peakConcurrent: analytics.peakConcurrentUsers,
+      avgTimeOnSite: analytics.avgSessionDuration,
+      bounceRate: analytics.bounceRate,
+    },
+    performance: {
+      avgPageLoadTime: analytics.avgPageLoadTime,
+      errorRate: analytics.errorRate,
+      queueEfficiency: analytics.admittedToCompletedRatio,
+    },
+  };
+}
+```
+
+## Best Practices
+
+### 1. Create Fair Access
+
+```typescript
+// Prevent abuse with rate limiting and customer limits
+const fairnessConfig = {
+  // Limit purchases per customer
+  maxPurchasesPerCustomer: 2,
+
+  // Require authentication to prevent multi-accounting
+  requireAuthentication: true,
+
+  // Use CAPTCHA for suspicious behavior
+  enableBotProtection: true,
+
+  // Randomize admission order for fairness
+  admissionMode: "randomized", // vs "fifo"
+};
+```
+
+### 2. Communicate Clearly
+
+```tsx
+// Clear messaging throughout the experience
+const saleMessages = {
+  preSale: {
+    title: "Flash Sale Starting Soon",
+    body: "Get ready! Have your payment info ready. You'll have 10 minutes to shop once admitted.",
+  },
+  inQueue: {
+    title: "You're in Line",
+    body: "Stay on this page. We'll let you in as soon as possible.",
+  },
+  shopping: {
+    title: "Happy Shopping!",
+    body: "Your cart will be held for the duration of your shopping window.",
+  },
+  lowTime: {
+    title: "Time Running Out",
+    body: "Complete your purchase now before your session expires.",
+  },
+  ended: {
+    title: "Sale Has Ended",
+    body: "Thanks for shopping! Sign up to be notified of future sales.",
+  },
+};
+```
+
+### 3. Mobile-First Design
+
+```css
+/* Mobile-optimized flash sale styles */
+.sale-product-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.floating-cart {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 16px;
+  background: white;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+  z-index: 100;
+}
+
+.shopping-timer {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: #333;
+  color: white;
+  padding: 12px;
+  text-align: center;
+}
+
+.shopping-timer.urgent {
+  background: #e53935;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+```
+
+## Troubleshooting
+
+### Customers Can't Add to Cart
+
+1. Check if product is sold out
+2. Verify customer hasn't exceeded max per customer
+3. Ensure admission hasn't expired
+
+### Stock Levels Not Updating
+
+1. Verify webhook is receiving order events
+2. Check stock decrement API calls
+3. Review client polling interval
+
+### Sale Ended Early
+
+1. Check if all products sold out
+2. Review scheduled end time
+3. Check for manual termination in admin
+
+## What's Next
+
+- [Limited Edition](/guides/use-cases/limited-edition) - Exclusive product drops
+- [Product Launch](/guides/use-cases/product-launch) - Managing high-demand launches
+- [Webhooks Guide](/guides/advanced/webhooks-guide) - Real-time event handling

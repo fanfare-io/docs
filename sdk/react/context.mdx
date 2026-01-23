@@ -1,0 +1,351 @@
+---
+title: Context Hook
+description: Accessing the Fanfare SDK instance in React
+---
+
+# Context Hook
+
+The `useFanfare` hook provides access to the underlying Fanfare SDK instance within the React context.
+
+## useFanfare
+
+```typescript
+function useFanfare(): FanfareSDK;
+```
+
+Returns the initialized `FanfareSDK` instance.
+
+### Basic Usage
+
+```tsx
+import { useFanfare } from "@waitify-io/fanfare-sdk-react";
+
+function MyComponent() {
+  const fanfare = useFanfare();
+
+  // Access any SDK module
+  const handleEnterQueue = async () => {
+    await fanfare.queues.enter("queue_123");
+  };
+
+  return <button onClick={handleEnterQueue}>Enter Queue</button>;
+}
+```
+
+### Error Handling
+
+The hook throws if used outside a `FanfareProvider`:
+
+```tsx
+function ComponentOutsideProvider() {
+  // This will throw:
+  // "useFanfare must be used within a FanfareProvider"
+  const fanfare = useFanfare();
+  return null;
+}
+```
+
+Always ensure components using `useFanfare` are descendants of `FanfareProvider`:
+
+```tsx
+function App() {
+  return (
+    <FanfareProvider organizationId="org_xxx" publishableKey="pk_live_xxx">
+      <MyComponent /> {/* This works */}
+    </FanfareProvider>
+  );
+}
+```
+
+## When to Use useFanfare
+
+### Use useFanfare When
+
+- You need direct access to SDK modules
+- You want to call SDK methods imperatively
+- You're building custom hooks on top of the SDK
+- You need to access modules not covered by existing hooks
+
+### Use Specialized Hooks When
+
+- You need reactive state (use `useQueue`, `useDraw`, etc.)
+- You want automatic event subscription
+- You need loading/error state management
+- You want to leverage the hook patterns
+
+## Examples
+
+### Direct Module Access
+
+```tsx
+import { useFanfare } from "@waitify-io/fanfare-sdk-react";
+
+function DirectAccess() {
+  const fanfare = useFanfare();
+
+  // Access auth module
+  const handleLogin = async () => {
+    await fanfare.auth.requestOtp({ email: "user@example.com" });
+  };
+
+  // Access beacon module
+  const trackEvent = () => {
+    fanfare.beacon.track({
+      event: "button_click",
+      properties: { button: "cta" },
+    });
+  };
+
+  return (
+    <div>
+      <button onClick={handleLogin}>Login</button>
+      <button onClick={trackEvent}>Track</button>
+    </div>
+  );
+}
+```
+
+### Subscribing to Events
+
+```tsx
+import { useEffect } from "react";
+import { useFanfare } from "@waitify-io/fanfare-sdk-react";
+
+function EventSubscriber() {
+  const fanfare = useFanfare();
+
+  useEffect(() => {
+    const unsubscribe = fanfare.on("queue:admitted", (data) => {
+      console.log("Admitted to queue:", data.queueId);
+      // Navigate to checkout
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, [fanfare]);
+
+  return <div>Listening for admission...</div>;
+}
+```
+
+### Custom Hook Pattern
+
+```tsx
+import { useCallback, useState, useEffect } from "react";
+import { useFanfare } from "@waitify-io/fanfare-sdk-react";
+import type { Queue } from "@waitify-io/fanfare-sdk-core";
+
+function useQueueDetails(queueId: string) {
+  const fanfare = useFanfare();
+  const [queue, setQueue] = useState<Queue | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
+
+  useEffect(() => {
+    let mounted = true;
+
+    async function fetchQueue() {
+      try {
+        setIsLoading(true);
+        const data = await fanfare.queues.get(queueId);
+        if (mounted) {
+          setQueue(data);
+          setError(null);
+        }
+      } catch (err) {
+        if (mounted) {
+          setError(err as Error);
+        }
+      } finally {
+        if (mounted) {
+          setIsLoading(false);
+        }
+      }
+    }
+
+    fetchQueue();
+
+    return () => {
+      mounted = false;
+    };
+  }, [fanfare, queueId]);
+
+  const refetch = useCallback(async () => {
+    const data = await fanfare.queues.get(queueId);
+    setQueue(data);
+    return data;
+  }, [fanfare, queueId]);
+
+  return { queue, isLoading, error, refetch };
+}
+```
+
+### Building a Multi-Queue Dashboard
+
+```tsx
+import { useEffect, useState } from "react";
+import { useFanfare } from "@waitify-io/fanfare-sdk-react";
+import type { QueueParticipation } from "@waitify-io/fanfare-sdk-core";
+
+function QueueDashboard() {
+  const fanfare = useFanfare();
+  const [activeQueues, setActiveQueues] = useState<Record<string, QueueParticipation>>({});
+
+  useEffect(() => {
+    // Get initial state
+    setActiveQueues(fanfare.queues.getActiveQueues());
+
+    // Subscribe to updates
+    const unsubscribes = [
+      fanfare.on("queue:entered", () => {
+        setActiveQueues(fanfare.queues.getActiveQueues());
+      }),
+      fanfare.on("queue:left", () => {
+        setActiveQueues(fanfare.queues.getActiveQueues());
+      }),
+      fanfare.on("queue:position-changed", () => {
+        setActiveQueues(fanfare.queues.getActiveQueues());
+      }),
+      fanfare.on("queue:admitted", () => {
+        setActiveQueues(fanfare.queues.getActiveQueues());
+      }),
+    ];
+
+    return () => {
+      unsubscribes.forEach((unsub) => unsub());
+    };
+  }, [fanfare]);
+
+  return (
+    <div>
+      <h2>Your Active Queues</h2>
+      {Object.entries(activeQueues).map(([queueId, participation]) => (
+        <div key={queueId}>
+          <p>Queue: {queueId}</p>
+          <p>Status: {participation.status}</p>
+          <p>Position: {participation.position}</p>
+        </div>
+      ))}
+    </div>
+  );
+}
+```
+
+### Accessing Experience Journey
+
+```tsx
+import { useEffect, useRef } from "react";
+import { useFanfare } from "@waitify-io/fanfare-sdk-react";
+import type { ExperienceJourney } from "@waitify-io/fanfare-sdk-core";
+
+function JourneyComponent({ experienceId }: { experienceId: string }) {
+  const fanfare = useFanfare();
+  const journeyRef = useRef<ExperienceJourney | null>(null);
+
+  useEffect(() => {
+    // Create or get existing journey
+    const journey = fanfare.experiences.createJourney(experienceId);
+    journeyRef.current = journey;
+
+    // Subscribe to state changes
+    const unsubscribe = journey.state.listen((snapshot) => {
+      console.log("Journey stage:", snapshot.journeyStage);
+      console.log("Sequence stage:", snapshot.sequenceStage);
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, [fanfare, experienceId]);
+
+  const startJourney = async () => {
+    if (journeyRef.current) {
+      await journeyRef.current.start();
+    }
+  };
+
+  return <button onClick={startJourney}>Start Journey</button>;
+}
+```
+
+## TypeScript
+
+```typescript
+import { useFanfare } from "@waitify-io/fanfare-sdk-react";
+import type { FanfareSDK } from "@waitify-io/fanfare-sdk-core";
+
+function TypedComponent() {
+  // fanfare is typed as FanfareSDK
+  const fanfare: FanfareSDK = useFanfare();
+
+  // All modules are fully typed
+  const auth = fanfare.auth; // AuthModule
+  const queues = fanfare.queues; // QueueModule
+  const draws = fanfare.draws; // DrawModule
+  const auctions = fanfare.auctions; // AuctionModule
+
+  return null;
+}
+```
+
+## Best Practices
+
+### 1. Use Specialized Hooks When Available
+
+```tsx
+// Prefer this
+import { useQueue } from "@waitify-io/fanfare-sdk-react";
+
+function QueueComponent() {
+  const { queue, position, enter, leave } = useQueue("queue_123");
+  // Automatic state management, event subscriptions, cleanup
+}
+
+// Over this (unless you need custom behavior)
+import { useFanfare } from "@waitify-io/fanfare-sdk-react";
+
+function QueueComponent() {
+  const fanfare = useFanfare();
+  // Manual state management required
+}
+```
+
+### 2. Clean Up Event Subscriptions
+
+```tsx
+useEffect(() => {
+  const unsubscribes = [fanfare.on("queue:admitted", handleAdmitted), fanfare.on("queue:denied", handleDenied)];
+
+  return () => {
+    unsubscribes.forEach((unsub) => unsub());
+  };
+}, [fanfare]);
+```
+
+### 3. Handle Async Operations Safely
+
+```tsx
+useEffect(() => {
+  let mounted = true;
+
+  async function fetchData() {
+    const result = await fanfare.queues.status("queue_123");
+    if (mounted) {
+      setStatus(result);
+    }
+  }
+
+  fetchData();
+
+  return () => {
+    mounted = false;
+  };
+}, [fanfare]);
+```
+
+## Related
+
+- [FanfareProvider](/sdk/react/provider) - Provider setup
+- [Hooks Overview](/sdk/react/hooks/overview) - Specialized hooks
+- [Core SDK Client](/sdk/core/client) - Full SDK API reference

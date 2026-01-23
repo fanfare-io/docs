@@ -1,0 +1,270 @@
+---
+title: "Landing Page Editor"
+description: "Visual editor interface for designing landing pages"
+---
+
+{/* TODO: MISSING_FUNCTIONALITY
+Feature: Integrated WYSIWYG landing page editor
+Expected behavior: Drag-and-drop editor with real-time preview in admin dashboard
+Current state: Multiple editor prototypes exist in Storybook; not yet integrated into admin-client
+Blocking: true - Editor UI not available in production
+*/}
+
+<Note>
+**In Development**
+
+The landing page editor is currently being built. Multiple editor approaches are being evaluated, including section-based builders and freeform artboard editors. This documentation describes the planned functionality.
+
+</Note>
+
+## Editor Overview
+
+The Fanfare landing page editor provides a visual, no-code interface for creating and customizing landing pages. The editor is designed to feel intuitive while supporting sophisticated design outcomes.
+
+### Editor Philosophy
+
+The editor follows a "two-tier" approach:
+
+1. **Tier 1: Section Composition** - Assemble pages from pre-built section templates
+2. **Tier 2: Section Editing** - Customize individual sections with freeform controls
+
+This approach balances ease of use (section templates) with creative flexibility (freeform editing).
+
+## Editor Interface
+
+### Main Canvas
+
+The central canvas displays your page as it will appear to visitors:
+
+```
+┌─────────────────────────────────────────────────────────┐
+│  [+ Add Section]           [Preview]  [Publish]         │
+├─────────────────────────────────────────────────────────┤
+│                                                         │
+│    ┌─────────────────────────────────┐                  │
+│    │          Hero Section           │  ← Click to edit │
+│    │    Your Headline Here           │                  │
+│    │    [Call to Action]             │                  │
+│    └─────────────────────────────────┘                  │
+│                                                         │
+│    ┌─────────────────────────────────┐                  │
+│    │        Features Section         │                  │
+│    │  ┌────┐  ┌────┐  ┌────┐        │                  │
+│    │  │    │  │    │  │    │        │                  │
+│    │  └────┘  └────┘  └────┘        │                  │
+│    └─────────────────────────────────┘                  │
+│                                                         │
+│    ┌─────────────────────────────────┐                  │
+│    │         CTA Section             │                  │
+│    └─────────────────────────────────┘                  │
+│                                                         │
+└─────────────────────────────────────────────────────────┘
+```
+
+### Tool Palette
+
+A floating toolbar at the top provides quick actions:
+
+| Tool            | Action                                                |
+| --------------- | ----------------------------------------------------- |
+| **Add Section** | Opens the section library for drag-and-drop insertion |
+| **Focus**       | Zoom into a specific section for editing              |
+| **Preview**     | Open full-screen preview                              |
+| **Settings**    | Access page settings and SEO                          |
+
+### Inspector Panel
+
+The right-side panel shows context-sensitive controls:
+
+- **Theme controls** when no section selected
+- **Section settings** when a section is selected
+- **Layer tools** when editing a freeform section (hero)
+
+## Working with Sections
+
+### Adding Sections
+
+Click the **+** button or drag from the section library:
+
+1. **Click to add** - Inserts at the top of the page
+2. **Drag to insert** - Drop between existing sections
+
+Available section types:
+
+| Section     | Description                                | Best For          |
+| ----------- | ------------------------------------------ | ----------------- |
+| Hero        | Bold opening with layered media + headline | Page introduction |
+| Features    | Highlight benefits in a premium grid       | Product features  |
+| Testimonial | Social proof with elegant framing          | Building trust    |
+| Gallery     | Image grid or carousel                     | Visual products   |
+| Pricing     | Price display with comparison              | Product details   |
+| CTA         | Strong closing call to action              | Conversions       |
+| FAQ         | Expandable question/answer pairs           | Common questions  |
+| Stats       | Numeric highlights                         | Social proof      |
+| Video       | Embedded video content                     | Demonstrations    |
+| Countdown   | Timer until experience starts              | Urgency           |
+
+### Reordering Sections
+
+Drag sections by their handle to reorder:
+
+1. Hover over a section to reveal the drag handle
+2. Click and hold the handle
+3. Drag to the desired position
+4. Release to drop
+
+### Deleting Sections
+
+1. Select a section by clicking it
+2. Click the trash icon in the section toolbar
+3. Confirm deletion
+
+<Warning>Section deletion cannot be undone. Save your work frequently.</Warning>
+
+## Section Editing Modes
+
+### Standard Mode
+
+Most sections use a form-based editing approach:
+
+- Click a section to select it
+- Edit content fields in the inspector panel
+- Changes appear in real-time on the canvas
+
+### Freeform Mode (Hero)
+
+The hero section supports a Canva-like freeform editor:
+
+1. Select the hero section
+2. Click **Edit** to enter freeform mode
+3. Manipulate layers directly on the canvas:
+   - **Drag** to reposition
+   - **Resize handles** to scale
+   - **Layer panel** to reorder z-index
+4. Click **Done** to exit freeform mode
+
+```
+┌─────────────────────────────────────────────────────────┐
+│  [← Done]                    [Reset hero]  [Zoom: 100%] │
+├─────────────────────────────────────────────────────────┤
+│                                                         │
+│    ┌─────────────────────────────────────────────┐      │
+│    │  ○──────────────────────────────────────○   │      │
+│    │  │                                      │   │      │
+│    │  │        Headline Layer                │   │      │
+│    │  │                                      │   │      │
+│    │  ○──────────────────────────────────────○   │      │
+│    │                                             │      │
+│    │     ┌──────────────┐                       │      │
+│    │     │  Image       │                       │      │
+│    │     │  Layer       │                       │      │
+│    │     └──────────────┘                       │      │
+│    │                                             │      │
+│    └─────────────────────────────────────────────┘      │
+│                                                         │
+└─────────────────────────────────────────────────────────┘
+```
+
+## Theme Controls
+
+Global theme settings affect the entire page:
+
+### Font Family
+
+Select from web-safe fonts or connected custom fonts:
+
+```css
+/* Example theme font */
+font-family:
+  Inter,
+  ui-sans-serif,
+  system-ui,
+  -apple-system,
+  sans-serif;
+```
+
+### Color Palette
+
+| Color      | Usage                                |
+| ---------- | ------------------------------------ |
+| Primary    | CTA buttons, links, accents          |
+| Secondary  | Secondary buttons, highlights        |
+| Background | Page background (supports gradients) |
+| Text       | Primary text color                   |
+| Muted      | Secondary text, captions             |
+
+### Background
+
+Backgrounds support:
+
+- Solid colors
+- Linear gradients
+- Radial gradients
+- Background images (coming soon)
+
+Example gradient:
+
+```css
+radial-gradient(1200px 700px at 25% 20%, rgba(140, 20, 255, 0.35), transparent 55%),
+linear-gradient(135deg, #0b1020, #0f172a 55%, #05060f)
+```
+
+## Keyboard Shortcuts
+
+| Shortcut               | Action                       |
+| ---------------------- | ---------------------------- |
+| `Cmd/Ctrl + S`         | Save draft                   |
+| `Cmd/Ctrl + Z`         | Undo                         |
+| `Cmd/Ctrl + Shift + Z` | Redo                         |
+| `Escape`               | Exit current mode / deselect |
+| `Delete`               | Delete selected section      |
+
+## Output and Export
+
+The editor produces a creative document (JSON) that is rendered to HTML at view time.
+
+### Viewing Output
+
+Click the gear icon to open the output drawer:
+
+- **JSON** - Raw creative document for debugging
+- **HTML** - Rendered output for the current page
+
+This is useful for:
+
+- Debugging rendering issues
+- Understanding the document structure
+- Exporting for custom use
+
+## Current Prototypes
+
+The following editor variants are being evaluated in Storybook:
+
+| Variant          | Description                               | Status            |
+| ---------------- | ----------------------------------------- | ----------------- |
+| Section Builder  | Stack pre-built sections, drag to reorder | Primary candidate |
+| Layered Artboard | Freeform canvas with layers (Canva-like)  | For hero sections |
+| Email Blocks     | Schema-first blocks optimized for email   | Email-specific    |
+| Raw HTML/CSS     | Direct code editing with preview          | Power users       |
+
+<Info>
+  Run Storybook locally to explore prototypes: ```bash pnpm -F @waitify-io/admin-components storybook ``` Navigate to
+  **Wysiwyg Studio** stories.
+</Info>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Branding" icon="paintbrush" href="/landing-pages/customization/branding">
+    Configure colors, fonts, and visual identity
+  </Card>
+  <Card title="Content Blocks" icon="cube" href="/landing-pages/customization/content-blocks">
+    Learn about each section type
+  </Card>
+  <Card title="Forms" icon="rectangle-list" href="/landing-pages/customization/forms">
+    Add signup and contact forms
+  </Card>
+  <Card title="Preview & Publish" icon="eye" href="/landing-pages/publishing/preview">
+    Test and deploy your page
+  </Card>
+</CardGroup>

@@ -1,0 +1,578 @@
+---
+title: Queue API
+description: Consumer API endpoints for queue operations
+---
+
+# Queue API
+
+Queues provide first-come, first-served waiting room functionality. Consumers enter, wait in line, and are admitted in order.
+
+## Get Queue
+
+Retrieve queue details and current status.
+
+`GET /api/v1/queues/:queueId`
+
+### Authentication
+
+- Publishable key required
+- Consumer authentication not required
+
+### Path Parameters
+
+| Parameter | Type   | Description  |
+| --------- | ------ | ------------ |
+| `queueId` | string | The queue ID |
+
+### Response
+
+```typescript
+interface Queue {
+  id: string;
+  name: string;
+  sequenceId: string;
+  capacity: number | null;
+  openAt: string | null;
+  closeAt: string | null;
+  timeZone: string | null;
+  status: "PENDING" | "OPEN" | "CLOSED";
+  consumerCount?: number;
+}
+```
+
+### Example
+
+```bash
+curl -X GET https://consumer.fanfare.io/api/v1/queues/queue_01HXYZ123456789 \
+  -H "X-Publishable-Key: pk_live_xxxxxxxxxxxx"
+```
+
+**Response:**
+
+```json
+{
+  "id": "queue_01HXYZ123456789",
+  "name": "Holiday Sale Queue",
+  "sequenceId": "seq_01HXYZ123456789",
+  "capacity": 1000,
+  "openAt": "2024-12-01T09:00:00Z",
+  "closeAt": "2024-12-01T18:00:00Z",
+  "timeZone": "America/New_York",
+  "status": "OPEN"
+}
+```
+
+### Error Responses
+
+| Status | Error             | Description                 |
+| ------ | ----------------- | --------------------------- |
+| 404    | `Queue not found` | The queue ID does not exist |
+
+---
+
+## Enter Queue
+
+Join a queue and receive initial position.
+
+`POST /api/v1/queues/:queueId/enter`
+
+### Authentication
+
+- Publishable key required
+- Consumer authentication **required**
+
+### Headers
+
+| Header          | Required    | Description                           |
+| --------------- | ----------- | ------------------------------------- |
+| `X-Fingerprint` | Recommended | Device fingerprint for bot mitigation |
+
+### Path Parameters
+
+| Parameter | Type   | Description  |
+| --------- | ------ | ------------ |
+| `queueId` | string | The queue ID |
+
+### Response
+
+```typescript
+interface QueueConsumerState {
+  queueId: string;
+  consumerId: string;
+  status: "QUEUED" | "ADMITTED" | "COMPLETED" | "DENIED" | "LEFT";
+  position: number | null;
+  enteredAt: string;
+  admittedAt: string | null;
+  admissionToken: string | null;
+  denyReason: string | null;
+}
+```
+
+### Example
+
+```bash
+curl -X POST https://consumer.fanfare.io/api/v1/queues/queue_01HXYZ123456789/enter \
+  -H "X-Publishable-Key: pk_live_xxxxxxxxxxxx" \
+  -H "Authorization: Bearer eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9..." \
+  -H "X-Fingerprint: fp_01HXYZ123456789"
+```
+
+**Response:**
+
+```json
+{
+  "queueId": "queue_01HXYZ123456789",
+  "consumerId": "cons_01HXYZ123456789",
+  "status": "QUEUED",
+  "position": 42,
+  "enteredAt": "2024-12-01T09:05:23Z",
+  "admittedAt": null,
+  "admissionToken": null,
+  "denyReason": null
+}
+```
+
+### Error Responses
+
+| Status | Error                     | Description                     |
+| ------ | ------------------------- | ------------------------------- |
+| 400    | `Consumer ID is required` | Missing consumer authentication |
+| 404    | `Queue not found`         | The queue ID does not exist     |
+| 423    | `Queue is not open yet`   | Queue opens in the future       |
+| 429    | `Queue is full`           | Queue is at capacity            |
+
+### Special Headers on Error
+
+| Header                | Value                    | Description                   |
+| --------------------- | ------------------------ | ----------------------------- |
+| `Retry-After`         | ISO timestamp or seconds | When to retry (for 423/429)   |
+| `X-Fingerprint-Error` | `true`                   | Fingerprint validation failed |
+
+### Denied Entry Response
+
+If the consumer is denied entry (e.g., order limit exceeded):
+
+```json
+{
+  "queueId": "queue_01HXYZ123456789",
+  "consumerId": "cons_01HXYZ123456789",
+  "status": "DENIED",
+  "position": null,
+  "enteredAt": "2024-12-01T09:05:23Z",
+  "admittedAt": null,
+  "admissionToken": null,
+  "denyReason": "ORDER_LIMIT_EXCEEDED"
+}
+```
+
+---
+
+## Leave Queue
+
+Voluntarily leave a queue.
+
+`POST /api/v1/queues/:queueId/leave`
+
+### Authentication
+
+- Publishable key required
+- Consumer authentication **required**
+
+### Path Parameters
+
+| Parameter | Type   | Description  |
+| --------- | ------ | ------------ |
+| `queueId` | string | The queue ID |
+
+### Response
+
+```typescript
+interface QueueConsumerState {
+  status: "LEFT";
+  // ... other fields
+}
+```
+
+### Example
+
+```bash
+curl -X POST https://consumer.fanfare.io/api/v1/queues/queue_01HXYZ123456789/leave \
+  -H "X-Publishable-Key: pk_live_xxxxxxxxxxxx" \
+  -H "Authorization: Bearer eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9..."
+```
+
+**Response:**
+
+```json
+{
+  "queueId": "queue_01HXYZ123456789",
+  "consumerId": "cons_01HXYZ123456789",
+  "status": "LEFT",
+  "position": null
+}
+```
+
+### Error Responses
+
+| Status | Error                     | Description                      |
+| ------ | ------------------------- | -------------------------------- |
+| 400    | `Consumer ID is required` | Missing consumer authentication  |
+| 404    | `Queue not found`         | The queue ID does not exist      |
+| 404    | `Consumer not in queue`   | Consumer is not currently queued |
+
+---
+
+## Get Queue Status
+
+Get the current consumer's position and status in the queue.
+
+`GET /api/v1/queues/:queueId/status`
+
+### Authentication
+
+- Publishable key required
+- Consumer authentication **required**
+
+### Path Parameters
+
+| Parameter | Type   | Description  |
+| --------- | ------ | ------------ |
+| `queueId` | string | The queue ID |
+
+### Response
+
+Returns `QueueConsumerState` with current position and status.
+
+### Example
+
+```bash
+curl -X GET https://consumer.fanfare.io/api/v1/queues/queue_01HXYZ123456789/status \
+  -H "X-Publishable-Key: pk_live_xxxxxxxxxxxx" \
+  -H "Authorization: Bearer eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9..."
+```
+
+**Response (Queued):**
+
+```json
+{
+  "queueId": "queue_01HXYZ123456789",
+  "consumerId": "cons_01HXYZ123456789",
+  "status": "QUEUED",
+  "position": 15,
+  "enteredAt": "2024-12-01T09:05:23Z"
+}
+```
+
+**Response (Admitted):**
+
+```json
+{
+  "queueId": "queue_01HXYZ123456789",
+  "consumerId": "cons_01HXYZ123456789",
+  "status": "ADMITTED",
+  "position": 0,
+  "enteredAt": "2024-12-01T09:05:23Z",
+  "admittedAt": "2024-12-01T09:15:00Z",
+  "admissionToken": "eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9..."
+}
+```
+
+---
+
+## Admit Consumer (Server-Side)
+
+Manually admit a consumer. Requires secret key.
+
+`POST /api/v1/queues/:queueId/admit`
+
+### Authentication
+
+- Secret key **required**
+
+### Path Parameters
+
+| Parameter | Type   | Description  |
+| --------- | ------ | ------------ |
+| `queueId` | string | The queue ID |
+
+### Request Body
+
+```typescript
+interface AdmitRequest {
+  consumerId: string;
+}
+```
+
+### Example
+
+```bash
+curl -X POST https://consumer.fanfare.io/api/v1/queues/queue_01HXYZ123456789/admit \
+  -H "Authorization: Bearer sk_live_xxxxxxxxxxxx" \
+  -H "Content-Type: application/json" \
+  -d '{"consumerId": "cons_01HXYZ123456789"}'
+```
+
+**Response:**
+
+```json
+{
+  "queueId": "queue_01HXYZ123456789",
+  "consumerId": "cons_01HXYZ123456789",
+  "status": "ADMITTED",
+  "admittedAt": "2024-12-01T09:15:00Z",
+  "admissionToken": "eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9..."
+}
+```
+
+---
+
+## Complete Admission (Server-Side)
+
+Mark an admission as completed (consumer has finished checkout).
+
+`POST /api/v1/queues/:queueId/complete`
+
+### Authentication
+
+- Secret key **required**
+
+### Path Parameters
+
+| Parameter | Type   | Description  |
+| --------- | ------ | ------------ |
+| `queueId` | string | The queue ID |
+
+### Request Body
+
+```typescript
+interface CompleteRequest {
+  consumerId: string;
+}
+```
+
+### Example
+
+```bash
+curl -X POST https://consumer.fanfare.io/api/v1/queues/queue_01HXYZ123456789/complete \
+  -H "Authorization: Bearer sk_live_xxxxxxxxxxxx" \
+  -H "Content-Type: application/json" \
+  -d '{"consumerId": "cons_01HXYZ123456789"}'
+```
+
+**Response:**
+
+```json
+{
+  "queueId": "queue_01HXYZ123456789",
+  "consumerId": "cons_01HXYZ123456789",
+  "status": "COMPLETED",
+  "completedAt": "2024-12-01T09:20:00Z"
+}
+```
+
+---
+
+## Deny Consumer (Server-Side)
+
+Deny a consumer from the queue.
+
+`POST /api/v1/queues/:queueId/deny`
+
+### Authentication
+
+- Secret key **required**
+
+### Path Parameters
+
+| Parameter | Type   | Description  |
+| --------- | ------ | ------------ |
+| `queueId` | string | The queue ID |
+
+### Request Body
+
+```typescript
+interface DenyRequest {
+  consumerId: string;
+  reason: string;
+}
+```
+
+### Deny Reasons
+
+| Reason                 | Description                        |
+| ---------------------- | ---------------------------------- |
+| `ORDER_LIMIT_EXCEEDED` | Consumer has exceeded order limits |
+| `FRAUD_DETECTED`       | Suspicious activity detected       |
+| `ADMIN_ACTION`         | Manual denial by administrator     |
+
+### Example
+
+```bash
+curl -X POST https://consumer.fanfare.io/api/v1/queues/queue_01HXYZ123456789/deny \
+  -H "Authorization: Bearer sk_live_xxxxxxxxxxxx" \
+  -H "Content-Type: application/json" \
+  -d '{"consumerId": "cons_01HXYZ123456789", "reason": "FRAUD_DETECTED"}'
+```
+
+---
+
+## Validate Admission Token (Server-Side)
+
+Validate that an admission token is valid for a consumer.
+
+`POST /api/v1/queues/:queueId/validate`
+
+### Authentication
+
+- Secret key **required**
+
+### Path Parameters
+
+| Parameter | Type   | Description  |
+| --------- | ------ | ------------ |
+| `queueId` | string | The queue ID |
+
+### Request Body
+
+```typescript
+interface ValidateRequest {
+  consumerId: string;
+  token: string;
+}
+```
+
+### Response
+
+Returns `true` if valid, or an error object with details if invalid.
+
+### Example
+
+```bash
+curl -X POST https://consumer.fanfare.io/api/v1/queues/queue_01HXYZ123456789/validate \
+  -H "Authorization: Bearer sk_live_xxxxxxxxxxxx" \
+  -H "Content-Type: application/json" \
+  -d '{"consumerId": "cons_01HXYZ123456789", "token": "eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9..."}'
+```
+
+**Valid Response:**
+
+```json
+true
+```
+
+**Invalid Response (Device Mismatch):**
+
+```json
+{
+  "valid": false,
+  "error": "DEVICE_MISMATCH",
+  "message": "This access token can only be used on the device that originally entered the queue.",
+  "code": "FP002",
+  "support": {
+    "message": "If you need to switch devices, please contact support with your confirmation code.",
+    "confirmationCode": "ABC123XYZ"
+  }
+}
+```
+
+---
+
+## Queue Consumer Statuses
+
+| Status      | Description                                |
+| ----------- | ------------------------------------------ |
+| `QUEUED`    | Consumer is waiting in line                |
+| `ADMITTED`  | Consumer has been admitted and can proceed |
+| `COMPLETED` | Consumer has completed their checkout      |
+| `DENIED`    | Consumer was denied entry                  |
+| `LEFT`      | Consumer voluntarily left the queue        |
+
+---
+
+## SDK Usage
+
+### React
+
+```typescript
+import { useQueue } from "@fanfare/sdk-react";
+
+function QueuePage({ queueId }: { queueId: string }) {
+  const {
+    queue,
+    status,
+    position,
+    isAdmitted,
+    admissionToken,
+    enter,
+    leave,
+    isLoading,
+    error,
+  } = useQueue(queueId);
+
+  if (isLoading) return <Loading />;
+  if (error) return <Error message={error.message} />;
+
+  if (isAdmitted) {
+    return (
+      <div>
+        <h2>You're in!</h2>
+        <p>Use this token to complete your purchase:</p>
+        <code>{admissionToken}</code>
+        <a href={`/checkout?token=${admissionToken}`}>Continue to Checkout</a>
+      </div>
+    );
+  }
+
+  if (status?.status === "QUEUED") {
+    return (
+      <div>
+        <h2>You're in line</h2>
+        <p>Position: {position}</p>
+        <button onClick={leave}>Leave Queue</button>
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      <h2>{queue?.name}</h2>
+      <p>Capacity: {queue?.capacity}</p>
+      <button onClick={enter}>Join Queue</button>
+    </div>
+  );
+}
+```
+
+### Polling for Updates
+
+```typescript
+import { useEffect, useState } from "react";
+
+function useQueuePolling(queueId: string, intervalMs = 5000) {
+  const [status, setStatus] = useState(null);
+
+  useEffect(() => {
+    const poll = async () => {
+      const response = await fetch(`https://consumer.fanfare.io/api/v1/queues/${queueId}/status`, {
+        headers: {
+          "X-Publishable-Key": publishableKey,
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      const data = await response.json();
+      setStatus(data);
+
+      // Stop polling if admitted or completed
+      if (data.status === "ADMITTED" || data.status === "COMPLETED") {
+        return;
+      }
+    };
+
+    poll();
+    const interval = setInterval(poll, intervalMs);
+    return () => clearInterval(interval);
+  }, [queueId, intervalMs]);
+
+  return status;
+}
+```

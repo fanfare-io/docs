@@ -1,0 +1,258 @@
+---
+title: Experience Widget
+description: Complete journey orchestration widget
+---
+
+# Experience Widget
+
+The Experience Widget is a top-level orchestrator that manages the full consumer journey flow, automatically routing to appropriate views based on journey and sequence stages.
+
+## Web Component
+
+```tsx
+<fanfare-experience-widget experience-id="exp_123" auto-start="true" checkout-url="/checkout" />
+```
+
+## Attributes
+
+| Attribute             | Type     | Default   | Description                          |
+| --------------------- | -------- | --------- | ------------------------------------ |
+| `experience-id`       | `string` | Required  | The experience identifier            |
+| `auto-start`          | `string` | `"false"` | Automatically start journey on mount |
+| `access-code`         | `string` | -         | Pre-fill access code for VIP access  |
+| `auto-enter-waitlist` | `string` | `"false"` | Auto-join waitlist if upcoming       |
+| `checkout-url`        | `string` | -         | URL to redirect on admission         |
+| `container-class`     | `string` | -         | Custom CSS class for container       |
+
+## Events
+
+| Event                    | Detail                          | Description           |
+| ------------------------ | ------------------------------- | --------------------- |
+| `fanfare-journey-change` | `{ snapshot: JourneySnapshot }` | Journey state changed |
+| `fanfare-admitted`       | `{ token: string }`             | User was admitted     |
+| `fanfare-error`          | `{ error: string }`             | Error occurred        |
+
+## Event Handling Example
+
+```tsx
+import { useEffect, useRef } from "react";
+
+function ExperiencePage({ experienceId }: { experienceId: string }) {
+  const widgetRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const widget = widgetRef.current;
+    if (!widget) return;
+
+    const handleJourneyChange = (e: CustomEvent) => {
+      const { snapshot } = e.detail;
+      console.log("Journey stage:", snapshot.journeyStage);
+      console.log("Sequence stage:", snapshot.sequenceStage);
+
+      // Track analytics
+      analytics.track("journey_stage_change", {
+        journeyStage: snapshot.journeyStage,
+        sequenceStage: snapshot.sequenceStage,
+      });
+    };
+
+    const handleAdmitted = (e: CustomEvent<{ token: string }>) => {
+      console.log("Admitted with token:", e.detail.token);
+      // Widget will auto-redirect if checkout-url is set
+      // Or handle manually:
+      window.location.href = `/checkout?token=${e.detail.token}`;
+    };
+
+    const handleError = (e: CustomEvent<{ error: string }>) => {
+      console.error("Journey error:", e.detail.error);
+      showErrorToast(e.detail.error);
+    };
+
+    widget.addEventListener("fanfare-journey-change", handleJourneyChange);
+    widget.addEventListener("fanfare-admitted", handleAdmitted);
+    widget.addEventListener("fanfare-error", handleError);
+
+    return () => {
+      widget.removeEventListener("fanfare-journey-change", handleJourneyChange);
+      widget.removeEventListener("fanfare-admitted", handleAdmitted);
+      widget.removeEventListener("fanfare-error", handleError);
+    };
+  }, []);
+
+  return (
+    <div className="experience-container">
+      <fanfare-experience-widget
+        ref={widgetRef}
+        experience-id={experienceId}
+        auto-start="true"
+        checkout-url="/checkout"
+      />
+    </div>
+  );
+}
+```
+
+## Journey Stages
+
+The widget automatically handles all journey stages:
+
+### Journey Stages
+
+| Stage               | Description                  | Widget View            |
+| ------------------- | ---------------------------- | ---------------------- |
+| `not_started`       | Journey not yet started      | Start button           |
+| `entering`          | Starting the journey         | Loading spinner        |
+| `needs_auth`        | Authentication required      | Auth form              |
+| `needs_access_code` | Access code required         | Access code input      |
+| `routing`           | Finding appropriate sequence | Loading spinner        |
+| `routed`            | Routed to a sequence         | Sequence-specific view |
+| `error`             | Error occurred               | Error message + retry  |
+
+### Sequence Stages
+
+| Stage               | Description              | Widget View              |
+| ------------------- | ------------------------ | ------------------------ |
+| `upcoming`          | Sequence not yet open    | Countdown + Waitlist CTA |
+| `waitlist_entered`  | On the waitlist          | Waitlist confirmation    |
+| `active_enterable`  | Can enter distribution   | Enter button             |
+| `participating`     | Actively participating   | Distribution-specific UI |
+| `admitted`          | User was admitted        | Success + Checkout CTA   |
+| `admission_expired` | Admission window expired | Re-enter option          |
+| `ended`             | Sequence has ended       | Ended message            |
+
+## VIP Access Code Flow
+
+```tsx
+function VIPExperience({ experienceId }: { experienceId: string }) {
+  const [accessCode, setAccessCode] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+
+  if (!submitted) {
+    return (
+      <div className="access-code-entry">
+        <h2>VIP Access</h2>
+        <input
+          type="text"
+          value={accessCode}
+          onChange={(e) => setAccessCode(e.target.value)}
+          placeholder="Enter your access code"
+        />
+        <button onClick={() => setSubmitted(true)}>Continue</button>
+      </div>
+    );
+  }
+
+  return (
+    <fanfare-experience-widget
+      experience-id={experienceId}
+      access-code={accessCode}
+      auto-start="true"
+      checkout-url="/checkout"
+    />
+  );
+}
+```
+
+## Auto-Start with Waitlist
+
+```tsx
+// Automatically start and join waitlist for upcoming experiences
+<fanfare-experience-widget experience-id="exp_123" auto-start="true" auto-enter-waitlist="true" />
+```
+
+## Styling
+
+### CSS Variables
+
+```css
+fanfare-experience-widget {
+  --fanfare-primary: #3b82f6;
+  --fanfare-primary-hover: #2563eb;
+  --fanfare-background: #ffffff;
+  --fanfare-foreground: #1f2937;
+  --fanfare-muted: #f3f4f6;
+  --fanfare-border: #e5e7eb;
+  --fanfare-success: #22c55e;
+  --fanfare-destructive: #ef4444;
+  --fanfare-radius: 0.5rem;
+}
+```
+
+## Using with React Hook (Alternative)
+
+For more control, use the `useExperienceJourney` hook:
+
+```tsx
+import { useExperienceJourney, useFanfareAuth } from "@waitify-io/fanfare-sdk-react";
+
+function CustomExperienceUI({ experienceId }: { experienceId: string }) {
+  const { isAuthenticated, guest } = useFanfareAuth();
+  const { journey, state, status, error, start } = useExperienceJourney(experienceId);
+
+  const handleStart = async () => {
+    if (!isAuthenticated) {
+      await guest();
+    }
+    await start();
+  };
+
+  if (error) {
+    return (
+      <div className="error">
+        <p>{error}</p>
+        <button onClick={() => start()}>Try Again</button>
+      </div>
+    );
+  }
+
+  switch (status) {
+    case "idle":
+      return <button onClick={handleStart}>Start Experience</button>;
+
+    case "entering_experience":
+    case "routing_sequence":
+      return <LoadingSpinner />;
+
+    case "needs_authentication":
+      return <AuthForm onComplete={() => journey?.authenticate()} />;
+
+    case "needs_access_code":
+      return <AccessCodeForm onSubmit={(code) => journey?.provideAccessCode(code)} />;
+
+    case "waiting":
+      return <WaitlistView onJoin={() => journey?.enterWaitlist()} />;
+
+    case "ready":
+      return <ParticipationView journey={journey!} state={state!} />;
+
+    default:
+      return null;
+  }
+}
+```
+
+## TypeScript Declaration
+
+```typescript
+declare namespace JSX {
+  interface IntrinsicElements {
+    "fanfare-experience-widget": React.DetailedHTMLProps<
+      React.HTMLAttributes<HTMLElement> & {
+        "experience-id": string;
+        "auto-start"?: string;
+        "access-code"?: string;
+        "auto-enter-waitlist"?: string;
+        "checkout-url"?: string;
+        "container-class"?: string;
+      },
+      HTMLElement
+    >;
+  }
+}
+```
+
+## Related
+
+- [useExperienceJourney Hook](/sdk/react/hooks/use-experience-journey) - React hook for custom journey UIs
+- [Core SDK Experiences](/sdk/core/experiences) - Underlying journey API
+- [Widgets Overview](/sdk/react/widgets/overview) - Widget architecture

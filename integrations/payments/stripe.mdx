@@ -1,0 +1,362 @@
+---
+title: "Stripe Integration"
+description: "Accept payments for auctions, pre-orders, and premium experiences with Stripe Connect"
+---
+
+## Overview
+
+The Stripe integration enables payment processing for Fanfare experiences using Stripe Connect. This allows organizations to:
+
+- Accept payments for auction wins
+- Process pre-order charges for queue and draw winners
+- Manage subscription billing for Fanfare itself
+- Split payments between the platform and connected accounts
+
+## Prerequisites
+
+Before setting up the Stripe integration, you need:
+
+- A Stripe account (Standard or Express Connect account)
+- Stripe account must have charges enabled
+- Business verification completed in Stripe
+
+## How It Works
+
+Fanfare uses Stripe Connect in **Standard** mode, which means:
+
+1. Your organization connects an existing Stripe account to Fanfare
+2. Fanfare creates charges on behalf of your connected account
+3. Platform fees are automatically deducted from each transaction
+4. Payouts go directly to your Stripe account's bank account
+
+```
+┌─────────────┐     ┌─────────────┐     ┌─────────────┐
+│  Consumer   │────▶│   Fanfare   │────▶│   Stripe    │
+│  Payment    │     │   Platform  │     │   Connect   │
+└─────────────┘     └─────────────┘     └─────────────┘
+                           │                    │
+                           │   Platform Fee     │
+                           │◀──────────────────▶│
+                           │                    │
+                           │                    ▼
+                           │            ┌─────────────┐
+                           │            │    Your     │
+                           └───────────▶│   Stripe    │
+                                        │   Account   │
+                                        └─────────────┘
+```
+
+## Setup
+
+### Step 1: Navigate to Payment Settings
+
+1. Go to **Settings** > **Payments** in the Fanfare admin
+2. You'll see the Stripe Connect card
+
+### Step 2: Connect Your Stripe Account
+
+1. Click **Connect with Stripe**
+2. You'll be redirected to Stripe's OAuth flow
+3. Log in to your Stripe account (or create one)
+4. Authorize Fanfare to access your account
+5. You'll be redirected back to Fanfare
+
+### Step 3: Verify Connection
+
+After connecting, you'll see:
+
+- Your Stripe account ID
+- Account display name
+- Connection status (Active, Pending, or Error)
+- Charges enabled status
+- Payouts enabled status
+
+<Callout type="warning">
+  **Account Verification**: If your Stripe account requires additional verification, charges may be disabled until you
+  complete the verification in your Stripe dashboard.
+</Callout>
+
+## Connection Status
+
+### Status Indicators
+
+| Status           | Description                                         |
+| ---------------- | --------------------------------------------------- |
+| **Active**       | Account is fully connected and can process payments |
+| **Pending**      | Account connected but awaiting verification         |
+| **Error**        | Connection issue that needs attention               |
+| **Disconnected** | Account has been disconnected from Fanfare          |
+
+### Charges Enabled
+
+If charges are disabled:
+
+1. Log in to your Stripe dashboard
+2. Complete any pending verification requirements
+3. Fanfare will automatically update the status via webhooks
+
+### Payouts Enabled
+
+If payouts are disabled:
+
+1. Add a bank account in your Stripe dashboard
+2. Complete identity verification if required
+3. Status updates automatically via webhooks
+
+## Webhooks
+
+Fanfare automatically receives updates from Stripe via webhooks:
+
+### Subscription Events
+
+| Event                           | Description              |
+| ------------------------------- | ------------------------ |
+| `customer.subscription.created` | New subscription created |
+| `customer.subscription.updated` | Subscription modified    |
+| `customer.subscription.deleted` | Subscription cancelled   |
+| `customer.subscription.paused`  | Subscription paused      |
+| `customer.subscription.resumed` | Subscription resumed     |
+
+### Payment Events
+
+| Event                           | Description                 |
+| ------------------------------- | --------------------------- |
+| `invoice.paid`                  | Invoice successfully paid   |
+| `invoice.payment_failed`        | Payment attempt failed      |
+| `payment_intent.succeeded`      | One-time payment successful |
+| `payment_intent.payment_failed` | One-time payment failed     |
+
+### Connect Account Events
+
+| Event                              | Description                       |
+| ---------------------------------- | --------------------------------- |
+| `account.updated`                  | Connected account details changed |
+| `account.application.deauthorized` | Account disconnected from Fanfare |
+
+### Webhook Security
+
+All Stripe webhooks are verified using HMAC-SHA256 signatures:
+
+```typescript
+// Webhook signature verification
+const event = await stripe.webhooks.constructEventAsync(body, signature, webhookSecret);
+```
+
+## Platform Fees
+
+### How Fees Work
+
+Fanfare charges a platform fee on each transaction processed through connected Stripe accounts:
+
+- The fee percentage is set at the organization level
+- Fees are automatically deducted from the transaction amount
+- The remaining amount goes to your Stripe account
+
+### Viewing Your Fee Rate
+
+1. Navigate to **Settings** > **Payments**
+2. Your current platform fee rate is displayed
+3. The effective rate may differ based on your subscription plan
+
+<Callout type="info">
+  **Note**: Platform fee rates are determined by your Fanfare subscription plan and cannot be modified directly in the
+  settings.
+</Callout>
+
+## Disconnecting
+
+To disconnect your Stripe account:
+
+1. Go to **Settings** > **Payments**
+2. Click **Disconnect** on the Stripe card
+3. Confirm the disconnection
+
+<Callout type="warning">
+  **Warning**: Disconnecting will prevent any new charges from being processed. Existing subscriptions may be affected.
+</Callout>
+
+### What Happens When You Disconnect
+
+- No new charges can be processed through Fanfare
+- Existing refunds can still be processed directly in Stripe
+- Historical transaction data remains in Fanfare
+- You can reconnect at any time with the same or different account
+
+## API Reference
+
+### Get Connection Status
+
+Check the current Stripe Connect status.
+
+```bash
+GET /api/payment-providers/stripe/status
+```
+
+**Response:**
+
+```json
+{
+  "connected": true,
+  "status": "ACTIVE",
+  "accountId": "acct_1234567890",
+  "displayName": "My Store",
+  "chargesEnabled": true,
+  "payoutsEnabled": true
+}
+```
+
+### Initiate Connection
+
+Get the OAuth URL to start the connection flow.
+
+```bash
+GET /api/payment-providers/stripe/auth/url
+```
+
+**Response:**
+
+```json
+{
+  "url": "https://connect.stripe.com/oauth/authorize?..."
+}
+```
+
+### Disconnect Account
+
+Remove the Stripe connection.
+
+```bash
+DELETE /api/payment-providers/stripe
+```
+
+**Response:**
+
+```json
+{
+  "success": true
+}
+```
+
+## Payment Flows
+
+### Auction Payments
+
+When a consumer wins an auction:
+
+1. Consumer receives winning notification with payment link
+2. Consumer enters payment details
+3. Charge is created on the connected Stripe account
+4. Platform fee is deducted
+5. Order is marked as paid
+
+### Queue/Draw Winner Payments
+
+For experiences with pre-set pricing:
+
+1. Winner receives checkout link
+2. Payment is processed at checkout
+3. Time limit enforced for checkout completion
+4. Inventory released if payment not completed
+
+{/* TODO: MISSING_FUNCTIONALITY
+Feature: Automatic payment capture for pre-authorized amounts
+Expected behavior: Option to pre-authorize and capture later
+Current state: Direct charge only - no authorization/capture flow
+*/}
+
+## Testing
+
+### Test Mode
+
+For testing, use Stripe test mode credentials:
+
+1. Toggle to test mode in your Stripe dashboard
+2. Connect using test mode OAuth
+3. Use Stripe test cards for transactions
+
+### Test Card Numbers
+
+| Card               | Description        |
+| ------------------ | ------------------ |
+| `4242424242424242` | Successful payment |
+| `4000000000000002` | Declined payment   |
+| `4000000000009995` | Insufficient funds |
+
+## Troubleshooting
+
+### Common Issues
+
+**"Charges not enabled" warning**
+
+Your Stripe account requires verification.
+
+- Log in to Stripe dashboard
+- Complete pending verification steps
+- Wait for Stripe to review (usually 1-2 business days)
+
+**OAuth callback error**
+
+The connection flow was interrupted.
+
+- Ensure you're logged into the correct Stripe account
+- Check that browser cookies are enabled
+- Try clearing cache and reconnecting
+
+**Webhook events not processing**
+
+Webhooks may not be reaching Fanfare.
+
+- Verify the webhook endpoint in Stripe dashboard
+- Check webhook signing secret matches
+- Review Stripe webhook logs for delivery failures
+
+**Account disconnected unexpectedly**
+
+The account owner may have revoked access.
+
+- Reconnect from Settings > Payments
+- Contact Stripe support if issue persists
+
+### Checking Webhook Delivery
+
+In your Stripe dashboard:
+
+1. Go to **Developers** > **Webhooks**
+2. Find the Fanfare endpoint
+3. Check recent delivery attempts
+4. Review any failed deliveries
+
+## Security
+
+### Data Handling
+
+- Fanfare never stores full card numbers
+- Payment details are handled entirely by Stripe
+- Only tokenized references are stored
+
+### OAuth Security
+
+- State parameter prevents CSRF attacks
+- Tokens are exchanged server-side only
+- Connected account IDs are validated
+
+### Webhook Verification
+
+- All webhooks require valid signatures
+- Timestamps are validated to prevent replay attacks
+- Events are processed idempotently
+
+## Limitations
+
+| Limitation            | Description                                    |
+| --------------------- | ---------------------------------------------- |
+| Standard Connect only | Express and Custom account types not supported |
+| Single account        | One Stripe account per organization            |
+| Currency              | Determined by connected account settings       |
+| Country availability  | Subject to Stripe's country availability       |
+
+## Related Resources
+
+- [Auction Payments](/features/experiences/auctions#payments)
+- [Order Management](/features/orders)
+- [Stripe Connect Documentation](https://stripe.com/docs/connect)

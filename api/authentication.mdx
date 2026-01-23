@@ -1,0 +1,331 @@
+---
+title: Authentication
+description: API authentication methods for the Fanfare platform
+---
+
+# Authentication
+
+Fanfare uses different authentication methods depending on the API and use case.
+
+## API Keys
+
+Every organization has two types of API keys:
+
+### Publishable Key
+
+- **Format**: `pk_live_xxxxxxxxxxxx` or `pk_test_xxxxxxxxxxxx`
+- **Usage**: Client-side code (browsers, mobile apps)
+- **Permissions**: Read-only access to public resources, consumer session creation
+- **Security**: Safe to expose in client-side code
+
+```javascript
+// Browser SDK initialization
+import { Fanfare } from "@fanfare/sdk-react";
+
+const fanfare = new Fanfare({
+  publishableKey: "pk_live_xxxxxxxxxxxx",
+});
+```
+
+### Secret Key
+
+- **Format**: `sk_live_xxxxxxxxxxxx` or `sk_test_xxxxxxxxxxxx`
+- **Usage**: Server-side code only
+- **Permissions**: Full API access including write operations
+- **Security**: Must be kept confidential, never expose in client-side code
+
+```bash
+# Server-side API call
+curl -X POST https://admin.fanfare.io/api/v1/experiences \
+  -H "Authorization: Bearer sk_live_xxxxxxxxxxxx" \
+  -H "Content-Type: application/json" \
+  -d '{"name": "Holiday Sale"}'
+```
+
+## Authentication Methods
+
+### Consumer API - Browser (Publishable Key)
+
+For browser-based consumer interactions, use the publishable key in the `X-Publishable-Key` header:
+
+```http
+GET /api/v1/experiences/exp_01HXYZ123456789 HTTP/1.1
+Host: consumer.fanfare.io
+X-Publishable-Key: pk_live_xxxxxxxxxxxx
+```
+
+### Consumer API - Authenticated Consumer
+
+After a consumer authenticates (via OTP, external auth, etc.), use the access token:
+
+```http
+POST /api/v1/queues/queue_01HXYZ123456789/enter HTTP/1.1
+Host: consumer.fanfare.io
+X-Publishable-Key: pk_live_xxxxxxxxxxxx
+Authorization: Bearer eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9...
+```
+
+### Consumer API - Server-Side (Secret Key)
+
+For server-to-server calls to the Consumer API, use the secret key:
+
+```http
+POST /api/v1/auth/external/authorize HTTP/1.1
+Host: consumer.fanfare.io
+Authorization: Bearer sk_live_xxxxxxxxxxxx
+Content-Type: application/json
+
+{
+  "provider": "shopify",
+  "issuer": "https://your-store.myshopify.com",
+  "subject": "customer_123456"
+}
+```
+
+### Admin API (Secret Key Required)
+
+All Admin API calls require the secret key:
+
+```http
+POST /api/v1/experiences HTTP/1.1
+Host: admin.fanfare.io
+Authorization: Bearer sk_live_xxxxxxxxxxxx
+Content-Type: application/json
+
+{
+  "name": "Holiday Sale Queue",
+  "openAt": "2024-12-01T09:00:00Z"
+}
+```
+
+## Consumer Authentication Flows
+
+### Guest Session
+
+Create an anonymous session for tracking purposes:
+
+```http
+POST /api/v1/auth/guest HTTP/1.1
+Host: consumer.fanfare.io
+X-Publishable-Key: pk_live_xxxxxxxxxxxx
+```
+
+**Response:**
+
+```json
+{
+  "session": {
+    "type": "guest",
+    "consumerId": "guest_01HXYZ123456789",
+    "guestId": "guest_01HXYZ123456789",
+    "expiresAt": "2024-12-01T10:00:00Z"
+  },
+  "accessToken": "eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9...",
+  "refreshToken": "eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9..."
+}
+```
+
+### OTP Authentication (Email)
+
+Request a one-time password:
+
+```http
+POST /api/v1/auth/otp/request HTTP/1.1
+Host: consumer.fanfare.io
+X-Publishable-Key: pk_live_xxxxxxxxxxxx
+Content-Type: application/json
+
+{
+  "email": "customer@example.com"
+}
+```
+
+Verify the OTP:
+
+```http
+POST /api/v1/auth/otp/verify HTTP/1.1
+Host: consumer.fanfare.io
+X-Publishable-Key: pk_live_xxxxxxxxxxxx
+Content-Type: application/json
+
+{
+  "email": "customer@example.com",
+  "code": "123456"
+}
+```
+
+### OTP Authentication (Phone)
+
+Request an SMS code:
+
+```http
+POST /api/v1/auth/otp/request HTTP/1.1
+Host: consumer.fanfare.io
+X-Publishable-Key: pk_live_xxxxxxxxxxxx
+Content-Type: application/json
+
+{
+  "phone": "+12025551234",
+  "defaultCountry": "US"
+}
+```
+
+Verify the code:
+
+```http
+POST /api/v1/auth/otp/verify HTTP/1.1
+Host: consumer.fanfare.io
+X-Publishable-Key: pk_live_xxxxxxxxxxxx
+Content-Type: application/json
+
+{
+  "phone": "+12025551234",
+  "code": "123456",
+  "defaultCountry": "US"
+}
+```
+
+### External Authentication (Server-Side)
+
+For integrating with your existing authentication system:
+
+**Step 1: Create exchange code (server-side)**
+
+```http
+POST /api/v1/auth/external/authorize HTTP/1.1
+Host: consumer.fanfare.io
+Authorization: Bearer sk_live_xxxxxxxxxxxx
+Content-Type: application/json
+
+{
+  "provider": "your-platform",
+  "issuer": "https://your-domain.com",
+  "subject": "user_123456",
+  "claims": {
+    "email": "user@example.com",
+    "name": "John Doe"
+  }
+}
+```
+
+**Response:**
+
+```json
+{
+  "exchangeCode": "exc_01HXYZ123456789",
+  "expiresAt": "2024-12-01T09:01:00Z"
+}
+```
+
+**Step 2: Exchange code for session (client-side)**
+
+```http
+POST /api/v1/auth/external/exchange HTTP/1.1
+Host: consumer.fanfare.io
+X-Publishable-Key: pk_live_xxxxxxxxxxxx
+Content-Type: application/json
+
+{
+  "exchangeCode": "exc_01HXYZ123456789"
+}
+```
+
+### Token Refresh
+
+Refresh an expired access token:
+
+```http
+POST /api/v1/auth/refresh HTTP/1.1
+Host: consumer.fanfare.io
+X-Publishable-Key: pk_live_xxxxxxxxxxxx
+Content-Type: application/json
+
+{
+  "refreshToken": "eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9..."
+}
+```
+
+**Response:**
+
+```json
+{
+  "accessToken": "eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9...",
+  "refreshToken": "eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9..."
+}
+```
+
+### Logout
+
+Invalidate the current session:
+
+```http
+POST /api/v1/auth/logout HTTP/1.1
+Host: consumer.fanfare.io
+Authorization: Bearer eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9...
+```
+
+## Token Structure
+
+Access tokens are JWTs containing:
+
+```json
+{
+  "consumerId": "cons_01HXYZ123456789",
+  "organizationId": "org_01HXYZ123456789",
+  "sessionId": "sess_01HXYZ123456789",
+  "iat": 1701424800,
+  "exp": 1701428400
+}
+```
+
+## Token Lifetimes
+
+| Token Type    | Default Lifetime | Configurable |
+| ------------- | ---------------- | ------------ |
+| Access Token  | 1 hour           | Yes          |
+| Refresh Token | 30 days          | Yes          |
+| Exchange Code | 60 seconds       | No           |
+
+## Security Best Practices
+
+1. **Never expose secret keys** in client-side code, version control, or logs
+2. **Rotate keys regularly** using the Admin dashboard
+3. **Use environment variables** for storing keys in server-side applications
+4. **Implement token refresh** to maintain sessions without re-authentication
+5. **Use HTTPS** for all API communications (enforced by Fanfare)
+
+## Error Responses
+
+### Invalid Credentials
+
+```json
+{
+  "error": "Authentication required"
+}
+```
+
+### Expired Token
+
+```json
+{
+  "error": "otp_expired",
+  "message": "Your verification code has expired. Please request a new one."
+}
+```
+
+### Invalid OTP
+
+```json
+{
+  "error": "otp_invalid",
+  "message": "Invalid verification code. Please try again."
+}
+```
+
+### Secret Key Required
+
+```json
+{
+  "error": "Secret key required"
+}
+```

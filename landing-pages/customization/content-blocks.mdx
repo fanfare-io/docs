@@ -1,0 +1,412 @@
+---
+title: "Content Blocks"
+description: "Available section types for building landing pages"
+---
+
+{/* TODO: MISSING_FUNCTIONALITY
+Feature: Content block library in landing page editor
+Expected behavior: Full library of configurable section types
+Current state: Section types defined in editor prototypes; UI not integrated
+Blocking: true - Cannot add content blocks through UI yet
+*/}
+
+<Note>
+**Coming Soon**
+
+Content blocks are defined and working in editor prototypes. This documentation describes the blocks that will be available when the landing page builder launches.
+
+</Note>
+
+## Section Types Overview
+
+Landing pages are built by stacking sections. Each section type serves a specific purpose and can be customized with your content.
+
+| Section     | Purpose                                  | Recommended Position |
+| ----------- | ---------------------------------------- | -------------------- |
+| Hero        | Grab attention, introduce the experience | First                |
+| Features    | Highlight key benefits or details        | Early-middle         |
+| Countdown   | Create urgency with timer                | Early                |
+| Testimonial | Build trust with social proof            | Middle               |
+| Gallery     | Showcase products or images              | Middle               |
+| Stats       | Display impressive numbers               | Middle               |
+| Video       | Embed explanatory content                | Middle               |
+| FAQ         | Answer common questions                  | Late                 |
+| CTA         | Drive action                             | Last                 |
+
+## Hero Section
+
+The hero is the first thing visitors see. It sets the tone for the entire page.
+
+### Hero Elements
+
+| Element       | Required | Description                                             |
+| ------------- | -------- | ------------------------------------------------------- |
+| Headline      | Yes      | Main attention-grabbing text (60 chars max recommended) |
+| Subheadline   | No       | Supporting text that expands on the headline            |
+| Media         | No       | Background image, video, or gradient                    |
+| CTA Button    | Yes      | Primary call-to-action                                  |
+| Secondary CTA | No       | Alternative action (e.g., "Learn More")                 |
+
+### Hero Variants
+
+| Variant  | Description                      | Best For                 |
+| -------- | -------------------------------- | ------------------------ |
+| Centered | Text centered over background    | Clean, modern look       |
+| Split    | Text on one side, media on other | Product showcases        |
+| Layered  | Overlapping elements with depth  | Premium, creative brands |
+| Video    | Full-width background video      | High-energy products     |
+
+### Hero Best Practices
+
+- Keep headlines under 10 words
+- Use high-contrast text over images
+- Include a single, clear CTA
+- Test on mobile (text should remain readable)
+
+```
+┌─────────────────────────────────────────────────┐
+│                                                 │
+│           [Background Image/Video]              │
+│                                                 │
+│         Your Headline Goes Here                 │
+│                                                 │
+│      Supporting text that adds context          │
+│                                                 │
+│            [ Primary CTA Button ]               │
+│                                                 │
+└─────────────────────────────────────────────────┘
+```
+
+## Features Section
+
+Highlight product benefits, experience details, or value propositions.
+
+### Features Elements
+
+| Element          | Required | Description                   |
+| ---------------- | -------- | ----------------------------- |
+| Section Title    | No       | Introduces the features block |
+| Section Subtitle | No       | Additional context            |
+| Feature Cards    | Yes      | 2-6 individual feature items  |
+
+### Feature Card Structure
+
+Each feature card includes:
+
+- **Icon** (optional) - Visual representation
+- **Title** - Feature name
+- **Description** - Brief explanation (50 words max)
+- **Link** (optional) - Learn more destination
+
+### Features Layout Options
+
+| Layout   | Cards   | Best For               |
+| -------- | ------- | ---------------------- |
+| 2-column | 2, 4, 6 | Detailed features      |
+| 3-column | 3, 6    | Standard feature grids |
+| List     | Any     | Simple presentations   |
+
+```
+┌─────────────────────────────────────────────────┐
+│  Premium Features                               │
+│  Why customers choose us                        │
+├───────────────┬───────────────┬────────────────┤
+│    [Icon]     │    [Icon]     │    [Icon]      │
+│   Feature 1   │   Feature 2   │   Feature 3    │
+│  Description  │  Description  │  Description   │
+└───────────────┴───────────────┴────────────────┘
+```
+
+## Countdown Section
+
+Display time remaining until the experience starts or ends.
+
+### Countdown Elements
+
+| Element      | Required | Description                           |
+| ------------ | -------- | ------------------------------------- |
+| Title        | No       | "Launching in..." or similar          |
+| Timer        | Yes      | Days, hours, minutes, seconds display |
+| Target Date  | Yes      | When the countdown ends               |
+| End Behavior | Yes      | What happens when timer reaches zero  |
+
+### Countdown Configuration
+
+```typescript
+{
+  targetDate: "2024-03-15T10:00:00Z",  // ISO 8601 format
+  showDays: true,
+  showHours: true,
+  showMinutes: true,
+  showSeconds: true,
+  endBehavior: "hide" | "showMessage" | "redirect"
+}
+```
+
+### Countdown Styling
+
+| Style    | Description                     |
+| -------- | ------------------------------- |
+| Minimal  | Simple numbers with labels      |
+| Cards    | Each unit in a separate card    |
+| Flip     | Animated flip clock style       |
+| Circular | Progress circles around numbers |
+
+```
+┌─────────────────────────────────────────────────┐
+│           Experience Starts In                  │
+│                                                 │
+│    ┌────┐  ┌────┐  ┌────┐  ┌────┐             │
+│    │ 02 │  │ 14 │  │ 32 │  │ 45 │             │
+│    │Days│  │Hrs │  │Min │  │Sec │             │
+│    └────┘  └────┘  └────┘  └────┘             │
+│                                                 │
+└─────────────────────────────────────────────────┘
+```
+
+## Testimonial Section
+
+Build trust with customer quotes and social proof.
+
+### Testimonial Elements
+
+| Element      | Required | Description               |
+| ------------ | -------- | ------------------------- |
+| Quote        | Yes      | Customer testimonial text |
+| Author Name  | Yes      | Who said it               |
+| Author Title | No       | Role, company, or context |
+| Author Image | No       | Profile photo             |
+| Rating       | No       | Star rating (1-5)         |
+
+### Testimonial Variants
+
+| Variant  | Description                | Best For              |
+| -------- | -------------------------- | --------------------- |
+| Single   | One prominent quote        | Hero testimonials     |
+| Carousel | Rotating quotes            | Multiple testimonials |
+| Grid     | 2-3 quotes visible         | Social proof density  |
+| Video    | Embedded video testimonial | High-impact proof     |
+
+```
+┌─────────────────────────────────────────────────┐
+│                                                 │
+│  "This experience was incredible. The queue     │
+│   system was fair and the checkout was          │
+│   seamless. Got my limited edition!"            │
+│                                                 │
+│         [Photo] Jane Smith                      │
+│                 Verified Customer               │
+│                 ★★★★★                           │
+│                                                 │
+└─────────────────────────────────────────────────┘
+```
+
+## Gallery Section
+
+Display product images or visual content.
+
+### Gallery Elements
+
+| Element  | Required | Description             |
+| -------- | -------- | ----------------------- |
+| Images   | Yes      | 3-12 images recommended |
+| Captions | No       | Text below each image   |
+| Lightbox | No       | Click to enlarge        |
+
+### Gallery Layouts
+
+| Layout   | Images | Description             |
+| -------- | ------ | ----------------------- |
+| Grid     | 4-12   | Equal-sized thumbnails  |
+| Masonry  | 3-9    | Variable height images  |
+| Carousel | Any    | Horizontal scroll/swipe |
+| Featured | 1+3    | One large, others small |
+
+### Image Requirements
+
+| Property     | Recommended               |
+| ------------ | ------------------------- |
+| Format       | WebP, JPG, PNG            |
+| Max Size     | 2MB per image             |
+| Aspect Ratio | Consistent within gallery |
+| Resolution   | 2x for retina displays    |
+
+## Stats Section
+
+Showcase impressive numbers and achievements.
+
+### Stats Elements
+
+| Element    | Required | Description                |
+| ---------- | -------- | -------------------------- |
+| Stat Value | Yes      | The number                 |
+| Stat Label | Yes      | What the number represents |
+| Icon       | No       | Visual accent              |
+| Animation  | No       | Count-up animation         |
+
+### Stats Configuration
+
+```typescript
+{
+  stats: [
+    { value: "10K+", label: "Happy Customers" },
+    { value: "99%", label: "Success Rate" },
+    { value: "24/7", label: "Support" },
+    { value: "50+", label: "Countries" }
+  ],
+  layout: "horizontal" | "grid",
+  animated: true
+}
+```
+
+```
+┌─────────────────────────────────────────────────┐
+│                                                 │
+│    10K+           99%           24/7           │
+│   Customers    Success Rate    Support          │
+│                                                 │
+└─────────────────────────────────────────────────┘
+```
+
+## Video Section
+
+Embed video content to explain or demonstrate.
+
+### Video Elements
+
+| Element      | Required | Description               |
+| ------------ | -------- | ------------------------- |
+| Video Source | Yes      | YouTube, Vimeo, or hosted |
+| Thumbnail    | No       | Preview image before play |
+| Title        | No       | Section heading           |
+| Description  | No       | Supporting text           |
+
+### Video Sources
+
+| Source  | Support               |
+| ------- | --------------------- |
+| YouTube | Embed URL or video ID |
+| Vimeo   | Embed URL or video ID |
+| Direct  | MP4, WebM URLs        |
+
+### Video Settings
+
+| Setting  | Options                       |
+| -------- | ----------------------------- |
+| Autoplay | Off (recommended), On (muted) |
+| Controls | Show, Hide                    |
+| Loop     | Yes, No                       |
+| Muted    | Yes, No                       |
+
+## FAQ Section
+
+Answer common questions to reduce support load.
+
+### FAQ Elements
+
+| Element       | Required | Description                  |
+| ------------- | -------- | ---------------------------- |
+| Section Title | No       | "Frequently Asked Questions" |
+| Questions     | Yes      | 3-10 Q&A pairs               |
+
+### FAQ Structure
+
+Each FAQ item includes:
+
+- **Question** - Clear, concise question
+- **Answer** - Detailed response (supports markdown)
+
+### FAQ Variants
+
+| Variant   | Description                   |
+| --------- | ----------------------------- |
+| Accordion | Click to expand (recommended) |
+| Open      | All answers visible           |
+| Tabbed    | Questions as tabs             |
+
+```
+┌─────────────────────────────────────────────────┐
+│  Frequently Asked Questions                     │
+├─────────────────────────────────────────────────┤
+│  ▶ How does the queue work?                    │
+├─────────────────────────────────────────────────┤
+│  ▶ What happens if I lose my position?         │
+├─────────────────────────────────────────────────┤
+│  ▶ Can I transfer my spot to someone else?     │
+└─────────────────────────────────────────────────┘
+```
+
+## CTA Section
+
+Drive final conversion with a strong call-to-action.
+
+### CTA Elements
+
+| Element          | Required | Description               |
+| ---------------- | -------- | ------------------------- |
+| Headline         | Yes      | Action-oriented text      |
+| Subheadline      | No       | Supporting message        |
+| Primary Button   | Yes      | Main CTA                  |
+| Secondary Button | No       | Alternative action        |
+| Background       | No       | Color, gradient, or image |
+
+### CTA Best Practices
+
+- Use action verbs ("Join Now", "Get Started")
+- Create urgency when appropriate
+- Ensure button is highly visible
+- Keep it simple - one primary action
+
+```
+┌─────────────────────────────────────────────────┐
+│  ┌─────────────────────────────────────────┐   │
+│  │                                         │   │
+│  │         Ready to Get Started?           │   │
+│  │                                         │   │
+│  │   Join thousands who have already       │   │
+│  │   secured their spot.                   │   │
+│  │                                         │   │
+│  │        [ Join the Queue ]               │   │
+│  │                                         │   │
+│  └─────────────────────────────────────────┘   │
+└─────────────────────────────────────────────────┘
+```
+
+## Experience Widget Block
+
+This special block automatically displays the appropriate Fanfare widget based on your experience type.
+
+### Widget Auto-Configuration
+
+The widget automatically adjusts for:
+
+| Experience Type | Widget Display                          |
+| --------------- | --------------------------------------- |
+| Queue           | Position indicator, estimated wait time |
+| Draw            | Entry form, status display              |
+| Auction         | Bidding interface, current bid          |
+| Timed Release   | Countdown, add-to-cart button           |
+
+### Widget Placement
+
+<Tip>
+  Place the experience widget after your hero and key content, but before the FAQ and final CTA. Visitors should
+  understand what they're joining before seeing the widget.
+</Tip>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Forms" icon="rectangle-list" href="/landing-pages/customization/forms">
+    Add signup and contact forms
+  </Card>
+  <Card title="Countdown Timer" icon="clock" href="/landing-pages/customization/countdown">
+    Configure countdown displays
+  </Card>
+  <Card title="Media" icon="image" href="/landing-pages/customization/media">
+    Add images and videos
+  </Card>
+  <Card title="Templates" icon="clone" href="/landing-pages/templates/gallery">
+    Start from pre-built designs
+  </Card>
+</CardGroup>

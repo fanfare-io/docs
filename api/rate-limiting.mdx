@@ -1,0 +1,279 @@
+---
+title: Rate Limiting
+description: Rate limits and quotas for the Fanfare API
+---
+
+# Rate Limiting
+
+Fanfare implements rate limiting to ensure fair usage and maintain service stability for all customers.
+
+## Rate Limit Types
+
+### Per-Organization Limits
+
+Rate limits are applied at the organization level, shared across all API keys for that organization.
+
+### Per-Endpoint Limits
+
+Some endpoints have specific rate limits based on their resource intensity:
+
+| Endpoint Category            | Limit         | Window   |
+| ---------------------------- | ------------- | -------- |
+| Authentication (OTP request) | 10 requests   | 1 minute |
+| External Authorization       | 100 requests  | 1 minute |
+| Queue Entry                  | 1000 requests | 1 minute |
+| Auction Bids                 | 500 requests  | 1 minute |
+| Draw Entry                   | 1000 requests | 1 minute |
+| Admin API (general)          | 1000 requests | 1 minute |
+| Analytics Query              | 100 requests  | 1 minute |
+
+## Rate Limit Headers
+
+Every API response includes rate limit information in the headers:
+
+```http
+HTTP/1.1 200 OK
+X-RateLimit-Limit: 1000
+X-RateLimit-Remaining: 999
+X-RateLimit-Reset: 1701424860
+```
+
+| Header                  | Description                              |
+| ----------------------- | ---------------------------------------- |
+| `X-RateLimit-Limit`     | Maximum requests allowed in the window   |
+| `X-RateLimit-Remaining` | Remaining requests in the current window |
+| `X-RateLimit-Reset`     | Unix timestamp when the window resets    |
+
+## Rate Limit Exceeded Response
+
+When you exceed the rate limit, the API returns a `429 Too Many Requests` response:
+
+```http
+HTTP/1.1 429 Too Many Requests
+Retry-After: 30
+X-RateLimit-Limit: 1000
+X-RateLimit-Remaining: 0
+X-RateLimit-Reset: 1701424860
+Content-Type: application/json
+
+{
+  "error": "Rate limit exceeded",
+  "retryAfter": 30
+}
+```
+
+### Retry-After Header
+
+The `Retry-After` header indicates when you can retry:
+
+- **Numeric value**: Seconds to wait before retrying
+- **HTTP date**: Timestamp when you can retry
+
+## Handling Rate Limits
+
+### Basic Retry Logic
+
+```javascript
+async function apiCallWithRetry(url, options, maxRetries = 3) {
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    const response = await fetch(url, options);
+
+    if (response.status === 429) {
+      const retryAfter = response.headers.get("Retry-After");
+      const waitTime = retryAfter ? parseInt(retryAfter, 10) * 1000 : 1000 * Math.pow(2, attempt);
+
+      console.log(`Rate limited. Waiting ${waitTime}ms before retry...`);
+      await new Promise((resolve) => setTimeout(resolve, waitTime));
+      continue;
+    }
+
+    return response;
+  }
+
+  throw new Error("Max retries exceeded");
+}
+```
+
+### Proactive Rate Limit Tracking
+
+```javascript
+class RateLimitTracker {
+  constructor() {
+    this.remaining = Infinity;
+    this.resetTime = 0;
+  }
+
+  update(headers) {
+    this.remaining = parseInt(headers.get("X-RateLimit-Remaining") || "0", 10);
+    this.resetTime = parseInt(headers.get("X-RateLimit-Reset") || "0", 10) * 1000;
+  }
+
+  async waitIfNeeded() {
+    if (this.remaining <= 0 && Date.now() < this.resetTime) {
+      const waitTime = this.resetTime - Date.now();
+      console.log(`Approaching rate limit. Waiting ${waitTime}ms...`);
+      await new Promise((resolve) => setTimeout(resolve, waitTime));
+    }
+  }
+}
+```
+
+### Request Queue with Rate Limiting
+
+```javascript
+class RateLimitedQueue {
+  constructor(requestsPerMinute = 1000) {
+    this.queue = [];
+    this.processing = false;
+    this.interval = 60000 / requestsPerMinute;
+  }
+
+  async add(request) {
+    return new Promise((resolve, reject) => {
+      this.queue.push({ request, resolve, reject });
+      this.process();
+    });
+  }
+
+  async process() {
+    if (this.processing || this.queue.length === 0) return;
+    this.processing = true;
+
+    while (this.queue.length > 0) {
+      const { request, resolve, reject } = this.queue.shift();
+      try {
+        const result = await request();
+        resolve(result);
+      } catch (error) {
+        reject(error);
+      }
+      await new Promise((r) => setTimeout(r, this.interval));
+    }
+
+    this.processing = false;
+  }
+}
+```
+
+## Burst Limits
+
+In addition to per-minute limits, Fanfare implements burst limits to prevent sudden spikes:
+
+| Endpoint Category | Burst Limit  | Burst Window |
+| ----------------- | ------------ | ------------ |
+| Queue Entry       | 100 requests | 1 second     |
+| Auction Bids      | 50 requests  | 1 second     |
+| Draw Entry        | 100 requests | 1 second     |
+
+Exceeding burst limits returns the same `429` response.
+
+## Best Practices
+
+### 1. Implement Exponential Backoff
+
+```javascript
+function getBackoffDelay(attempt, baseDelay = 1000) {
+  return Math.min(baseDelay * Math.pow(2, attempt), 30000);
+}
+```
+
+### 2. Use Batch Endpoints
+
+Instead of making individual requests, use batch endpoints where available:
+
+```http
+POST /api/v1/consumers/batch
+Content-Type: application/json
+
+{
+  "consumers": [
+    { "email": "user1@example.com" },
+    { "email": "user2@example.com" },
+    { "email": "user3@example.com" }
+  ]
+}
+```
+
+### 3. Cache Responses
+
+Cache read responses to reduce API calls:
+
+```javascript
+const cache = new Map();
+
+async function getCachedData(key, fetchFn, ttlMs = 60000) {
+  const cached = cache.get(key);
+  if (cached && Date.now() < cached.expiresAt) {
+    return cached.data;
+  }
+
+  const data = await fetchFn();
+  cache.set(key, { data, expiresAt: Date.now() + ttlMs });
+  return data;
+}
+```
+
+### 4. Monitor Rate Limit Usage
+
+Track your rate limit consumption to identify patterns:
+
+```javascript
+function logRateLimitUsage(response) {
+  const limit = response.headers.get("X-RateLimit-Limit");
+  const remaining = response.headers.get("X-RateLimit-Remaining");
+  const usage = ((limit - remaining) / limit) * 100;
+
+  if (usage > 80) {
+    console.warn(`High rate limit usage: ${usage.toFixed(1)}%`);
+  }
+}
+```
+
+### 5. Distribute Load Over Time
+
+For bulk operations, spread requests over time:
+
+```javascript
+async function processBulkWithDelay(items, processItem, delayMs = 100) {
+  for (const item of items) {
+    await processItem(item);
+    await new Promise((r) => setTimeout(r, delayMs));
+  }
+}
+```
+
+## Plan-Based Limits
+
+Rate limits may vary by subscription plan:
+
+| Plan       | Admin API | Consumer API | Analytics |
+| ---------- | --------- | ------------ | --------- |
+| Starter    | 500/min   | 2000/min     | 50/min    |
+| Growth     | 1000/min  | 5000/min     | 100/min   |
+| Enterprise | Custom    | Custom       | Custom    |
+
+Contact sales for Enterprise rate limit customization.
+
+## Rate Limit Exemptions
+
+Certain endpoints are exempt from standard rate limits:
+
+- Health check endpoints (`/health`)
+- OpenAPI documentation endpoints (`/openapi.json`)
+- Webhook delivery (outbound)
+
+## Monitoring and Alerts
+
+Use the Fanfare dashboard to:
+
+- View real-time rate limit usage
+- Set up alerts for approaching limits
+- Analyze historical usage patterns
+
+## Need Higher Limits?
+
+If your use case requires higher rate limits:
+
+1. Review if batch endpoints can reduce request volume
+2. Implement caching for read operations
+3. Contact support for Enterprise plan options

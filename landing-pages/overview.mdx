@@ -1,0 +1,169 @@
+---
+title: "Landing Pages"
+description: "Create dedicated landing pages for your experiences without writing code"
+---
+
+{/* TODO: MISSING_FUNCTIONALITY
+Feature: Full landing page builder UI
+Expected behavior: Visual editor integrated into admin dashboard for creating and managing landing pages
+Current state: Database schema and data models exist; WYSIWYG editor prototypes in exploration phase
+Blocking: false - Core infrastructure is in place
+*/}
+
+<Note>
+**Early Access Feature**
+
+Landing Pages is currently in development. The core infrastructure is in place, and we are actively building the visual editor experience. This documentation reflects both current capabilities and planned functionality.
+
+</Note>
+
+## What are Landing Pages?
+
+Landing Pages allow you to create dedicated, branded web pages for your experiences without needing a developer or existing website. Each landing page is automatically connected to an experience and includes the appropriate consumer-facing widgets (queue position, draw entry, auction bidding, etc.).
+
+### When to Use Landing Pages
+
+| Scenario                               | Recommendation                                                          |
+| -------------------------------------- | ----------------------------------------------------------------------- |
+| No existing website                    | Landing Pages                                                           |
+| Quick campaign launch (under 24 hours) | Landing Pages                                                           |
+| Event-specific one-off experiences     | Landing Pages                                                           |
+| Full brand control needed              | [SDK Integration](/sdk/overview)                                        |
+| Complex checkout flow                  | [SDK](/sdk/overview) or [Shopify App](/integrations/e-commerce/shopify) |
+| Permanent storefront feature           | [SDK Integration](/sdk/overview)                                        |
+
+### Key Benefits
+
+- **No code required** - Visual editor for design and content
+- **Instant deployment** - Publish changes immediately
+- **Experience integration** - Widgets automatically configured for your distribution type
+- **Mobile responsive** - All templates adapt to any screen size
+- **Brand consistent** - Applies your organization's brand theme
+
+## Landing Page Architecture
+
+Landing pages in Fanfare are built on a flexible creative document system that supports multiple editor types and output formats.
+
+```
+Organization Brand Theme
+         ↓
+    Experience Theme Overrides
+         ↓
+    Landing Page Creative Document
+         ↓
+    Rendered HTML (served to visitors)
+```
+
+### Creative Document Model
+
+Each landing page stores its design as a JSON document that includes:
+
+- **Schema version** - For renderer compatibility
+- **Editor type** - Which editor created the design (section builder, artboard, etc.)
+- **Theme overrides** - Page-specific brand customizations
+- **Body content** - The actual page structure and content
+
+This architecture allows you to:
+
+- Start from templates and customize
+- Override organization branding per-page
+- Preview changes before publishing
+- Maintain draft and published versions
+
+## Current Capabilities
+
+### What Works Today
+
+<CardGroup cols={2}>
+  <Card title="Database Infrastructure" icon="database">
+    Full schema support for landing pages with draft/published status, slugs, SEO metadata, and creative documents.
+  </Card>
+  <Card title="Creative Document System" icon="file-code">
+    Flexible JSON-based design storage that supports multiple editor types and theme inheritance.
+  </Card>
+  <Card title="Editor Prototypes" icon="palette">
+    Multiple WYSIWYG editor variants in development: section builder, layered artboard, and more.
+  </Card>
+  <Card title="Theme Integration" icon="paintbrush">
+    Organization brand themes flow through to landing pages with per-page override support.
+  </Card>
+</CardGroup>
+
+### Coming Soon
+
+<CardGroup cols={2}>
+  <Card title="Visual Editor" icon="wand-magic-sparkles">
+    Drag-and-drop landing page builder integrated into the admin dashboard.
+  </Card>
+  <Card title="Template Gallery" icon="grid-2">
+    Pre-built templates for product drops, raffles, auctions, and waitlists.
+  </Card>
+  <Card title="Custom Domains" icon="globe">
+    Host landing pages on your own domain with SSL.
+  </Card>
+  <Card title="Analytics" icon="chart-line">
+    Track page views, engagement, and conversion metrics.
+  </Card>
+</CardGroup>
+
+## How Landing Pages Relate to Experiences
+
+Every landing page is connected to a single experience. The page automatically:
+
+1. **Displays the appropriate widget** - Queue, draw, auction, or timed release interface
+2. **Inherits experience configuration** - Timing, capacity, access rules
+3. **Applies experience theme** - Colors, fonts, and branding from experience settings
+4. **Routes consumers correctly** - Handles authentication and session management
+
+```
+Experience
+├── Sequences (timing and phases)
+├── Distributions (queue, draw, auction)
+├── Theme settings
+└── Landing Page ← connected
+    ├── URL slug
+    ├── Creative document
+    ├── SEO metadata
+    └── Publish status
+```
+
+## Alternative Approaches
+
+If Landing Pages don't fit your needs, consider these alternatives:
+
+### SDK Integration
+
+For full control over the consumer experience, use the [Fanfare SDK](/sdk/overview) to embed widgets directly in your existing website or application.
+
+```tsx
+import { FanfareProvider, ExperienceWidget } from "@waitify-io/fanfare-sdk-react";
+
+function App() {
+  return (
+    <FanfareProvider config={{ organizationId: "...", publishableKey: "..." }}>
+      <ExperienceWidget experienceId="exp_..." />
+    </FanfareProvider>
+  );
+}
+```
+
+### Shopify Integration
+
+For Shopify stores, the [Fanfare Shopify App](/integrations/e-commerce/shopify) provides native integration without code.
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Getting Started" icon="rocket" href="/landing-pages/getting-started">
+    Create your first landing page
+  </Card>
+  <Card title="Customization" icon="sliders" href="/landing-pages/customization/branding">
+    Brand and style your pages
+  </Card>
+  <Card title="Templates" icon="clone" href="/landing-pages/templates/gallery">
+    Browse available templates
+  </Card>
+  <Card title="SDK Alternative" icon="code" href="/sdk/overview">
+    Build custom integrations instead
+  </Card>
+</CardGroup>

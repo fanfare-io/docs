@@ -1,0 +1,372 @@
+---
+title: "Custom Templates"
+description: "Create and manage reusable landing page templates"
+---
+
+{/* TODO: MISSING_FUNCTIONALITY
+Feature: Custom template creation and management
+Expected behavior: Save landing page designs as reusable templates
+Current state: Creative design library schema exists; UI not implemented
+Blocking: true - Cannot create or save custom templates yet
+*/}
+
+<Note>
+**Coming Soon**
+
+Custom template functionality is planned for a future release. The underlying creative design library infrastructure is in place.
+
+</Note>
+
+## Custom Templates Overview
+
+Custom templates allow you to:
+
+- Save successful landing page designs for reuse
+- Create organization-specific templates
+- Maintain brand consistency across experiences
+- Speed up landing page creation
+
+## Template Architecture
+
+The template system is built on the creative design library:
+
+```
+Creative Design Library
+├── Global Templates (Fanfare-provided)
+├── Organization Templates (your custom templates)
+└── Page Instances (individual landing pages)
+```
+
+### How Templates Work
+
+```
+Template (reusable)
+       ↓
+    Clone
+       ↓
+Landing Page (instance)
+       ↓
+   Customize
+       ↓
+   Publish
+```
+
+Changes to templates don't affect existing landing pages - they're independent copies.
+
+## Creating Custom Templates (Coming Soon)
+
+{/* TODO: MISSING_FUNCTIONALITY
+Feature: Save as template functionality
+Expected behavior: Save current landing page design as reusable template
+Current state: Planned feature
+Blocking: true
+*/}
+
+### From Existing Page
+
+1. Open a published landing page
+2. Click **Save as Template**
+3. Enter template name and description
+4. Choose visibility (personal/organization)
+5. Save template
+
+### From Scratch
+
+1. Create new landing page
+2. Design your template
+3. Save as template before adding experience-specific content
+4. Use placeholders for dynamic content
+
+### Template Properties
+
+| Property    | Description                   |
+| ----------- | ----------------------------- |
+| Name        | Template identifier           |
+| Description | Use case and contents         |
+| Thumbnail   | Preview image                 |
+| Category    | Organization category         |
+| Tags        | Searchable tags               |
+| Visibility  | Personal or organization-wide |
+
+## Template Content
+
+### Static Content
+
+Content that remains the same across uses:
+
+- Brand logo placement
+- Standard header/footer
+- Legal disclaimers
+- Social links
+
+### Placeholder Content
+
+Content to be replaced per-use:
+
+- Headlines (marked as editable)
+- Product images
+- Feature descriptions
+- Dates and times
+
+### Dynamic Bindings
+
+Content that updates automatically:
+
+- Experience name
+- Experience dates
+- Countdown to start
+- Current status
+
+## Managing Templates
+
+### Organization Template Library
+
+{/* TODO: MISSING_FUNCTIONALITY
+Feature: Template library management UI
+Expected behavior: Browse, edit, delete organization templates
+Current state: Planned feature
+Blocking: true
+*/}
+
+View and manage your organization's templates:
+
+```
+┌─────────────────────────────────────────────────────────┐
+│  Organization Templates                                 │
+│                                                         │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐    │
+│  │ [Thumbnail] │  │ [Thumbnail] │  │ [Thumbnail] │    │
+│  │             │  │             │  │             │    │
+│  │ Product     │  │ VIP Event   │  │ Holiday     │    │
+│  │ Launch      │  │ Template    │  │ Sale        │    │
+│  │             │  │             │  │             │    │
+│  │ 12 uses     │  │ 5 uses      │  │ 3 uses      │    │
+│  └─────────────┘  └─────────────┘  └─────────────┘    │
+│                                                         │
+│  + Create Template                                      │
+│                                                         │
+└─────────────────────────────────────────────────────────┘
+```
+
+### Template Actions
+
+| Action    | Description                            |
+| --------- | -------------------------------------- |
+| Edit      | Modify template design                 |
+| Duplicate | Create copy for variations             |
+| Delete    | Remove (doesn't affect existing pages) |
+| Share     | Share with team members                |
+| Export    | Download template JSON                 |
+
+### Template Versioning
+
+Track template changes over time:
+
+| Version | Date         | Changes              |
+| ------- | ------------ | -------------------- |
+| v3      | Mar 15, 2024 | Updated hero section |
+| v2      | Feb 1, 2024  | Added FAQ section    |
+| v1      | Jan 10, 2024 | Initial creation     |
+
+## Template Categories
+
+Organize templates by category:
+
+| Category         | Example Templates                       |
+| ---------------- | --------------------------------------- |
+| Product Launches | Standard drop, Premium drop, Flash sale |
+| Events           | Ticket release, Virtual event, In-store |
+| Campaigns        | Holiday, Seasonal, Partnership          |
+| Waitlists        | Pre-launch, Beta signup, Interest       |
+
+## Sharing Templates
+
+### Within Organization
+
+All organization templates are available to team members with appropriate permissions.
+
+### Template Permissions
+
+| Role   | Capabilities                       |
+| ------ | ---------------------------------- |
+| Admin  | Create, edit, delete all templates |
+| Editor | Create personal, edit own, use all |
+| Viewer | Use templates only                 |
+
+### Exporting Templates
+
+Export templates for backup or sharing:
+
+```typescript
+// Export template as JSON
+const templateExport = {
+  name: "Product Launch Template",
+  version: "1.0.0",
+  creativeDocument: {
+    schemaVersion: 1,
+    kind: "landing-page",
+    editor: "section-builder",
+    body: {
+      // Template sections
+    },
+  },
+  metadata: {
+    description: "Standard product launch template",
+    tags: ["product", "launch", "queue"],
+  },
+};
+```
+
+### Importing Templates
+
+Import templates from JSON:
+
+```typescript
+// Import endpoint (coming soon)
+await adminApi.templates.import({
+  template: templateJson,
+  organizationId: "org_...",
+});
+```
+
+## Template Best Practices
+
+### Design for Reuse
+
+| Do                        | Don't                          |
+| ------------------------- | ------------------------------ |
+| Use placeholder content   | Include specific product names |
+| Apply brand theme         | Hard-code colors               |
+| Include common sections   | Over-customize for one use     |
+| Document template purpose | Leave unnamed                  |
+
+### Placeholder Strategy
+
+Use clear placeholders that are easy to identify:
+
+```
+[PRODUCT NAME]
+[HERO IMAGE]
+[LAUNCH DATE]
+[FEATURE 1 TITLE]
+[FEATURE 1 DESCRIPTION]
+```
+
+### Section Library
+
+Build templates from reusable sections:
+
+1. Create section variations (Hero A, Hero B, Hero C)
+2. Document each variation's use case
+3. Combine sections into full templates
+4. Test across different content
+
+## Template Inheritance
+
+{/* TODO: MISSING_FUNCTIONALITY
+Feature: Template inheritance/extension
+Expected behavior: Create templates that extend base templates
+Current state: Conceptual; not implemented
+Blocking: true
+*/}
+
+Future capability: Template inheritance
+
+```
+Base Template (brand standards)
+       ↓
+Product Template (extends base)
+       ↓
+Sneaker Drop Template (extends product)
+       ↓
+Landing Page Instance
+```
+
+## Current Workarounds
+
+### Manual Template Creation
+
+Save template designs as JSON files:
+
+```bash
+# Export current page design
+# Copy from editor output drawer
+# Save to templates/product-launch.json
+```
+
+### Page Duplication
+
+Duplicate existing pages for new experiences:
+
+1. Create a "template" experience with landing page
+2. Clone the experience for each new launch
+3. Customize the cloned landing page
+
+### Design System Documentation
+
+Maintain a design system document:
+
+```markdown
+# Brand Landing Page Standards
+
+## Hero Section
+
+- Headline: 48px, bold, primary color
+- Subheadline: 18px, regular, muted color
+- CTA: Primary button, "Join Queue" default
+
+## Features Section
+
+- 3-column layout
+- Icon + Title + Description
+- Consistent spacing: 32px gap
+
+## Color Usage
+
+- Hero background: Brand gradient
+- Section backgrounds: Alternate white/gray
+- CTAs: Primary color
+```
+
+## Template API (Coming Soon)
+
+Programmatic template management:
+
+```typescript
+// List organization templates
+const templates = await adminApi.templates.list({
+  organizationId: "org_...",
+  category: "product-launch",
+});
+
+// Create template from page
+const template = await adminApi.templates.createFromPage({
+  landingPageId: "lp_...",
+  name: "Summer Drop Template",
+  description: "Template for summer product releases",
+});
+
+// Create page from template
+const page = await adminApi.landingPages.createFromTemplate({
+  templateId: "tpl_...",
+  experienceId: "exp_...",
+  slug: "summer-2024",
+});
+```
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Template Gallery" icon="grid-2" href="/landing-pages/templates/gallery">
+    Browse available templates
+  </Card>
+  <Card title="Editor Guide" icon="palette" href="/landing-pages/customization/editor">
+    Build page designs
+  </Card>
+  <Card title="Branding" icon="paintbrush" href="/landing-pages/customization/branding">
+    Apply brand consistency
+  </Card>
+  <Card title="Publishing" icon="rocket" href="/landing-pages/publishing/preview">
+    Publish your pages
+  </Card>
+</CardGroup>

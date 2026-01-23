@@ -1,0 +1,413 @@
+---
+title: Webhook Debugging
+description: Troubleshoot webhook delivery and processing issues.
+---
+
+# Webhook Debugging
+
+This guide helps you troubleshoot issues with webhook delivery and processing.
+
+## How Webhooks Work
+
+Fanfare sends HTTP POST requests to your configured endpoint when events occur:
+
+```
+Fanfare Platform  -->  Your Webhook Endpoint
+     Event              POST /webhooks/fanfare
+                        Headers + JSON Body
+```
+
+## Common Issues
+
+### Webhooks Not Being Received
+
+**Symptoms**: Your endpoint isn't receiving any webhook requests.
+
+**Checklist**:
+
+1. **Verify webhook URL is correct**
+   - Check for typos in the URL
+   - Ensure the URL is publicly accessible
+   - HTTPS is required for production
+
+2. **Check endpoint accessibility**
+
+   ```bash
+   # Test your endpoint is reachable
+   curl -X POST https://your-site.com/webhooks/fanfare \
+     -H "Content-Type: application/json" \
+     -d '{"test": true}'
+   ```
+
+3. **Verify webhook is enabled**
+   - Check webhook configuration in the dashboard
+   - Ensure the webhook is active, not paused
+
+4. **Check firewall rules**
+   - Fanfare sends requests from specific IP ranges
+   - Contact support for current IP allowlist
+
+### Signature Verification Failing
+
+**Symptoms**: Webhook arrives but signature verification fails.
+
+**Example Verification (Node.js)**:
+
+```typescript
+import crypto from "crypto";
+
+function verifyWebhookSignature(payload: string, signature: string, secret: string): boolean {
+  const expectedSignature = crypto.createHmac("sha256", secret).update(payload).digest("hex");
+
+  return crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expectedSignature));
+}
+
+// In your webhook handler
+app.post("/webhooks/fanfare", (req, res) => {
+  const signature = req.headers["x-fanfare-signature"];
+  const rawBody = req.rawBody; // Must be raw string, not parsed JSON
+
+  if (!verifyWebhookSignature(rawBody, signature, WEBHOOK_SECRET)) {
+    return res.status(400).json({ error: "Invalid signature" });
+  }
+
+  // Process webhook...
+});
+```
+
+**Common Causes**:
+
+1. **Using parsed body instead of raw body**
+
+   ```typescript
+   // Wrong: JSON parsing changes whitespace
+   const body = JSON.stringify(req.body);
+
+   // Correct: Use raw body as received
+   const body = req.rawBody;
+   ```
+
+2. **Wrong webhook secret**
+   - Each webhook endpoint has its own secret
+   - Secrets are different between test and live modes
+
+3. **Middleware modifying the request**
+   ```typescript
+   // Express: Capture raw body before JSON parsing
+   app.use("/webhooks", express.raw({ type: "application/json" }));
+   ```
+
+### Webhook Timeouts
+
+**Symptoms**: Webhooks fail with timeout errors.
+
+**Requirements**:
+
+- Respond within 30 seconds
+- Return 2xx status code for success
+
+**Solution**: Process asynchronously
+
+```typescript
+// Bad: Long processing blocks response
+app.post("/webhooks/fanfare", async (req, res) => {
+  await processOrder(req.body); // Takes 45 seconds
+  res.json({ received: true });
+});
+
+// Good: Acknowledge immediately, process async
+app.post("/webhooks/fanfare", async (req, res) => {
+  // Acknowledge receipt immediately
+  res.json({ received: true });
+
+  // Process in background
+  processOrder(req.body).catch((error) => {
+    console.error("Webhook processing failed:", error);
+  });
+});
+
+// Better: Use a queue
+app.post("/webhooks/fanfare", async (req, res) => {
+  // Queue for processing
+  await messageQueue.publish("webhooks", req.body);
+
+  res.json({ received: true });
+});
+```
+
+### Duplicate Webhook Deliveries
+
+**Symptoms**: Same webhook received multiple times.
+
+**Causes**:
+
+- Your endpoint returned non-2xx status
+- Network issues caused retry
+- Your endpoint took too long to respond
+
+**Solution**: Implement idempotency
+
+```typescript
+const processedWebhooks = new Set<string>();
+
+app.post("/webhooks/fanfare", async (req, res) => {
+  const eventId = req.headers["x-fanfare-event-id"];
+
+  // Check if already processed
+  if (processedWebhooks.has(eventId)) {
+    return res.json({ received: true, duplicate: true });
+  }
+
+  // Mark as processed (use database in production)
+  processedWebhooks.add(eventId);
+
+  // Process webhook
+  await processWebhook(req.body);
+
+  res.json({ received: true });
+});
+```
+
+**Production-ready idempotency**:
+
+```typescript
+// Using database for idempotency
+async function processWebhook(eventId: string, payload: unknown) {
+  // Try to insert - will fail if duplicate
+  try {
+    await db.webhookEvents.insert({
+      eventId,
+      payload,
+      status: "processing",
+      receivedAt: new Date(),
+    });
+  } catch (error) {
+    if (error.code === "23505") {
+      // Unique constraint violation - already processed
+      return { duplicate: true };
+    }
+    throw error;
+  }
+
+  // Process the webhook
+  await handleWebhookPayload(payload);
+
+  // Mark as processed
+  await db.webhookEvents.update({
+    where: { eventId },
+    data: { status: "processed" },
+  });
+}
+```
+
+### Wrong Event Types Received
+
+**Symptoms**: Receiving unexpected event types.
+
+**Solution**: Filter events in configuration
+
+```typescript
+// Only subscribe to events you need
+const webhookConfig = {
+  url: "https://your-site.com/webhooks/fanfare",
+  events: ["queue.access_granted", "draw.completed", "order.completed"],
+};
+```
+
+### Webhook Payload Issues
+
+**Symptoms**: Cannot parse or understand webhook payload.
+
+**Debug logging**:
+
+```typescript
+app.post("/webhooks/fanfare", (req, res) => {
+  // Log full webhook for debugging
+  console.log("Webhook received:", {
+    headers: req.headers,
+    body: req.body,
+    rawBody: req.rawBody?.toString(),
+  });
+
+  res.json({ received: true });
+});
+```
+
+**Payload structure**:
+
+```json
+{
+  "id": "evt_abc123",
+  "type": "queue.access_granted",
+  "created": "2024-01-15T10:30:00Z",
+  "data": {
+    "queueId": "queue_xyz",
+    "consumerId": "consumer_123",
+    "handoffToken": "hoff_abc",
+    "expiresAt": "2024-01-15T10:45:00Z"
+  },
+  "organization": {
+    "id": "org_abc",
+    "name": "Your Store"
+  }
+}
+```
+
+## Testing Webhooks
+
+### Local Development
+
+Use a tunneling service to receive webhooks locally:
+
+```bash
+# Using ngrok
+ngrok http 3000
+
+# Using cloudflared
+cloudflared tunnel --url http://localhost:3000
+```
+
+Configure the tunnel URL in your webhook settings.
+
+### Manual Testing
+
+Send test webhooks from the dashboard or use the CLI:
+
+```bash
+# Trigger test webhook
+fanfare webhooks test --endpoint webhook_abc123
+```
+
+### Webhook Log Review
+
+Check webhook delivery history in the dashboard:
+
+1. Go to **Settings > Webhooks**
+2. Select your endpoint
+3. View **Delivery Attempts**
+
+Each attempt shows:
+
+- Request payload
+- Response received
+- Status code
+- Timing information
+
+## Webhook Event Reference
+
+### Queue Events
+
+| Event                    | Description                      |
+| ------------------------ | -------------------------------- |
+| `queue.consumer_entered` | Consumer joined the queue        |
+| `queue.position_updated` | Consumer's position changed      |
+| `queue.access_granted`   | Consumer granted checkout access |
+| `queue.access_expired`   | Consumer's access window expired |
+| `queue.consumer_left`    | Consumer left the queue          |
+
+### Draw Events
+
+| Event                   | Description                    |
+| ----------------------- | ------------------------------ |
+| `draw.consumer_entered` | Consumer registered for draw   |
+| `draw.completed`        | Draw selection completed       |
+| `draw.winner_selected`  | Individual winner notification |
+| `draw.consumer_left`    | Consumer withdrew from draw    |
+
+### Order Events
+
+| Event             | Description         |
+| ----------------- | ------------------- |
+| `order.created`   | Order was created   |
+| `order.completed` | Order was completed |
+| `order.cancelled` | Order was cancelled |
+
+## Error Recovery
+
+### Retry Policy
+
+Fanfare retries failed webhooks with exponential backoff:
+
+| Attempt | Delay      |
+| ------- | ---------- |
+| 1       | Immediate  |
+| 2       | 1 minute   |
+| 3       | 5 minutes  |
+| 4       | 30 minutes |
+| 5       | 2 hours    |
+| 6       | 8 hours    |
+| 7       | 24 hours   |
+
+After 7 failed attempts, the webhook is marked as failed.
+
+### Manual Retry
+
+Retry failed webhooks from the dashboard:
+
+1. Go to webhook delivery history
+2. Find the failed delivery
+3. Click **Retry**
+
+### Webhook Replay
+
+For missed webhooks, use the replay feature:
+
+```bash
+# Replay events from a time range
+fanfare webhooks replay \
+  --endpoint webhook_abc123 \
+  --from 2024-01-15T00:00:00Z \
+  --to 2024-01-15T12:00:00Z
+```
+
+## Best Practices
+
+### Always Respond Quickly
+
+```typescript
+// Acknowledge immediately
+res.status(200).json({ received: true });
+
+// Then process
+```
+
+### Use Idempotency Keys
+
+```typescript
+// Store and check event IDs
+const eventId = req.headers["x-fanfare-event-id"];
+```
+
+### Validate Signatures
+
+```typescript
+// Always verify webhook authenticity
+if (!verifySignature(req)) {
+  return res.status(400).json({ error: "Invalid signature" });
+}
+```
+
+### Handle All Event Types
+
+```typescript
+switch (event.type) {
+  case "queue.access_granted":
+    await handleAccessGranted(event.data);
+    break;
+  // ... other cases
+  default:
+    console.log("Unhandled event type:", event.type);
+}
+```
+
+### Monitor Webhook Health
+
+- Set up alerts for failed webhooks
+- Monitor response times
+- Track success rates
+
+## Related Resources
+
+- [Webhooks Overview](/api/webhooks) - Webhook configuration
+- [API Errors](/resources/troubleshooting/api-errors) - Error reference
+- [Contact Support](/resources/support/contact) - Get help

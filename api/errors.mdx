@@ -1,0 +1,437 @@
+---
+title: Error Handling
+description: Error response format and error codes for the Fanfare API
+---
+
+# Error Handling
+
+The Fanfare API uses conventional HTTP response codes to indicate the success or failure of an API request.
+
+## Error Response Format
+
+All error responses follow a consistent JSON structure:
+
+```json
+{
+  "error": "Error type or message",
+  "message": "Human-readable description (optional)",
+  "details": [
+    {
+      "field": "fieldName",
+      "message": "Field-specific error message"
+    }
+  ]
+}
+```
+
+## HTTP Status Codes
+
+### Success Codes (2xx)
+
+| Code             | Description                                 |
+| ---------------- | ------------------------------------------- |
+| `200 OK`         | The request succeeded                       |
+| `201 Created`    | A new resource was created                  |
+| `204 No Content` | The request succeeded with no response body |
+
+### Client Error Codes (4xx)
+
+| Code                    | Description                                                        |
+| ----------------------- | ------------------------------------------------------------------ |
+| `400 Bad Request`       | The request was malformed or contained invalid data                |
+| `401 Unauthorized`      | Authentication credentials were missing or invalid                 |
+| `403 Forbidden`         | The authenticated user lacks permission for the requested action   |
+| `404 Not Found`         | The requested resource does not exist                              |
+| `409 Conflict`          | The request conflicts with the current state of the resource       |
+| `413 Payload Too Large` | The request body exceeds the maximum allowed size                  |
+| `423 Locked`            | The resource is temporarily unavailable (e.g., queue not yet open) |
+| `429 Too Many Requests` | Rate limit exceeded                                                |
+
+### Server Error Codes (5xx)
+
+| Code                        | Description                                |
+| --------------------------- | ------------------------------------------ |
+| `500 Internal Server Error` | An unexpected error occurred on the server |
+| `503 Service Unavailable`   | The service is temporarily unavailable     |
+
+## Common Error Types
+
+### Authentication Errors
+
+**Missing Authentication**
+
+```http
+HTTP/1.1 401 Unauthorized
+```
+
+```json
+{
+  "error": "Authentication required"
+}
+```
+
+**Invalid Token**
+
+```http
+HTTP/1.1 401 Unauthorized
+```
+
+```json
+{
+  "error": "invalid refresh token"
+}
+```
+
+**Secret Key Required**
+
+```http
+HTTP/1.1 401 Unauthorized
+```
+
+```json
+{
+  "error": "Secret key required"
+}
+```
+
+### Validation Errors
+
+**Field Validation Failed**
+
+```http
+HTTP/1.1 400 Bad Request
+```
+
+```json
+{
+  "error": "Validation failed",
+  "details": [
+    {
+      "field": "email",
+      "message": "Invalid email format"
+    },
+    {
+      "field": "capacity",
+      "message": "Must be a positive integer"
+    }
+  ]
+}
+```
+
+**Missing Required Field**
+
+```http
+HTTP/1.1 400 Bad Request
+```
+
+```json
+{
+  "error": "Validation failed",
+  "details": [
+    {
+      "field": "name",
+      "message": "Required"
+    }
+  ]
+}
+```
+
+**Database Constraint Violation**
+
+```http
+HTTP/1.1 400 Bad Request
+```
+
+```json
+{
+  "error": "Validation failed",
+  "details": [
+    {
+      "field": "slug",
+      "message": "Already taken"
+    }
+  ]
+}
+```
+
+### Resource Errors
+
+**Resource Not Found**
+
+```http
+HTTP/1.1 404 Not Found
+```
+
+```json
+{
+  "error": "Experience not found"
+}
+```
+
+**Resource Conflict**
+
+```http
+HTTP/1.1 409 Conflict
+```
+
+```json
+{
+  "error": "Sync already in progress"
+}
+```
+
+### State Errors
+
+**Queue Not Open**
+
+```http
+HTTP/1.1 423 Locked
+Retry-After: 2024-12-01T09:00:00Z
+```
+
+```json
+{
+  "error": "Queue is not open yet"
+}
+```
+
+**Queue Full**
+
+```http
+HTTP/1.1 429 Too Many Requests
+Retry-After: 30
+```
+
+```json
+{
+  "error": "Queue is full"
+}
+```
+
+**Auction Closed**
+
+```http
+HTTP/1.1 400 Bad Request
+```
+
+```json
+{
+  "error": "Auction is closed"
+}
+```
+
+### OTP Errors
+
+**OTP Expired**
+
+```http
+HTTP/1.1 401 Unauthorized
+```
+
+```json
+{
+  "error": "otp_expired",
+  "message": "Your verification code has expired. Please request a new one."
+}
+```
+
+**Invalid OTP**
+
+```http
+HTTP/1.1 401 Unauthorized
+```
+
+```json
+{
+  "error": "otp_invalid",
+  "message": "Invalid verification code. Please try again."
+}
+```
+
+### Fingerprint Errors
+
+For bot mitigation, some endpoints validate device fingerprints:
+
+**Missing Fingerprint**
+
+```http
+HTTP/1.1 400 Bad Request
+X-Fingerprint-Error: true
+```
+
+```json
+{
+  "error": "FINGERPRINT_REQUIRED",
+  "code": "FP001",
+  "message": "Device fingerprint is required for this action",
+  "support": {
+    "message": "If you need assistance, please contact support with this reference code.",
+    "referenceCode": "ABC123XYZ"
+  }
+}
+```
+
+**Device Mismatch**
+
+```http
+HTTP/1.1 403 Forbidden
+X-Fingerprint-Mismatch: true
+```
+
+```json
+{
+  "valid": false,
+  "error": "DEVICE_MISMATCH",
+  "message": "This access token can only be used on the device that originally entered the queue.",
+  "code": "FP002",
+  "support": {
+    "message": "If you need to switch devices, please contact support with your confirmation code.",
+    "confirmationCode": "DEF456UVW"
+  }
+}
+```
+
+### Rate Limiting Errors
+
+```http
+HTTP/1.1 429 Too Many Requests
+Retry-After: 60
+X-RateLimit-Limit: 100
+X-RateLimit-Remaining: 0
+X-RateLimit-Reset: 1701424860
+```
+
+```json
+{
+  "error": "Rate limit exceeded",
+  "retryAfter": 60
+}
+```
+
+### Order Limit Errors
+
+When a consumer exceeds purchase limits:
+
+```json
+{
+  "status": "DENIED",
+  "denyReason": "ORDER_LIMIT_EXCEEDED",
+  "consumerId": "cons_01HXYZ123456789"
+}
+```
+
+## Error Handling Best Practices
+
+### 1. Check HTTP Status Code First
+
+```javascript
+const response = await fetch(url, options);
+
+if (!response.ok) {
+  const error = await response.json();
+  // Handle based on status code
+  switch (response.status) {
+    case 400:
+      handleValidationError(error);
+      break;
+    case 401:
+      handleAuthError(error);
+      break;
+    case 429:
+      handleRateLimitError(error, response.headers);
+      break;
+    default:
+      handleGenericError(error);
+  }
+}
+```
+
+### 2. Respect Retry-After Headers
+
+```javascript
+if (response.status === 429 || response.status === 423) {
+  const retryAfter = response.headers.get("Retry-After");
+  if (retryAfter) {
+    // Could be seconds or ISO timestamp
+    const delay = isNaN(retryAfter) ? new Date(retryAfter).getTime() - Date.now() : parseInt(retryAfter) * 1000;
+    await sleep(delay);
+    // Retry the request
+  }
+}
+```
+
+### 3. Display User-Friendly Messages
+
+Map error codes to user-friendly messages:
+
+```javascript
+const errorMessages = {
+  otp_expired: "Your code has expired. Please request a new one.",
+  otp_invalid: "That code doesn't look right. Please check and try again.",
+  DEVICE_MISMATCH: "Please use the same device you used to join the queue.",
+  "Queue is full": "Sorry, this queue is currently full. Please try again later.",
+};
+```
+
+### 4. Log Errors for Debugging
+
+Include relevant context in error logs:
+
+```javascript
+console.error("API Error", {
+  status: response.status,
+  error: error.error,
+  details: error.details,
+  requestId: response.headers.get("X-Request-Id"),
+  timestamp: new Date().toISOString(),
+});
+```
+
+## Error Recovery Strategies
+
+### Transient Errors (5xx)
+
+Implement exponential backoff:
+
+```javascript
+async function retryWithBackoff(fn, maxRetries = 3) {
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      return await fn();
+    } catch (error) {
+      if (i === maxRetries - 1) throw error;
+      if (error.status >= 500) {
+        await sleep(Math.pow(2, i) * 1000);
+      } else {
+        throw error; // Don't retry client errors
+      }
+    }
+  }
+}
+```
+
+### Token Expiration
+
+Automatically refresh tokens when expired:
+
+```javascript
+async function apiCall(url, options) {
+  const response = await fetch(url, options);
+
+  if (response.status === 401) {
+    const refreshed = await refreshToken();
+    if (refreshed) {
+      // Retry with new token
+      return fetch(url, {
+        ...options,
+        headers: {
+          ...options.headers,
+          Authorization: `Bearer ${refreshed.accessToken}`,
+        },
+      });
+    }
+  }
+
+  return response;
+}
+```

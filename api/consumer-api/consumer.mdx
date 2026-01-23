@@ -1,0 +1,331 @@
+---
+title: Consumer Identity API
+description: Consumer API endpoints for consumer identity and profile
+---
+
+# Consumer Identity API
+
+Endpoints for managing consumer identity, profile, and active participations.
+
+## Get Current Consumer
+
+Retrieve the current authenticated consumer's profile and all active participations across experiences.
+
+`GET /api/v1/consumers/me`
+
+### Authentication
+
+- Publishable key required
+- Consumer authentication **required**
+
+### Response
+
+```typescript
+interface ConsumerMe {
+  id: string;
+  email: string | null;
+  phone: string | null;
+  fullName: string | null;
+  createdAt: string;
+  active: ActiveParticipations;
+}
+
+interface ActiveParticipations {
+  experiences: Record<string, ExperienceNode>;
+  queues: Record<string, QueueState>;
+  draws: Record<string, DrawState>;
+  auctions: Record<string, AuctionState>;
+  timedReleases: Record<string, TimedReleaseState>;
+  admissions: Record<string, Admission>;
+  journeys: JourneyResume[];
+}
+
+interface JourneyResume {
+  experienceId: string;
+  sequenceId: string;
+  journeyStage: "routed" | "admitted";
+  sequenceStage: "waitlist_entered" | "participating" | "admitted";
+  participation: {
+    type: "waitlist" | "queue" | "draw" | "auction" | "timed_release";
+    id: string;
+    status: string;
+    admissionToken?: string;
+  };
+  admission?: {
+    distributionType: string;
+    distributionId: string;
+    experienceId: string;
+    sequenceId: string;
+    admissionToken: string;
+    admittedAt: string;
+  };
+}
+```
+
+### Example
+
+```bash
+curl -X GET https://consumer.fanfare.io/api/v1/consumers/me \
+  -H "X-Publishable-Key: pk_live_xxxxxxxxxxxx" \
+  -H "Authorization: Bearer eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9..."
+```
+
+**Response:**
+
+```json
+{
+  "id": "cons_01HXYZ123456789",
+  "email": "customer@example.com",
+  "phone": null,
+  "fullName": "John Doe",
+  "createdAt": "2024-11-15T10:00:00Z",
+  "active": {
+    "experiences": {
+      "exp_01HXYZ123456789": {
+        "sequences": {
+          "seq_01HXYZ123456789": {
+            "queue": {
+              "queueId": "queue_01HXYZ123456789",
+              "sequenceId": "seq_01HXYZ123456789",
+              "status": "ADMITTED",
+              "enteredAt": "2024-12-01T09:05:00Z",
+              "admittedAt": "2024-12-01T09:15:00Z",
+              "admissionToken": "eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9..."
+            }
+          }
+        }
+      }
+    },
+    "queues": {
+      "queue_01HXYZ123456789": {
+        "queueId": "queue_01HXYZ123456789",
+        "status": "ADMITTED",
+        "position": 0,
+        "enteredAt": "2024-12-01T09:05:00Z",
+        "admittedAt": "2024-12-01T09:15:00Z",
+        "admissionToken": "eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9..."
+      }
+    },
+    "draws": {},
+    "auctions": {},
+    "timedReleases": {},
+    "admissions": {},
+    "journeys": [
+      {
+        "experienceId": "exp_01HXYZ123456789",
+        "sequenceId": "seq_01HXYZ123456789",
+        "journeyStage": "admitted",
+        "sequenceStage": "admitted",
+        "participation": {
+          "type": "queue",
+          "id": "queue_01HXYZ123456789",
+          "status": "ADMITTED",
+          "admissionToken": "eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9..."
+        },
+        "admission": {
+          "distributionType": "queue",
+          "distributionId": "queue_01HXYZ123456789",
+          "experienceId": "exp_01HXYZ123456789",
+          "sequenceId": "seq_01HXYZ123456789",
+          "admissionToken": "eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9...",
+          "admittedAt": "2024-12-01T09:15:00Z"
+        }
+      }
+    ]
+  }
+}
+```
+
+### Error Responses
+
+| Status | Error                     | Description                                |
+| ------ | ------------------------- | ------------------------------------------ |
+| 401    | `Authentication required` | Missing or invalid consumer authentication |
+| 404    | `Consumer not found`      | Consumer ID does not exist                 |
+
+---
+
+## Get Consumer by ID (Server-Side)
+
+Retrieve a consumer by ID. Requires secret key.
+
+`GET /api/v1/consumers/:id`
+
+### Authentication
+
+- Secret key **required**
+
+### Path Parameters
+
+| Parameter | Type   | Description     |
+| --------- | ------ | --------------- |
+| `id`      | string | The consumer ID |
+
+### Response
+
+```typescript
+interface Consumer {
+  id: string;
+  email: string | null;
+  phone: string | null;
+  fullName: string | null;
+  createdAt: string;
+}
+```
+
+### Example
+
+```bash
+curl -X GET https://consumer.fanfare.io/api/v1/consumers/cons_01HXYZ123456789 \
+  -H "Authorization: Bearer sk_live_xxxxxxxxxxxx"
+```
+
+**Response:**
+
+```json
+{
+  "id": "cons_01HXYZ123456789",
+  "email": "customer@example.com",
+  "phone": "+12025551234",
+  "fullName": "John Doe",
+  "createdAt": "2024-11-15T10:00:00Z"
+}
+```
+
+### Error Responses
+
+| Status | Error                 | Description                   |
+| ------ | --------------------- | ----------------------------- |
+| 401    | `Secret key required` | Missing or invalid secret key |
+| 404    | `Consumer not found`  | Consumer ID does not exist    |
+
+---
+
+## Understanding Active Participations
+
+The `/consumers/me` endpoint returns all active participations, which helps the SDK resume consumer journeys.
+
+### Journey Stages
+
+| Stage      | Description                                                                         |
+| ---------- | ----------------------------------------------------------------------------------- |
+| `routed`   | Consumer has been directed to a distribution (waiting in queue, entered draw, etc.) |
+| `admitted` | Consumer has been admitted and can proceed to checkout                              |
+
+### Sequence Stages
+
+| Stage              | Description                                                          |
+| ------------------ | -------------------------------------------------------------------- |
+| `waitlist_entered` | Consumer is on a waitlist                                            |
+| `participating`    | Consumer is active in a distribution (queued, entered draw, bidding) |
+| `admitted`         | Consumer has been admitted through the distribution                  |
+
+### Using Journeys for SDK Resume
+
+The SDK uses the `journeys` array to automatically resume consumer experiences:
+
+```typescript
+// SDK automatically reads journeys from /consumers/me
+const { journeys } = await fanfare.consumer.getMe();
+
+// Find the most relevant journey
+const activeJourney = journeys.find((j) => j.journeyStage === "admitted");
+
+if (activeJourney?.admission) {
+  // Resume checkout flow
+  fanfare.checkout.resume(activeJourney.admission);
+}
+```
+
+---
+
+## SDK Usage
+
+### React
+
+```typescript
+import { useConsumer } from "@fanfare/sdk-react";
+
+function ProfilePage() {
+  const { consumer, activeJourneys, isLoading, error } = useConsumer();
+
+  if (isLoading) return <Loading />;
+  if (error) return <Error message={error.message} />;
+
+  const admittedJourney = activeJourneys.find(
+    (j) => j.journeyStage === "admitted"
+  );
+
+  return (
+    <div>
+      <h1>Welcome, {consumer?.fullName || "Guest"}</h1>
+      <p>Email: {consumer?.email}</p>
+
+      {admittedJourney && (
+        <div className="alert">
+          <p>You have an active admission!</p>
+          <a href={`/checkout?token=${admittedJourney.admission?.admissionToken}`}>
+            Continue to Checkout
+          </a>
+        </div>
+      )}
+
+      <h2>Your Active Participations</h2>
+      {activeJourneys.map((journey) => (
+        <JourneyCard key={journey.sequenceId} journey={journey} />
+      ))}
+    </div>
+  );
+}
+```
+
+### Direct API Usage
+
+```typescript
+async function getConsumerProfile(accessToken: string) {
+  const response = await fetch("https://consumer.fanfare.io/api/v1/consumers/me", {
+    headers: {
+      "X-Publishable-Key": publishableKey,
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch consumer profile");
+  }
+
+  const data = await response.json();
+
+  return {
+    consumer: {
+      id: data.id,
+      email: data.email,
+      phone: data.phone,
+      fullName: data.fullName,
+    },
+    active: data.active,
+    journeys: data.active.journeys,
+  };
+}
+```
+
+### Server-Side Consumer Lookup
+
+```typescript
+async function lookupConsumer(consumerId: string) {
+  const response = await fetch(`https://consumer.fanfare.io/api/v1/consumers/${consumerId}`, {
+    headers: {
+      Authorization: `Bearer ${process.env.FANFARE_SECRET_KEY}`,
+    },
+  });
+
+  if (!response.ok) {
+    if (response.status === 404) {
+      return null;
+    }
+    throw new Error("Failed to lookup consumer");
+  }
+
+  return response.json();
+}
+```

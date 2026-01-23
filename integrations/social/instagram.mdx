@@ -1,0 +1,407 @@
+---
+title: "Instagram Integration"
+description: "Connect your Instagram Business account to Fanfare for content publishing and insights"
+---
+
+## Overview
+
+The Instagram integration allows you to connect your Instagram Business account to Fanfare. This enables:
+
+- Viewing your Instagram account information and insights
+- Publishing posts directly from Fanfare
+- Accessing recent media and engagement metrics
+- Managing content for experience marketing
+
+<Callout type="info">
+  **Note**: This integration is currently in proof-of-concept (POC) stage. Features are functional but may have limited
+  production use cases.
+</Callout>
+
+## Prerequisites
+
+Before setting up the Instagram integration, you need:
+
+- A Facebook Business Page
+- An Instagram Business or Creator account linked to your Facebook Page
+- Admin access to the Facebook Page
+
+### Account Requirements
+
+The Instagram account must be:
+
+1. **Business or Creator account** - Personal accounts are not supported
+2. **Connected to a Facebook Page** - Required for the Instagram Graph API
+3. **Page admin access** - You must be an admin of the connected Facebook Page
+
+## Setup
+
+### Step 1: Start the Connection Flow
+
+1. Navigate to **Settings** > **Integrations** in Fanfare
+2. Find **Instagram** and click to configure
+3. Click **Connect Instagram**
+
+### Step 2: Authorize with Facebook
+
+1. You'll be redirected to Facebook's OAuth flow
+2. Log in to Facebook (if not already logged in)
+3. Select the Facebook Page with the Instagram account you want to connect
+4. Review and approve the requested permissions:
+   - `pages_show_list` - View your Pages
+   - `pages_read_engagement` - Read Page engagement data
+   - `instagram_basic` - Access Instagram account info
+   - `instagram_manage_insights` - View Instagram insights
+   - `instagram_content_publish` - Publish content to Instagram
+   - `instagram_manage_comments` - Manage Instagram comments
+   - `pages_manage_posts` - Manage Page posts
+
+### Step 3: Verify Connection
+
+After authorization, you'll be redirected back to Fanfare with your Instagram account connected. You should see:
+
+- Your Instagram username
+- Profile picture
+- Follower count
+- Media count
+
+## OAuth Flow
+
+### Authentication Flow
+
+```
+┌─────────────┐     ┌─────────────┐     ┌─────────────┐
+│   Fanfare   │────▶│  Facebook   │────▶│  Instagram  │
+│   Admin     │     │   OAuth     │     │  Graph API  │
+└─────────────┘     └─────────────┘     └─────────────┘
+        │                   │
+        │   Authorization   │
+        │◀──────────────────│
+        │                   │
+        │   Access Token    │
+        │◀──────────────────│
+        │                   │
+        ▼
+┌─────────────┐
+│  Long-lived │
+│    Token    │
+│   (60 days) │
+└─────────────┘
+```
+
+### Token Lifecycle
+
+1. **Short-lived token**: Initial token valid for ~1 hour
+2. **Long-lived token**: Exchanged for 60-day token
+3. **Token refresh**: Automatically refreshed before expiration
+
+### Token Storage
+
+Tokens are stored securely in organization settings:
+
+| Field                        | Description                   |
+| ---------------------------- | ----------------------------- |
+| `accessToken`                | Current access token          |
+| `tokenExpiresAt`             | Expiration timestamp          |
+| `facebookPageId`             | Connected Facebook Page ID    |
+| `instagramBusinessAccountId` | Instagram Business Account ID |
+| `accountUsername`            | Instagram username            |
+
+## Features
+
+### View Account Information
+
+Retrieve your connected Instagram account details:
+
+```bash
+GET /api/instagram/account
+```
+
+**Response:**
+
+```json
+{
+  "id": "17841234567890",
+  "username": "mybrand",
+  "name": "My Brand",
+  "profile_picture_url": "https://...",
+  "followers_count": 10500,
+  "media_count": 245
+}
+```
+
+### Get Recent Media
+
+View recent posts from your Instagram account:
+
+```bash
+GET /api/instagram/media
+```
+
+**Response:**
+
+```json
+[
+  {
+    "id": "17891234567890",
+    "caption": "Check out our new product! #launch",
+    "media_type": "IMAGE",
+    "media_url": "https://...",
+    "timestamp": "2024-06-20T14:30:00Z",
+    "permalink": "https://instagram.com/p/ABC123",
+    "like_count": 234,
+    "comments_count": 45
+  }
+]
+```
+
+### Get Account Insights
+
+Retrieve engagement metrics for your account:
+
+```bash
+GET /api/instagram/insights
+```
+
+**Response:**
+
+```json
+{
+  "impressions": 25000,
+  "reach": 18000,
+  "profile_views": 1200,
+  "website_clicks": 450,
+  "follower_count": 10500
+}
+```
+
+### Create a Post
+
+Publish a new image post to Instagram:
+
+```bash
+POST /api/instagram/posts
+Content-Type: application/json
+
+{
+  "imageUrl": "https://example.com/product-image.jpg",
+  "caption": "Exciting new drop coming soon! 🎉 #launch #exclusive"
+}
+```
+
+**Response:**
+
+```json
+{
+  "mediaId": "17891234567891",
+  "permalink": "https://instagram.com/p/XYZ789"
+}
+```
+
+<Callout type="warning">
+  **Image Requirements**: - Image must be publicly accessible via URL - Supported formats: JPEG, PNG - Minimum
+  dimensions: 320x320 pixels - Maximum file size: 8MB
+</Callout>
+
+## Disconnecting
+
+To disconnect your Instagram account:
+
+1. Navigate to **Settings** > **Integrations**
+2. Click on the Instagram integration
+3. Click **Disconnect**
+
+```bash
+DELETE /api/instagram/disconnect
+```
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "message": "Instagram account disconnected successfully"
+}
+```
+
+### What Happens When You Disconnect
+
+- Access token is removed
+- No further API calls can be made
+- Historical data remains in logs
+- You can reconnect at any time
+
+## API Reference
+
+### Get Authorization URL
+
+```bash
+GET /api/instagram/auth/url
+```
+
+Returns the Facebook OAuth URL to start the connection flow.
+
+### OAuth Callback
+
+```bash
+GET /api/instagram/auth/callback?code=XXX&state=ORG_ID
+```
+
+Handles the OAuth callback from Facebook and completes the connection.
+
+### Get Connected Account
+
+```bash
+GET /api/instagram/account
+```
+
+Returns the connected Instagram account information or `null` if not connected.
+
+### Get Recent Media
+
+```bash
+GET /api/instagram/media
+```
+
+Returns up to 10 recent media posts from the connected account.
+
+### Get Account Insights
+
+```bash
+GET /api/instagram/insights
+```
+
+Returns daily insight metrics for the connected account.
+
+### Create Post
+
+```bash
+POST /api/instagram/posts
+```
+
+Creates and publishes a new image post.
+
+### Disconnect Account
+
+```bash
+DELETE /api/instagram/disconnect
+```
+
+Removes the Instagram connection from the organization.
+
+## Token Refresh
+
+### Automatic Refresh
+
+Tokens are automatically refreshed when:
+
+- An API call is made
+- Token is expiring within 5 days
+- Refresh happens transparently
+
+### Manual Token Check
+
+Token expiration is checked on each account access. If the token is expiring soon, a refresh is attempted automatically.
+
+## Troubleshooting
+
+### Common Issues
+
+**"No Instagram business account found"**
+
+Your Facebook Page doesn't have a connected Instagram Business account.
+
+- Go to your Facebook Page settings
+- Connect an Instagram Business or Creator account
+- Ensure you're selecting the correct Facebook Page
+
+**OAuth callback error**
+
+The authorization flow was interrupted.
+
+- Ensure you're logged into the correct Facebook account
+- Check that you have admin access to the Facebook Page
+- Try clearing browser cache and cookies
+
+**Token refresh failed**
+
+The access token couldn't be refreshed.
+
+- Token may have been revoked
+- Disconnect and reconnect the integration
+- Check that the Facebook App is still authorized
+
+**Post creation failed**
+
+Image posting failed.
+
+- Verify image URL is publicly accessible
+- Check image format and size requirements
+- Ensure `instagram_content_publish` permission was granted
+
+### Checking Connection Status
+
+Verify your connection by calling the account endpoint:
+
+```bash
+curl -X GET /api/instagram/account \
+  -H "Authorization: Bearer YOUR_TOKEN"
+```
+
+If connected, you'll receive account details. If not, you'll receive `null`.
+
+## Security
+
+### Data Handling
+
+- Access tokens encrypted at rest
+- Tokens never exposed in client-side code
+- Facebook Page access limited to authorized users
+
+### Permission Scopes
+
+The integration requests minimal permissions needed:
+
+| Scope                       | Purpose              |
+| --------------------------- | -------------------- |
+| `pages_show_list`           | List available Pages |
+| `pages_read_engagement`     | Read engagement data |
+| `instagram_basic`           | Basic account info   |
+| `instagram_manage_insights` | View analytics       |
+| `instagram_content_publish` | Post content         |
+| `instagram_manage_comments` | Manage comments      |
+| `pages_manage_posts`        | Manage Page posts    |
+
+### Token Security
+
+- Long-lived tokens (60 days) used for extended access
+- Tokens refreshed automatically
+- Tokens revocable from Facebook Settings
+
+## Limitations
+
+| Limitation        | Description                            |
+| ----------------- | -------------------------------------- |
+| Image posts only  | Video and carousel posts not supported |
+| Single account    | One Instagram account per organization |
+| Business accounts | Personal accounts not supported        |
+| Public images     | Image URLs must be publicly accessible |
+| POC status        | Feature set may be limited             |
+
+{/* TODO: MISSING_FUNCTIONALITY
+Feature: Full Instagram content management
+Expected behavior: Support for video posts, stories, carousels, and scheduling
+Current state: Basic image posting and account insights only (POC)
+*/}
+
+## Future Enhancements
+
+<Callout type="info">
+  **Roadmap**: The following features are planned for future releases: - Video and carousel post support - Post
+  scheduling - Story publishing - Comment management - Hashtag analytics
+</Callout>
+
+## Related Resources
+
+- [Marketing Automation](/features/marketing)
+- [Instagram Graph API Documentation](https://developers.facebook.com/docs/instagram-api)
+- [Facebook Developer Portal](https://developers.facebook.com)

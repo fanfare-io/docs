@@ -1,0 +1,552 @@
+---
+title: Lottery (Draw) API
+description: Consumer API endpoints for lottery/draw operations
+---
+
+# Lottery (Draw) API
+
+Draws provide random selection functionality where winners are selected from entered consumers at a scheduled time.
+
+## Get Draw
+
+Retrieve draw details and current status.
+
+`GET /api/v1/draws/:drawId`
+
+### Authentication
+
+- Publishable key required
+- Consumer authentication not required
+
+### Path Parameters
+
+| Parameter | Type   | Description |
+| --------- | ------ | ----------- |
+| `drawId`  | string | The draw ID |
+
+### Response
+
+```typescript
+interface Draw {
+  id: string;
+  name: string;
+  sequenceId: string;
+  openAt: string | null;
+  closeAt: string | null;
+  drawAt: string;
+  timeZone: string | null;
+  capacity: number | null;
+  winnerCount: number;
+  status: "PENDING" | "OPEN" | "CLOSED" | "DRAWN";
+  entrantCount?: number;
+}
+```
+
+### Example
+
+```bash
+curl -X GET https://consumer.fanfare.io/api/v1/draws/draw_01HXYZ123456789 \
+  -H "X-Publishable-Key: pk_live_xxxxxxxxxxxx"
+```
+
+**Response:**
+
+```json
+{
+  "id": "draw_01HXYZ123456789",
+  "name": "Holiday Giveaway Draw",
+  "sequenceId": "seq_01HXYZ123456789",
+  "openAt": "2024-12-01T09:00:00Z",
+  "closeAt": "2024-12-15T23:59:59Z",
+  "drawAt": "2024-12-16T12:00:00Z",
+  "timeZone": "America/New_York",
+  "capacity": 10000,
+  "winnerCount": 5,
+  "status": "OPEN"
+}
+```
+
+### Error Responses
+
+| Status | Error            | Description                |
+| ------ | ---------------- | -------------------------- |
+| 404    | `Draw not found` | The draw ID does not exist |
+
+---
+
+## Enter Draw
+
+Enter a draw for a chance to win.
+
+`POST /api/v1/draws/:drawId/enter`
+
+### Authentication
+
+- Publishable key required
+- Consumer authentication **required**
+
+### Headers
+
+| Header          | Required    | Description                           |
+| --------------- | ----------- | ------------------------------------- |
+| `X-Fingerprint` | Recommended | Device fingerprint for bot mitigation |
+
+### Path Parameters
+
+| Parameter | Type   | Description |
+| --------- | ------ | ----------- |
+| `drawId`  | string | The draw ID |
+
+### Response
+
+```typescript
+interface DrawConsumerState {
+  drawId: string;
+  consumerId: string;
+  status: "ENTERED" | "WON" | "LOST" | "DENIED" | "LEFT";
+  enteredAt: string;
+  wonAt: string | null;
+  admissionToken: string | null;
+  denyReason: string | null;
+}
+```
+
+### Example
+
+```bash
+curl -X POST https://consumer.fanfare.io/api/v1/draws/draw_01HXYZ123456789/enter \
+  -H "X-Publishable-Key: pk_live_xxxxxxxxxxxx" \
+  -H "Authorization: Bearer eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9..." \
+  -H "X-Fingerprint: fp_01HXYZ123456789"
+```
+
+**Response:**
+
+```json
+{
+  "drawId": "draw_01HXYZ123456789",
+  "consumerId": "cons_01HXYZ123456789",
+  "status": "ENTERED",
+  "enteredAt": "2024-12-05T14:30:00Z",
+  "wonAt": null,
+  "admissionToken": null,
+  "denyReason": null
+}
+```
+
+### Error Responses
+
+| Status | Error                     | Description                     |
+| ------ | ------------------------- | ------------------------------- |
+| 400    | `Draw is closed`          | Entry period has ended          |
+| 401    | `Authentication required` | Missing consumer authentication |
+| 404    | `Draw not found`          | The draw ID does not exist      |
+| 423    | `Draw is not open yet`    | Draw opens in the future        |
+
+### Special Headers on Error
+
+| Header                | Value         | Description                   |
+| --------------------- | ------------- | ----------------------------- |
+| `Retry-After`         | ISO timestamp | When to retry (for 423)       |
+| `X-Fingerprint-Error` | `true`        | Fingerprint validation failed |
+
+### Denied Entry Response
+
+If the consumer is denied entry (e.g., order limit exceeded):
+
+```json
+{
+  "drawId": "draw_01HXYZ123456789",
+  "consumerId": "cons_01HXYZ123456789",
+  "status": "DENIED",
+  "enteredAt": null,
+  "wonAt": null,
+  "admissionToken": null,
+  "denyReason": "ORDER_LIMIT_EXCEEDED"
+}
+```
+
+---
+
+## Leave Draw
+
+Withdraw from a draw before the drawing takes place.
+
+`POST /api/v1/draws/:drawId/leave`
+
+### Authentication
+
+- Publishable key required
+- Consumer authentication **required**
+
+### Path Parameters
+
+| Parameter | Type   | Description |
+| --------- | ------ | ----------- |
+| `drawId`  | string | The draw ID |
+
+### Response
+
+Returns `DrawConsumerState` with status `DENIED` (treated as self-removal).
+
+### Example
+
+```bash
+curl -X POST https://consumer.fanfare.io/api/v1/draws/draw_01HXYZ123456789/leave \
+  -H "X-Publishable-Key: pk_live_xxxxxxxxxxxx" \
+  -H "Authorization: Bearer eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9..."
+```
+
+**Response:**
+
+```json
+{
+  "drawId": "draw_01HXYZ123456789",
+  "consumerId": "cons_01HXYZ123456789",
+  "status": "DENIED",
+  "denyReason": "DRAW_CLOSED"
+}
+```
+
+---
+
+## Get Draw Status
+
+Get the consumer's current entry status.
+
+`GET /api/v1/draws/:drawId/status`
+
+### Authentication
+
+- Publishable key required
+- Consumer authentication **required**
+
+### Path Parameters
+
+| Parameter | Type   | Description |
+| --------- | ------ | ----------- |
+| `drawId`  | string | The draw ID |
+
+### Response
+
+Returns `DrawConsumerState` with current status.
+
+### Example
+
+```bash
+curl -X GET https://consumer.fanfare.io/api/v1/draws/draw_01HXYZ123456789/status \
+  -H "X-Publishable-Key: pk_live_xxxxxxxxxxxx" \
+  -H "Authorization: Bearer eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9..."
+```
+
+**Response (Entered):**
+
+```json
+{
+  "drawId": "draw_01HXYZ123456789",
+  "consumerId": "cons_01HXYZ123456789",
+  "status": "ENTERED",
+  "enteredAt": "2024-12-05T14:30:00Z",
+  "wonAt": null,
+  "admissionToken": null
+}
+```
+
+**Response (Won):**
+
+```json
+{
+  "drawId": "draw_01HXYZ123456789",
+  "consumerId": "cons_01HXYZ123456789",
+  "status": "WON",
+  "enteredAt": "2024-12-05T14:30:00Z",
+  "wonAt": "2024-12-16T12:00:00Z",
+  "admissionToken": "eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9..."
+}
+```
+
+**Response (Lost):**
+
+```json
+{
+  "drawId": "draw_01HXYZ123456789",
+  "consumerId": "cons_01HXYZ123456789",
+  "status": "LOST",
+  "enteredAt": "2024-12-05T14:30:00Z",
+  "wonAt": null,
+  "admissionToken": null
+}
+```
+
+---
+
+## Complete Draw Win (Server-Side)
+
+Complete a draw win and mark the consumer as having claimed their prize.
+
+`POST /api/v1/draws/:drawId/complete`
+
+### Authentication
+
+- Secret key **required**
+
+### Path Parameters
+
+| Parameter | Type   | Description |
+| --------- | ------ | ----------- |
+| `drawId`  | string | The draw ID |
+
+### Request Body
+
+```typescript
+interface CompleteRequest {
+  consumerId: string;
+}
+```
+
+### Example
+
+```bash
+curl -X POST https://consumer.fanfare.io/api/v1/draws/draw_01HXYZ123456789/complete \
+  -H "Authorization: Bearer sk_live_xxxxxxxxxxxx" \
+  -H "Content-Type: application/json" \
+  -d '{"consumerId": "cons_01HXYZ123456789"}'
+```
+
+**Response:**
+
+```json
+{
+  "drawId": "draw_01HXYZ123456789",
+  "consumerId": "cons_01HXYZ123456789",
+  "status": "COMPLETED",
+  "completedAt": "2024-12-16T14:00:00Z"
+}
+```
+
+---
+
+## Deny Consumer (Server-Side)
+
+Deny a consumer from the draw.
+
+`POST /api/v1/draws/:drawId/deny`
+
+### Authentication
+
+- Secret key **required**
+
+### Path Parameters
+
+| Parameter | Type   | Description |
+| --------- | ------ | ----------- |
+| `drawId`  | string | The draw ID |
+
+### Request Body
+
+```typescript
+interface DenyRequest {
+  consumerId: string;
+  reason: string;
+}
+```
+
+### Deny Reasons
+
+| Reason                 | Description                        |
+| ---------------------- | ---------------------------------- |
+| `ORDER_LIMIT_EXCEEDED` | Consumer has exceeded order limits |
+| `DRAW_CLOSED`          | Consumer left or draw was closed   |
+| `FRAUD_DETECTED`       | Suspicious activity detected       |
+| `ADMIN_ACTION`         | Manual denial by administrator     |
+
+### Example
+
+```bash
+curl -X POST https://consumer.fanfare.io/api/v1/draws/draw_01HXYZ123456789/deny \
+  -H "Authorization: Bearer sk_live_xxxxxxxxxxxx" \
+  -H "Content-Type: application/json" \
+  -d '{"consumerId": "cons_01HXYZ123456789", "reason": "FRAUD_DETECTED"}'
+```
+
+---
+
+## Validate Win Token (Server-Side)
+
+Validate that a consumer has won and their token is valid.
+
+`POST /api/v1/draws/:drawId/validate`
+
+### Authentication
+
+- Secret key **required**
+
+### Path Parameters
+
+| Parameter | Type   | Description |
+| --------- | ------ | ----------- |
+| `drawId`  | string | The draw ID |
+
+### Request Body
+
+```typescript
+interface ValidateRequest {
+  consumerId: string;
+}
+```
+
+### Response
+
+Returns `true` if the consumer is a valid winner, or an error object with details.
+
+### Example
+
+```bash
+curl -X POST https://consumer.fanfare.io/api/v1/draws/draw_01HXYZ123456789/validate \
+  -H "Authorization: Bearer sk_live_xxxxxxxxxxxx" \
+  -H "Content-Type: application/json" \
+  -d '{"consumerId": "cons_01HXYZ123456789"}'
+```
+
+**Valid Response:**
+
+```json
+true
+```
+
+**Invalid Response (Device Mismatch):**
+
+```json
+{
+  "valid": false,
+  "error": "DEVICE_MISMATCH",
+  "message": "This winning token can only be used on the device that originally entered the draw.",
+  "code": "FP002",
+  "support": {
+    "message": "If you need to switch devices, please contact support with your confirmation code.",
+    "confirmationCode": "ABC123XYZ"
+  }
+}
+```
+
+---
+
+## Draw Consumer Statuses
+
+| Status      | Description                       |
+| ----------- | --------------------------------- |
+| `ENTERED`   | Consumer has entered the draw     |
+| `WON`       | Consumer was selected as a winner |
+| `COMPLETED` | Winner has claimed their prize    |
+| `LOST`      | Consumer was not selected         |
+| `DENIED`    | Consumer was denied entry or left |
+
+---
+
+## Draw Lifecycle
+
+1. **Pending**: Draw created but not yet open for entries
+2. **Open**: Entry period is active
+3. **Closed**: Entry period ended, awaiting draw
+4. **Drawn**: Winners have been selected
+
+---
+
+## SDK Usage
+
+### React
+
+```typescript
+import { useDraw } from "@fanfare/sdk-react";
+
+function DrawPage({ drawId }: { drawId: string }) {
+  const {
+    draw,
+    status,
+    isEntered,
+    isWinner,
+    admissionToken,
+    enter,
+    leave,
+    isLoading,
+    error,
+  } = useDraw(drawId);
+
+  if (isLoading) return <Loading />;
+  if (error) return <Error message={error.message} />;
+
+  // Winner flow
+  if (isWinner) {
+    return (
+      <div>
+        <h2>Congratulations! You won!</h2>
+        <p>Claim your prize before it expires.</p>
+        <a href={`/claim?token=${admissionToken}`}>
+          Claim Prize
+        </a>
+      </div>
+    );
+  }
+
+  // Entered but draw not yet happened
+  if (isEntered && draw?.status === "OPEN") {
+    return (
+      <div>
+        <h2>You're Entered!</h2>
+        <p>Drawing happens: {new Date(draw.drawAt).toLocaleString()}</p>
+        <button onClick={leave}>Withdraw Entry</button>
+      </div>
+    );
+  }
+
+  // Not yet entered
+  if (draw?.status === "OPEN") {
+    return (
+      <div>
+        <h2>{draw.name}</h2>
+        <p>Winners: {draw.winnerCount}</p>
+        <p>Drawing: {new Date(draw.drawAt).toLocaleString()}</p>
+        <button onClick={enter}>Enter Draw</button>
+      </div>
+    );
+  }
+
+  // Draw closed or completed
+  return (
+    <div>
+      <h2>{draw?.name}</h2>
+      <p>This draw has ended.</p>
+    </div>
+  );
+}
+```
+
+### Checking Draw Results
+
+```typescript
+async function checkDrawResult(drawId: string, accessToken: string) {
+  const response = await fetch(`https://consumer.fanfare.io/api/v1/draws/${drawId}/status`, {
+    headers: {
+      "X-Publishable-Key": publishableKey,
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+
+  const result = await response.json();
+
+  if (result.status === "WON") {
+    // Show winning UI and claim flow
+    return {
+      isWinner: true,
+      admissionToken: result.admissionToken,
+      wonAt: result.wonAt,
+    };
+  } else if (result.status === "LOST") {
+    // Show consolation message
+    return { isWinner: false };
+  } else {
+    // Still waiting for draw
+    return { isPending: true };
+  }
+}
+```

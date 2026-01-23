@@ -1,68 +1,466 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "theme": "mint",
-  "name": "Mint Starter Kit",
+  "theme": "maple",
+  "name": "Fanfare Documentation",
+  "logo": {
+    "light": "/logo/light.svg",
+    "dark": "/logo/dark.svg"
+  },
   "colors": {
-    "primary": "#16A34A",
-    "light": "#07C983",
-    "dark": "#15803D"
+    "primary": "#8B14FF",
+    "light": "#A855F7",
+    "dark": "#7C3AED"
+  },
+  "modeToggle": {
+    "default": "dark"
+  },
+  "font": {
+    "headings": {
+      "family": "Space Grotesk",
+      "weight": 600
+    },
+    "body": {
+      "family": "Inter"
+    }
   },
   "favicon": "/favicon.svg",
   "navigation": {
     "tabs": [
       {
-        "tab": "Guides",
+        "tab": "Documentation",
         "groups": [
           {
-            "group": "Getting started",
+            "group": "Getting Started",
             "pages": [
-              "index",
-              "quickstart",
-              "development"
+              "getting-started/introduction",
+              "getting-started/installation",
+              "getting-started/quickstart",
+              "getting-started/configuration",
+              "getting-started/first-experience",
+              "getting-started/testing",
+              "getting-started/deployment",
+              "getting-started/next-steps"
             ]
           },
           {
-            "group": "Customization",
+            "group": "Core Concepts",
             "pages": [
-              "essentials/settings",
-              "essentials/navigation"
+              "concepts/overview",
+              "concepts/organizations",
+              "concepts/experiences",
+              "concepts/audiences",
+              "concepts/consumers",
+              "concepts/products",
+              "concepts/state-machine",
+              "concepts/real-time"
             ]
           },
           {
-            "group": "Writing content",
+            "group": "Distribution Types",
             "pages": [
-              "essentials/markdown",
-              "essentials/code",
-              "essentials/images",
-              "essentials/reusable-snippets"
-            ]
-          },
-          {
-            "group": "AI tools",
-            "pages": [
-              "ai-tools/cursor",
-              "ai-tools/claude-code",
-              "ai-tools/windsurf"
+              "concepts/distributions/overview",
+              "concepts/distributions/queue",
+              "concepts/distributions/lottery",
+              "concepts/distributions/auction",
+              "concepts/distributions/appointment",
+              "concepts/distributions/instant",
+              "concepts/distributions/exclusive"
             ]
           }
         ]
       },
       {
-        "tab": "API reference",
+        "tab": "SDK Reference",
         "groups": [
           {
-            "group": "API documentation",
+            "group": "Core SDK",
             "pages": [
-              "api-reference/introduction"
+              "sdk/core/overview",
+              "sdk/core/initialization",
+              "sdk/core/client",
+              "sdk/core/experiences",
+              "sdk/core/consumers",
+              "sdk/core/events",
+              "sdk/core/state",
+              "sdk/core/errors",
+              "sdk/core/types"
             ]
           },
           {
-            "group": "Endpoint examples",
+            "group": "React SDK",
             "pages": [
-              "api-reference/endpoint/get",
-              "api-reference/endpoint/create",
-              "api-reference/endpoint/delete",
-              "api-reference/endpoint/webhook"
+              "sdk/react/overview",
+              "sdk/react/provider",
+              "sdk/react/context"
+            ]
+          },
+          {
+            "group": "React Hooks",
+            "pages": [
+              "sdk/react/hooks/overview",
+              "sdk/react/hooks/use-queue",
+              "sdk/react/hooks/use-draw",
+              "sdk/react/hooks/use-auction",
+              "sdk/react/hooks/use-waitlist",
+              "sdk/react/hooks/use-timed-release",
+              "sdk/react/hooks/use-experience-journey"
+            ]
+          },
+          {
+            "group": "React Widgets",
+            "pages": [
+              "sdk/react/widgets/overview",
+              "sdk/react/widgets/queue-widget",
+              "sdk/react/widgets/draw-widget",
+              "sdk/react/widgets/auction-widget",
+              "sdk/react/widgets/experience-widget",
+              "sdk/react/widgets/waitlist-widget",
+              "sdk/react/widgets/timed-release-widget"
+            ]
+          },
+          {
+            "group": "Customization",
+            "pages": [
+              "sdk/react/customization/theming",
+              "sdk/react/customization/styling",
+              "sdk/react/customization/i18n",
+              "sdk/react/customization/components",
+              "sdk/react/customization/headless"
+            ]
+          },
+          {
+            "group": "Solid SDK",
+            "pages": [
+              "sdk/solid/overview",
+              "sdk/solid/provider",
+              "sdk/solid/primitives",
+              "sdk/solid/components",
+              "sdk/solid/web-components"
+            ]
+          },
+          {
+            "group": "Migration",
+            "pages": [
+              "sdk/migration/overview",
+              "sdk/migration/v1-to-v2",
+              "sdk/migration/react-to-solid",
+              "sdk/migration/custom-to-widgets",
+              "sdk/migration/changelog"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Guides",
+        "groups": [
+          {
+            "group": "Overview",
+            "pages": ["guides/overview"]
+          },
+          {
+            "group": "Integration Patterns",
+            "pages": [
+              "guides/integration-patterns/spa-integration",
+              "guides/integration-patterns/ssr-integration",
+              "guides/integration-patterns/headless-integration",
+              "guides/integration-patterns/mobile-webview"
+            ]
+          },
+          {
+            "group": "Authentication",
+            "pages": [
+              "guides/authentication/anonymous-consumers",
+              "guides/authentication/identified-consumers",
+              "guides/authentication/consumer-linking",
+              "guides/authentication/jwt-tokens"
+            ]
+          },
+          {
+            "group": "Checkout Integration",
+            "pages": [
+              "guides/checkout-integration/checkout-overview",
+              "guides/checkout-integration/cart-reservation",
+              "guides/checkout-integration/payment-processing",
+              "guides/checkout-integration/order-completion"
+            ]
+          },
+          {
+            "group": "Platform Integrations",
+            "pages": [
+              "guides/platform-integrations/shopify",
+              "guides/platform-integrations/woocommerce",
+              "guides/platform-integrations/custom-platform"
+            ]
+          },
+          {
+            "group": "Use Cases",
+            "pages": [
+              "guides/use-cases/product-launch",
+              "guides/use-cases/flash-sale",
+              "guides/use-cases/limited-edition",
+              "guides/use-cases/appointment-booking",
+              "guides/use-cases/event-ticketing"
+            ]
+          },
+          {
+            "group": "Advanced",
+            "pages": [
+              "guides/advanced/webhooks-guide",
+              "guides/advanced/real-time-updates",
+              "guides/advanced/error-handling"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "API Reference",
+        "groups": [
+          {
+            "group": "Overview",
+            "pages": [
+              "api/overview",
+              "api/authentication",
+              "api/errors",
+              "api/rate-limiting",
+              "api/pagination"
+            ]
+          },
+          {
+            "group": "Consumer API",
+            "pages": [
+              "api/consumer-api/overview",
+              "api/consumer-api/experiences",
+              "api/consumer-api/queue",
+              "api/consumer-api/auction",
+              "api/consumer-api/lottery",
+              "api/consumer-api/consumer"
+            ]
+          },
+          {
+            "group": "Admin API",
+            "pages": [
+              "api/admin-api/overview",
+              "api/admin-api/experiences",
+              "api/admin-api/consumers",
+              "api/admin-api/analytics",
+              "api/admin-api/audiences",
+              "api/admin-api/products",
+              "api/admin-api/organizations",
+              "api/admin-api/distributions"
+            ]
+          },
+          {
+            "group": "Webhooks",
+            "pages": [
+              "api/webhooks/overview",
+              "api/webhooks/events",
+              "api/webhooks/signatures",
+              "api/webhooks/retry-policy"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Dashboard",
+        "groups": [
+          {
+            "group": "Getting Started",
+            "pages": ["dashboard/overview", "dashboard/getting-started"]
+          },
+          {
+            "group": "Experiences",
+            "pages": [
+              "dashboard/experiences/overview",
+              "dashboard/experiences/create-experience",
+              "dashboard/experiences/configure-queue",
+              "dashboard/experiences/configure-auction",
+              "dashboard/experiences/configure-lottery",
+              "dashboard/experiences/configure-appointment",
+              "dashboard/experiences/experience-lifecycle",
+              "dashboard/experiences/experience-analytics"
+            ]
+          },
+          {
+            "group": "Audiences",
+            "pages": [
+              "dashboard/audiences/overview",
+              "dashboard/audiences/create-audience",
+              "dashboard/audiences/membership-rules",
+              "dashboard/audiences/import-consumers"
+            ]
+          },
+          {
+            "group": "Consumers",
+            "pages": [
+              "dashboard/consumers/overview",
+              "dashboard/consumers/consumer-details",
+              "dashboard/consumers/consumer-activity"
+            ]
+          },
+          {
+            "group": "Settings",
+            "pages": [
+              "dashboard/settings/overview",
+              "dashboard/settings/organization",
+              "dashboard/settings/team-members",
+              "dashboard/settings/api-keys",
+              "dashboard/settings/integrations",
+              "dashboard/settings/branding"
+            ]
+          },
+          {
+            "group": "Analytics",
+            "pages": [
+              "dashboard/analytics/overview",
+              "dashboard/analytics/reports"
+            ]
+          },
+          {
+            "group": "Billing",
+            "pages": ["dashboard/billing/overview"]
+          }
+        ]
+      },
+      {
+        "tab": "Integrations",
+        "groups": [
+          {
+            "group": "Overview",
+            "pages": ["integrations/overview"]
+          },
+          {
+            "group": "E-commerce",
+            "pages": [
+              "integrations/e-commerce/shopify",
+              "integrations/e-commerce/woocommerce",
+              "integrations/e-commerce/custom-api"
+            ]
+          },
+          {
+            "group": "Marketing",
+            "pages": [
+              "integrations/marketing/klaviyo",
+              "integrations/marketing/mailchimp",
+              "integrations/marketing/hubspot"
+            ]
+          },
+          {
+            "group": "Messaging",
+            "pages": [
+              "integrations/messaging/sendgrid",
+              "integrations/messaging/twilio",
+              "integrations/messaging/resend"
+            ]
+          },
+          {
+            "group": "Payments",
+            "pages": [
+              "integrations/payments/stripe",
+              "integrations/payments/paypal"
+            ]
+          },
+          {
+            "group": "Social",
+            "pages": [
+              "integrations/social/instagram",
+              "integrations/social/facebook"
+            ]
+          },
+          {
+            "group": "Analytics",
+            "pages": [
+              "integrations/analytics/google-analytics",
+              "integrations/analytics/segment",
+              "integrations/analytics/mixpanel"
+            ]
+          },
+          {
+            "group": "Webhooks",
+            "pages": [
+              "integrations/webhooks/zapier",
+              "integrations/webhooks/make",
+              "integrations/webhooks/custom-webhooks"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Landing Pages",
+        "groups": [
+          {
+            "group": "Overview",
+            "pages": ["landing-pages/overview", "landing-pages/getting-started"]
+          },
+          {
+            "group": "Customization",
+            "pages": [
+              "landing-pages/customization/editor",
+              "landing-pages/customization/branding",
+              "landing-pages/customization/content-blocks",
+              "landing-pages/customization/forms",
+              "landing-pages/customization/countdown",
+              "landing-pages/customization/media"
+            ]
+          },
+          {
+            "group": "Publishing",
+            "pages": [
+              "landing-pages/publishing/preview",
+              "landing-pages/publishing/domains",
+              "landing-pages/publishing/seo",
+              "landing-pages/publishing/analytics"
+            ]
+          },
+          {
+            "group": "Templates",
+            "pages": [
+              "landing-pages/templates/gallery",
+              "landing-pages/templates/custom-templates"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Resources",
+        "groups": [
+          {
+            "group": "Overview",
+            "pages": ["resources/overview"]
+          },
+          {
+            "group": "Best Practices",
+            "pages": [
+              "resources/best-practices/fairness",
+              "resources/best-practices/performance",
+              "resources/best-practices/scalability",
+              "resources/best-practices/testing",
+              "resources/best-practices/ux-patterns"
+            ]
+          },
+          {
+            "group": "Troubleshooting",
+            "pages": [
+              "resources/troubleshooting/common-issues",
+              "resources/troubleshooting/api-errors",
+              "resources/troubleshooting/sdk-errors",
+              "resources/troubleshooting/browser-compatibility",
+              "resources/troubleshooting/webhook-debugging"
+            ]
+          },
+          {
+            "group": "Security",
+            "pages": [
+              "resources/security/overview",
+              "resources/security/authentication",
+              "resources/security/bot-protection",
+              "resources/security/data-privacy"
+            ]
+          },
+          {
+            "group": "Support",
+            "pages": [
+              "resources/support/contact",
+              "resources/support/changelog"
             ]
           }
         ]
@@ -71,52 +469,54 @@
     "global": {
       "anchors": [
         {
-          "anchor": "Documentation",
-          "href": "https://mintlify.com/docs",
-          "icon": "book-open-cover"
+          "anchor": "API Status",
+          "href": "https://status.fanfare.io",
+          "icon": "signal"
         },
         {
-          "anchor": "Blog",
-          "href": "https://mintlify.com/blog",
-          "icon": "newspaper"
+          "anchor": "GitHub",
+          "href": "https://github.com/waitify-io",
+          "icon": "github"
+        },
+        {
+          "anchor": "Support",
+          "href": "mailto:support@fanfare.io",
+          "icon": "envelope"
         }
       ]
     }
   },
-  "logo": {
-    "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
-  },
   "navbar": {
     "links": [
       {
-        "label": "Support",
-        "href": "mailto:hi@mintlify.com"
+        "label": "Dashboard",
+        "href": "https://app.fanfare.io"
       }
     ],
     "primary": {
       "type": "button",
-      "label": "Dashboard",
-      "href": "https://dashboard.mintlify.com"
+      "label": "Get Started",
+      "href": "https://app.fanfare.io/signup"
     }
   },
   "contextual": {
-    "options": [
-     "copy",
-     "view",
-     "chatgpt",
-     "claude",
-     "perplexity",
-     "mcp",
-     "cursor",
-     "vscode"
-   ]
+    "options": ["copy", "view", "chatgpt", "claude", "cursor"]
   },
   "footer": {
     "socials": {
-      "x": "https://x.com/mintlify",
-      "github": "https://github.com/mintlify",
-      "linkedin": "https://linkedin.com/company/mintlify"
+      "x": "https://x.com/fanfare_io",
+      "github": "https://github.com/waitify-io",
+      "linkedin": "https://linkedin.com/company/fanfare-io"
     }
+  },
+  "feedback": {
+    "thumbsRating": true,
+    "suggestEdit": true
+  },
+  "seo": {
+    "indexHiddenPages": false
+  },
+  "search": {
+    "prompt": "Search documentation..."
   }
 }

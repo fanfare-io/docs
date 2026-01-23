@@ -1,0 +1,301 @@
+---
+title: Branding
+description: Customize your brand appearance across the Fanfare platform
+---
+
+# Branding
+
+Brand settings allow you to customize how your organization appears to consumers, including logos, colors, and email styling.
+
+## Accessing Brand Settings
+
+Navigate to **Settings** > **Brand** to manage your brand appearance.
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/settings/brand
+Shows: Brand settings form with logo upload and color options
+Annotations: Label the main sections
+Alt text: "Brand settings page with logo upload and theme configuration"
+*/}
+
+![Brand settings](./images/settings-brand.png)
+_Caption: Customize your brand appearance_
+
+## Brand Theme
+
+### Color Configuration
+
+| Setting              | Description        |
+| -------------------- | ------------------ |
+| **Primary Color**    | Main brand color   |
+| **Secondary Color**  | Accent color       |
+| **Background Color** | Page background    |
+| **Text Color**       | Default text color |
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/settings/brand
+Shows: Color picker for brand colors
+Annotations: Highlight color selection options
+Alt text: "Color configuration with color pickers"
+*/}
+
+![Color settings](./images/settings-brand-colors.png)
+_Caption: Configure your brand colors_
+
+### Supported Color Formats
+
+| Format  | Example            |
+| ------- | ------------------ |
+| **Hex** | #FF5733            |
+| **RGB** | rgb(255, 87, 51)   |
+| **HSL** | hsl(11, 100%, 60%) |
+
+### Color Usage
+
+Your brand colors appear in:
+
+| Location                   | Colors Used         |
+| -------------------------- | ------------------- |
+| **Experience Pages**       | Primary, Secondary  |
+| **Email Templates**        | Primary, Background |
+| **Consumer Notifications** | Primary, Text       |
+| **Call-to-Action Buttons** | Primary             |
+
+## Logo Configuration
+
+### Logo Upload
+
+Upload your organization's logo:
+
+1. Click on the logo upload area
+2. Select an image file
+3. Crop if necessary
+4. Save changes
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/settings/brand
+Shows: Logo upload area with preview
+Annotations: Highlight upload zone and preview
+Alt text: "Logo upload section with image preview"
+*/}
+
+![Logo upload](./images/settings-brand-logo.png)
+_Caption: Upload and preview your logo_
+
+### Logo Requirements
+
+| Requirement      | Specification           |
+| ---------------- | ----------------------- |
+| **Format**       | PNG, JPG, SVG           |
+| **Max Size**     | 2 MB                    |
+| **Recommended**  | 400x100 pixels          |
+| **Aspect Ratio** | Flexible (will scale)   |
+| **Background**   | Transparent recommended |
+
+### Logo Placement
+
+Your logo appears in:
+
+| Location             | Size/Format        |
+| -------------------- | ------------------ |
+| **Email Header**     | Full width, scaled |
+| **Experience Pages** | Header area        |
+| **Notifications**    | Thumbnail          |
+| **Receipts**         | Header area        |
+
+## Email Settings
+
+Configure how emails appear to consumers.
+
+### Sender Information
+
+| Field              | Required | Description               |
+| ------------------ | -------- | ------------------------- |
+| **From Email**     | Yes      | Sender email address      |
+| **From Name**      | Yes      | Display name for sender   |
+| **Reply-To Email** | No       | Where replies are sent    |
+| **Reply-To Name**  | No       | Display name for reply-to |
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/settings/brand
+Shows: Email settings section with sender fields
+Annotations: Label each email field
+Alt text: "Email sender configuration with from and reply-to fields"
+*/}
+
+![Email settings](./images/settings-brand-email.png)
+_Caption: Configure email sender information_
+
+### Email Branding
+
+Emails are automatically branded with:
+
+- Your logo in the header
+- Brand colors for accents
+- Company name and contact
+- Unsubscribe link (where required)
+
+### Email Preview
+
+Preview how branded emails will appear:
+
+1. Configure your settings
+2. Click **Preview Email**
+3. Review the preview
+4. Make adjustments if needed
+
+## Theme Presets
+
+Quick-start with preset themes:
+
+| Preset      | Description             |
+| ----------- | ----------------------- |
+| **Light**   | Clean, light background |
+| **Dark**    | Modern dark theme       |
+| **Minimal** | Simple, minimal styling |
+| **Custom**  | Full customization      |
+
+### Applying a Preset
+
+1. Select a preset from the dropdown
+2. Colors auto-populate
+3. Customize further if desired
+4. Save changes
+
+## Advanced Styling
+
+### Custom CSS (Enterprise)
+
+Enterprise plans can add custom CSS:
+
+```css
+/* Example custom styles */
+.fanfare-button {
+  border-radius: 8px;
+}
+
+.fanfare-header {
+  font-family: "Your Font", sans-serif;
+}
+```
+
+### Font Configuration
+
+| Setting          | Description        |
+| ---------------- | ------------------ |
+| **Heading Font** | Font for titles    |
+| **Body Font**    | Font for body text |
+| **Button Font**  | Font for buttons   |
+
+## Preview and Testing
+
+### Live Preview
+
+See changes in real-time:
+
+1. Make a change
+2. Preview updates immediately
+3. Switch between views
+4. Save when satisfied
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/settings/brand
+Shows: Preview panel showing branded experience
+Annotations: Highlight the preview area
+Alt text: "Brand preview showing how changes appear to consumers"
+*/}
+
+![Brand preview](./images/settings-brand-preview.png)
+_Caption: Preview your brand settings in real-time_
+
+### Test Email
+
+Send a test email to verify branding:
+
+1. Click **Send Test Email**
+2. Enter your email address
+3. Receive the test
+4. Verify appearance
+
+## Saving Changes
+
+1. Make your changes
+2. Click **Save** to apply
+3. Wait for confirmation
+4. Changes take effect immediately
+
+### What Happens on Save
+
+| Item                     | Update Timing   |
+| ------------------------ | --------------- |
+| **New Experiences**      | Immediate       |
+| **Existing Experiences** | On next load    |
+| **Emails**               | Next email sent |
+| **Consumer Pages**       | Immediate       |
+
+## Brand Consistency
+
+### Best Practices
+
+1. **Use consistent colors** - Match your brand guidelines
+2. **High-quality logo** - Use vector or high-res images
+3. **Readable contrast** - Ensure text is readable
+4. **Test on devices** - Check mobile and desktop
+
+### Accessibility
+
+Consider accessibility when customizing:
+
+| Guideline          | Recommendation                   |
+| ------------------ | -------------------------------- |
+| **Color Contrast** | 4.5:1 minimum ratio              |
+| **Text Size**      | Minimum 16px body text           |
+| **Alt Text**       | Describe logo for screen readers |
+| **Focus States**   | Visible focus indicators         |
+
+## Troubleshooting
+
+### Logo Not Displaying
+
+1. Check file format is supported
+2. Verify file size is under limit
+3. Try re-uploading
+4. Clear browser cache
+
+### Colors Look Different
+
+1. Check color code is correct
+2. Consider monitor calibration
+3. Test on multiple devices
+4. Review in different browsers
+
+### Emails Not Branded
+
+1. Verify brand settings are saved
+2. Check email sender is configured
+3. Send a test email
+4. Contact support if issues persist
+
+## Resetting to Defaults
+
+To reset all brand settings:
+
+1. Click **Reset to Defaults**
+2. Confirm the action
+3. All settings return to defaults
+4. Logo is removed
+
+<Warning>
+Resetting brand settings cannot be undone. Save your current configuration before resetting if you may want to restore it.
+</Warning>
+
+## Related Guides
+
+- [Settings Overview](/dashboard/settings/overview) - All settings
+- [Organization Settings](/dashboard/settings/organization) - Company info
+- [Experience Design](/dashboard/experiences/overview) - Creating experiences

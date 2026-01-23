@@ -1,0 +1,322 @@
+---
+title: Widget Components
+description: SolidJS widget components for Fanfare experiences
+---
+
+# Widget Components
+
+The Solid SDK provides fully-featured widget components for different distribution types. Each widget handles state management, UI rendering, and user interactions.
+
+## Available Widgets
+
+| Component            | Description                | Use Case                |
+| -------------------- | -------------------------- | ----------------------- |
+| `QueueWidget`        | Virtual waiting room       | High-demand launches    |
+| `DrawWidget`         | Lottery/raffle entry       | Random selection events |
+| `AuctionWidget`      | Real-time bidding          | Auction sales           |
+| `WaitlistWidget`     | Pre-registration signup    | Coming soon pages       |
+| `TimedReleaseWidget` | Flash sale window          | Limited-time offers     |
+| `ExperienceWidget`   | Full journey orchestration | Multi-step experiences  |
+
+## QueueWidget
+
+Virtual waiting room with position display and estimated wait times.
+
+```tsx
+import { QueueWidget } from "@waitify-io/fanfare-sdk-solid";
+
+function QueuePage() {
+  return (
+    <QueueWidget
+      queueId="queue_123"
+      title="Join Our Queue"
+      description="Get in line for exclusive access"
+      showHeader={true}
+      showEstimatedWait={true}
+      showActions={true}
+      onEnter={() => console.log("Entered queue")}
+      onLeave={() => console.log("Left queue")}
+      onPositionChange={(pos) => console.log("Position:", pos)}
+    />
+  );
+}
+```
+
+### QueueWidget Props
+
+| Prop                | Type                         | Default  | Description                 |
+| ------------------- | ---------------------------- | -------- | --------------------------- |
+| `queueId`           | `string`                     | Required | Queue identifier            |
+| `title`             | `string`                     | i18n     | Header title                |
+| `description`       | `string`                     | i18n     | Header description          |
+| `showHeader`        | `boolean`                    | `true`   | Show header section         |
+| `showEstimatedWait` | `boolean`                    | `true`   | Show wait time estimate     |
+| `showActions`       | `boolean`                    | `true`   | Show action buttons         |
+| `theme`             | `ExperienceTheme`            | -        | Theme configuration         |
+| `onEnter`           | `() => void`                 | -        | Callback on enter           |
+| `onLeave`           | `() => void`                 | -        | Callback on leave           |
+| `onPositionChange`  | `(position: number) => void` | -        | Callback on position change |
+
+## DrawWidget
+
+Lottery/raffle entry with countdown and result display.
+
+```tsx
+import { DrawWidget } from "@waitify-io/fanfare-sdk-solid";
+
+function DrawPage() {
+  return (
+    <DrawWidget
+      drawId="draw_123"
+      title="Win Exclusive Access"
+      description="Enter for a chance to win"
+      showHeader={true}
+      showCountdown={true}
+      showActions={true}
+      onEnter={() => console.log("Entered draw")}
+      onWithdraw={() => console.log("Withdrew entry")}
+      onResult={(result) => console.log("Result:", result)}
+      onProceed={() => (window.location.href = "/checkout")}
+    />
+  );
+}
+```
+
+### DrawWidget Props
+
+| Prop            | Type                                | Default  | Description             |
+| --------------- | ----------------------------------- | -------- | ----------------------- |
+| `drawId`        | `string`                            | Required | Draw identifier         |
+| `title`         | `string`                            | i18n     | Header title            |
+| `description`   | `string`                            | i18n     | Header description      |
+| `showHeader`    | `boolean`                           | `true`   | Show header section     |
+| `showCountdown` | `boolean`                           | `true`   | Show countdown timer    |
+| `showActions`   | `boolean`                           | `true`   | Show action buttons     |
+| `drawTime`      | `Date`                              | -        | Override draw time      |
+| `theme`         | `ExperienceTheme`                   | -        | Theme configuration     |
+| `onEnter`       | `() => void`                        | -        | Callback on enter       |
+| `onWithdraw`    | `() => void`                        | -        | Callback on withdraw    |
+| `onResult`      | `(result: "won" \| "lost") => void` | -        | Callback on result      |
+| `onProceed`     | `() => void`                        | -        | Callback on proceed CTA |
+
+## AuctionWidget
+
+Real-time bidding with bid history and countdown.
+
+```tsx
+import { AuctionWidget } from "@waitify-io/fanfare-sdk-solid";
+
+function AuctionPage() {
+  return (
+    <AuctionWidget
+      auctionId="auction_123"
+      title="Exclusive Item Auction"
+      description="Place your bids"
+      showHeader={true}
+      showBidHistory={true}
+      showCountdown={true}
+      currencyCode="USD"
+      locale="en-US"
+      onBid={(amount) => console.log("Bid placed:", amount)}
+      onOutbid={() => console.log("You were outbid!")}
+      onWin={() => console.log("You won!")}
+      onProceed={() => (window.location.href = "/checkout")}
+    />
+  );
+}
+```
+
+### AuctionWidget Props
+
+| Prop             | Type                       | Default  | Description             |
+| ---------------- | -------------------------- | -------- | ----------------------- |
+| `auctionId`      | `string`                   | Required | Auction identifier      |
+| `title`          | `string`                   | i18n     | Header title            |
+| `description`    | `string`                   | i18n     | Header description      |
+| `showHeader`     | `boolean`                  | `true`   | Show header section     |
+| `showBidHistory` | `boolean`                  | `true`   | Show recent bids        |
+| `showCountdown`  | `boolean`                  | `true`   | Show countdown timer    |
+| `currencyCode`   | `string`                   | `"USD"`  | Currency for display    |
+| `locale`         | `string`                   | -        | Locale for formatting   |
+| `theme`          | `ExperienceTheme`          | -        | Theme configuration     |
+| `onBid`          | `(amount: number) => void` | -        | Callback on bid         |
+| `onOutbid`       | `() => void`               | -        | Callback when outbid    |
+| `onWin`          | `() => void`               | -        | Callback on win         |
+| `onProceed`      | `() => void`               | -        | Callback on proceed CTA |
+
+## WaitlistWidget
+
+Pre-registration signup with countdown to open.
+
+```tsx
+import { WaitlistWidget } from "@waitify-io/fanfare-sdk-solid";
+
+function WaitlistPage() {
+  const opensAt = new Date("2024-03-15T10:00:00Z");
+
+  return (
+    <WaitlistWidget
+      waitlistId="waitlist_123"
+      title="Coming Soon"
+      description="Sign up to be notified"
+      showHeader={true}
+      showCountdown={true}
+      showActions={true}
+      opensAt={opensAt}
+      onEnter={() => console.log("Joined waitlist")}
+      onLeave={() => console.log("Left waitlist")}
+      onProceed={() => (window.location.href = "/experience")}
+    />
+  );
+}
+```
+
+### WaitlistWidget Props
+
+| Prop            | Type              | Default  | Description          |
+| --------------- | ----------------- | -------- | -------------------- |
+| `waitlistId`    | `string`          | Required | Waitlist identifier  |
+| `title`         | `string`          | i18n     | Header title         |
+| `description`   | `string`          | i18n     | Header description   |
+| `showHeader`    | `boolean`         | `true`   | Show header section  |
+| `showCountdown` | `boolean`         | `true`   | Show countdown timer |
+| `showActions`   | `boolean`         | `true`   | Show action buttons  |
+| `opensAt`       | `Date`            | -        | When waitlist opens  |
+| `theme`         | `ExperienceTheme` | -        | Theme configuration  |
+| `onEnter`       | `() => void`      | -        | Callback on join     |
+| `onLeave`       | `() => void`      | -        | Callback on leave    |
+| `onProceed`     | `() => void`      | -        | Callback when opened |
+
+## TimedReleaseWidget
+
+Flash sale window with urgency countdown.
+
+```tsx
+import { TimedReleaseWidget } from "@waitify-io/fanfare-sdk-solid";
+
+function FlashSalePage() {
+  return (
+    <TimedReleaseWidget
+      timedReleaseId="tr_123"
+      title="Flash Sale"
+      description="Limited time only!"
+      showHeader={true}
+      showCountdown={true}
+      showActions={true}
+      checkoutUrl="/shop"
+      onEnter={() => console.log("Entered flash sale")}
+      onShop={() => console.log("Started shopping")}
+      onComplete={() => console.log("Completed purchase")}
+      onExit={() => console.log("Exited sale")}
+    />
+  );
+}
+```
+
+### TimedReleaseWidget Props
+
+| Prop             | Type              | Default  | Description              |
+| ---------------- | ----------------- | -------- | ------------------------ |
+| `timedReleaseId` | `string`          | Required | Timed release identifier |
+| `title`          | `string`          | i18n     | Header title             |
+| `description`    | `string`          | i18n     | Header description       |
+| `showHeader`     | `boolean`         | `true`   | Show header section      |
+| `showCountdown`  | `boolean`         | `true`   | Show countdown timer     |
+| `showActions`    | `boolean`         | `true`   | Show action buttons      |
+| `checkoutUrl`    | `string`          | -        | URL for shopping         |
+| `endTime`        | `Date`            | -        | Override end time        |
+| `theme`          | `ExperienceTheme` | -        | Theme configuration      |
+| `onEnter`        | `() => void`      | -        | Callback on enter        |
+| `onShop`         | `() => void`      | -        | Callback on shop click   |
+| `onComplete`     | `() => void`      | -        | Callback on complete     |
+| `onExit`         | `() => void`      | -        | Callback on exit         |
+
+## ExperienceWidget
+
+Full journey orchestration handling all stages.
+
+```tsx
+import { ExperienceWidget } from "@waitify-io/fanfare-sdk-solid";
+
+function ExperiencePage() {
+  return (
+    <ExperienceWidget
+      experienceId="exp_123"
+      autoStart={true}
+      autoEnterWaitlist={false}
+      checkoutUrl="/checkout"
+      onJourneyChange={(snapshot) => {
+        console.log("Stage:", snapshot.journeyStage);
+      }}
+      onAdmitted={(token) => {
+        console.log("Admitted with token:", token);
+      }}
+      onError={(error) => {
+        console.error("Journey error:", error);
+      }}
+    />
+  );
+}
+```
+
+### ExperienceWidget Props
+
+| Prop                | Type                                  | Default  | Description            |
+| ------------------- | ------------------------------------- | -------- | ---------------------- |
+| `experienceId`      | `string`                              | Required | Experience identifier  |
+| `autoStart`         | `boolean`                             | `false`  | Auto-start on mount    |
+| `accessCode`        | `string`                              | -        | Pre-fill access code   |
+| `autoEnterWaitlist` | `boolean`                             | `false`  | Auto-join waitlist     |
+| `checkoutUrl`       | `string`                              | -        | Checkout redirect URL  |
+| `theme`             | `ExperienceTheme`                     | -        | Theme configuration    |
+| `variant`           | `WidgetVariant`                       | -        | Visual variant         |
+| `onJourneyChange`   | `(snapshot: JourneySnapshot) => void` | -        | Journey state callback |
+| `onAdmitted`        | `(token: string) => void`             | -        | Admission callback     |
+| `onError`           | `(error: Error) => void`              | -        | Error callback         |
+
+## Slots and Render Props
+
+All widgets support customization through slots and render props. See [Component Customization](/sdk/react/customization/components) for details.
+
+### Slots Example
+
+```tsx
+<QueueWidget
+  queueId="queue_123"
+  slots={{
+    header: (props) => (
+      <div class="custom-header">
+        <h2>{props.title}</h2>
+        <Badge>{props.status}</Badge>
+      </div>
+    ),
+    actions: (props) => <Button onClick={props.onEnter}>Get In Line</Button>,
+  }}
+/>
+```
+
+### Render Props Example
+
+```tsx
+<QueueWidget queueId="queue_123">
+  {({ status, position, enter, leave }) => (
+    <div class="my-custom-ui">
+      {status === "queued" ? (
+        <div>
+          <p>Position: {position}</p>
+          <button onClick={leave}>Leave</button>
+        </div>
+      ) : (
+        <button onClick={enter}>Enter</button>
+      )}
+    </div>
+  )}
+</QueueWidget>
+```
+
+## Related
+
+- [Overview](/sdk/solid/overview) - Solid SDK overview
+- [Primitives](/sdk/solid/primitives) - Primitive components
+- [Web Components](/sdk/solid/web-components) - Web component registration
+- [Theming](/sdk/react/customization/theming) - Theme customization

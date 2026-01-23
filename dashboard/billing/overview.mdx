@@ -1,0 +1,385 @@
+---
+title: Billing Overview
+description: Manage your subscription, usage, and payment methods
+---
+
+# Billing Overview
+
+The Billing section allows you to manage your Fanfare subscription, monitor usage, update payment methods, and view your billing history.
+
+## Accessing Billing
+
+Navigate to **Billing** in the sidebar to view your subscription and usage details. The route is `/app/billing`.
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/billing
+Shows: Billing page with current plan and usage metrics
+Annotations: Label the plan card, usage section, and management options
+Alt text: "Billing page showing current plan, usage metrics, and management options"
+*/}
+
+![Billing overview](./images/billing-overview.png)
+_Caption: The billing page shows your subscription details and usage_
+
+## Current Plan
+
+### Plan Information
+
+The main card displays your current subscription:
+
+| Information        | Description                    |
+| ------------------ | ------------------------------ |
+| **Plan Name**      | Your subscription tier         |
+| **Price**          | Monthly or annual cost         |
+| **Status**         | Active, Trial, Cancelled, etc. |
+| **Billing Period** | Current billing cycle dates    |
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/billing
+Shows: Current plan card with details
+Annotations: Highlight plan name and price
+Alt text: "Current plan card showing Pro Plan at $99/month"
+*/}
+
+![Current plan](./images/billing-current-plan.png)
+_Caption: View your current subscription details_
+
+### Plan Tiers
+
+| Plan           | Price     | Entries/Month | Features                    |
+| -------------- | --------- | ------------- | --------------------------- |
+| **Free**       | $0        | 100           | Basic features              |
+| **Basic**      | $29/month | 10,000        | Standard features           |
+| **Pro**        | $99/month | 100,000       | Advanced features           |
+| **Enterprise** | Custom    | Unlimited     | Custom features and support |
+
+### Trial Period
+
+If you're on a trial:
+
+| Information        | Description                |
+| ------------------ | -------------------------- |
+| **Trial Ends**     | Date when trial expires    |
+| **Upgrade Prompt** | Link to choose a paid plan |
+| **Trial Features** | Access to all Pro features |
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/billing
+Shows: Trial banner with countdown
+Annotations: Highlight days remaining and upgrade button
+Alt text: "Trial banner showing 14 days remaining with upgrade option"
+*/}
+
+![Trial banner](./images/billing-trial.png)
+_Caption: Trial information shows when your trial ends_
+
+## Usage Metrics
+
+### Usage Overview
+
+Track your consumption against plan limits:
+
+| Metric                   | Description                        |
+| ------------------------ | ---------------------------------- |
+| **Total Entries**        | All experience entries this period |
+| **Queue Entries**        | Queue-specific entries             |
+| **Draw Entries**         | Draw/lottery entries               |
+| **Auction Entries**      | Auction bids                       |
+| **Appointment Bookings** | Appointments scheduled             |
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/billing
+Shows: Usage breakdown cards with progress bars
+Annotations: Highlight usage percentages and limits
+Alt text: "Usage breakdown showing entries by type with progress toward limits"
+*/}
+
+![Usage breakdown](./images/billing-usage-breakdown.png)
+_Caption: Monitor usage across different entry types_
+
+### Usage Progress
+
+Progress bars show consumption relative to limits:
+
+| Progress Level | Color  | Action Needed                   |
+| -------------- | ------ | ------------------------------- |
+| **0-75%**      | Green  | Normal usage                    |
+| **75-90%**     | Yellow | Consider upgrading              |
+| **90-100%**    | Red    | Near limit, upgrade recommended |
+| **100%+**      | Red    | At limit, may be throttled      |
+
+### Detailed Usage
+
+For more detailed usage analytics:
+
+1. Click **Detailed Usage**
+2. View usage by time period
+3. See trends and projections
+4. Export usage data
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/billing/usage
+Shows: Detailed usage charts by metric
+Annotations: Highlight the time period selector and charts
+Alt text: "Detailed usage page with charts showing entry volume over time"
+*/}
+
+![Detailed usage](./images/billing-detailed-usage.png)
+_Caption: View detailed usage analytics and trends_
+
+## Billing Management
+
+### Payment Methods
+
+Manage your payment methods:
+
+| Action           | Description                  |
+| ---------------- | ---------------------------- |
+| **View Current** | See card on file             |
+| **Update Card**  | Change payment method        |
+| **Add Backup**   | Add secondary payment method |
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/billing
+Shows: Payment method section showing card details
+Annotations: Highlight last 4 digits and manage button
+Alt text: "Payment method showing Visa ending in 4242 with manage option"
+*/}
+
+![Payment method](./images/billing-payment-method.png)
+_Caption: View and manage your payment method_
+
+### Managing Payment via Stripe
+
+Payment management is handled through Stripe's secure portal:
+
+1. Click **Manage** on the billing page
+2. Redirected to Stripe billing portal
+3. Update card, view invoices, etc.
+4. Return to Fanfare when done
+
+### Billing Portal Features
+
+Through the Stripe portal you can:
+
+| Feature                 | Description                |
+| ----------------------- | -------------------------- |
+| **Update Card**         | Change your payment method |
+| **View Invoices**       | Download past invoices     |
+| **Billing History**     | See all transactions       |
+| **Cancel Subscription** | Cancel your plan           |
+
+## Changing Plans
+
+### Upgrading
+
+To upgrade to a higher tier:
+
+1. Click **View All Plans**
+2. Select the desired plan
+3. Confirm the upgrade
+4. New limits apply immediately
+
+### Downgrading
+
+To downgrade to a lower tier:
+
+1. Click **View All Plans**
+2. Select the lower plan
+3. Downgrade takes effect at period end
+4. Current period maintains existing limits
+
+### Plan Changes
+
+| Change Type      | When Applied                  |
+| ---------------- | ----------------------------- |
+| **Upgrade**      | Immediately, pro-rated        |
+| **Downgrade**    | End of current billing period |
+| **Cancellation** | End of current billing period |
+
+## Subscription Status
+
+### Status Types
+
+| Status        | Description                  |
+| ------------- | ---------------------------- |
+| **Active**    | Subscription is current      |
+| **Trialing**  | On free trial period         |
+| **Past Due**  | Payment failed, grace period |
+| **Cancelled** | Will not renew               |
+| **Expired**   | No longer active             |
+
+### Past Due Status
+
+If your payment fails:
+
+1. You receive email notification
+2. Grace period begins
+3. Update payment method
+4. Service continues during grace
+
+### Cancelled Status
+
+After cancellation:
+
+1. Access continues until period end
+2. Download any needed data
+3. Reactivate anytime before expiry
+4. Plan converts to Free after expiry
+
+## Invoices and Receipts
+
+### Viewing Invoices
+
+Access your invoice history:
+
+1. Go to Billing
+2. Click **Manage** to open portal
+3. View invoices in Stripe portal
+4. Download PDF invoices
+
+### Invoice Contents
+
+| Item               | Description           |
+| ------------------ | --------------------- |
+| **Invoice Number** | Unique identifier     |
+| **Date**           | Invoice date          |
+| **Amount**         | Total charged         |
+| **Status**         | Paid, pending, failed |
+| **Download**       | PDF download link     |
+
+## Cancellation
+
+### Cancelling Your Subscription
+
+To cancel:
+
+1. Go to Billing
+2. Click **Cancel Subscription**
+3. Complete cancellation flow
+4. Confirm the cancellation
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/billing
+Shows: Cancellation section with cancel button
+Annotations: Highlight the cancel option
+Alt text: "Subscription cancellation option with cancel button"
+*/}
+
+![Cancellation](./images/billing-cancel.png)
+_Caption: Cancel your subscription from the billing page_
+
+### Cancellation Flow
+
+The cancellation process includes:
+
+1. Reason selection
+2. Retention offers
+3. Confirmation
+4. Final confirmation email
+
+### After Cancellation
+
+| What Happens           | Timing                |
+| ---------------------- | --------------------- |
+| **Access continues**   | Until period end      |
+| **No further charges** | Immediate             |
+| **Data retained**      | 30 days after expiry  |
+| **Can reactivate**     | Anytime before expiry |
+
+## Reactivation
+
+### Reactivating a Cancelled Subscription
+
+If you've cancelled but want to continue:
+
+1. Go to Billing
+2. Click **Reactivate**
+3. Confirm reactivation
+4. Subscription continues as normal
+
+### Reactivating an Expired Subscription
+
+If your subscription has expired:
+
+1. Go to Billing
+2. Choose a plan
+3. Enter payment method
+4. Start new subscription
+
+## Shopify Billing
+
+If you're using Fanfare through Shopify:
+
+| Feature          | Shopify Handling            |
+| ---------------- | --------------------------- |
+| **Billing**      | Through Shopify app charges |
+| **Payment**      | Via your Shopify account    |
+| **Invoices**     | Available in Shopify admin  |
+| **Cancellation** | Uninstall app in Shopify    |
+
+<Info>
+Shopify users manage billing through their Shopify admin, not directly in Fanfare.
+</Info>
+
+## Platform Fees
+
+When using Stripe Connect for payments:
+
+| Fee Type         | Description               |
+| ---------------- | ------------------------- |
+| **Platform Fee** | Fanfare's transaction fee |
+| **Stripe Fees**  | Stripe's processing fees  |
+| **Net Revenue**  | Your earnings after fees  |
+
+## Best Practices
+
+### Managing Usage
+
+1. **Monitor regularly** - Check usage weekly
+2. **Set alerts** - Get notified at thresholds
+3. **Plan for growth** - Upgrade before hitting limits
+4. **Review trends** - Understand usage patterns
+
+### Billing Hygiene
+
+1. **Keep payment current** - Update expired cards
+2. **Download invoices** - Keep records
+3. **Review charges** - Verify accuracy
+4. **Set reminders** - For renewal dates
+
+## Troubleshooting
+
+### Payment Failed
+
+1. Check card is valid
+2. Ensure sufficient funds
+3. Update payment method
+4. Contact support if issues persist
+
+### Can't Access Portal
+
+1. Try refreshing the page
+2. Clear browser cache
+3. Try different browser
+4. Contact support
+
+### Usage Doesn't Match
+
+1. Check time period selected
+2. Verify metric definitions
+3. Compare with analytics
+4. Contact support if discrepancy
+
+## Related Guides
+
+- [Settings](/dashboard/settings/overview) - Organization settings
+- [Analytics](/dashboard/analytics/overview) - Usage analytics
+- [Payments Settings](/dashboard/settings/integrations) - Payment configuration

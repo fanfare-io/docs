@@ -1,0 +1,207 @@
+---
+title: Organization Settings
+description: Configure your organization's basic information and preferences
+---
+
+# Organization Settings
+
+Organization settings control your company's basic information that appears throughout the platform and in communications with consumers.
+
+## Accessing Organization Settings
+
+Navigate to **Settings** > **Organization** to manage your organization details.
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/settings/organization
+Shows: Organization settings form with fields
+Annotations: Label the form sections
+Alt text: "Organization settings form with company name and contact fields"
+*/}
+
+![Organization settings](./images/settings-organization.png)
+_Caption: Configure your organization's basic information_
+
+## Organization Information
+
+### Company Details
+
+| Field            | Required | Description                           |
+| ---------------- | -------- | ------------------------------------- |
+| **Company Name** | Yes      | Legal or display name of your company |
+| **Display Name** | No       | Short name for UI display             |
+| **Website**      | No       | Company website URL                   |
+| **Industry**     | No       | Business category                     |
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/settings/organization
+Shows: Company details section of the form
+Annotations: Highlight the company name field
+Alt text: "Company details form with name and website fields"
+*/}
+
+![Company details](./images/settings-company-details.png)
+_Caption: Enter your company information_
+
+### Contact Information
+
+| Field             | Required | Description            |
+| ----------------- | -------- | ---------------------- |
+| **Contact Email** | Yes      | Primary contact email  |
+| **Support Email** | No       | Customer support email |
+| **Phone Number**  | No       | Business phone number  |
+
+### Business Address
+
+| Field              | Description             |
+| ------------------ | ----------------------- |
+| **Street Address** | Physical address line 1 |
+| **Address Line 2** | Suite, unit, etc.       |
+| **City**           | City name               |
+| **State/Province** | State or province       |
+| **Postal Code**    | ZIP or postal code      |
+| **Country**        | Country                 |
+
+## Organization Preferences
+
+### Default Settings
+
+| Setting         | Description                     |
+| --------------- | ------------------------------- |
+| **Timezone**    | Default timezone for scheduling |
+| **Date Format** | How dates are displayed         |
+| **Currency**    | Default currency for pricing    |
+| **Language**    | Primary language                |
+
+### Timezone Configuration
+
+Select the timezone used for:
+
+- Experience scheduling
+- Analytics reporting
+- Email scheduling
+- Dashboard displays
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/settings/organization
+Shows: Timezone selector dropdown
+Annotations: Show the dropdown options
+Alt text: "Timezone selection dropdown"
+*/}
+
+![Timezone selector](./images/settings-timezone.png)
+_Caption: Select your organization's default timezone_
+
+## Organization ID
+
+Your organization has a unique identifier used for:
+
+- API integrations
+- Support requests
+- Technical configurations
+
+| Field               | Description                       |
+| ------------------- | --------------------------------- |
+| **Organization ID** | Unique identifier (read-only)     |
+| **Created At**      | When the organization was created |
+
+<Info>
+The Organization ID is automatically generated and cannot be changed. You may need this ID when contacting support or configuring integrations.
+</Info>
+
+## Saving Changes
+
+1. Make your changes in the form
+2. Click **Save** to apply
+3. Wait for confirmation
+4. Changes take effect immediately
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/settings/organization
+Shows: Save and Cancel buttons at form bottom
+Annotations: Highlight the Save button
+Alt text: "Form action buttons showing Save and Cancel"
+*/}
+
+![Save changes](./images/settings-save.png)
+_Caption: Click Save to apply your changes_
+
+### Validation Rules
+
+| Field            | Validation                 |
+| ---------------- | -------------------------- |
+| **Company Name** | Required, 2-100 characters |
+| **Email**        | Valid email format         |
+| **Website**      | Valid URL format           |
+| **Phone**        | Valid phone format         |
+
+## Where Organization Info Appears
+
+Your organization information is used in:
+
+| Location             | Usage                           |
+| -------------------- | ------------------------------- |
+| **Email headers**    | Sender name and reply-to        |
+| **Receipts**         | Company information on receipts |
+| **Consumer pages**   | Brand display                   |
+| **Legal notices**    | Contact information             |
+| **Support requests** | Organization context            |
+
+## Multi-Organization Support
+
+If you manage multiple organizations:
+
+1. Switch organizations from the organization selector
+2. Each organization has separate settings
+3. Settings don't carry over between organizations
+
+## Data Retention
+
+Organization data is retained according to your plan:
+
+| Plan           | Data Retention           |
+| -------------- | ------------------------ |
+| **Free**       | 30 days after inactivity |
+| **Basic**      | 1 year                   |
+| **Pro**        | 3 years                  |
+| **Enterprise** | Custom retention         |
+
+## Best Practices
+
+### Company Information
+
+1. **Use official names** - Match legal business name
+2. **Keep contact current** - Update when emails change
+3. **Add support email** - Separate from primary contact
+4. **Include timezone** - Helps with scheduling
+
+### Organization Setup
+
+1. **Complete all fields** - Full information helps support
+2. **Review periodically** - Update as business changes
+3. **Check timezone** - Affects all time-based features
+
+## Troubleshooting
+
+### Changes Not Saving
+
+1. Check all required fields are filled
+2. Verify field validation passes
+3. Check network connection
+4. Try refreshing the page
+
+### Timezone Issues
+
+1. Verify correct timezone is selected
+2. Check for daylight saving time
+3. Refresh after changing timezone
+4. Clear browser cache if issues persist
+
+## Related Guides
+
+- [Settings Overview](/dashboard/settings/overview) - All settings
+- [Brand Settings](/dashboard/settings/branding) - Visual customization
+- [Team Members](/dashboard/settings/team-members) - User management

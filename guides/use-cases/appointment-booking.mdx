@@ -1,0 +1,1031 @@
+---
+title: Appointment Booking Use Case
+description: Manage appointment scheduling with fair access to limited time slots.
+---
+
+# Appointment Booking Use Case
+
+Learn how to use Fanfare to manage appointment scheduling with fair access to limited time slots.
+
+## Overview
+
+When appointment slots are scarce (medical specialists, consultations, exclusive services), Fanfare helps manage demand fairly. Use queues for high-demand scheduling or timed releases for coordinated slot openings.
+
+**What you'll learn:**
+
+- Setting up appointment-based experiences
+- Managing time slot inventory
+- Building the booking interface
+- Handling confirmations and reminders
+- Managing cancellations and waitlists
+
+**Complexity:** Intermediate
+**Time to complete:** 40 minutes
+
+## Prerequisites
+
+- Fanfare account with queue or timed release enabled
+- Appointment scheduling system or calendar
+- Understanding of your service capacity
+- Customer communication system (email/SMS)
+
+## When to Use Fanfare for Appointments
+
+| Scenario                                | Fanfare Solution               |
+| --------------------------------------- | ------------------------------ |
+| High demand for limited slots           | Queue before slot selection    |
+| Coordinated slot release (e.g., weekly) | Timed release                  |
+| VIP priority booking                    | Audience-based early access    |
+| Preventing bots from grabbing slots     | Rate limiting + authentication |
+
+## Step 1: Define Appointment Structure
+
+### Configuration Model
+
+```typescript
+// types/appointments.ts
+interface AppointmentConfig {
+  // Service definition
+  serviceId: string;
+  serviceName: string;
+  duration: number; // minutes
+  price: number;
+  location: "in_person" | "virtual";
+
+  // Availability
+  availableDays: number[]; // 0=Sunday, 1=Monday, etc.
+  timeSlots: TimeSlot[];
+
+  // Booking rules
+  maxAdvanceBookingDays: number;
+  minAdvanceBookingHours: number;
+  maxBookingsPerConsumer: number;
+  requireDeposit: boolean;
+  depositAmount?: number;
+
+  // Cancellation policy
+  freeCancellationHours: number;
+  cancellationFee?: number;
+}
+
+interface TimeSlot {
+  startTime: string; // "09:00"
+  endTime: string; // "09:30"
+  capacity: number; // Concurrent appointments
+}
+
+// Example configuration
+const consultationConfig: AppointmentConfig = {
+  serviceId: "specialist-consultation",
+  serviceName: "Specialist Consultation",
+  duration: 30,
+  price: 150,
+  location: "virtual",
+
+  availableDays: [1, 2, 3, 4, 5], // Monday-Friday
+  timeSlots: [
+    { startTime: "09:00", endTime: "09:30", capacity: 1 },
+    { startTime: "09:30", endTime: "10:00", capacity: 1 },
+    { startTime: "10:00", endTime: "10:30", capacity: 1 },
+    { startTime: "10:30", endTime: "11:00", capacity: 1 },
+    { startTime: "14:00", endTime: "14:30", capacity: 1 },
+    { startTime: "14:30", endTime: "15:00", capacity: 1 },
+    { startTime: "15:00", endTime: "15:30", capacity: 1 },
+    { startTime: "15:30", endTime: "16:00", capacity: 1 },
+  ],
+
+  maxAdvanceBookingDays: 30,
+  minAdvanceBookingHours: 24,
+  maxBookingsPerConsumer: 2,
+  requireDeposit: true,
+  depositAmount: 50,
+
+  freeCancellationHours: 48,
+  cancellationFee: 25,
+};
+```
+
+## Step 2: Create Booking Experience
+
+### Queue-Based Booking (High Demand)
+
+```typescript
+import { FanfareAdminClient } from "@waitify-io/fanfare-admin-sdk";
+
+const adminClient = new FanfareAdminClient({
+  apiKey: process.env.FANFARE_ADMIN_API_KEY!,
+  organizationId: process.env.FANFARE_ORGANIZATION_ID!,
+});
+
+async function createAppointmentQueue(
+  config: AppointmentConfig,
+  releaseDate: Date,
+) {
+  const queue = await adminClient.queues.create({
+    name: `${config.serviceName} - Booking Queue`,
+    slug: `booking-${config.serviceId}-${releaseDate.toISOString().split("T")[0]}`,
+
+    // Queue opens at specific time
+    scheduledStart: releaseDate,
+
+    config: {
+      // Booking window after admission
+      admissionWindowSeconds: 300, // 5 minutes to select slot
+
+      // Flow control
+      maxConcurrentAdmissions: 10,
+      admissionRatePerMinute: 20,
+
+      // Authentication required
+      requireAuthentication: true,
+
+      // Fair access
+      fairnessMode: "strict",
+    },
+
+    metadata: {
+      serviceId: config.serviceId,
+      bookingType: "appointment",
+      availableSlots: await getAvailableSlotsCount(config, releaseDate),
+    },
+  });
+
+  return queue;
+}
+```
+
+### Timed Release for Weekly Slots
+
+```typescript
+async function createWeeklySlotRelease(config: AppointmentConfig) {
+  // Release next week's appointments every Monday at 9 AM
+  const release = await adminClient.timedReleases.create({
+    name: `${config.serviceName} - Weekly Slot Release`,
+    slug: `slots-${config.serviceId}`,
+
+    // Recurring schedule
+    schedule: {
+      type: "recurring",
+      frequency: "weekly",
+      dayOfWeek: 1, // Monday
+      time: "09:00",
+      timezone: "America/New_York",
+    },
+
+    config: {
+      admissionWindowSeconds: 600, // 10 minutes
+      maxConcurrentAdmissions: 50,
+      showRemainingSlots: true,
+    },
+
+    metadata: {
+      serviceId: config.serviceId,
+      releaseType: "weekly_appointment_slots",
+    },
+  });
+
+  return release;
+}
+```
+
+## Step 3: Build the Booking Interface
+
+### Appointment Booking Page
+
+```tsx
+// pages/book/[serviceId].tsx
+import { FanfareProvider } from "@waitify-io/fanfare-sdk-react";
+import { AppointmentBookingExperience } from "@/components/AppointmentBookingExperience";
+import { ServiceInfo } from "@/components/ServiceInfo";
+
+interface BookingPageProps {
+  experienceId: string;
+  service: ServiceConfig;
+  availableSlots: TimeSlot[];
+}
+
+export default function BookingPage({
+  experienceId,
+  service,
+  availableSlots,
+}: BookingPageProps) {
+  return (
+    <FanfareProvider
+      organizationId={process.env.NEXT_PUBLIC_FANFARE_ORG_ID!}
+      options={{ environment: "production" }}
+    >
+      <div className="booking-page">
+        <ServiceInfo service={service} />
+        <AppointmentBookingExperience
+          experienceId={experienceId}
+          service={service}
+          availableSlots={availableSlots}
+        />
+      </div>
+    </FanfareProvider>
+  );
+}
+```
+
+### Booking Experience Component
+
+```tsx
+// components/AppointmentBookingExperience.tsx
+import { useExperienceJourney } from "@waitify-io/fanfare-sdk-react";
+import { useState, useEffect } from "react";
+
+interface AppointmentBookingExperienceProps {
+  experienceId: string;
+  service: ServiceConfig;
+  availableSlots: TimeSlot[];
+}
+
+export function AppointmentBookingExperience({
+  experienceId,
+  service,
+  availableSlots,
+}: AppointmentBookingExperienceProps) {
+  const { journey, state, start } = useExperienceJourney(experienceId, {
+    autoStart: true,
+  });
+
+  const snapshot = state?.snapshot;
+  const stage = snapshot?.sequenceStage;
+
+  switch (stage) {
+    case "not_started":
+      return <BookingNotOpenState snapshot={snapshot} service={service} />;
+
+    case "entering":
+    case "routing":
+      return <LoadingState message="Connecting to booking system..." />;
+
+    case "waiting":
+      return <WaitingState snapshot={snapshot} />;
+
+    case "admitted":
+      return (
+        <SlotSelectionState
+          snapshot={snapshot}
+          service={service}
+          availableSlots={availableSlots}
+        />
+      );
+
+    case "completed":
+      return <BookingConfirmedState snapshot={snapshot} service={service} />;
+
+    default:
+      return null;
+  }
+}
+
+function BookingNotOpenState({
+  snapshot,
+  service,
+}: {
+  snapshot: JourneySnapshot;
+  service: ServiceConfig;
+}) {
+  const opensAt = snapshot?.context?.startsAt;
+
+  return (
+    <div className="booking-not-open">
+      <h2>Booking Opens Soon</h2>
+
+      {opensAt && (
+        <div className="countdown">
+          <p>New appointments available in:</p>
+          <CountdownTimer targetTime={opensAt} />
+        </div>
+      )}
+
+      <div className="service-preview">
+        <h3>{service.serviceName}</h3>
+        <p>
+          {service.duration} minutes - ${service.price}
+        </p>
+        <p>
+          {service.location === "virtual"
+            ? "Video consultation"
+            : "In-person appointment"}
+        </p>
+      </div>
+
+      <div className="preparation-tips">
+        <h4>Prepare for Booking</h4>
+        <ul>
+          <li>Have your preferred dates ready</li>
+          <li>Prepare payment information (deposit required)</li>
+          <li>You'll have 5 minutes to select your slot</li>
+        </ul>
+      </div>
+    </div>
+  );
+}
+
+function WaitingState({ snapshot }: { snapshot: JourneySnapshot }) {
+  const position = snapshot?.context?.position;
+  const estimatedWait = snapshot?.context?.estimatedWaitSeconds;
+
+  return (
+    <div className="waiting-state">
+      <h2>You're in the Booking Queue</h2>
+
+      <div className="queue-info">
+        <div className="position">
+          <span className="label">Your Position</span>
+          <span className="value">{position}</span>
+        </div>
+
+        <div className="wait-time">
+          <span className="label">Estimated Wait</span>
+          <span className="value">{formatWaitTime(estimatedWait)}</span>
+        </div>
+      </div>
+
+      <p className="instructions">
+        Please keep this page open. We'll notify you when it's your turn to
+        book.
+      </p>
+    </div>
+  );
+}
+
+function SlotSelectionState({
+  snapshot,
+  service,
+  availableSlots,
+}: {
+  snapshot: JourneySnapshot;
+  service: ServiceConfig;
+  availableSlots: TimeSlot[];
+}) {
+  const expiresAt = snapshot?.context?.admittanceExpiresAt;
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [selectedSlot, setSelectedSlot] = useState<TimeSlot | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleBookSlot = async () => {
+    if (!selectedDate || !selectedSlot) return;
+
+    setIsSubmitting(true);
+    try {
+      // Reserve the slot
+      const reservation = await reserveAppointmentSlot({
+        serviceId: service.serviceId,
+        date: selectedDate,
+        slot: selectedSlot,
+        admissionToken: snapshot?.context?.admittanceToken,
+        consumerId: snapshot?.context?.consumerId,
+      });
+
+      // Redirect to payment/confirmation
+      window.location.href = `/book/confirm/${reservation.id}`;
+    } catch (error) {
+      console.error("Booking failed:", error);
+      alert("Failed to reserve slot. Please try another time.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <div className="slot-selection">
+      <div className="selection-header">
+        <h2>Select Your Appointment</h2>
+        <div className="timer">
+          <span className="label">Time to book:</span>
+          <CountdownTimer targetTime={expiresAt} />
+        </div>
+      </div>
+
+      <div className="date-selection">
+        <h3>Select a Date</h3>
+        <DatePicker
+          minDate={addDays(new Date(), 1)}
+          maxDate={addDays(new Date(), service.maxAdvanceBookingDays)}
+          availableDays={service.availableDays}
+          selectedDate={selectedDate}
+          onSelect={setSelectedDate}
+        />
+      </div>
+
+      {selectedDate && (
+        <div className="time-selection">
+          <h3>Select a Time</h3>
+          <TimeSlotPicker
+            date={selectedDate}
+            slots={availableSlots}
+            selectedSlot={selectedSlot}
+            onSelect={setSelectedSlot}
+          />
+        </div>
+      )}
+
+      {selectedDate && selectedSlot && (
+        <div className="booking-summary">
+          <h3>Booking Summary</h3>
+          <dl>
+            <dt>Service</dt>
+            <dd>{service.serviceName}</dd>
+
+            <dt>Date</dt>
+            <dd>{selectedDate.toLocaleDateString()}</dd>
+
+            <dt>Time</dt>
+            <dd>
+              {selectedSlot.startTime} - {selectedSlot.endTime}
+            </dd>
+
+            <dt>Duration</dt>
+            <dd>{service.duration} minutes</dd>
+
+            <dt>Price</dt>
+            <dd>${service.price}</dd>
+
+            {service.requireDeposit && (
+              <>
+                <dt>Deposit (due now)</dt>
+                <dd>${service.depositAmount}</dd>
+              </>
+            )}
+          </dl>
+
+          <button
+            onClick={handleBookSlot}
+            disabled={isSubmitting}
+            className="book-btn"
+          >
+            {isSubmitting
+              ? "Reserving..."
+              : `Book & Pay $${service.depositAmount || service.price}`}
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function BookingConfirmedState({
+  snapshot,
+  service,
+}: {
+  snapshot: JourneySnapshot;
+  service: ServiceConfig;
+}) {
+  const booking = snapshot?.context?.booking;
+
+  return (
+    <div className="booking-confirmed">
+      <div className="success-badge">
+        <span className="icon">✓</span>
+        <h2>Booking Confirmed!</h2>
+      </div>
+
+      <div className="confirmation-details">
+        <h3>Appointment Details</h3>
+        <dl>
+          <dt>Confirmation Number</dt>
+          <dd>{booking?.confirmationNumber}</dd>
+
+          <dt>Service</dt>
+          <dd>{service.serviceName}</dd>
+
+          <dt>Date & Time</dt>
+          <dd>
+            {new Date(booking?.dateTime).toLocaleDateString()} at{" "}
+            {booking?.time}
+          </dd>
+
+          <dt>Location</dt>
+          <dd>
+            {service.location === "virtual"
+              ? "Video Call (link will be emailed)"
+              : booking?.address}
+          </dd>
+        </dl>
+      </div>
+
+      <div className="next-steps">
+        <h3>What's Next?</h3>
+        <ul>
+          <li>Confirmation email sent to {snapshot?.context?.email}</li>
+          <li>Calendar invite attached</li>
+          <li>Reminder sent 24 hours before appointment</li>
+        </ul>
+      </div>
+
+      <div className="actions">
+        <button onClick={() => addToCalendar(booking)}>Add to Calendar</button>
+        <button onClick={() => (window.location.href = "/appointments")}>
+          View My Appointments
+        </button>
+      </div>
+    </div>
+  );
+}
+```
+
+### Time Slot Picker Component
+
+```tsx
+// components/TimeSlotPicker.tsx
+interface TimeSlotPickerProps {
+  date: Date;
+  slots: TimeSlot[];
+  selectedSlot: TimeSlot | null;
+  onSelect: (slot: TimeSlot) => void;
+}
+
+export function TimeSlotPicker({
+  date,
+  slots,
+  selectedSlot,
+  onSelect,
+}: TimeSlotPickerProps) {
+  const [availability, setAvailability] = useState<Map<string, boolean>>(
+    new Map(),
+  );
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchAvailability() {
+      setLoading(true);
+      try {
+        const available = await getSlotAvailability(date);
+        const map = new Map<string, boolean>();
+        available.forEach((slot) => {
+          map.set(slot.startTime, slot.available);
+        });
+        setAvailability(map);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchAvailability();
+  }, [date]);
+
+  if (loading) {
+    return <div className="loading">Loading available times...</div>;
+  }
+
+  const morningSlots = slots.filter((s) => parseInt(s.startTime) < 12);
+  const afternoonSlots = slots.filter((s) => parseInt(s.startTime) >= 12);
+
+  return (
+    <div className="time-slot-picker">
+      <div className="slot-group">
+        <h4>Morning</h4>
+        <div className="slots">
+          {morningSlots.map((slot) => {
+            const isAvailable = availability.get(slot.startTime) ?? false;
+            const isSelected = selectedSlot?.startTime === slot.startTime;
+
+            return (
+              <button
+                key={slot.startTime}
+                onClick={() => isAvailable && onSelect(slot)}
+                disabled={!isAvailable}
+                className={`slot ${isSelected ? "selected" : ""} ${!isAvailable ? "unavailable" : ""}`}
+              >
+                {slot.startTime}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      <div className="slot-group">
+        <h4>Afternoon</h4>
+        <div className="slots">
+          {afternoonSlots.map((slot) => {
+            const isAvailable = availability.get(slot.startTime) ?? false;
+            const isSelected = selectedSlot?.startTime === slot.startTime;
+
+            return (
+              <button
+                key={slot.startTime}
+                onClick={() => isAvailable && onSelect(slot)}
+                disabled={!isAvailable}
+                className={`slot ${isSelected ? "selected" : ""} ${!isAvailable ? "unavailable" : ""}`}
+              >
+                {slot.startTime}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
+```
+
+## Step 4: Booking Management
+
+### Server-Side Slot Reservation
+
+```typescript
+// services/appointment-booking.ts
+import { db } from "../db";
+import { appointments, appointmentSlots } from "../db/schema";
+import { eq, and } from "drizzle-orm";
+
+interface ReserveSlotParams {
+  serviceId: string;
+  date: Date;
+  slot: TimeSlot;
+  admissionToken: string;
+  consumerId: string;
+}
+
+export async function reserveAppointmentSlot(params: ReserveSlotParams) {
+  const { serviceId, date, slot, admissionToken, consumerId } = params;
+
+  return await db.transaction(async (tx) => {
+    // Check slot availability with lock
+    const slotRecord = await tx
+      .select()
+      .from(appointmentSlots)
+      .where(
+        and(
+          eq(appointmentSlots.serviceId, serviceId),
+          eq(appointmentSlots.date, date),
+          eq(appointmentSlots.startTime, slot.startTime),
+        ),
+      )
+      .for("update");
+
+    if (!slotRecord[0] || slotRecord[0].bookedCount >= slotRecord[0].capacity) {
+      throw new Error("Slot no longer available");
+    }
+
+    // Increment booked count
+    await tx
+      .update(appointmentSlots)
+      .set({ bookedCount: slotRecord[0].bookedCount + 1 })
+      .where(eq(appointmentSlots.id, slotRecord[0].id));
+
+    // Create appointment
+    const [appointment] = await tx
+      .insert(appointments)
+      .values({
+        serviceId,
+        consumerId,
+        slotId: slotRecord[0].id,
+        date,
+        startTime: slot.startTime,
+        endTime: slot.endTime,
+        status: "pending_payment",
+        admissionToken,
+        confirmationNumber: generateConfirmationNumber(),
+        createdAt: new Date(),
+      })
+      .returning();
+
+    return appointment;
+  });
+}
+```
+
+### Cancellation and Waitlist
+
+```typescript
+// services/appointment-cancellation.ts
+export async function cancelAppointment(
+  appointmentId: string,
+  consumerId: string,
+) {
+  const appointment = await db.query.appointments.findFirst({
+    where: and(
+      eq(appointments.id, appointmentId),
+      eq(appointments.consumerId, consumerId),
+    ),
+  });
+
+  if (!appointment) {
+    throw new Error("Appointment not found");
+  }
+
+  const hoursUntilAppointment =
+    (new Date(appointment.date).getTime() - Date.now()) / (1000 * 60 * 60);
+
+  const service = await getServiceConfig(appointment.serviceId);
+  const isFreeCancellation =
+    hoursUntilAppointment >= service.freeCancellationHours;
+
+  await db.transaction(async (tx) => {
+    // Update appointment status
+    await tx
+      .update(appointments)
+      .set({
+        status: "cancelled",
+        cancelledAt: new Date(),
+        cancellationFee: isFreeCancellation ? 0 : service.cancellationFee,
+      })
+      .where(eq(appointments.id, appointmentId));
+
+    // Release slot
+    await tx
+      .update(appointmentSlots)
+      .set({ bookedCount: sql`booked_count - 1` })
+      .where(eq(appointmentSlots.id, appointment.slotId));
+
+    // Process waitlist
+    const nextInWaitlist = await tx
+      .select()
+      .from(appointmentWaitlist)
+      .where(
+        and(
+          eq(appointmentWaitlist.slotId, appointment.slotId),
+          eq(appointmentWaitlist.status, "waiting"),
+        ),
+      )
+      .orderBy(appointmentWaitlist.createdAt)
+      .limit(1);
+
+    if (nextInWaitlist[0]) {
+      // Notify waitlist customer
+      await notifyWaitlistCustomer(nextInWaitlist[0], appointment);
+
+      // Update waitlist entry
+      await tx
+        .update(appointmentWaitlist)
+        .set({
+          status: "notified",
+          notifiedAt: new Date(),
+          expiresAt: new Date(Date.now() + 2 * 60 * 60 * 1000), // 2 hours to claim
+        })
+        .where(eq(appointmentWaitlist.id, nextInWaitlist[0].id));
+    }
+  });
+
+  // Process refund if applicable
+  if (isFreeCancellation && appointment.depositPaid) {
+    await processRefund(appointment.paymentId, appointment.depositAmount);
+  } else if (appointment.depositPaid && service.cancellationFee) {
+    await processPartialRefund(
+      appointment.paymentId,
+      appointment.depositAmount - service.cancellationFee,
+    );
+  }
+}
+```
+
+## Step 5: Notifications and Reminders
+
+### Notification Service
+
+```typescript
+// services/appointment-notifications.ts
+interface AppointmentNotification {
+  type:
+    | "confirmation"
+    | "reminder_24h"
+    | "reminder_1h"
+    | "cancellation"
+    | "waitlist_available";
+  appointment: Appointment;
+  consumer: Consumer;
+}
+
+export async function sendAppointmentNotification(
+  notification: AppointmentNotification,
+) {
+  const { type, appointment, consumer } = notification;
+
+  const templates: Record<string, EmailTemplate> = {
+    confirmation: {
+      subject: `Appointment Confirmed - ${appointment.serviceName}`,
+      template: "appointment-confirmation",
+    },
+    reminder_24h: {
+      subject: `Reminder: Your appointment is tomorrow`,
+      template: "appointment-reminder-24h",
+    },
+    reminder_1h: {
+      subject: `Your appointment starts in 1 hour`,
+      template: "appointment-reminder-1h",
+    },
+    cancellation: {
+      subject: `Appointment Cancelled`,
+      template: "appointment-cancellation",
+    },
+    waitlist_available: {
+      subject: `A slot is now available!`,
+      template: "waitlist-slot-available",
+    },
+  };
+
+  const template = templates[type];
+
+  // Send email
+  await sendEmail({
+    to: consumer.email,
+    subject: template.subject,
+    template: template.template,
+    data: {
+      consumerName: consumer.name,
+      serviceName: appointment.serviceName,
+      date: new Date(appointment.date).toLocaleDateString(),
+      time: appointment.startTime,
+      confirmationNumber: appointment.confirmationNumber,
+      location: appointment.location,
+      calendarLink: generateCalendarLink(appointment),
+    },
+  });
+
+  // Send SMS for reminders
+  if (type.includes("reminder") || type === "waitlist_available") {
+    await sendSMS({
+      to: consumer.phone,
+      message: getSMSMessage(type, appointment),
+    });
+  }
+}
+
+// Scheduled reminder job
+export async function processAppointmentReminders() {
+  const now = new Date();
+
+  // 24 hour reminders
+  const tomorrow = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+  const appointments24h = await getAppointmentsForDate(tomorrow);
+
+  for (const appointment of appointments24h) {
+    if (!appointment.reminder24hSent) {
+      await sendAppointmentNotification({
+        type: "reminder_24h",
+        appointment,
+        consumer: await getConsumer(appointment.consumerId),
+      });
+
+      await markReminderSent(appointment.id, "24h");
+    }
+  }
+
+  // 1 hour reminders
+  const inOneHour = new Date(now.getTime() + 60 * 60 * 1000);
+  const appointments1h = await getAppointmentsStartingAt(inOneHour);
+
+  for (const appointment of appointments1h) {
+    if (!appointment.reminder1hSent) {
+      await sendAppointmentNotification({
+        type: "reminder_1h",
+        appointment,
+        consumer: await getConsumer(appointment.consumerId),
+      });
+
+      await markReminderSent(appointment.id, "1h");
+    }
+  }
+}
+```
+
+## Best Practices
+
+### 1. Clear Booking Rules
+
+```tsx
+function BookingRules({ service }: { service: ServiceConfig }) {
+  return (
+    <section className="booking-rules">
+      <h3>Booking Policy</h3>
+      <ul>
+        <li>Book up to {service.maxAdvanceBookingDays} days in advance</li>
+        <li>Minimum {service.minAdvanceBookingHours} hours notice required</li>
+        <li>
+          Maximum {service.maxBookingsPerConsumer} active bookings per customer
+        </li>
+
+        {service.requireDeposit && (
+          <li>Deposit of ${service.depositAmount} required to confirm</li>
+        )}
+
+        <li>
+          Free cancellation up to {service.freeCancellationHours} hours before
+          appointment
+        </li>
+
+        {service.cancellationFee && (
+          <li>Late cancellation fee: ${service.cancellationFee}</li>
+        )}
+      </ul>
+    </section>
+  );
+}
+```
+
+### 2. Handle No-Shows
+
+```typescript
+async function processNoShows() {
+  const gracePeriod = 15 * 60 * 1000; // 15 minutes
+
+  const noShows = await db.query.appointments.findMany({
+    where: and(
+      eq(appointments.status, "confirmed"),
+      lt(appointments.startTime, new Date(Date.now() - gracePeriod)),
+      isNull(appointments.checkedInAt),
+    ),
+  });
+
+  for (const appointment of noShows) {
+    await db
+      .update(appointments)
+      .set({
+        status: "no_show",
+        noShowAt: new Date(),
+      })
+      .where(eq(appointments.id, appointment.id));
+
+    // Apply no-show policy (e.g., forfeit deposit)
+    if (appointment.depositPaid) {
+      await recordNoShowFee(appointment.id, appointment.depositAmount);
+    }
+
+    // Update customer history
+    await incrementNoShowCount(appointment.consumerId);
+  }
+}
+```
+
+### 3. Mobile-Optimized Interface
+
+```css
+/* Mobile-first booking styles */
+.time-slot-picker .slots {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  gap: 8px;
+}
+
+.slot {
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: white;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.slot.selected {
+  background: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+
+.slot.unavailable {
+  background: #f5f5f5;
+  color: #999;
+  cursor: not-allowed;
+  text-decoration: line-through;
+}
+
+.booking-summary {
+  position: sticky;
+  bottom: 0;
+  background: white;
+  padding: 16px;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 480px) {
+  .date-picker {
+    width: 100%;
+  }
+
+  .book-btn {
+    width: 100%;
+    padding: 16px;
+    font-size: 16px;
+  }
+}
+```
+
+## Troubleshooting
+
+### Double Bookings
+
+1. Always use database transactions with row locks
+2. Verify slot availability immediately before booking
+3. Implement idempotency keys for payment processing
+
+### Slot Not Showing Available
+
+1. Check slot capacity vs. booked count
+2. Verify date is within booking window
+3. Ensure customer hasn't exceeded booking limit
+
+### Reminders Not Sending
+
+1. Verify scheduled job is running
+2. Check email/SMS service status
+3. Review reminder sent flags in database
+
+## What's Next
+
+- [Event Ticketing](/guides/use-cases/event-ticketing) - Manage event access
+- [Webhooks Guide](/guides/advanced/webhooks-guide) - Real-time notifications
+- [Error Handling](/guides/advanced/error-handling) - Handle booking failures gracefully

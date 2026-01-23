@@ -1,0 +1,281 @@
+---
+title: Audiences Overview
+description: Manage audience segments to control access to your experiences
+---
+
+# Audiences Overview
+
+Audiences define groups of consumers who can access your experiences. Use audiences to target specific customer segments, create exclusive access, and personalize the experience for different groups.
+
+## Accessing Audiences
+
+Navigate to **Audiences** in the sidebar to view and manage your audience segments. The route is `/app/audiences`.
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/audiences
+Shows: Audiences list with multiple audiences showing different types and member counts
+Annotations: Highlight the Create button and audience type indicators
+Alt text: "Audiences list showing multiple audience segments with member counts"
+*/}
+
+![Audiences list](./images/audiences-list.png)
+_Caption: The audiences list shows all your defined segments with member counts_
+
+## Audience Types
+
+Fanfare supports several types of audiences:
+
+| Type             | Description                    | Best For                  |
+| ---------------- | ------------------------------ | ------------------------- |
+| **Dynamic**      | Membership based on rules      | Behavioral targeting      |
+| **Static**       | Manually defined members       | Specific customer lists   |
+| **Import**       | Uploaded from external source  | Migration, bulk additions |
+| **Loyalty Tier** | Based on loyalty levels        | VIP programs              |
+| **Synced**       | Synchronized from integrations | Klaviyo lists, etc.       |
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/audiences
+Shows: Empty state with audience creation options
+Annotations: Label each creation option
+Alt text: "Audience creation options showing Create, Import, and Loyalty Tiers"
+*/}
+
+![Audience options](./images/audiences-options.png)
+_Caption: Multiple ways to create and manage audiences_
+
+## Audiences Table
+
+When you have audiences, they're displayed in a sortable table.
+
+### Table Columns
+
+| Column           | Description                                        |
+| ---------------- | -------------------------------------------------- |
+| **Name**         | Audience name (click to view details)              |
+| **Type**         | Dynamic, Static, Import, or Loyalty                |
+| **Members**      | Number of consumers in the audience                |
+| **Rules**        | Number of membership rules (for dynamic audiences) |
+| **Sync Source**  | External integration source (if synced)            |
+| **Created**      | When the audience was created                      |
+| **Last Updated** | Most recent modification                           |
+
+### Actions Menu
+
+Each audience row has an actions menu with:
+
+- **View Details** - Open audience detail page
+- **Edit** - Modify audience settings
+- **Duplicate** - Create a copy
+- **Delete** - Remove the audience
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/audiences
+Shows: Audiences table with actions menu expanded on one row
+Annotations: Highlight the actions menu
+Alt text: "Audiences table with row actions menu showing view, edit, duplicate, delete options"
+*/}
+
+![Audience actions](./images/audiences-actions.png)
+_Caption: Access quick actions from the row menu_
+
+## Audience Groups
+
+Related audiences can be organized into groups. This is particularly useful for:
+
+- Loyalty tiers (Gold, Silver, Bronze as a group)
+- Regional audiences (US, UK, EU as a group)
+- Campaign audiences (Spring Sale segments as a group)
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/audiences/{audienceId}
+Shows: Audience detail showing group membership
+Annotations: Highlight the group indicator
+Alt text: "Audience detail showing membership in a group"
+*/}
+
+![Audience group](./images/audiences-group.png)
+_Caption: Audiences can be organized into logical groups_
+
+## Creating Audiences
+
+Click the **Create** button to see available options:
+
+| Option                   | Description                            |
+| ------------------------ | -------------------------------------- |
+| **Create Audience**      | Build a new dynamic or static audience |
+| **Import Audience**      | Upload consumers from CSV              |
+| **Import from Klaviyo**  | Sync a Klaviyo list (if configured)    |
+| **Create Loyalty Tiers** | Set up loyalty tier audiences          |
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/audiences
+Shows: Create button dropdown showing all options
+Annotations: None needed
+Alt text: "Audience creation dropdown with multiple options"
+*/}
+
+![Create options](./images/audiences-create-dropdown.png)
+_Caption: Multiple ways to add audiences to your organization_
+
+See detailed guides:
+
+- [Create Audience](/dashboard/audiences/create-audience) - Manual creation
+- [Import Consumers](/dashboard/audiences/import-consumers) - CSV imports
+- [Membership Rules](/dashboard/audiences/membership-rules) - Dynamic rule configuration
+
+## Audience Detail Page
+
+Click any audience to view its detail page. The detail page includes:
+
+### Overview Tab
+
+- Audience summary and metadata
+- Member count and growth
+- Associated experiences
+- Sync status (if applicable)
+
+### Members Tab
+
+- List of consumers in the audience
+- Search and filter members
+- Add/remove members (for static audiences)
+- Export members
+
+### Rules Tab (Dynamic Audiences)
+
+- View and edit membership rules
+- Test rules against consumers
+- Rule match statistics
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/audiences/{audienceId}
+Shows: Audience detail page with tabs visible
+Annotations: Label the Overview, Members, and Rules tabs
+Alt text: "Audience detail page showing overview, members, and rules tabs"
+*/}
+
+![Audience detail](./images/audiences-detail.png)
+_Caption: The audience detail page provides comprehensive management options_
+
+## Using Audiences in Experiences
+
+When creating or editing an experience, select which audiences can participate:
+
+1. Navigate to the experience
+2. Find the Audience selection field
+3. Choose one or more audiences
+4. Consumers in selected audiences can access the experience
+
+### Multiple Audiences
+
+When multiple audiences are selected:
+
+- A consumer in **any** selected audience can participate
+- This creates a union of all selected audiences
+- Great for combining different customer segments
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/experiences/create
+Shows: Audience selector in experience form with multiple selections
+Annotations: Show the multi-select behavior
+Alt text: "Experience form showing multiple audiences selected"
+*/}
+
+![Multiple audiences](./images/audiences-multiple-select.png)
+_Caption: Select multiple audiences for combined access_
+
+## Audience Analytics
+
+Track audience performance:
+
+| Metric           | Description                          |
+| ---------------- | ------------------------------------ |
+| **Member Count** | Total consumers in audience          |
+| **Growth Rate**  | Change in membership over time       |
+| **Engagement**   | Participation in experiences         |
+| **Conversion**   | Completion rate for audience members |
+
+## Deleting Audiences
+
+To delete an audience:
+
+1. Navigate to the audience detail page
+2. Click the **Delete** button
+3. Confirm the deletion
+
+For audience groups:
+
+- Deleting a group deletes all audiences in the group
+- Confirm the count of audiences to be deleted
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/audiences/{audienceId}
+Shows: Delete confirmation dialog
+Annotations: Highlight warning about deletion impact
+Alt text: "Delete audience confirmation dialog"
+*/}
+
+![Delete confirmation](./images/audiences-delete.png)
+_Caption: Confirm before deleting audiences_
+
+<Warning>
+Deleting an audience removes it from all experiences that reference it. Those experiences will no longer have audience restrictions.
+</Warning>
+
+## Best Practices
+
+### Naming Conventions
+
+Use clear, descriptive names:
+
+- Include the targeting criteria
+- Add date ranges for time-limited audiences
+- Prefix with category (e.g., "VIP - Gold Members")
+
+### Audience Strategy
+
+1. **Start broad, then narrow** - Begin with general audiences
+2. **Use dynamic when possible** - Rules auto-update membership
+3. **Clean up unused audiences** - Remove old, unused segments
+4. **Document your logic** - Add descriptions explaining criteria
+
+### Performance Considerations
+
+- Large static audiences (100k+) may take longer to load
+- Complex dynamic rules impact experience load times
+- Consider breaking very large audiences into segments
+
+## Integration with External Tools
+
+### Klaviyo Integration
+
+If Klaviyo is configured:
+
+1. Import lists as audiences
+2. Keep audiences synced with Klaviyo
+3. Track audience source
+
+See [Settings > Integrations](/dashboard/settings/integrations) to configure Klaviyo.
+
+### Future Integrations
+
+Additional integrations coming soon:
+
+- Shopify customer segments
+- CDP platforms
+- Custom webhooks
+
+## Related Guides
+
+- [Create Audience](/dashboard/audiences/create-audience) - Build new audiences
+- [Membership Rules](/dashboard/audiences/membership-rules) - Configure dynamic rules
+- [Import Consumers](/dashboard/audiences/import-consumers) - Bulk imports
+- [Consumer Management](/dashboard/consumers/overview) - Individual consumer records

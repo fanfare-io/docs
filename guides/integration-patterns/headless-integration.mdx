@@ -1,0 +1,648 @@
+---
+title: Headless Integration Guide
+description: Integrate Fanfare using the core SDK without UI components for full control.
+---
+
+# Headless Integration Guide
+
+Learn how to integrate Fanfare using the core SDK without UI components, giving you full control over the experience interface.
+
+## Overview
+
+The headless integration pattern is ideal when you need complete control over the user interface or are building for platforms where the React SDK isn't suitable. This guide shows you how to use the `@waitify-io/fanfare-sdk-core` package directly.
+
+**What you'll learn:**
+
+- Using the core SDK without framework bindings
+- Building custom UI for queue/draw/auction experiences
+- Managing state with the journey state machine
+- Implementing real-time updates
+
+**Complexity:** Advanced
+**Time to complete:** 60 minutes
+
+## Prerequisites
+
+- A Fanfare account with API credentials
+- JavaScript/TypeScript project (any framework or vanilla JS)
+- Understanding of async/await and event-driven programming
+
+## When to Use Headless Integration
+
+Choose headless integration when:
+
+- Building a mobile app with React Native or other frameworks
+- Using Vue, Svelte, or other non-React frameworks
+- Need complete UI customization
+- Integrating with game engines or canvas-based UIs
+- Building server-side applications (Node.js)
+
+## Step 1: Install the Core SDK
+
+Install the framework-agnostic core SDK:
+
+```bash
+npm install @waitify-io/fanfare-sdk-core
+```
+
+## Step 2: Initialize the SDK
+
+Initialize the SDK with your credentials:
+
+```typescript
+import Fanfare, { type FanfareSDK } from "@waitify-io/fanfare-sdk-core";
+
+let sdk: FanfareSDK;
+
+async function initializeFanfare() {
+  sdk = await Fanfare.init({
+    organizationId: "org_your_organization_id",
+    publishableKey: "pk_live_your_publishable_key",
+    environment: "production",
+    debug: false,
+  });
+
+  console.log("Fanfare SDK initialized");
+  return sdk;
+}
+```
+
+### Configuration Options
+
+```typescript
+interface FanfareConfig {
+  organizationId: string; // Required: Your org ID
+  publishableKey: string; // Required: Your publishable key
+  environment?: "production" | "staging" | "development";
+  apiUrl?: string; // Override API URL
+  debug?: boolean; // Enable debug logging
+  auth?: {
+    persistSession?: boolean; // Default: true
+    sessionDuration?: number; // Seconds, default: 3600
+  };
+  sync?:
+    | boolean
+    | {
+        enabled?: boolean; // Cross-tab sync
+        syncKeys?: string[]; // Keys to sync
+        channelName?: string; // BroadcastChannel name
+      };
+  features?: {
+    fingerprinting?: boolean; // Device fingerprinting
+  };
+}
+```
+
+## Step 3: Authenticate
+
+Create a guest session or authenticate with credentials:
+
+```typescript
+// Guest authentication
+async function authenticateGuest() {
+  const status = sdk.auth.check();
+
+  if (!status.isAuthenticated) {
+    const session = await sdk.auth.guest();
+    console.log("Guest session created:", session.consumerId);
+    return session;
+  }
+
+  return status.session;
+}
+
+// OTP authentication (email)
+async function authenticateWithEmail(email: string) {
+  // Request OTP
+  await sdk.auth.requestOtp({ email });
+  console.log("OTP sent to", email);
+}
+
+async function verifyOtp(email: string, code: string) {
+  const session = await sdk.auth.verifyOtp({ email, code });
+  console.log("Authenticated:", session.consumerId);
+  return session;
+}
+
+// External authentication (from your backend)
+async function authenticateExternal(exchangeCode: string) {
+  const session = await sdk.auth.exchangeExternal({ exchangeCode });
+  console.log("External auth complete:", session.consumerId);
+  return session;
+}
+```
+
+## Step 4: Create an Experience Journey
+
+The journey state machine manages the complete experience flow:
+
+```typescript
+import {
+  type ExperienceJourney,
+  type JourneySnapshot,
+} from "@waitify-io/fanfare-sdk-core";
+
+let journey: ExperienceJourney;
+
+async function startExperience(experienceId: string) {
+  // Create journey instance
+  journey = sdk.experiences.createJourney(experienceId);
+
+  // Subscribe to state changes
+  journey.state.listen((snapshot: JourneySnapshot) => {
+    handleStateChange(snapshot);
+  });
+
+  // Start the journey
+  await journey.start();
+}
+
+function handleStateChange(snapshot: JourneySnapshot) {
+  console.log("Journey state changed:", {
+    stage: snapshot.journeyStage,
+    sequenceStage: snapshot.sequenceStage,
+    requirements: snapshot.requirements,
+    availableActions: snapshot.availableActions,
+  });
+
+  // Update your UI based on the new state
+  updateUI(snapshot);
+}
+```
+
+## Step 5: Handle Journey Stages
+
+Process each stage of the journey:
+
+```typescript
+function updateUI(snapshot: JourneySnapshot) {
+  const {
+    journeyStage,
+    sequenceStage,
+    requirements,
+    availableActions,
+    context,
+  } = snapshot;
+
+  switch (journeyStage) {
+    case "not_started":
+      showStartButton();
+      break;
+
+    case "entering":
+      showLoadingState("Entering experience...");
+      break;
+
+    case "needs_auth":
+      showAuthenticationForm();
+      break;
+
+    case "needs_access_code":
+      const isRequired = requirements.find(
+        (r) => r.type === "access_code",
+      )?.required;
+      showAccessCodeForm(isRequired);
+      break;
+
+    case "routing":
+      showLoadingState("Finding your access path...");
+      break;
+
+    case "routed":
+      handleRoutedState(sequenceStage, context, availableActions);
+      break;
+
+    default:
+      console.warn("Unknown stage:", journeyStage);
+  }
+}
+
+function handleRoutedState(
+  sequenceStage: string,
+  context: JourneyContext,
+  availableActions: { journey: string[]; sequence: string[] },
+) {
+  switch (sequenceStage) {
+    case "upcoming":
+      showUpcomingState(context.distribution?.upcoming);
+      break;
+
+    case "active_enterable":
+      showEnterableState(
+        context.distribution?.active,
+        availableActions.sequence,
+      );
+      break;
+
+    case "participating":
+      showParticipatingState(context.participation);
+      break;
+
+    case "waitlist_entered":
+      showWaitlistState();
+      break;
+
+    case "admitted":
+      showAdmittedState(context.admittanceToken, context.admittanceExpiresAt);
+      break;
+
+    case "ended":
+      showEndedState();
+      break;
+  }
+}
+```
+
+## Step 6: Perform Journey Actions
+
+Execute actions based on available options:
+
+```typescript
+// Enter a queue
+async function enterQueue() {
+  await journey.perform("enter_queue");
+}
+
+// Enter a draw
+async function enterDraw() {
+  await journey.perform("enter_draw");
+}
+
+// Provide access code
+async function submitAccessCode(code: string) {
+  await journey.perform("provide_access_code", code);
+}
+
+// Skip access code (if optional)
+async function skipAccessCode() {
+  await journey.perform("skip_access_code");
+}
+
+// Leave current participation
+async function leave() {
+  await journey.perform("leave_participation");
+}
+
+// Refresh distribution data
+async function refresh() {
+  await journey.perform("refresh_distribution");
+}
+```
+
+### Check Available Actions
+
+Always check what actions are available before showing UI:
+
+```typescript
+function getAvailableActions(snapshot: JourneySnapshot) {
+  const { journey: journeyActions, sequence: sequenceActions } =
+    snapshot.availableActions;
+
+  return {
+    canStart: journeyActions.includes("start"),
+    canAuthenticate: journeyActions.includes("authenticate"),
+    canProvideAccessCode: journeyActions.includes("provide_access_code"),
+    canSkipAccessCode: journeyActions.includes("skip_access_code"),
+    canEnterQueue: sequenceActions.includes("enter_queue"),
+    canEnterDraw: sequenceActions.includes("enter_draw"),
+    canEnterAuction: sequenceActions.includes("enter_auction"),
+    canEnterWaitlist: sequenceActions.includes("enter_waitlist"),
+    canLeave: sequenceActions.includes("leave_participation"),
+  };
+}
+```
+
+## Step 7: Direct Distribution Module Access
+
+For more control, access distribution modules directly:
+
+### Queue Operations
+
+```typescript
+// Get queue details
+const queue = await sdk.queues.get("queue_xxx");
+
+// Enter queue
+const result = await sdk.queues.enter("queue_xxx");
+console.log("Entered queue:", result);
+
+// Check status
+const status = await sdk.queues.status("queue_xxx");
+console.log("Position:", status.position, "Status:", status.status);
+
+// Poll for updates
+sdk.queues.startPolling("queue_xxx", 5000); // Every 5 seconds
+
+// Stop polling
+sdk.queues.stopPolling("queue_xxx");
+
+// Leave queue
+await sdk.queues.leave("queue_xxx");
+```
+
+### Draw Operations
+
+```typescript
+// Get draw details
+const draw = await sdk.draws.get("draw_xxx");
+
+// Enter draw
+await sdk.draws.enter("draw_xxx");
+
+// Check if entered
+const isEntered = sdk.draws.isEntered("draw_xxx");
+
+// Schedule result check
+sdk.draws.scheduleResultCheck("draw_xxx", draw.drawTime, 5000);
+
+// Check result manually
+const result = await sdk.draws.checkResult("draw_xxx");
+if (result.won) {
+  const token = await sdk.draws.getAdmissionToken("draw_xxx");
+  console.log("Won! Token:", token);
+}
+```
+
+### Auction Operations
+
+```typescript
+// Get auction details
+const auction = await sdk.auctions.get("auction_xxx");
+
+// Enter auction
+await sdk.auctions.enter("auction_xxx");
+
+// Place a bid
+const bidResult = await sdk.auctions.placeBid("auction_xxx", 15000); // $150.00
+console.log("Bid placed:", bidResult);
+
+// Watch for updates
+sdk.auctions.startWatching("auction_xxx", 3000);
+
+// Check if winning
+const isWinning = sdk.auctions.isWinning("auction_xxx");
+
+// Get bid history
+const history = sdk.auctions.getBidHistory("auction_xxx");
+```
+
+## Step 8: Subscribe to Events
+
+Listen for SDK-wide events:
+
+```typescript
+// Authentication events
+sdk.on("auth:authenticated", ({ session, isNew }) => {
+  console.log("Authenticated:", session.consumerId, "New:", isNew);
+});
+
+sdk.on("auth:logout", ({ reason }) => {
+  console.log("Logged out:", reason);
+});
+
+sdk.on("auth:error", ({ error, context }) => {
+  console.error("Auth error:", error.message, "Context:", context);
+});
+
+// Queue events
+sdk.on("queue:status", ({ queueId, status, position }) => {
+  console.log("Queue status:", queueId, status, position);
+});
+
+sdk.on("queue:admitted", ({ queueId, admissionToken }) => {
+  console.log("Admitted from queue:", queueId);
+});
+
+// Draw events
+sdk.on("draw:result", ({ drawId, won, admissionToken }) => {
+  console.log("Draw result:", drawId, "Won:", won);
+});
+
+// Auction events
+sdk.on("auction:outbid", ({ auctionId, newBid }) => {
+  console.log("Outbid on:", auctionId, "New bid:", newBid);
+});
+```
+
+## Step 9: Session Management
+
+Handle session restoration and cleanup:
+
+```typescript
+// Restore session on app start
+async function restoreSession() {
+  const result = await sdk.restore();
+
+  if (result.session) {
+    console.log("Session restored:", result.session.consumerId);
+
+    // Resume active operations
+    await sdk.resume();
+
+    // Check active experiences
+    const active = result.experiences;
+    console.log("Active queues:", Object.keys(active.queues));
+    console.log("Active draws:", Object.keys(active.draws));
+  }
+
+  return result;
+}
+
+// Clean up on app close
+async function cleanup() {
+  await sdk.destroy();
+  console.log("SDK cleaned up");
+}
+```
+
+## Complete Example
+
+Here's a complete vanilla JavaScript implementation:
+
+```typescript
+import Fanfare, {
+  type FanfareSDK,
+  type ExperienceJourney,
+  type JourneySnapshot,
+} from "@waitify-io/fanfare-sdk-core";
+
+class FanfareExperience {
+  private sdk: FanfareSDK | null = null;
+  private journey: ExperienceJourney | null = null;
+  private onStateChange: (snapshot: JourneySnapshot) => void;
+
+  constructor(onStateChange: (snapshot: JourneySnapshot) => void) {
+    this.onStateChange = onStateChange;
+  }
+
+  async initialize(orgId: string, publishableKey: string) {
+    this.sdk = await Fanfare.init({
+      organizationId: orgId,
+      publishableKey: publishableKey,
+    });
+
+    // Try to restore existing session
+    const { session } = await this.sdk.restore();
+    if (session) {
+      await this.sdk.resume();
+    }
+
+    return this.sdk;
+  }
+
+  async authenticate() {
+    if (!this.sdk) throw new Error("SDK not initialized");
+
+    const status = this.sdk.auth.check();
+    if (!status.isAuthenticated) {
+      await this.sdk.auth.guest();
+    }
+  }
+
+  async startExperience(experienceId: string) {
+    if (!this.sdk) throw new Error("SDK not initialized");
+
+    this.journey = this.sdk.experiences.createJourney(experienceId);
+
+    // Subscribe to state changes
+    this.journey.state.listen(this.onStateChange);
+
+    // Start the journey
+    await this.journey.start();
+  }
+
+  async performAction(action: string, payload?: unknown) {
+    if (!this.journey) throw new Error("Journey not started");
+    await this.journey.perform(action, payload);
+  }
+
+  getSnapshot(): JourneySnapshot | null {
+    return this.journey?.state.get() ?? null;
+  }
+
+  async destroy() {
+    if (this.sdk) {
+      await this.sdk.destroy();
+    }
+  }
+}
+
+// Usage
+const experience = new FanfareExperience((snapshot) => {
+  console.log("State changed:", snapshot.journeyStage, snapshot.sequenceStage);
+  // Update your UI here
+});
+
+await experience.initialize("org_xxx", "pk_live_xxx");
+await experience.authenticate();
+await experience.startExperience("exp_xxx");
+```
+
+## Framework Examples
+
+### Vue 3 Composable
+
+```typescript
+// composables/useFanfare.ts
+import { ref, onMounted, onUnmounted } from "vue";
+import Fanfare, {
+  type FanfareSDK,
+  type JourneySnapshot,
+} from "@waitify-io/fanfare-sdk-core";
+
+export function useFanfare(orgId: string, publishableKey: string) {
+  const sdk = ref<FanfareSDK | null>(null);
+  const snapshot = ref<JourneySnapshot | null>(null);
+  const isReady = ref(false);
+
+  onMounted(async () => {
+    sdk.value = await Fanfare.init({ organizationId: orgId, publishableKey });
+    await sdk.value.restore();
+    isReady.value = true;
+  });
+
+  onUnmounted(async () => {
+    if (sdk.value) {
+      await sdk.value.destroy();
+    }
+  });
+
+  return { sdk, snapshot, isReady };
+}
+```
+
+### Svelte Store
+
+```typescript
+// stores/fanfare.ts
+import { writable } from "svelte/store";
+import Fanfare, {
+  type FanfareSDK,
+  type JourneySnapshot,
+} from "@waitify-io/fanfare-sdk-core";
+
+export const fanfareStore = writable<{
+  sdk: FanfareSDK | null;
+  snapshot: JourneySnapshot | null;
+  isReady: boolean;
+}>({
+  sdk: null,
+  snapshot: null,
+  isReady: false,
+});
+
+export async function initFanfare(orgId: string, publishableKey: string) {
+  const sdk = await Fanfare.init({ organizationId: orgId, publishableKey });
+  await sdk.restore();
+  fanfareStore.update((s) => ({ ...s, sdk, isReady: true }));
+}
+```
+
+## Testing
+
+Test your headless integration:
+
+```typescript
+import { init as mockInit } from "@waitify-io/fanfare-sdk-core/test-utils";
+
+describe("Fanfare Integration", () => {
+  it("should initialize and authenticate", async () => {
+    const sdk = await mockInit({
+      organizationId: "org_test",
+      publishableKey: "pk_test_xxx",
+    });
+
+    await sdk.auth.guest();
+    const status = sdk.auth.check();
+
+    expect(status.isAuthenticated).toBe(true);
+    expect(status.isGuest).toBe(true);
+  });
+});
+```
+
+## Troubleshooting
+
+### SDK Not Initializing
+
+- Check credentials are correct
+- Verify network connectivity
+- Enable debug mode: `debug: true`
+
+### State Not Updating
+
+- Ensure you've subscribed to `journey.state.listen()`
+- Check that journey has been started
+- Verify authentication completed
+
+### Events Not Firing
+
+- Subscribe before performing actions
+- Check event name spelling
+- Verify SDK is initialized
+
+## What's Next
+
+- [Real-time Updates](/guides/advanced/real-time-updates) - Polling and websocket patterns
+- [Error Handling](/guides/advanced/error-handling) - Robust error management
+- [Custom Platform](/guides/platform-integrations/custom-platform) - Full custom integration

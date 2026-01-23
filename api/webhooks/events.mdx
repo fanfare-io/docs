@@ -1,0 +1,512 @@
+---
+title: Webhook Events
+description: Complete reference for all Fanfare webhook event types and payloads
+---
+
+# Webhook Events
+
+This page documents all webhook event types and their payload structures.
+
+## Queue Events
+
+### queue.consumer.entered
+
+Triggered when a consumer joins a queue.
+
+```json
+{
+  "id": "whk_01HXYZ123456789",
+  "type": "queue.consumer.entered",
+  "timestamp": "2024-12-01T09:00:00Z",
+  "organizationId": "org_01HXYZ123456789",
+  "data": {
+    "queueId": "queue_01HXYZ123456789",
+    "sequenceId": "seq_01HXYZ123456789",
+    "experienceId": "exp_01HXYZ123456789",
+    "consumerId": "cons_01HXYZ123456789",
+    "position": 42,
+    "enteredAt": "2024-12-01T09:00:00Z"
+  }
+}
+```
+
+### queue.consumer.admitted
+
+Triggered when a consumer is admitted from the queue.
+
+```json
+{
+  "id": "whk_01HXYZ123456789",
+  "type": "queue.consumer.admitted",
+  "timestamp": "2024-12-01T09:15:00Z",
+  "organizationId": "org_01HXYZ123456789",
+  "data": {
+    "queueId": "queue_01HXYZ123456789",
+    "sequenceId": "seq_01HXYZ123456789",
+    "experienceId": "exp_01HXYZ123456789",
+    "consumerId": "cons_01HXYZ123456789",
+    "enteredAt": "2024-12-01T09:00:00Z",
+    "admittedAt": "2024-12-01T09:15:00Z",
+    "admissionToken": "eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9...",
+    "waitTimeSeconds": 900
+  }
+}
+```
+
+### queue.consumer.completed
+
+Triggered when an admitted consumer completes their checkout.
+
+```json
+{
+  "id": "whk_01HXYZ123456789",
+  "type": "queue.consumer.completed",
+  "timestamp": "2024-12-01T09:25:00Z",
+  "organizationId": "org_01HXYZ123456789",
+  "data": {
+    "queueId": "queue_01HXYZ123456789",
+    "sequenceId": "seq_01HXYZ123456789",
+    "experienceId": "exp_01HXYZ123456789",
+    "consumerId": "cons_01HXYZ123456789",
+    "completedAt": "2024-12-01T09:25:00Z",
+    "orderId": "order_01HXYZ123456789"
+  }
+}
+```
+
+### queue.consumer.left
+
+Triggered when a consumer voluntarily leaves a queue.
+
+```json
+{
+  "id": "whk_01HXYZ123456789",
+  "type": "queue.consumer.left",
+  "timestamp": "2024-12-01T09:10:00Z",
+  "organizationId": "org_01HXYZ123456789",
+  "data": {
+    "queueId": "queue_01HXYZ123456789",
+    "sequenceId": "seq_01HXYZ123456789",
+    "experienceId": "exp_01HXYZ123456789",
+    "consumerId": "cons_01HXYZ123456789",
+    "leftAt": "2024-12-01T09:10:00Z",
+    "positionWhenLeft": 35
+  }
+}
+```
+
+### queue.consumer.denied
+
+Triggered when a consumer is denied entry to a queue.
+
+```json
+{
+  "id": "whk_01HXYZ123456789",
+  "type": "queue.consumer.denied",
+  "timestamp": "2024-12-01T09:05:00Z",
+  "organizationId": "org_01HXYZ123456789",
+  "data": {
+    "queueId": "queue_01HXYZ123456789",
+    "sequenceId": "seq_01HXYZ123456789",
+    "experienceId": "exp_01HXYZ123456789",
+    "consumerId": "cons_01HXYZ123456789",
+    "deniedAt": "2024-12-01T09:05:00Z",
+    "reason": "ORDER_LIMIT_EXCEEDED"
+  }
+}
+```
+
+---
+
+## Draw Events
+
+### draw.consumer.entered
+
+Triggered when a consumer enters a draw.
+
+```json
+{
+  "id": "whk_01HXYZ123456789",
+  "type": "draw.consumer.entered",
+  "timestamp": "2024-12-01T10:00:00Z",
+  "organizationId": "org_01HXYZ123456789",
+  "data": {
+    "drawId": "draw_01HXYZ123456789",
+    "sequenceId": "seq_01HXYZ123456789",
+    "experienceId": "exp_01HXYZ123456789",
+    "consumerId": "cons_01HXYZ123456789",
+    "enteredAt": "2024-12-01T10:00:00Z",
+    "entrantNumber": 1542
+  }
+}
+```
+
+### draw.consumer.won
+
+Triggered when a consumer wins a draw.
+
+```json
+{
+  "id": "whk_01HXYZ123456789",
+  "type": "draw.consumer.won",
+  "timestamp": "2024-12-15T12:00:00Z",
+  "organizationId": "org_01HXYZ123456789",
+  "data": {
+    "drawId": "draw_01HXYZ123456789",
+    "sequenceId": "seq_01HXYZ123456789",
+    "experienceId": "exp_01HXYZ123456789",
+    "consumerId": "cons_01HXYZ123456789",
+    "wonAt": "2024-12-15T12:00:00Z",
+    "admissionToken": "eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9...",
+    "winnerPosition": 3
+  }
+}
+```
+
+### draw.consumer.lost
+
+Triggered when a draw is completed and a consumer did not win.
+
+```json
+{
+  "id": "whk_01HXYZ123456789",
+  "type": "draw.consumer.lost",
+  "timestamp": "2024-12-15T12:00:00Z",
+  "organizationId": "org_01HXYZ123456789",
+  "data": {
+    "drawId": "draw_01HXYZ123456789",
+    "sequenceId": "seq_01HXYZ123456789",
+    "experienceId": "exp_01HXYZ123456789",
+    "consumerId": "cons_01HXYZ123456789",
+    "lostAt": "2024-12-15T12:00:00Z"
+  }
+}
+```
+
+### draw.completed
+
+Triggered when a draw has been executed.
+
+```json
+{
+  "id": "whk_01HXYZ123456789",
+  "type": "draw.completed",
+  "timestamp": "2024-12-15T12:00:00Z",
+  "organizationId": "org_01HXYZ123456789",
+  "data": {
+    "drawId": "draw_01HXYZ123456789",
+    "sequenceId": "seq_01HXYZ123456789",
+    "experienceId": "exp_01HXYZ123456789",
+    "completedAt": "2024-12-15T12:00:00Z",
+    "totalEntrants": 5420,
+    "winnersSelected": 10
+  }
+}
+```
+
+---
+
+## Auction Events
+
+### auction.bid.placed
+
+Triggered when a bid is placed on an auction.
+
+```json
+{
+  "id": "whk_01HXYZ123456789",
+  "type": "auction.bid.placed",
+  "timestamp": "2024-12-01T14:30:00Z",
+  "organizationId": "org_01HXYZ123456789",
+  "data": {
+    "auctionId": "auction_01HXYZ123456789",
+    "sequenceId": "seq_01HXYZ123456789",
+    "experienceId": "exp_01HXYZ123456789",
+    "consumerId": "cons_01HXYZ123456789",
+    "bidId": "bid_01HXYZ123456789",
+    "amount": 250.0,
+    "currencyCode": "USD",
+    "bidTime": "2024-12-01T14:30:00Z",
+    "isHighestBid": true,
+    "previousHighBid": 225.0
+  }
+}
+```
+
+### auction.bid.outbid
+
+Triggered when a bidder is outbid.
+
+```json
+{
+  "id": "whk_01HXYZ123456789",
+  "type": "auction.bid.outbid",
+  "timestamp": "2024-12-01T14:35:00Z",
+  "organizationId": "org_01HXYZ123456789",
+  "data": {
+    "auctionId": "auction_01HXYZ123456789",
+    "sequenceId": "seq_01HXYZ123456789",
+    "experienceId": "exp_01HXYZ123456789",
+    "consumerId": "cons_01HXYZ123456789",
+    "outbidAt": "2024-12-01T14:35:00Z",
+    "previousBidAmount": 250.0,
+    "newHighBidAmount": 275.0
+  }
+}
+```
+
+### auction.consumer.won
+
+Triggered when a consumer wins an auction.
+
+```json
+{
+  "id": "whk_01HXYZ123456789",
+  "type": "auction.consumer.won",
+  "timestamp": "2024-12-01T18:00:00Z",
+  "organizationId": "org_01HXYZ123456789",
+  "data": {
+    "auctionId": "auction_01HXYZ123456789",
+    "sequenceId": "seq_01HXYZ123456789",
+    "experienceId": "exp_01HXYZ123456789",
+    "consumerId": "cons_01HXYZ123456789",
+    "wonAt": "2024-12-01T18:00:00Z",
+    "winningBid": 500.0,
+    "currencyCode": "USD",
+    "paymentToken": "eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9..."
+  }
+}
+```
+
+### auction.settled
+
+Triggered when an auction has been fully settled.
+
+```json
+{
+  "id": "whk_01HXYZ123456789",
+  "type": "auction.settled",
+  "timestamp": "2024-12-01T18:30:00Z",
+  "organizationId": "org_01HXYZ123456789",
+  "data": {
+    "auctionId": "auction_01HXYZ123456789",
+    "sequenceId": "seq_01HXYZ123456789",
+    "experienceId": "exp_01HXYZ123456789",
+    "settledAt": "2024-12-01T18:30:00Z",
+    "totalBids": 145,
+    "uniqueBidders": 42,
+    "winningBid": 500.0,
+    "winnerId": "cons_01HXYZ123456789"
+  }
+}
+```
+
+---
+
+## Order Events
+
+### order.created
+
+Triggered when a new order is created.
+
+```json
+{
+  "id": "whk_01HXYZ123456789",
+  "type": "order.created",
+  "timestamp": "2024-12-01T09:20:00Z",
+  "organizationId": "org_01HXYZ123456789",
+  "data": {
+    "orderId": "order_01HXYZ123456789",
+    "consumerId": "cons_01HXYZ123456789",
+    "experienceId": "exp_01HXYZ123456789",
+    "sequenceId": "seq_01HXYZ123456789",
+    "createdAt": "2024-12-01T09:20:00Z",
+    "totalAmount": 149.99,
+    "currencyCode": "USD",
+    "items": [
+      {
+        "productId": "prod_01HXYZ123456789",
+        "productName": "Limited Edition Item",
+        "quantity": 1,
+        "price": 149.99
+      }
+    ]
+  }
+}
+```
+
+### order.completed
+
+Triggered when an order is completed.
+
+```json
+{
+  "id": "whk_01HXYZ123456789",
+  "type": "order.completed",
+  "timestamp": "2024-12-01T09:25:00Z",
+  "organizationId": "org_01HXYZ123456789",
+  "data": {
+    "orderId": "order_01HXYZ123456789",
+    "consumerId": "cons_01HXYZ123456789",
+    "completedAt": "2024-12-01T09:25:00Z",
+    "totalAmount": 149.99,
+    "currencyCode": "USD"
+  }
+}
+```
+
+### order.cancelled
+
+Triggered when an order is cancelled.
+
+```json
+{
+  "id": "whk_01HXYZ123456789",
+  "type": "order.cancelled",
+  "timestamp": "2024-12-01T09:30:00Z",
+  "organizationId": "org_01HXYZ123456789",
+  "data": {
+    "orderId": "order_01HXYZ123456789",
+    "consumerId": "cons_01HXYZ123456789",
+    "cancelledAt": "2024-12-01T09:30:00Z",
+    "reason": "customer_requested"
+  }
+}
+```
+
+---
+
+## Consumer Events
+
+### consumer.created
+
+Triggered when a new consumer is created.
+
+```json
+{
+  "id": "whk_01HXYZ123456789",
+  "type": "consumer.created",
+  "timestamp": "2024-12-01T08:00:00Z",
+  "organizationId": "org_01HXYZ123456789",
+  "data": {
+    "consumerId": "cons_01HXYZ123456789",
+    "email": "customer@example.com",
+    "phone": null,
+    "fullName": "John Doe",
+    "createdAt": "2024-12-01T08:00:00Z",
+    "source": "otp_login"
+  }
+}
+```
+
+### consumer.updated
+
+Triggered when a consumer profile is updated.
+
+```json
+{
+  "id": "whk_01HXYZ123456789",
+  "type": "consumer.updated",
+  "timestamp": "2024-12-01T10:00:00Z",
+  "organizationId": "org_01HXYZ123456789",
+  "data": {
+    "consumerId": "cons_01HXYZ123456789",
+    "updatedAt": "2024-12-01T10:00:00Z",
+    "changedFields": ["fullName", "metadata"]
+  }
+}
+```
+
+---
+
+## Distribution Events
+
+### distribution.updated
+
+Triggered when a distribution's settings are changed.
+
+```json
+{
+  "id": "whk_01HXYZ123456789",
+  "type": "distribution.updated",
+  "timestamp": "2024-12-01T08:00:00Z",
+  "organizationId": "org_01HXYZ123456789",
+  "data": {
+    "distributionId": "queue_01HXYZ123456789",
+    "distributionType": "queue",
+    "sequenceId": "seq_01HXYZ123456789",
+    "experienceId": "exp_01HXYZ123456789",
+    "updatedAt": "2024-12-01T08:00:00Z",
+    "changedFields": ["openAt", "closeAt"]
+  }
+}
+```
+
+### distribution.opened
+
+Triggered when a distribution becomes open for participation.
+
+```json
+{
+  "id": "whk_01HXYZ123456789",
+  "type": "distribution.opened",
+  "timestamp": "2024-12-01T09:00:00Z",
+  "organizationId": "org_01HXYZ123456789",
+  "data": {
+    "distributionId": "queue_01HXYZ123456789",
+    "distributionType": "queue",
+    "sequenceId": "seq_01HXYZ123456789",
+    "experienceId": "exp_01HXYZ123456789",
+    "openedAt": "2024-12-01T09:00:00Z"
+  }
+}
+```
+
+### distribution.closed
+
+Triggered when a distribution is closed.
+
+```json
+{
+  "id": "whk_01HXYZ123456789",
+  "type": "distribution.closed",
+  "timestamp": "2024-12-01T18:00:00Z",
+  "organizationId": "org_01HXYZ123456789",
+  "data": {
+    "distributionId": "queue_01HXYZ123456789",
+    "distributionType": "queue",
+    "sequenceId": "seq_01HXYZ123456789",
+    "experienceId": "exp_01HXYZ123456789",
+    "closedAt": "2024-12-01T18:00:00Z",
+    "totalParticipants": 5420
+  }
+}
+```
+
+---
+
+## Event Type Summary
+
+| Event Type                 | Description           |
+| -------------------------- | --------------------- |
+| `queue.consumer.entered`   | Consumer joined queue |
+| `queue.consumer.admitted`  | Consumer admitted     |
+| `queue.consumer.completed` | Consumer completed    |
+| `queue.consumer.left`      | Consumer left         |
+| `queue.consumer.denied`    | Consumer denied       |
+| `draw.consumer.entered`    | Consumer entered draw |
+| `draw.consumer.won`        | Consumer won draw     |
+| `draw.consumer.lost`       | Consumer lost draw    |
+| `draw.completed`           | Draw executed         |
+| `auction.bid.placed`       | Bid placed            |
+| `auction.bid.outbid`       | Bidder outbid         |
+| `auction.consumer.won`     | Consumer won auction  |
+| `auction.settled`          | Auction settled       |
+| `order.created`            | Order created         |
+| `order.completed`          | Order completed       |
+| `order.cancelled`          | Order cancelled       |
+| `consumer.created`         | Consumer created      |
+| `consumer.updated`         | Consumer updated      |
+| `distribution.updated`     | Distribution updated  |
+| `distribution.opened`      | Distribution opened   |
+| `distribution.closed`      | Distribution closed   |

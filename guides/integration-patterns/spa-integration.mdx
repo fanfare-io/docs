@@ -1,0 +1,498 @@
+---
+title: SPA Integration Guide
+description: Integrate Fanfare into single-page applications using React, Vue, or Angular.
+---
+
+# SPA Integration Guide
+
+Learn how to integrate Fanfare into a single-page application (SPA) using React, Vue, or Angular.
+
+## Overview
+
+This guide walks you through integrating the Fanfare SDK into a client-side rendered single-page application. By the end, you'll have a working queue experience that manages high-demand product access.
+
+**What you'll learn:**
+
+- Installing and configuring the Fanfare SDK
+- Setting up the React provider
+- Managing authentication
+- Implementing the experience journey flow
+- Handling queue states and admission
+
+**Complexity:** Beginner
+**Time to complete:** 30 minutes
+
+## Prerequisites
+
+Before starting, ensure you have:
+
+- A Fanfare account with API credentials
+- A React 18+ application (or Vue/Angular equivalent)
+- Node.js 18+ installed
+- Basic understanding of React hooks
+
+## Step 1: Install the SDK
+
+Install the Fanfare React SDK and its peer dependencies:
+
+```bash
+npm install @waitify-io/fanfare-sdk-react
+```
+
+Or with other package managers:
+
+```bash
+# pnpm
+pnpm add @waitify-io/fanfare-sdk-react
+
+# yarn
+yarn add @waitify-io/fanfare-sdk-react
+```
+
+## Step 2: Configure the Provider
+
+Wrap your application with the `FanfareProvider` to make the SDK available throughout your component tree.
+
+```tsx
+// src/App.tsx
+import { FanfareProvider } from "@waitify-io/fanfare-sdk-react";
+import { ExperiencePage } from "./pages/ExperiencePage";
+
+export function App() {
+  return (
+    <FanfareProvider
+      organizationId="org_your_organization_id"
+      publishableKey="pk_live_your_publishable_key"
+      environment="production"
+    >
+      <ExperiencePage />
+    </FanfareProvider>
+  );
+}
+```
+
+### Provider Options
+
+| Option             | Type                                         | Default        | Description                        |
+| ------------------ | -------------------------------------------- | -------------- | ---------------------------------- |
+| `organizationId`   | `string`                                     | Required       | Your Fanfare organization ID       |
+| `publishableKey`   | `string`                                     | Required       | Your publishable API key           |
+| `environment`      | `"production" \| "staging" \| "development"` | `"production"` | API environment                    |
+| `autoRestore`      | `boolean`                                    | `true`         | Restore session on mount           |
+| `autoResume`       | `boolean`                                    | `true`         | Resume operations after restore    |
+| `loadingComponent` | `ReactNode`                                  | `null`         | Component shown while initializing |
+| `locale`           | `string`                                     | `"en"`         | Locale for translations            |
+
+## Step 3: Authenticate the Consumer
+
+Before a consumer can participate in an experience, they need to authenticate. Fanfare supports both anonymous (guest) and identified authentication.
+
+```tsx
+// src/hooks/useConsumerAuth.ts
+import { useFanfareAuth } from "@waitify-io/fanfare-sdk-react";
+import { useEffect } from "react";
+
+export function useConsumerAuth() {
+  const { isAuthenticated, isGuest, guest, session } = useFanfareAuth();
+
+  useEffect(() => {
+    // Automatically create a guest session if not authenticated
+    if (!isAuthenticated) {
+      guest();
+    }
+  }, [isAuthenticated, guest]);
+
+  return { isAuthenticated, isGuest, session };
+}
+```
+
+### Using the Auth Hook
+
+```tsx
+// src/components/AuthStatus.tsx
+import { useFanfareAuth } from "@waitify-io/fanfare-sdk-react";
+
+export function AuthStatus() {
+  const { isAuthenticated, isGuest, session } = useFanfareAuth();
+
+  if (!isAuthenticated) {
+    return <div>Connecting...</div>;
+  }
+
+  return (
+    <div>
+      <p>Status: {isGuest ? "Guest" : "Authenticated"}</p>
+      <p>Consumer ID: {session?.consumerId}</p>
+    </div>
+  );
+}
+```
+
+## Step 4: Create the Experience Journey
+
+Use the `useExperienceJourney` hook to manage the complete flow from entering an experience to admission.
+
+```tsx
+// src/pages/ExperiencePage.tsx
+import { useExperienceJourney } from "@waitify-io/fanfare-sdk-react";
+import { useConsumerAuth } from "../hooks/useConsumerAuth";
+
+export function ExperiencePage() {
+  const { isAuthenticated } = useConsumerAuth();
+
+  const { journey, state, status, error, start } = useExperienceJourney(
+    "exp_your_experience_id",
+    {
+      autoStart: false, // We'll start manually after auth
+    },
+  );
+
+  // Start the journey once authenticated
+  useEffect(() => {
+    if (isAuthenticated && status === "idle") {
+      start();
+    }
+  }, [isAuthenticated, status, start]);
+
+  return (
+    <div className="experience-container">
+      <h1>Product Launch Queue</h1>
+      <ExperienceStatus status={status} error={error} />
+      <JourneyActions journey={journey} state={state} />
+    </div>
+  );
+}
+```
+
+## Step 5: Handle Journey States
+
+The journey progresses through several states. Handle each appropriately:
+
+```tsx
+// src/components/ExperienceStatus.tsx
+import type { ExperienceJourneyStatus } from "@waitify-io/fanfare-sdk-react";
+
+interface ExperienceStatusProps {
+  status: ExperienceJourneyStatus;
+  error: string | null;
+}
+
+export function ExperienceStatus({ status, error }: ExperienceStatusProps) {
+  switch (status) {
+    case "idle":
+      return <p>Preparing experience...</p>;
+
+    case "entering_experience":
+      return <p>Entering experience...</p>;
+
+    case "routing_sequence":
+      return <p>Finding your access path...</p>;
+
+    case "needs_authentication":
+      return <AuthenticationRequired />;
+
+    case "needs_access_code":
+      return <AccessCodeRequired />;
+
+    case "loading_distributions":
+      return <p>Loading availability...</p>;
+
+    case "waiting":
+      return <p>Waiting for access to open...</p>;
+
+    case "ready":
+      return <p>Ready to participate!</p>;
+
+    case "no_sequence_available":
+      return <p>No access currently available.</p>;
+
+    case "error":
+      return <p className="error">Error: {error}</p>;
+
+    default:
+      return <p>Status: {status}</p>;
+  }
+}
+```
+
+## Step 6: Implement Journey Actions
+
+Allow consumers to interact with the journey based on available actions:
+
+```tsx
+// src/components/JourneyActions.tsx
+import type {
+  ExperienceJourney,
+  JourneySnapshot,
+} from "@waitify-io/fanfare-sdk-core";
+
+interface JourneyActionsProps {
+  journey: ExperienceJourney | null;
+  state: { snapshot: JourneySnapshot } | null;
+}
+
+export function JourneyActions({ journey, state }: JourneyActionsProps) {
+  if (!journey || !state) return null;
+
+  const { availableActions, sequenceStage, context } = state.snapshot;
+  const { sequence: sequenceActions } = availableActions;
+
+  return (
+    <div className="journey-actions">
+      {/* Enter Queue */}
+      {sequenceActions.includes("enter_queue") && (
+        <button
+          onClick={() => journey.perform("enter_queue")}
+          className="primary-button"
+        >
+          Join the Queue
+        </button>
+      )}
+
+      {/* Enter Draw */}
+      {sequenceActions.includes("enter_draw") && (
+        <button
+          onClick={() => journey.perform("enter_draw")}
+          className="primary-button"
+        >
+          Enter the Draw
+        </button>
+      )}
+
+      {/* Leave Participation */}
+      {sequenceActions.includes("leave_participation") && (
+        <button
+          onClick={() => journey.perform("leave_participation")}
+          className="secondary-button"
+        >
+          Leave
+        </button>
+      )}
+
+      {/* Show Queue Position */}
+      {sequenceStage === "participating" &&
+        context.participation?.type === "queue" && (
+          <QueuePosition participationId={context.participation.id} />
+        )}
+
+      {/* Admitted State */}
+      {sequenceStage === "admitted" && (
+        <AdmittedView
+          admissionToken={context.admittanceToken}
+          expiresAt={context.admittanceExpiresAt}
+        />
+      )}
+    </div>
+  );
+}
+```
+
+## Step 7: Display Queue Position
+
+When participating in a queue, show the consumer their position:
+
+```tsx
+// src/components/QueuePosition.tsx
+import { useFanfare } from "@waitify-io/fanfare-sdk-react";
+import { useEffect, useState } from "react";
+
+interface QueuePositionProps {
+  participationId: string;
+}
+
+export function QueuePosition({ participationId }: QueuePositionProps) {
+  const fanfare = useFanfare();
+  const [position, setPosition] = useState<number | null>(null);
+  const [status, setStatus] = useState<string>("QUEUED");
+
+  useEffect(() => {
+    // Start polling for position updates
+    fanfare.queues.startPolling(participationId, 5000);
+
+    // Subscribe to status updates
+    const unsubscribe = fanfare.on("queue:status", (data) => {
+      if (data.queueId === participationId) {
+        setPosition(data.position ?? null);
+        setStatus(data.status);
+      }
+    });
+
+    return () => {
+      fanfare.queues.stopPolling(participationId);
+      unsubscribe();
+    };
+  }, [fanfare, participationId]);
+
+  if (status === "ADMITTED") {
+    return <p className="admitted">You've been admitted!</p>;
+  }
+
+  return (
+    <div className="queue-position">
+      <p>
+        Your position: <strong>{position ?? "..."}</strong>
+      </p>
+      <p className="hint">
+        Stay on this page. We'll notify you when it's your turn.
+      </p>
+    </div>
+  );
+}
+```
+
+## Step 8: Handle Admission
+
+When a consumer is admitted, redirect them to checkout or show purchase options:
+
+```tsx
+// src/components/AdmittedView.tsx
+import { useFanfare } from "@waitify-io/fanfare-sdk-react";
+
+interface AdmittedViewProps {
+  admissionToken: string | undefined;
+  expiresAt: number | undefined;
+}
+
+export function AdmittedView({ admissionToken, expiresAt }: AdmittedViewProps) {
+  const fanfare = useFanfare();
+  const [timeRemaining, setTimeRemaining] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (!expiresAt) return;
+
+    const interval = setInterval(() => {
+      const remaining = Math.max(0, expiresAt - Date.now());
+      setTimeRemaining(Math.floor(remaining / 1000));
+
+      if (remaining <= 0) {
+        clearInterval(interval);
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [expiresAt]);
+
+  const handleCheckout = async () => {
+    // Create a handoff token for checkout
+    // This token proves the consumer was admitted
+    const checkoutUrl = `/checkout?token=${admissionToken}`;
+    window.location.href = checkoutUrl;
+  };
+
+  return (
+    <div className="admitted-view">
+      <h2>You're In!</h2>
+      <p>You have access to purchase.</p>
+
+      {timeRemaining !== null && (
+        <p className="timer">
+          Time remaining: {Math.floor(timeRemaining / 60)}:
+          {(timeRemaining % 60).toString().padStart(2, "0")}
+        </p>
+      )}
+
+      <button onClick={handleCheckout} className="checkout-button">
+        Proceed to Checkout
+      </button>
+    </div>
+  );
+}
+```
+
+## Complete Example
+
+Here's a complete, minimal implementation:
+
+```tsx
+// src/App.tsx
+import {
+  FanfareProvider,
+  useExperienceJourney,
+  useFanfareAuth,
+} from "@waitify-io/fanfare-sdk-react";
+import { useEffect } from "react";
+
+function ExperienceWidget() {
+  const { isAuthenticated, guest } = useFanfareAuth();
+  const { journey, state, status, start } = useExperienceJourney("exp_xxx");
+
+  // Auto-authenticate as guest
+  useEffect(() => {
+    if (!isAuthenticated) guest();
+  }, [isAuthenticated, guest]);
+
+  // Start journey when authenticated
+  useEffect(() => {
+    if (isAuthenticated && status === "idle") start();
+  }, [isAuthenticated, status, start]);
+
+  const snapshot = state?.snapshot;
+  const actions = snapshot?.availableActions.sequence ?? [];
+
+  return (
+    <div>
+      <p>Status: {status}</p>
+
+      {actions.includes("enter_queue") && (
+        <button onClick={() => journey?.perform("enter_queue")}>
+          Join Queue
+        </button>
+      )}
+
+      {snapshot?.sequenceStage === "admitted" && (
+        <a href={`/checkout?token=${snapshot.context.admittanceToken}`}>
+          Go to Checkout
+        </a>
+      )}
+    </div>
+  );
+}
+
+export function App() {
+  return (
+    <FanfareProvider organizationId="org_xxx" publishableKey="pk_live_xxx">
+      <ExperienceWidget />
+    </FanfareProvider>
+  );
+}
+```
+
+## Testing Your Integration
+
+1. **Local testing**: Use `environment="development"` to connect to localhost:4802
+2. **Check authentication**: Verify the consumer session is created
+3. **Test queue flow**: Enter the queue and verify position updates
+4. **Verify admission**: Confirm admission tokens are generated correctly
+
+## Troubleshooting
+
+### SDK doesn't initialize
+
+- Check that `organizationId` and `publishableKey` are correct
+- Ensure the provider wraps your component tree
+- Check browser console for error messages
+
+### Authentication fails
+
+- Verify API credentials in the Fanfare dashboard
+- Check network requests for error responses
+- Ensure cookies are enabled for session storage
+
+### Queue position doesn't update
+
+- Verify polling is started with `startPolling()`
+- Check that the queue ID matches
+- Ensure event listeners are subscribed
+
+### Admission token issues
+
+- Tokens expire after 10 minutes by default
+- Verify the token hasn't been used already
+- Check device fingerprint matches
+
+## What's Next
+
+- [Anonymous Consumers](/guides/authentication/anonymous-consumers) - Guest authentication patterns
+- [Checkout Integration](/guides/checkout-integration/checkout-overview) - Connect to checkout
+- [Product Launch](/guides/use-cases/product-launch) - Full product launch example
+- [Real-time Updates](/guides/advanced/real-time-updates) - Live UI patterns

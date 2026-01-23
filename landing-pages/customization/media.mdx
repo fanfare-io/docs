@@ -1,0 +1,339 @@
+---
+title: "Images and Video"
+description: "Add media content to your landing pages"
+---
+
+{/* TODO: MISSING_FUNCTIONALITY
+Feature: Media management in landing page editor
+Expected behavior: Upload, manage, and embed media in landing pages
+Current state: Media support defined in section types; upload UI not implemented
+Blocking: partial - Can reference external URLs; upload management coming
+*/}
+
+<Note>
+**Partial Availability**
+
+You can reference external media URLs in landing pages. Direct upload and media management will be available when the landing page editor launches.
+
+</Note>
+
+## Media Types Supported
+
+| Type   | Formats                  | Use Cases                             |
+| ------ | ------------------------ | ------------------------------------- |
+| Images | JPG, PNG, WebP, SVG, GIF | Hero backgrounds, galleries, features |
+| Video  | YouTube, Vimeo, MP4      | Hero backgrounds, embedded videos     |
+| Icons  | SVG, icon libraries      | Feature sections, accents             |
+
+## Images
+
+### Image Requirements
+
+| Property      | Recommendation                                  |
+| ------------- | ----------------------------------------------- |
+| Format        | WebP (preferred), JPG, PNG                      |
+| Max File Size | 2MB                                             |
+| Resolution    | 2x for retina (e.g., 2400px for 1200px display) |
+| Color Profile | sRGB                                            |
+
+### Image Sizing by Use
+
+| Use Case            | Recommended Size | Aspect Ratio |
+| ------------------- | ---------------- | ------------ |
+| Hero background     | 1920x1080px      | 16:9         |
+| Hero (mobile)       | 750x1334px       | 9:16         |
+| Feature icons       | 128x128px        | 1:1          |
+| Gallery images      | 800x800px        | 1:1 or 4:3   |
+| Testimonial avatars | 80x80px          | 1:1          |
+| Product images      | 1200x1200px      | 1:1          |
+
+### Responsive Images
+
+The landing page system automatically serves appropriate image sizes:
+
+```html
+<!-- Generated responsive image -->
+<picture>
+  <source
+    srcset="image-400.webp 400w, image-800.webp 800w, image-1200.webp 1200w"
+    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+    type="image/webp"
+  />
+  <img src="image-800.jpg" alt="Description" loading="lazy" />
+</picture>
+```
+
+### Image Optimization
+
+Images are automatically optimized:
+
+| Optimization      | Description                     |
+| ----------------- | ------------------------------- |
+| Compression       | Quality-aware lossy compression |
+| Format conversion | Convert to WebP where supported |
+| Resizing          | Generate multiple sizes         |
+| Lazy loading      | Load when in viewport           |
+
+## Video
+
+### Embedded Video Platforms
+
+| Platform      | Supported   | Features                     |
+| ------------- | ----------- | ---------------------------- |
+| YouTube       | Yes         | Embed, privacy-enhanced mode |
+| Vimeo         | Yes         | Embed, player customization  |
+| Custom hosted | Coming soon | Direct MP4/WebM              |
+
+### YouTube Embeds
+
+```typescript
+{
+  type: "video",
+  source: "youtube",
+  videoId: "dQw4w9WgXcQ",
+  // or full URL
+  url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+}
+```
+
+### Vimeo Embeds
+
+```typescript
+{
+  type: "video",
+  source: "vimeo",
+  videoId: "123456789",
+  // or full URL
+  url: "https://vimeo.com/123456789"
+}
+```
+
+### Video Settings
+
+| Setting    | Options     | Default                  |
+| ---------- | ----------- | ------------------------ |
+| Autoplay   | true, false | false                    |
+| Muted      | true, false | false (true if autoplay) |
+| Loop       | true, false | false                    |
+| Controls   | true, false | true                     |
+| Start time | seconds     | 0                        |
+
+<Warning>Autoplaying video with sound is blocked by browsers. Set `muted: true` if using autoplay.</Warning>
+
+### Background Video
+
+For hero sections with video backgrounds:
+
+```typescript
+{
+  section: "hero",
+  media: {
+    type: "video",
+    source: "youtube",
+    videoId: "...",
+    background: true,
+    autoplay: true,
+    muted: true,
+    loop: true,
+    controls: false
+  },
+  overlay: {
+    color: "rgba(0, 0, 0, 0.5)"  // Dark overlay for text readability
+  }
+}
+```
+
+## Icons
+
+### Built-in Icon Library
+
+The editor includes access to common icon sets:
+
+| Library      | Icons | Style          |
+| ------------ | ----- | -------------- |
+| Heroicons    | 300+  | Outline, solid |
+| Lucide       | 1000+ | Outline        |
+| Simple Icons | 2000+ | Brand logos    |
+
+### Icon Usage
+
+```typescript
+{
+  section: "features",
+  features: [
+    {
+      icon: "heroicons:sparkles",
+      title: "AI-Powered",
+      description: "..."
+    },
+    {
+      icon: "lucide:rocket",
+      title: "Fast",
+      description: "..."
+    }
+  ]
+}
+```
+
+### Custom SVG Icons
+
+Upload custom SVG icons:
+
+```typescript
+{
+  icon: {
+    type: "custom",
+    svg: "<svg>...</svg>",
+    // or URL
+    url: "https://example.com/icon.svg"
+  }
+}
+```
+
+## Media Hosting
+
+### Currently Supported
+
+| Method        | Status      |
+| ------------- | ----------- |
+| External URLs | Supported   |
+| YouTube/Vimeo | Supported   |
+| Direct upload | Coming soon |
+
+### Using External URLs
+
+Reference images hosted elsewhere:
+
+```typescript
+{
+  section: "hero",
+  media: {
+    type: "image",
+    url: "https://your-cdn.com/hero-image.jpg",
+    alt: "Product hero image"
+  }
+}
+```
+
+Recommended CDN options:
+
+- Cloudflare Images
+- Cloudinary
+- Imgix
+- Your own CDN
+
+### Upload Management (Coming Soon)
+
+{/* TODO: MISSING_FUNCTIONALITY
+Feature: Media upload and management
+Expected behavior: Upload images directly in editor, manage media library
+Current state: Planned feature
+Blocking: true for upload; external URLs work
+*/}
+
+Future capabilities:
+
+- Drag-and-drop upload in editor
+- Organization media library
+- Automatic optimization
+- AI-powered alt text suggestions
+
+## Alt Text and Accessibility
+
+### Writing Good Alt Text
+
+| Image Type  | Alt Text Approach                    |
+| ----------- | ------------------------------------ |
+| Decorative  | Empty alt (`alt=""`)                 |
+| Informative | Describe content                     |
+| Functional  | Describe action                      |
+| Complex     | Brief summary + detailed description |
+
+### Examples
+
+```typescript
+// Decorative background
+{ url: "...", alt: "" }
+
+// Informative product image
+{ url: "...", alt: "Limited edition blue running shoes with white sole" }
+
+// Functional CTA image
+{ url: "...", alt: "Play video about queue system" }
+```
+
+<Tip>Good alt text is concise (under 125 characters) and describes what's important in the image context.</Tip>
+
+## Performance Considerations
+
+### Image Performance Checklist
+
+- [ ] Use WebP format when possible
+- [ ] Size images appropriately (don't scale down large images)
+- [ ] Enable lazy loading for below-fold images
+- [ ] Provide responsive image sizes
+- [ ] Compress images before upload
+- [ ] Use CDN for external images
+
+### Video Performance Checklist
+
+- [ ] Use YouTube/Vimeo embeds (optimized delivery)
+- [ ] Don't autoplay with sound
+- [ ] Consider poster image for videos
+- [ ] Avoid multiple autoplaying videos
+- [ ] Test on slow connections
+
+### Measuring Impact
+
+| Metric                         | Target |
+| ------------------------------ | ------ |
+| Largest Contentful Paint (LCP) | < 2.5s |
+| Total image weight             | < 1MB  |
+| Above-fold load                | < 1s   |
+
+## Current Workarounds
+
+### Image Optimization Services
+
+Use external services to optimize images:
+
+```
+# Cloudinary transformation
+https://res.cloudinary.com/demo/image/upload/w_800,f_auto,q_auto/sample.jpg
+
+# Imgix transformation
+https://example.imgix.net/image.jpg?w=800&auto=format,compress
+```
+
+### Video Thumbnails
+
+Create custom video thumbnails:
+
+```typescript
+{
+  section: "video",
+  source: "youtube",
+  videoId: "...",
+  thumbnail: {
+    url: "https://your-cdn.com/custom-thumbnail.jpg",
+    alt: "Video preview"
+  }
+}
+```
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Content Blocks" icon="cube" href="/landing-pages/customization/content-blocks">
+    Use media in sections
+  </Card>
+  <Card title="Branding" icon="paintbrush" href="/landing-pages/customization/branding">
+    Style your media
+  </Card>
+  <Card title="SEO" icon="magnifying-glass" href="/landing-pages/publishing/seo">
+    Optimize share images
+  </Card>
+  <Card title="Preview" icon="eye" href="/landing-pages/publishing/preview">
+    Test media display
+  </Card>
+</CardGroup>

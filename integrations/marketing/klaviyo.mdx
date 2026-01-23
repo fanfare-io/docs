@@ -1,0 +1,312 @@
+---
+title: "Klaviyo Integration"
+description: "Sync customer lists and audiences between Fanfare and Klaviyo"
+---
+
+## Overview
+
+The Klaviyo integration enables bidirectional synchronization between your Klaviyo email lists and Fanfare audiences. This allows you to:
+
+- Import Klaviyo lists as Fanfare audiences
+- Automatically sync consumer profiles between platforms
+- Target specific customer segments in your experiences
+- Trigger email campaigns based on experience participation
+
+## Prerequisites
+
+Before setting up the Klaviyo integration, you need:
+
+- A Klaviyo account with at least one list
+- A Klaviyo Private API Key with the following permissions:
+  - `Lists: Read`
+  - `Profiles: Read`
+  - `Profiles: Write` (if using bidirectional sync)
+
+## Setup
+
+### Step 1: Get Your Klaviyo API Key
+
+1. Log in to your Klaviyo account
+2. Navigate to **Account** > **Settings** > **API Keys**
+3. Click **Create Private API Key**
+4. Give it a descriptive name (e.g., "Fanfare Integration")
+5. Select the required scopes:
+   - `Lists: Read`
+   - `Profiles: Read`
+6. Copy the generated API key (starts with `pk_`)
+
+<Callout type="warning">
+  **Security Note**: Store your API key securely. You will not be able to view it again after leaving the Klaviyo API
+  keys page.
+</Callout>
+
+### Step 2: Configure Klaviyo in Fanfare
+
+1. Navigate to **Settings** > **Integrations** in the Fanfare admin
+2. Find **Klaviyo** and click to configure
+3. Paste your Klaviyo API key
+4. Click **Save**
+
+### Step 3: Verify Connection
+
+After saving, Fanfare will verify the connection by fetching your Klaviyo lists. If successful, you'll see a list of available lists to sync.
+
+## Data Sync
+
+### How Sync Works
+
+The Klaviyo sync uses Fanfare's sync source system to maintain data consistency:
+
+```
+┌─────────────────┐       ┌─────────────────┐       ┌─────────────────┐
+│   Klaviyo       │       │   Fanfare       │       │   Fanfare       │
+│   List          │──────▶│   Sync Source   │──────▶│   Audience      │
+└─────────────────┘       └─────────────────┘       └─────────────────┘
+        │                         │
+        │                         │
+        ▼                         ▼
+    Profiles                  Consumers
+```
+
+### Sync Source Types
+
+The integration creates two types of sync sources:
+
+| Sync Source       | Description                                   |
+| ----------------- | --------------------------------------------- |
+| `klaviyo:list`    | Links a Klaviyo list to a Fanfare audience    |
+| `klaviyo:profile` | Links a Klaviyo profile to a Fanfare consumer |
+
+### Importing a Klaviyo List
+
+To import a list from Klaviyo:
+
+1. Go to **Audiences** in the Fanfare admin
+2. Click **Import from Klaviyo**
+3. Select the list(s) you want to import
+4. Click **Import Selected**
+
+Fanfare will:
+
+1. Create a sync source for the list
+2. Create a new audience with the list name
+3. Queue a background job to sync all profiles
+4. Create or update consumer records for each profile
+
+### Sync Status
+
+Each sync source tracks its status:
+
+| Status    | Description                          |
+| --------- | ------------------------------------ |
+| `PENDING` | Sync has been queued but not started |
+| `SYNCING` | Sync is in progress                  |
+| `SUCCESS` | Last sync completed successfully     |
+| `FAILED`  | Last sync encountered an error       |
+
+### Automatic Resync
+
+{/* TODO: MISSING_FUNCTIONALITY
+Feature: Automatic periodic resync of Klaviyo lists
+Expected behavior: Scheduled background job to resync lists periodically
+Current state: Manual resync only - users must trigger sync manually
+*/}
+
+<Callout type="info">
+  **Note**: Currently, Klaviyo list syncs are triggered manually. Automatic periodic resync is planned for a future
+  release.
+</Callout>
+
+## Consumer Mapping
+
+### Profile to Consumer Mapping
+
+When syncing profiles, Fanfare maps Klaviyo fields to consumer records:
+
+| Klaviyo Field              | Fanfare Field       |
+| -------------------------- | ------------------- |
+| `email`                    | `email`             |
+| `first_name` + `last_name` | `fullName`          |
+| `phone_number`             | `phone`             |
+| `id` (profile ID)          | `primaryExternalId` |
+
+### Deduplication
+
+Fanfare deduplicates consumers by email address:
+
+- If a consumer with the same email exists, the existing record is updated
+- The Klaviyo profile is linked via `primarySyncSourceId`
+- New consumers are created for profiles without a matching email
+
+### Audience Membership
+
+Imported consumers are automatically added to the synced audience:
+
+```sql
+-- Example audience membership
+INSERT INTO audience_list_memberships (
+  organization_id,
+  audience_id,
+  consumer_id
+) VALUES (
+  'org-123',
+  'aud-456',  -- The synced audience
+  'con-789'   -- The imported consumer
+);
+```
+
+## API Reference
+
+### Get Klaviyo Lists
+
+Retrieves all Klaviyo lists with their sync status.
+
+```bash
+GET /api/klaviyo
+```
+
+**Response:**
+
+```json
+[
+  {
+    "id": "RtPqXs",
+    "attributes": {
+      "name": "Newsletter Subscribers",
+      "created": "2024-01-15T10:30:00Z",
+      "updated": "2024-06-20T14:45:00Z",
+      "optInProcess": "single_opt_in"
+    },
+    "isSynced": true,
+    "syncStatus": "SUCCESS",
+    "audienceId": "aud_abc123",
+    "lastSyncedAt": "2024-06-20T15:00:00Z"
+  },
+  {
+    "id": "XyZaBc",
+    "attributes": {
+      "name": "VIP Customers",
+      "created": "2024-03-01T09:00:00Z",
+      "updated": "2024-06-18T11:20:00Z",
+      "optInProcess": "double_opt_in"
+    },
+    "isSynced": false,
+    "syncStatus": null,
+    "audienceId": null,
+    "lastSyncedAt": null
+  }
+]
+```
+
+### Configure Klaviyo Settings
+
+Update the Klaviyo API key in organization settings.
+
+```bash
+PUT /api/settings
+Content-Type: application/json
+
+{
+  "klaviyo": {
+    "apiKey": "pk_your_api_key_here"
+  }
+}
+```
+
+## Best Practices
+
+### API Key Management
+
+- Use a dedicated API key for the Fanfare integration
+- Only grant the minimum required scopes
+- Rotate the API key periodically
+- Revoke the key immediately if compromised
+
+### List Management
+
+- Keep list names consistent between Klaviyo and Fanfare
+- Avoid importing very large lists (>100k profiles) in a single sync
+- Monitor sync status for failed imports
+
+### Performance
+
+- The sync processes profiles at ~75 per second (Klaviyo rate limit)
+- Large lists may take several minutes to fully sync
+- Syncs run in the background and don't block the UI
+
+## Troubleshooting
+
+### Common Issues
+
+**"Klaviyo API key not found" error**
+
+The API key hasn't been configured or is invalid.
+
+- Verify the key starts with `pk_`
+- Check the key hasn't been revoked in Klaviyo
+- Re-enter the key in Settings > Integrations
+
+**Sync stuck in "PENDING" status**
+
+The background processor may not be running.
+
+- Check event processor logs for errors
+- Verify the Klaviyo sync queue is operational
+- Contact support if the issue persists
+
+**Profiles not appearing as consumers**
+
+Email matching may have failed.
+
+- Verify profiles have valid email addresses in Klaviyo
+- Check for duplicate email handling
+- Review sync source logs for errors
+
+**Missing audience after sync**
+
+The audience creation may have failed.
+
+- Check for existing audiences with the same name
+- Verify organization permissions
+- Review the sync source status
+
+### Checking Sync Status
+
+You can check the status of a sync via the API:
+
+```bash
+GET /api/sync-sources/search?syncSource=klaviyo:list
+```
+
+### Logs
+
+Klaviyo sync operations are logged with the following identifiers:
+
+- **Handler**: `klaviyo.handler`
+- **Processor**: `klaviyo/sync-list`
+- **Log Fields**: `organizationId`, `syncSourceId`, `profileId`
+
+## Limitations
+
+| Limitation    | Description                                               |
+| ------------- | --------------------------------------------------------- |
+| One-way sync  | Currently only imports from Klaviyo to Fanfare            |
+| Rate limits   | Subject to Klaviyo's API rate limits (75 profiles/second) |
+| List size     | Very large lists may timeout; import in batches if needed |
+| Field mapping | Limited to email, name, and phone fields                  |
+
+## Future Enhancements
+
+{/* TODO: MISSING_FUNCTIONALITY
+Feature: Bidirectional sync with Klaviyo
+Expected behavior: Changes in Fanfare automatically sync back to Klaviyo
+Current state: One-way import only (Klaviyo → Fanfare)
+*/}
+
+<Callout type="info">**Roadmap**: Bidirectional sync and automatic resync are planned for future releases.</Callout>
+
+## Related Resources
+
+- [Audiences Overview](/features/audiences)
+- [Sync Sources](/api-reference/sync-sources)
+- [Klaviyo API Documentation](https://developers.klaviyo.com/en/reference/api_overview)

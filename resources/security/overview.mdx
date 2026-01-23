@@ -1,0 +1,211 @@
+---
+title: Security Overview
+description: Understanding Fanfare's security architecture and practices.
+---
+
+# Security Overview
+
+Fanfare is built with security as a core principle. This document outlines our security architecture and the measures we take to protect your data and your consumers.
+
+## Security Architecture
+
+### Infrastructure Security
+
+<CardGroup cols={2}>
+  <Card title="Cloud Infrastructure" icon="cloud">
+    Hosted on AWS with SOC 2 compliant infrastructure
+  </Card>
+  <Card title="Network Security" icon="shield">
+    All traffic encrypted in transit with TLS 1.3
+  </Card>
+  <Card title="Data Encryption" icon="lock">
+    Data encrypted at rest using AES-256
+  </Card>
+  <Card title="Access Controls" icon="key">
+    Role-based access control and audit logging
+  </Card>
+</CardGroup>
+
+### Data Flow Security
+
+```
+Consumer Device                    Fanfare Platform                    Your Systems
+     │                                    │                                  │
+     │──── TLS 1.3 ────────────────────►  │                                  │
+     │     Encrypted request              │                                  │
+     │                                    │                                  │
+     │                                    │──── TLS 1.3 ──────────────────► │
+     │                                    │     Webhook / API call           │
+     │                                    │                                  │
+     │  ◄───────────────────────────────  │                                  │
+     │     Encrypted response             │                                  │
+```
+
+## Authentication & Authorization
+
+### API Authentication
+
+Fanfare uses a multi-layer authentication model:
+
+| Key Type                | Usage            | Scope                |
+| ----------------------- | ---------------- | -------------------- |
+| Publishable Key (`pk_`) | Client-side SDK  | Read + limited write |
+| Secret Key (`sk_`)      | Server-side API  | Full access          |
+| Consumer Token          | Consumer session | User-specific access |
+
+### Key Security
+
+- **Publishable keys** are safe to include in client-side code
+- **Secret keys** must never be exposed to clients
+- All keys are organization-scoped and can be rotated
+
+```typescript
+// Safe: Publishable key in client code
+const client = new FanfareClient({
+  publishableKey: "pk_live_...", // OK to include
+});
+
+// NEVER: Secret key in client code
+// const response = await fetch(url, {
+//   headers: { Authorization: "Bearer sk_live_..." } // DANGER!
+// });
+```
+
+### Session Security
+
+Consumer sessions include multiple security layers:
+
+- **JWT tokens** with short expiration
+- **Session validation** against server state
+- **Device binding** via fingerprinting
+- **Automatic refresh** with secure token rotation
+
+## Data Protection
+
+### What We Store
+
+| Data Type       | Storage    | Encryption | Retention        |
+| --------------- | ---------- | ---------- | ---------------- |
+| Consumer email  | Encrypted  | AES-256    | Account lifetime |
+| Queue positions | Cache only | In-memory  | Session duration |
+| Access tokens   | Hashed     | bcrypt     | Until expiration |
+| Audit logs      | Encrypted  | AES-256    | 90 days          |
+
+### What We Don't Store
+
+- Full payment card numbers (handled by payment processors)
+- Consumer passwords (we use passwordless auth)
+- Raw IP addresses (hashed for rate limiting)
+- Detailed device specifications (only fingerprint hash)
+
+### Data Isolation
+
+Each organization's data is fully isolated:
+
+- **Database isolation**: Partitioned tables by organization
+- **Cache isolation**: Namespaced keys per organization
+- **API isolation**: Organization context required for all requests
+
+## Compliance
+
+### Standards & Certifications
+
+- **SOC 2 Type II**: Compliant infrastructure
+- **GDPR**: Full compliance for EU users
+- **PCI DSS**: Payment processing via certified partners
+- **CCPA**: California privacy compliance
+
+### Regular Audits
+
+- Annual third-party security audits
+- Quarterly penetration testing
+- Continuous automated security scanning
+- Bug bounty program for responsible disclosure
+
+## Security Features
+
+### Rate Limiting
+
+All API endpoints are rate-limited to prevent abuse:
+
+```http
+X-RateLimit-Limit: 100
+X-RateLimit-Remaining: 95
+Retry-After: 60
+```
+
+Rate limits vary by endpoint and authentication level.
+
+### Request Signing
+
+Webhook requests are signed for verification:
+
+```typescript
+// Verify webhook authenticity
+const signature = req.headers["x-fanfare-signature"];
+const isValid = verifySignature(payload, signature, webhookSecret);
+```
+
+### Audit Logging
+
+All sensitive operations are logged:
+
+- Authentication events
+- Configuration changes
+- Data access patterns
+- Administrative actions
+
+Access audit logs via the dashboard or API.
+
+## Incident Response
+
+### Our Commitment
+
+- **Detection**: 24/7 monitoring and alerting
+- **Response**: Security team on-call
+- **Communication**: Prompt notification of affected parties
+- **Resolution**: Root cause analysis and remediation
+
+### Reporting Security Issues
+
+If you discover a security vulnerability:
+
+1. **Do not** disclose publicly
+2. Email security@fanfare.io with details
+3. We'll acknowledge within 24 hours
+4. Work with us on coordinated disclosure
+
+## Security Best Practices
+
+For your integration, we recommend:
+
+<AccordionGroup>
+  <Accordion title="Protect your secret keys">
+    - Store in environment variables
+    - Never commit to source control
+    - Rotate periodically
+    - Use separate keys for test/production
+  </Accordion>
+
+<Accordion title="Verify webhooks">
+  - Always verify webhook signatures - Use HTTPS endpoints only - Implement idempotency - Validate payload structure
+</Accordion>
+
+<Accordion title="Secure your checkout">
+  - Validate handoff tokens server-side - Set appropriate session timeouts - Use HTTPS everywhere - Implement CSRF
+  protection
+</Accordion>
+
+  <Accordion title="Monitor for anomalies">
+    - Track authentication failures
+    - Monitor rate limit hits
+    - Alert on unusual patterns
+    - Review audit logs regularly
+  </Accordion>
+</AccordionGroup>
+
+## Related Resources
+
+- [Authentication Best Practices](/resources/security/authentication) - Secure auth flows
+- [Data Privacy](/resources/security/data-privacy) - GDPR and privacy
+- [Bot Protection](/resources/security/bot-protection) - Fraud prevention

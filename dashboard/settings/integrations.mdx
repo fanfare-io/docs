@@ -1,0 +1,262 @@
+---
+title: Integrations
+description: Connect third-party services to enhance your Fanfare experience
+---
+
+# Integrations
+
+Integrations allow you to connect Fanfare with external services like marketing platforms, analytics tools, and e-commerce systems to enhance functionality and streamline workflows.
+
+## Accessing Integrations
+
+Navigate to **Settings** > **Integrations** to view and manage your connected services.
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/settings/integrations
+Shows: Integrations grid showing available and connected integrations
+Annotations: Label active and available integrations
+Alt text: "Integrations page showing Klaviyo and other available integrations"
+*/}
+
+![Integrations page](./images/settings-integrations.png)
+_Caption: View and manage all available integrations_
+
+## Available Integrations
+
+### Active Integrations
+
+| Integration | Category   | Status    |
+| ----------- | ---------- | --------- |
+| **Klaviyo** | Marketing  | Available |
+| **Shopify** | E-commerce | Via App   |
+
+### Coming Soon
+
+| Integration    | Category  | Status      |
+| -------------- | --------- | ----------- |
+| **Mailchimp**  | Marketing | Coming Soon |
+| **Segment**    | CDP       | Coming Soon |
+| **HubSpot**    | CRM       | Coming Soon |
+| **Salesforce** | CRM       | Coming Soon |
+
+## Integration Status
+
+Each integration shows its current status:
+
+| Status            | Description                       |
+| ----------------- | --------------------------------- |
+| **Active**        | Connected and working             |
+| **Not Connected** | Available but not configured      |
+| **Error**         | Connected but experiencing issues |
+| **Coming Soon**   | Not yet available                 |
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/settings/integrations
+Shows: Integration card with status badge
+Annotations: Highlight the status indicator
+Alt text: "Integration card showing active status badge"
+*/}
+
+![Integration status](./images/settings-integration-status.png)
+_Caption: Status indicators show connection health_
+
+## Klaviyo Integration
+
+Klaviyo integration enables marketing automation and audience synchronization.
+
+### Features
+
+| Feature            | Description                       |
+| ------------------ | --------------------------------- |
+| **Audience Sync**  | Import Klaviyo lists as audiences |
+| **Contact Sync**   | Sync consumer data to Klaviyo     |
+| **Event Tracking** | Send experience events to Klaviyo |
+| **Segmentation**   | Use Klaviyo segments in Fanfare   |
+
+### Setting Up Klaviyo
+
+1. Click on the Klaviyo integration card
+2. Enter your Klaviyo API key
+3. Click **Save** to connect
+4. Verify the connection status
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/settings/integrations (Klaviyo sheet)
+Shows: Klaviyo configuration sheet with API key field
+Annotations: Highlight the API key input
+Alt text: "Klaviyo integration configuration with API key field"
+*/}
+
+![Klaviyo setup](./images/settings-klaviyo-setup.png)
+_Caption: Enter your Klaviyo API key to connect_
+
+### Klaviyo API Key
+
+To get your Klaviyo API key:
+
+1. Log in to Klaviyo
+2. Go to **Settings** > **API Keys**
+3. Create a new Private API key
+4. Copy the key
+
+### Required Permissions
+
+Your Klaviyo API key needs these permissions:
+
+| Permission         | Required For                 |
+| ------------------ | ---------------------------- |
+| **Read Lists**     | Importing lists as audiences |
+| **Read Profiles**  | Syncing consumer data        |
+| **Write Profiles** | Updating Klaviyo contacts    |
+| **Read Segments**  | Importing segments           |
+
+### Synced Data
+
+When Klaviyo is connected, the following data syncs:
+
+| Data Type        | Direction          |
+| ---------------- | ------------------ |
+| **Lists**        | Klaviyo to Fanfare |
+| **Segments**     | Klaviyo to Fanfare |
+| **Contact Data** | Bidirectional      |
+| **Events**       | Fanfare to Klaviyo |
+
+### Managing Klaviyo Connection
+
+After connecting:
+
+| Action                | Description                   |
+| --------------------- | ----------------------------- |
+| **Update API Key**    | Change the connected API key  |
+| **View Synced Lists** | See which lists are imported  |
+| **Force Sync**        | Manually trigger a sync       |
+| **Disconnect**        | Remove the Klaviyo connection |
+
+## Integration Configuration
+
+### Connection Process
+
+1. Click on an integration card
+2. Configuration sheet opens
+3. Enter required credentials
+4. Save the configuration
+5. Integration activates
+
+### Credential Security
+
+Integration credentials are:
+
+- Encrypted at rest
+- Never displayed after saving
+- Stored securely
+- Accessible only to admins
+
+## Synced Audiences
+
+When audiences are imported from integrations:
+
+| Feature                 | Behavior                    |
+| ----------------------- | --------------------------- |
+| **Auto-Update**         | Members sync automatically  |
+| **Source Tracking**     | Shows integration as source |
+| **Bidirectional**       | Changes sync both ways      |
+| **Conflict Resolution** | Most recent change wins     |
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/audiences
+Shows: Audience with Klaviyo sync source indicator
+Annotations: Highlight the sync source badge
+Alt text: "Audience list showing Klaviyo synced audience"
+*/}
+
+![Synced audience](./images/settings-synced-audience.png)
+_Caption: Synced audiences show their integration source_
+
+## Event Forwarding
+
+Forward Fanfare events to integrated services:
+
+### Supported Events
+
+| Event                    | Description                   |
+| ------------------------ | ----------------------------- |
+| **Experience Entered**   | Consumer joined an experience |
+| **Experience Completed** | Consumer completed experience |
+| **Purchase Made**        | Consumer made a purchase      |
+| **Consumer Created**     | New consumer added            |
+
+### Event Mapping
+
+Configure how Fanfare events map to integration events:
+
+| Fanfare Event        | Klaviyo Event        |
+| -------------------- | -------------------- |
+| Experience Entered   | Fanfare Queue Joined |
+| Experience Completed | Fanfare Purchase     |
+| Draw Won             | Fanfare Draw Winner  |
+
+## Troubleshooting Integrations
+
+### Connection Failed
+
+1. Verify API credentials are correct
+2. Check the service status
+3. Ensure required permissions are granted
+4. Try reconnecting
+
+### Sync Not Working
+
+1. Check the connection status
+2. Verify data exists in the source
+3. Force a manual sync
+4. Review error logs
+
+### Data Mismatch
+
+1. Check field mapping configuration
+2. Verify data formats match
+3. Review conflict resolution settings
+4. Contact support if issues persist
+
+## Integration Best Practices
+
+### Before Connecting
+
+1. **Verify permissions** - Ensure API key has required access
+2. **Document the setup** - Record configuration details
+3. **Test in staging** - If available, test first
+4. **Notify team** - Inform relevant team members
+
+### After Connecting
+
+1. **Monitor sync status** - Check regularly for errors
+2. **Review synced data** - Verify data accuracy
+3. **Set up alerts** - Configure error notifications
+4. **Regular audits** - Periodically review connections
+
+### Security Considerations
+
+1. **Rotate credentials** - Update API keys periodically
+2. **Limit permissions** - Grant only necessary access
+3. **Audit access** - Review who can manage integrations
+4. **Remove unused** - Disconnect unused integrations
+
+## Webhook Configuration
+
+Some integrations support webhooks for real-time updates:
+
+| Webhook Event      | Description           |
+| ------------------ | --------------------- |
+| **Sync Complete**  | When a sync finishes  |
+| **Error Occurred** | When an error happens |
+| **Data Updated**   | When data changes     |
+
+## Related Guides
+
+- [Settings Overview](/dashboard/settings/overview) - All settings
+- [Audiences](/dashboard/audiences/overview) - Managing audiences
+- [Import Consumers](/dashboard/audiences/import-consumers) - Importing from integrations

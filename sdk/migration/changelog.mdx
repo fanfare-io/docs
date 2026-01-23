@@ -1,0 +1,251 @@
+---
+title: Changelog
+description: Version history and release notes for Fanfare SDK
+---
+
+# Changelog
+
+All notable changes to the Fanfare SDK packages.
+
+## Versioning
+
+The Fanfare SDK follows [Semantic Versioning](https://semver.org/):
+
+- **Major (x.0.0)** - Breaking changes
+- **Minor (0.x.0)** - New features, backward compatible
+- **Patch (0.0.x)** - Bug fixes
+
+All packages are versioned together for compatibility:
+
+- `@waitify-io/fanfare-sdk-core`
+- `@waitify-io/fanfare-sdk-react`
+- `@waitify-io/fanfare-sdk-solid`
+
+---
+
+## [2.0.0] - Latest
+
+### Added
+
+- **ExperienceJourney state machine** for complex consumer journey orchestration
+- **SolidJS widgets** as web components for cross-framework usage
+- **Nanostores** for reactive state management
+- **Tab synchronization** via BroadcastChannel
+- **Session persistence** with automatic restoration
+- **Typed event system** with full TypeScript support
+- **i18n support** with multiple locales and custom translations
+- **Theme system** with CSS custom properties
+- **Widget variants** (default, rounded, retro, clean)
+- **Slot-based customization** for widget components
+- **useExperienceJourney** hook for journey orchestration
+- **useWaitlist** hook for pre-registration flows
+- **useTimedRelease** hook for flash sale windows
+
+### Changed
+
+- **BREAKING**: Renamed `FanfareClient` to `Fanfare` with static `init()` method
+- **BREAKING**: Changed `apiKey` prop to `publishableKey`
+- **BREAKING**: Queue state now returns typed union instead of loose object
+- **BREAKING**: Authentication integrated into SDK (no separate auth package)
+- **BREAKING**: Event names changed from `queue:admitted` to `queue:admitted` with typed payloads
+- Improved bundle size with tree-shaking support
+- React hooks now use nanostores internally
+- Better error messages with error codes
+
+### Deprecated
+
+- `FanfareClient` class (use `Fanfare.init()` instead)
+- Legacy callback-based event handling
+
+### Removed
+
+- `@waitify-io/fanfare-client` package (replaced by `-sdk-core`)
+- `@waitify-io/fanfare-client-react` package (replaced by `-sdk-react`)
+
+### Fixed
+
+- Memory leak in queue subscription cleanup
+- Race condition in session restoration
+- Position updates not reflecting immediately
+- Auction bid validation edge cases
+
+### Migration
+
+See [V1 to V2 Migration Guide](/sdk/migration/v1-to-v2) for detailed instructions.
+
+---
+
+## [1.5.0]
+
+### Added
+
+- Draw distribution type support
+- Auction bid history API
+- Estimated wait time display
+
+### Changed
+
+- Improved queue position accuracy
+- Better error handling for network failures
+
+### Fixed
+
+- Session expiry not handled correctly
+- Queue position NaN in edge cases
+
+---
+
+## [1.4.0]
+
+### Added
+
+- TypeScript type exports
+- React 18 support
+- Custom metadata for queue entries
+
+### Changed
+
+- Updated dependencies
+- Improved performance of position updates
+
+### Fixed
+
+- React hooks causing unnecessary re-renders
+- Memory leak in event listeners
+
+---
+
+## [1.3.0]
+
+### Added
+
+- Queue admission expiry handling
+- Consumer analytics events
+- Development mode logging
+
+### Changed
+
+- Reduced bundle size by 15%
+- Improved reconnection logic
+
+### Fixed
+
+- WebSocket disconnection not triggering reconnect
+- Position reset on page refresh
+
+---
+
+## [1.2.0]
+
+### Added
+
+- Offline support with queue restoration
+- Custom queue entry data
+- Admission token refresh
+
+### Changed
+
+- Better TypeScript generics
+- Improved error messages
+
+### Fixed
+
+- Race condition in concurrent entries
+- Event listener cleanup
+
+---
+
+## [1.1.0]
+
+### Added
+
+- React hooks (`useQueue`, `useDraw`)
+- Provider component for context
+- Development mode warnings
+
+### Fixed
+
+- Initial queue state not loading
+- Authentication flow errors
+
+---
+
+## [1.0.0]
+
+### Added
+
+- Initial release
+- Queue management API
+- Session management
+- Event subscription system
+- React integration
+
+---
+
+## Upgrade Guide
+
+### Upgrading to 2.x
+
+1. Update dependencies:
+
+   ```bash
+   npm uninstall @waitify-io/fanfare-client @waitify-io/fanfare-client-react
+   npm install @waitify-io/fanfare-sdk-core @waitify-io/fanfare-sdk-react
+   ```
+
+2. Update imports:
+
+   ```typescript
+   // Before
+   import { FanfareClient } from "@waitify-io/fanfare-client";
+
+   // After
+   import { Fanfare } from "@waitify-io/fanfare-sdk-core";
+   ```
+
+3. Update initialization:
+
+   ```typescript
+   // Before
+   const client = new FanfareClient({ apiKey: "...", organizationId: "..." });
+
+   // After
+   const sdk = await Fanfare.init({ publishableKey: "...", organizationId: "..." });
+   ```
+
+4. Update React provider:
+
+   ```tsx
+   // Before
+   <FanfareProvider apiKey="..." organizationId="...">
+
+   // After
+   <FanfareProvider publishableKey="..." organizationId="...">
+   ```
+
+See [V1 to V2 Migration](/sdk/migration/v1-to-v2) for complete migration guide.
+
+---
+
+## Support Policy
+
+| Version | Status      | End of Support |
+| ------- | ----------- | -------------- |
+| 2.x     | Current     | -              |
+| 1.x     | Maintenance | TBD            |
+
+**Maintenance** versions receive security fixes only.
+
+## Reporting Issues
+
+Found a bug? Please report it:
+
+1. Check [existing issues](https://github.com/waitify-io/fanfare-sdk/issues)
+2. Create a new issue with reproduction steps
+3. Include SDK version and environment details
+
+## Related
+
+- [Migration Overview](/sdk/migration/overview) - Migration guides
+- [Core SDK](/sdk/core/overview) - Current API reference
+- [React SDK](/sdk/react/overview) - React integration

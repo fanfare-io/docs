@@ -1,0 +1,305 @@
+---
+title: Admin API Overview
+description: Introduction to the Fanfare Admin API for management operations
+---
+
+# Admin API Overview
+
+The Admin API provides programmatic access to manage your Fanfare organization, including experiences, audiences, consumers, products, and analytics.
+
+## Base URL
+
+```
+https://admin.fanfare.io/api/v1
+```
+
+## Authentication
+
+All Admin API requests require your secret key:
+
+```http
+Authorization: Bearer sk_live_xxxxxxxxxxxx
+```
+
+Secret keys provide full access to your organization's resources. Keep them secure and never expose them in client-side code.
+
+## API Endpoints
+
+### Experiences
+
+| Method   | Endpoint                     | Description             |
+| -------- | ---------------------------- | ----------------------- |
+| `POST`   | `/experiences`               | Create an experience    |
+| `GET`    | `/experiences`               | List experiences        |
+| `GET`    | `/experiences/:id`           | Get an experience       |
+| `PUT`    | `/experiences/:id`           | Update an experience    |
+| `DELETE` | `/experiences/:id`           | Delete an experience    |
+| `POST`   | `/experiences/:id/duplicate` | Duplicate an experience |
+
+### Sequences
+
+| Method   | Endpoint                            | Description            |
+| -------- | ----------------------------------- | ---------------------- |
+| `POST`   | `/sequences`                        | Create a sequence      |
+| `GET`    | `/sequences`                        | List sequences         |
+| `GET`    | `/sequences/:id`                    | Get a sequence         |
+| `PUT`    | `/sequences/:id`                    | Update a sequence      |
+| `DELETE` | `/sequences/:id`                    | Delete a sequence      |
+| `GET`    | `/sequences/:id/metrics`            | Get sequence metrics   |
+| `GET`    | `/sequences/:id/waitlist/consumers` | Get waitlist consumers |
+| `POST`   | `/sequences/:id/waitlist/enter`     | Enter waitlist         |
+
+### Queues
+
+| Method   | Endpoint      | Description    |
+| -------- | ------------- | -------------- |
+| `POST`   | `/queues`     | Create a queue |
+| `GET`    | `/queues`     | List queues    |
+| `GET`    | `/queues/:id` | Get a queue    |
+| `PUT`    | `/queues/:id` | Update a queue |
+| `DELETE` | `/queues/:id` | Delete a queue |
+
+### Draws
+
+| Method   | Endpoint     | Description   |
+| -------- | ------------ | ------------- |
+| `POST`   | `/draws`     | Create a draw |
+| `GET`    | `/draws`     | List draws    |
+| `GET`    | `/draws/:id` | Get a draw    |
+| `PUT`    | `/draws/:id` | Update a draw |
+| `DELETE` | `/draws/:id` | Delete a draw |
+
+### Auctions
+
+| Method   | Endpoint        | Description       |
+| -------- | --------------- | ----------------- |
+| `POST`   | `/auctions`     | Create an auction |
+| `GET`    | `/auctions`     | List auctions     |
+| `GET`    | `/auctions/:id` | Get an auction    |
+| `PUT`    | `/auctions/:id` | Update an auction |
+| `DELETE` | `/auctions/:id` | Delete an auction |
+
+### Audiences
+
+| Method   | Endpoint                 | Description        |
+| -------- | ------------------------ | ------------------ |
+| `POST`   | `/audiences`             | Create an audience |
+| `GET`    | `/audiences`             | List audiences     |
+| `GET`    | `/audiences/:id`         | Get an audience    |
+| `PUT`    | `/audiences/:id`         | Update an audience |
+| `DELETE` | `/audiences/:id`         | Delete an audience |
+| `POST`   | `/audiences/:id/members` | Add members        |
+| `DELETE` | `/audiences/:id/members` | Remove members     |
+
+### Consumers
+
+| Method   | Endpoint           | Description                |
+| -------- | ------------------ | -------------------------- |
+| `POST`   | `/consumers`       | Create a consumer          |
+| `GET`    | `/consumers`       | List consumers (paginated) |
+| `GET`    | `/consumers/:id`   | Get a consumer             |
+| `PUT`    | `/consumers/:id`   | Update a consumer          |
+| `DELETE` | `/consumers/:id`   | Delete a consumer          |
+| `POST`   | `/consumers/batch` | Batch create consumers     |
+| `PUT`    | `/consumers/batch` | Batch update consumers     |
+
+### Products
+
+| Method   | Endpoint          | Description                  |
+| -------- | ----------------- | ---------------------------- |
+| `POST`   | `/products`       | Create a product             |
+| `GET`    | `/products`       | List products                |
+| `GET`    | `/products/:id`   | Get a product                |
+| `PUT`    | `/products/:id`   | Update a product             |
+| `DELETE` | `/products/:id`   | Delete a product             |
+| `POST`   | `/products/batch` | Batch create/update products |
+
+### Distributions
+
+| Method | Endpoint                       | Description                |
+| ------ | ------------------------------ | -------------------------- |
+| `GET`  | `/distributions`               | List all distributions     |
+| `GET`  | `/distributions/:id`           | Get a distribution         |
+| `GET`  | `/distributions/:id/consumers` | Get distribution consumers |
+
+### Analytics
+
+| Method | Endpoint           | Description             |
+| ------ | ------------------ | ----------------------- |
+| `POST` | `/analytics/query` | Execute analytics query |
+
+### Organizations
+
+| Method | Endpoint                  | Description              |
+| ------ | ------------------------- | ------------------------ |
+| `GET`  | `/organizations/me`       | Get current organization |
+| `PUT`  | `/organizations/me`       | Update organization      |
+| `GET`  | `/organizations/me/users` | Get organization users   |
+
+### Settings
+
+| Method | Endpoint    | Description                  |
+| ------ | ----------- | ---------------------------- |
+| `GET`  | `/settings` | Get organization settings    |
+| `PUT`  | `/settings` | Update organization settings |
+
+### Orders
+
+| Method   | Endpoint        | Description         |
+| -------- | --------------- | ------------------- |
+| `POST`   | `/orders`       | Create an order     |
+| `POST`   | `/orders/batch` | Batch create orders |
+| `GET`    | `/orders`       | List orders         |
+| `GET`    | `/orders/:id`   | Get an order        |
+| `PUT`    | `/orders/:id`   | Update an order     |
+| `DELETE` | `/orders/:id`   | Delete an order     |
+
+### Sync Sources
+
+| Method   | Endpoint               | Description          |
+| -------- | ---------------------- | -------------------- |
+| `POST`   | `/sync-sources`        | Create a sync source |
+| `GET`    | `/sync-sources/search` | Search sync sources  |
+| `GET`    | `/sync-sources/:id`    | Get a sync source    |
+| `PUT`    | `/sync-sources/:id`    | Update a sync source |
+| `DELETE` | `/sync-sources/:id`    | Delete a sync source |
+
+## Common Patterns
+
+### Pagination
+
+List endpoints support cursor-based pagination:
+
+```http
+GET /api/v1/consumers?first=20&after=eyJpZCI6ImNvbnNfMDFIWFlaIn0=
+```
+
+See [Pagination](/api/pagination) for details.
+
+### Filtering
+
+Many list endpoints support filtering via query parameters:
+
+```http
+GET /api/v1/consumers?search=john&createdAfter=2024-01-01
+```
+
+### Include Relations
+
+Use the `include` parameter to include related data:
+
+```http
+GET /api/v1/experiences?include=sequences,distributions
+```
+
+### Sorting
+
+Use `sortBy` and `sortDir` parameters:
+
+```http
+GET /api/v1/consumers?sortBy=createdAt&sortDir=desc
+```
+
+## Rate Limits
+
+Admin API rate limits:
+
+| Endpoint Category | Limit    | Window   |
+| ----------------- | -------- | -------- |
+| Read operations   | 1000/min | 1 minute |
+| Write operations  | 500/min  | 1 minute |
+| Batch operations  | 100/min  | 1 minute |
+| Analytics queries | 100/min  | 1 minute |
+
+## Response Format
+
+### Single Resource
+
+```json
+{
+  "id": "exp_01HXYZ123456789",
+  "name": "Holiday Sale",
+  "createdAt": "2024-11-01T10:00:00Z",
+  "updatedAt": "2024-11-01T10:00:00Z"
+}
+```
+
+### List Response
+
+```json
+{
+  "data": [...],
+  "pageInfo": {
+    "startCursor": "...",
+    "endCursor": "..."
+  }
+}
+```
+
+### Error Response
+
+```json
+{
+  "error": "Validation failed",
+  "details": [
+    {
+      "field": "name",
+      "message": "Required"
+    }
+  ]
+}
+```
+
+## SDK Usage
+
+### JavaScript/TypeScript
+
+```typescript
+import { FanfareAdmin } from "@fanfare/admin-sdk";
+
+const admin = new FanfareAdmin({
+  secretKey: process.env.FANFARE_SECRET_KEY,
+});
+
+// Create an experience
+const experience = await admin.experiences.create({
+  name: "Holiday Sale",
+  openAt: "2024-12-01T09:00:00Z",
+});
+
+// List consumers
+const consumers = await admin.consumers.list({
+  first: 20,
+  search: "john",
+});
+```
+
+### Direct API
+
+```typescript
+async function createExperience(data: CreateExperienceInput) {
+  const response = await fetch("https://admin.fanfare.io/api/v1/experiences", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${process.env.FANFARE_SECRET_KEY}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error);
+  }
+
+  return response.json();
+}
+```
+
+## Next Steps
+
+- [Experiences API](/api/admin-api/experiences) - Manage experiences
+- [Audiences API](/api/admin-api/audiences) - Manage audiences
+- [Consumers API](/api/admin-api/consumers) - Manage consumers
+- [Products API](/api/admin-api/products) - Manage products
+- [Analytics API](/api/admin-api/analytics) - Query analytics

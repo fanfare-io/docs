@@ -1,0 +1,579 @@
+---
+title: Consumer Linking Guide
+description: Upgrade anonymous consumers to identified accounts while preserving participation history.
+---
+
+# Consumer Linking Guide
+
+Learn how to upgrade anonymous (guest) consumers to identified accounts while preserving their participation history.
+
+## Overview
+
+Consumer linking connects an anonymous session to a verified identity. This is essential when a guest consumer wants to receive notifications, track their history, or access their account from another device.
+
+**What you'll learn:**
+
+- Linking guest sessions to email/phone
+- Preserving participation history during linking
+- Handling the linking flow in your UI
+- Server-side external identity linking
+
+**Complexity:** Intermediate
+**Time to complete:** 30 minutes
+
+## Prerequisites
+
+- Fanfare SDK installed and configured
+- Understanding of guest and identified authentication
+- [Anonymous Consumers](/guides/authentication/anonymous-consumers) guide completed
+
+## Why Link Consumers?
+
+| Before Linking (Guest) | After Linking (Identified) |
+| ---------------------- | -------------------------- |
+| No notifications       | Email/SMS notifications    |
+| Single device only     | Cross-device access        |
+| Session expires        | Persistent identity        |
+| No order history       | Full history tracking      |
+| Anonymous in dashboard | Identifiable in dashboard  |
+
+## Step 1: Detect Link Opportunity
+
+Show a linking prompt to guest users:
+
+```tsx
+import { useFanfareAuth } from "@waitify-io/fanfare-sdk-react";
+import { useState } from "react";
+
+function LinkAccountPrompt() {
+  const { isAuthenticated, isGuest, session } = useFanfareAuth();
+  const [dismissed, setDismissed] = useState(false);
+
+  // Only show to authenticated guests
+  if (!isAuthenticated || !isGuest || dismissed) {
+    return null;
+  }
+
+  return (
+    <div className="link-prompt">
+      <div className="link-prompt-content">
+        <h3>Want to track your progress?</h3>
+        <p>
+          Add your email to receive notifications and access your account from
+          any device.
+        </p>
+
+        <div className="link-prompt-actions">
+          <LinkAccountButton />
+          <button onClick={() => setDismissed(true)} className="dismiss-btn">
+            Not now
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+```
+
+## Step 2: Implement OTP Linking
+
+Link a guest session to an email:
+
+```tsx
+import { useFanfareAuth } from "@waitify-io/fanfare-sdk-react";
+import { useState } from "react";
+
+function LinkAccountButton() {
+  const { isGuest, requestOtp, verifyOtp } = useFanfareAuth();
+  const [showModal, setShowModal] = useState(false);
+  const [email, setEmail] = useState("");
+  const [code, setCode] = useState("");
+  const [step, setStep] = useState<"email" | "code">("email");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  if (!isGuest) return null;
+
+  const handleRequestOtp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    setIsLoading(true);
+
+    try {
+      await requestOtp({ email });
+      setStep("code");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to send code");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleVerifyOtp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    setIsLoading(true);
+
+    try {
+      // Verifying OTP automatically links the guest to this email
+      await verifyOtp({ email, code });
+      setShowModal(false);
+      // Session is now identified!
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Invalid code");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  if (!showModal) {
+    return (
+      <button onClick={() => setShowModal(true)} className="link-btn">
+        Add Email
+      </button>
+    );
+  }
+
+  return (
+    <div className="modal-overlay">
+      <div className="modal">
+        <button onClick={() => setShowModal(false)} className="close-btn">
+          &times;
+        </button>
+
+        {step === "email" ? (
+          <form onSubmit={handleRequestOtp}>
+            <h3>Add Your Email</h3>
+            <p>We'll send you a verification code.</p>
+
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="your@email.com"
+              required
+              disabled={isLoading}
+            />
+
+            {error && <p className="error">{error}</p>}
+
+            <button type="submit" disabled={isLoading}>
+              {isLoading ? "Sending..." : "Send Code"}
+            </button>
+          </form>
+        ) : (
+          <form onSubmit={handleVerifyOtp}>
+            <h3>Enter Code</h3>
+            <p>We sent a code to {email}</p>
+
+            <input
+              type="text"
+              value={code}
+              onChange={(e) => setCode(e.target.value)}
+              placeholder="123456"
+              maxLength={6}
+              required
+              disabled={isLoading}
+            />
+
+            {error && <p className="error">{error}</p>}
+
+            <button type="submit" disabled={isLoading}>
+              {isLoading ? "Verifying..." : "Verify & Link"}
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setStep("email")}
+              className="link-button"
+            >
+              Change email
+            </button>
+          </form>
+        )}
+      </div>
+    </div>
+  );
+}
+```
+
+## Step 3: Preserve Participation During Linking
+
+The Fanfare backend automatically preserves all participation data when linking:
+
+```
+Guest Session (guestId: abc123)
+├── Queue participation (queue_xyz)
+├── Draw entry (draw_456)
+└── Waitlist signup (waitlist_789)
+
+        ↓ After OTP verification ↓
+
+Identified Session (email: user@example.com)
+├── Queue participation (queue_xyz) ✓ Preserved
+├── Draw entry (draw_456) ✓ Preserved
+└── Waitlist signup (waitlist_789) ✓ Preserved
+```
+
+### What Gets Preserved
+
+- Queue positions and admission tokens
+- Draw entries and results
+- Auction bids
+- Waitlist signups
+- Order history (if any)
+- Analytics and tracking data
+
+## Step 4: Phone Number Linking
+
+Link to a phone number instead of email:
+
+```tsx
+function LinkPhoneForm() {
+  const { requestOtp, verifyOtp } = useFanfareAuth();
+  const [phone, setPhone] = useState("");
+  const [countryCode, setCountryCode] = useState("US");
+  const [code, setCode] = useState("");
+  const [step, setStep] = useState<"phone" | "code">("phone");
+
+  const handleLink = async () => {
+    if (step === "phone") {
+      await requestOtp({ phone, defaultCountry: countryCode });
+      setStep("code");
+    } else {
+      await verifyOtp({ phone, code, defaultCountry: countryCode });
+      // Success - account is now linked to phone
+    }
+  };
+
+  // ... UI similar to email linking
+}
+```
+
+## Step 5: External Identity Linking
+
+Link consumers via your own authentication system (server-side):
+
+### Backend Implementation
+
+```typescript
+// Your backend API endpoint
+// POST /api/link-fanfare-identity
+
+import { NextResponse } from "next/server";
+
+export async function POST(request: Request) {
+  // 1. Verify user is authenticated in your system
+  const session = await getYourSession(request);
+  if (!session?.user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  // 2. Create exchange code via Fanfare API (server-to-server)
+  const response = await fetch(
+    "https://api.fanfare.io/auth/external/authorize",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Organization-Id": process.env.FANFARE_ORG_ID!,
+        "X-Secret-Key": process.env.FANFARE_SECRET_KEY!, // Secret key!
+      },
+      body: JSON.stringify({
+        provider: "your-platform", // Your platform identifier
+        issuer: "https://your-domain.com",
+        subject: session.user.id, // Your user's unique ID
+        claims: {
+          email: session.user.email,
+          name: session.user.name,
+          // Add any other relevant claims
+        },
+      }),
+    },
+  );
+
+  if (!response.ok) {
+    return NextResponse.json(
+      { error: "Failed to create exchange code" },
+      { status: 500 },
+    );
+  }
+
+  const { exchangeCode, expiresAt } = await response.json();
+
+  // 3. Return exchange code to frontend
+  return NextResponse.json({ exchangeCode, expiresAt });
+}
+```
+
+### Frontend Implementation
+
+```tsx
+import { useFanfare, useFanfareAuth } from "@waitify-io/fanfare-sdk-react";
+import { useEffect } from "react";
+
+interface User {
+  id: string;
+  email: string;
+  name: string;
+}
+
+function useFanfareLink(user: User | null) {
+  const fanfare = useFanfare();
+  const { isAuthenticated, isGuest } = useFanfareAuth();
+
+  useEffect(() => {
+    async function linkAccount() {
+      // Only link if user is logged in to your platform
+      // and Fanfare session is guest (not already linked)
+      if (!user || !isGuest) return;
+
+      try {
+        // 1. Get exchange code from your backend
+        const res = await fetch("/api/link-fanfare-identity", {
+          method: "POST",
+          credentials: "include", // Include auth cookies
+        });
+
+        if (!res.ok) {
+          console.error("Failed to get exchange code");
+          return;
+        }
+
+        const { exchangeCode } = await res.json();
+
+        // 2. Exchange for Fanfare authenticated session
+        await fanfare.auth.exchangeExternal({ exchangeCode });
+
+        console.log("Account linked successfully!");
+      } catch (error) {
+        console.error("Failed to link account:", error);
+      }
+    }
+
+    linkAccount();
+  }, [user, isGuest, fanfare]);
+
+  return { isLinked: isAuthenticated && !isGuest };
+}
+```
+
+## Step 6: Automatic Linking on Login
+
+Automatically link when users log into your platform:
+
+```tsx
+function AutoLinkWrapper({ children }: { children: React.ReactNode }) {
+  const { user } = useYourAuth(); // Your auth hook
+  const { isLinked } = useFanfareLink(user);
+
+  return (
+    <>
+      {children}
+      {user && !isLinked && <LinkingIndicator />}
+    </>
+  );
+}
+
+function LinkingIndicator() {
+  return <div className="linking-toast">Syncing your account...</div>;
+}
+```
+
+## Step 7: Handle Linking Conflicts
+
+What happens if the email/phone is already linked to another consumer?
+
+```typescript
+async function handleLinkWithConflictResolution(email: string, code: string) {
+  try {
+    await verifyOtp({ email, code });
+    // Success - linked to existing or new consumer
+  } catch (error) {
+    if (error instanceof Error) {
+      if (error.message.includes("already_linked")) {
+        // This email is already linked to another consumer
+        // Options:
+        // 1. Merge accounts (if you support this)
+        // 2. Ask user to use different email
+        // 3. Sign out and sign in with that identity
+        showConflictResolutionUI(email);
+      } else {
+        showError(error.message);
+      }
+    }
+  }
+}
+```
+
+### Conflict Resolution UI
+
+```tsx
+function ConflictResolutionModal({
+  email,
+  onContinueAsNew,
+  onSignInExisting,
+}: {
+  email: string;
+  onContinueAsNew: () => void;
+  onSignInExisting: () => void;
+}) {
+  return (
+    <div className="conflict-modal">
+      <h3>Email Already in Use</h3>
+      <p>
+        The email <strong>{email}</strong> is already associated with another
+        account.
+      </p>
+
+      <div className="options">
+        <button onClick={onSignInExisting} className="primary">
+          Sign in to existing account
+        </button>
+        <p className="or">or</p>
+        <button onClick={onContinueAsNew} className="secondary">
+          Use a different email
+        </button>
+      </div>
+    </div>
+  );
+}
+```
+
+## Step 8: Post-Linking Actions
+
+After successful linking, consider these actions:
+
+```tsx
+import { useFanfare, useFanfareAuth } from "@waitify-io/fanfare-sdk-react";
+import { useEffect, useRef } from "react";
+
+function PostLinkActions() {
+  const { isAuthenticated, isGuest, session } = useFanfareAuth();
+  const fanfare = useFanfare();
+  const wasGuest = useRef(true);
+
+  useEffect(() => {
+    // Detect transition from guest to identified
+    if (wasGuest.current && isAuthenticated && !isGuest) {
+      onAccountLinked();
+      wasGuest.current = false;
+    }
+  }, [isAuthenticated, isGuest]);
+
+  async function onAccountLinked() {
+    // 1. Show success message
+    showToast("Account linked successfully!");
+
+    // 2. Refresh participations to get updated data
+    const me = await fanfare.experiences.getMe();
+    console.log("Active experiences:", me.active);
+
+    // 3. Track analytics
+    trackEvent("account_linked", {
+      consumerId: session?.consumerId,
+      email: session?.email,
+    });
+
+    // 4. Prompt for notification preferences
+    showNotificationPreferences();
+  }
+
+  return null;
+}
+```
+
+## Best Practices
+
+### 1. Time the Linking Prompt Well
+
+Don't interrupt the user during critical moments:
+
+```tsx
+function SmartLinkPrompt() {
+  const { status } = useExperienceJourney();
+
+  // Don't show during active participation
+  if (["participating", "admitted"].includes(status)) {
+    return null;
+  }
+
+  // Good times to show:
+  // - After successful queue entry
+  // - When viewing confirmation
+  // - During waitlist signup
+  return <LinkAccountPrompt />;
+}
+```
+
+### 2. Explain the Benefits
+
+```tsx
+<div className="link-benefits">
+  <h4>Why add your email?</h4>
+  <ul>
+    <li>Get notified when it's your turn</li>
+    <li>Access from any device</li>
+    <li>Track your order history</li>
+    <li>Never lose your spot</li>
+  </ul>
+</div>
+```
+
+### 3. Make it Optional
+
+Never force linking for basic participation:
+
+```tsx
+// Good - Optional linking
+{
+  isGuest && <OptionalLinkPrompt />;
+}
+{
+  /* User can still participate without linking */
+}
+
+// Avoid - Forced linking
+{
+  isGuest && <BlockingLinkModal />;
+} // Don't do this
+```
+
+### 4. Handle Errors Gracefully
+
+```tsx
+const handleLinkError = (error: Error) => {
+  // Don't disrupt the user's experience
+  console.error("Link failed:", error);
+
+  // Show non-blocking error
+  showToast("Couldn't link account. You can try again later.", "warning");
+
+  // User can continue as guest
+};
+```
+
+## Troubleshooting
+
+### Participation Not Preserved
+
+- Verify the same browser/device is used
+- Check that session wasn't cleared
+- Ensure linking happens before participation ends
+
+### Exchange Code Expired
+
+- Exchange codes expire after 60 seconds
+- Generate new code if expired
+- Check network latency
+
+### Email Already Linked
+
+- Provide options to sign in or use different email
+- Don't silently fail
+
+## What's Next
+
+- [JWT Tokens](/guides/authentication/jwt-tokens) - Advanced server-side auth
+- [Checkout Integration](/guides/checkout-integration/checkout-overview) - Complete checkout flows
+- [Webhooks](/guides/advanced/webhooks-guide) - Server-side event handling

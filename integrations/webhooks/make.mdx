@@ -1,0 +1,84 @@
+---
+title: "Make Integration"
+description: "Build powerful automations with Make (formerly Integromat)"
+---
+
+## Overview
+
+{/* TODO: MISSING_FUNCTIONALITY
+Feature: Make (Integromat) integration
+Expected behavior: Native Make app with triggers and actions
+Current state: Not yet implemented - planned for future release
+*/}
+
+<Callout type="warning">**Coming Soon**: The Make integration is under development.</Callout>
+
+The Make integration will enable you to build sophisticated automations connecting Fanfare to thousands of apps.
+
+## Planned Features
+
+### Triggers
+
+Instant triggers from Fanfare:
+
+| Trigger           | Description                |
+| ----------------- | -------------------------- |
+| Consumer Created  | New consumer registered    |
+| Experience Joined | Consumer enters experience |
+| Winner Selected   | Draw/auction winner chosen |
+| Order Completed   | Order finalized            |
+
+### Actions
+
+Operations in Fanfare:
+
+| Action          | Description                 |
+| --------------- | --------------------------- |
+| Create Consumer | Add new consumer            |
+| Update Consumer | Modify consumer data        |
+| Add to Audience | Add to audience list        |
+| Get Experience  | Retrieve experience details |
+
+### Searches
+
+Find data in Fanfare:
+
+| Search           | Description              |
+| ---------------- | ------------------------ |
+| Find Consumer    | Search by email/phone    |
+| List Experiences | Get active experiences   |
+| Get Distribution | Get distribution details |
+
+## Example Scenarios
+
+### CRM Sync
+
+1. **Trigger**: Consumer Created in Fanfare
+2. **Action**: Create Contact in HubSpot
+3. **Action**: Add to Mailchimp list
+
+### Multi-step Automation
+
+1. **Trigger**: Winner Selected
+2. **Filter**: Check if VIP customer
+3. **Action**: Send personalized email
+4. **Action**: Create task in Asana
+5. **Action**: Log to Google Sheets
+
+## Workaround: HTTP Module
+
+Until the native Make app is available:
+
+1. Use Make's HTTP module
+2. Connect to Fanfare API
+3. Poll for changes or receive webhooks
+
+## Requesting Early Access
+
+Contact support@fanfare.io to be notified when the Make integration is available.
+
+## Related Resources
+
+- [Custom Webhooks](/integrations/webhooks/custom-webhooks)
+- [Zapier Integration](/integrations/webhooks/zapier)
+- [API Reference](/api-reference)

@@ -1,0 +1,354 @@
+---
+title: Web Components
+description: Register and use Fanfare widgets as web components
+---
+
+# Web Components
+
+The Solid SDK can register widgets as web components (custom elements) for use in any framework or vanilla HTML/JavaScript.
+
+## Registration
+
+Call `registerWebComponents` once at application startup:
+
+```typescript
+import { registerWebComponents } from "@waitify-io/fanfare-sdk-solid";
+
+registerWebComponents({
+  organizationId: "org_xxx",
+  publishableKey: "pk_live_xxx",
+});
+```
+
+## Registration Options
+
+```typescript
+interface RegisterWebComponentsOptions {
+  organizationId: string;
+  publishableKey: string;
+  locale?: Locale;
+  translations?: PartialTranslationMessages;
+  themeConfig?: ExperienceTheme;
+  variant?: WidgetVariant;
+}
+```
+
+| Option           | Type                         | Required | Description                  |
+| ---------------- | ---------------------------- | -------- | ---------------------------- |
+| `organizationId` | `string`                     | Yes      | Your organization ID         |
+| `publishableKey` | `string`                     | Yes      | Your publishable API key     |
+| `locale`         | `Locale`                     | No       | Default language locale      |
+| `translations`   | `PartialTranslationMessages` | No       | Custom translation overrides |
+| `themeConfig`    | `ExperienceTheme`            | No       | Default theme configuration  |
+| `variant`        | `WidgetVariant`              | No       | Default visual variant       |
+
+## Full Configuration Example
+
+```typescript
+registerWebComponents({
+  organizationId: "org_xxx",
+  publishableKey: "pk_live_xxx",
+  locale: "en",
+  translations: {
+    "queue.enter": "Get in Line",
+    "queue.leave": "Exit Line",
+    "admitted.cta": "Shop Now",
+  },
+  themeConfig: {
+    colors: {
+      primary: "#8b5cf6",
+      primaryHover: "#7c3aed",
+      background: "#ffffff",
+      foreground: "#1f2937",
+    },
+    borderRadius: "lg",
+    fontFamily: "Inter, system-ui, sans-serif",
+  },
+  variant: "rounded",
+});
+```
+
+## Available Web Components
+
+| Web Component                    | SolidJS Component    | Description          |
+| -------------------------------- | -------------------- | -------------------- |
+| `<fanfare-queue-widget>`         | `QueueWidget`        | Virtual waiting room |
+| `<fanfare-draw-widget>`          | `DrawWidget`         | Lottery/raffle       |
+| `<fanfare-auction-widget>`       | `AuctionWidget`      | Real-time bidding    |
+| `<fanfare-waitlist-widget>`      | `WaitlistWidget`     | Pre-registration     |
+| `<fanfare-timed-release-widget>` | `TimedReleaseWidget` | Flash sale           |
+| `<fanfare-experience-widget>`    | `ExperienceWidget`   | Full journey         |
+
+## Usage in Different Frameworks
+
+### React
+
+```tsx
+// app.tsx - Register once
+import { registerWebComponents } from "@waitify-io/fanfare-sdk-solid";
+
+registerWebComponents({
+  organizationId: "org_xxx",
+  publishableKey: "pk_live_xxx",
+});
+
+// components/QueuePage.tsx
+function QueuePage() {
+  return <fanfare-queue-widget queue-id="queue_123" />;
+}
+```
+
+### Vue
+
+```vue
+<!-- App.vue -->
+<script setup>
+import { registerWebComponents } from "@waitify-io/fanfare-sdk-solid";
+import { onMounted } from "vue";
+
+onMounted(() => {
+  registerWebComponents({
+    organizationId: "org_xxx",
+    publishableKey: "pk_live_xxx",
+  });
+});
+</script>
+
+<template>
+  <fanfare-queue-widget queue-id="queue_123" />
+</template>
+```
+
+### Angular
+
+```typescript
+// main.ts
+import { registerWebComponents } from "@waitify-io/fanfare-sdk-solid";
+
+registerWebComponents({
+  organizationId: "org_xxx",
+  publishableKey: "pk_live_xxx",
+});
+
+// In your component template
+// <fanfare-queue-widget queue-id="queue_123"></fanfare-queue-widget>
+
+// app.module.ts - Add CUSTOM_ELEMENTS_SCHEMA
+import { CUSTOM_ELEMENTS_SCHEMA } from "@angular/core";
+
+@NgModule({
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+})
+export class AppModule {}
+```
+
+### Vanilla HTML/JavaScript
+
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+    <script type="module">
+      import { registerWebComponents } from "https://unpkg.com/@waitify-io/fanfare-sdk-solid";
+
+      registerWebComponents({
+        organizationId: "org_xxx",
+        publishableKey: "pk_live_xxx",
+      });
+    </script>
+  </head>
+  <body>
+    <fanfare-queue-widget queue-id="queue_123"></fanfare-queue-widget>
+  </body>
+</html>
+```
+
+## Attribute Mapping
+
+Web component attributes use kebab-case and are strings:
+
+| SolidJS Prop  | Web Component Attribute | Type Conversion   |
+| ------------- | ----------------------- | ----------------- |
+| `queueId`     | `queue-id`              | String (direct)   |
+| `showHeader`  | `show-header`           | String to Boolean |
+| `autoStart`   | `auto-start`            | String to Boolean |
+| `checkoutUrl` | `checkout-url`          | String (direct)   |
+
+### Boolean Attributes
+
+Boolean props accept string values:
+
+- `"true"` or `"1"` = `true`
+- `"false"` or `"0"` or absent = `false`
+
+```html
+<fanfare-queue-widget queue-id="queue_123" show-header="true" show-actions="false" />
+```
+
+## Event Handling
+
+Web components emit custom events that bubble up the DOM:
+
+```javascript
+const widget = document.querySelector("fanfare-queue-widget");
+
+widget.addEventListener("fanfare-queue-enter", (event) => {
+  console.log("Entered queue:", event.detail.queueId);
+});
+
+widget.addEventListener("fanfare-queue-admitted", (event) => {
+  console.log("Admitted with token:", event.detail.token);
+  window.location.href = `/checkout?token=${event.detail.token}`;
+});
+```
+
+### Event Reference
+
+#### Queue Widget Events
+
+| Event                           | Detail                  |
+| ------------------------------- | ----------------------- |
+| `fanfare-queue-enter`           | `{ queueId: string }`   |
+| `fanfare-queue-leave`           | `{ queueId: string }`   |
+| `fanfare-queue-position-change` | `{ queueId, position }` |
+| `fanfare-queue-admitted`        | `{ queueId, token }`    |
+
+#### Draw Widget Events
+
+| Event                   | Detail                     |
+| ----------------------- | -------------------------- |
+| `fanfare-draw-enter`    | `{ drawId: string }`       |
+| `fanfare-draw-withdraw` | `{ drawId: string }`       |
+| `fanfare-draw-result`   | `{ drawId, won: boolean }` |
+| `fanfare-draw-proceed`  | `{ drawId, token }`        |
+
+#### Auction Widget Events
+
+| Event                     | Detail                  |
+| ------------------------- | ----------------------- |
+| `fanfare-auction-bid`     | `{ auctionId, amount }` |
+| `fanfare-auction-outbid`  | `{ auctionId, newBid }` |
+| `fanfare-auction-win`     | `{ auctionId, amount }` |
+| `fanfare-auction-proceed` | `{ auctionId, token }`  |
+
+#### Experience Widget Events
+
+| Event                    | Detail              |
+| ------------------------ | ------------------- |
+| `fanfare-journey-change` | `{ snapshot }`      |
+| `fanfare-admitted`       | `{ token: string }` |
+| `fanfare-error`          | `{ error: string }` |
+
+## Styling Web Components
+
+### CSS Variables
+
+Web components can be styled via CSS custom properties:
+
+```css
+fanfare-queue-widget {
+  --fanfare-primary: #8b5cf6;
+  --fanfare-primary-hover: #7c3aed;
+  --fanfare-background: #ffffff;
+  --fanfare-foreground: #1f2937;
+  --fanfare-radius: 0.75rem;
+}
+```
+
+### Scoped Styles
+
+Target specific widgets:
+
+```css
+/* Style only queue widgets */
+fanfare-queue-widget {
+  --fanfare-primary: #3b82f6;
+}
+
+/* Style only auction widgets */
+fanfare-auction-widget {
+  --fanfare-primary: #ef4444;
+}
+```
+
+### Container Classes
+
+Use the `container-class` attribute:
+
+```html
+<fanfare-queue-widget queue-id="queue_123" container-class="my-widget premium-style" />
+```
+
+## TypeScript Declarations
+
+Add type declarations for your framework:
+
+### React
+
+```typescript
+// global.d.ts
+declare namespace JSX {
+  interface IntrinsicElements {
+    "fanfare-queue-widget": React.DetailedHTMLProps<
+      React.HTMLAttributes<HTMLElement> & {
+        "queue-id": string;
+        "show-header"?: string;
+        "show-actions"?: string;
+      },
+      HTMLElement
+    >;
+    "fanfare-draw-widget": React.DetailedHTMLProps<
+      React.HTMLAttributes<HTMLElement> & {
+        "draw-id": string;
+        "show-header"?: string;
+        "show-countdown"?: string;
+      },
+      HTMLElement
+    >;
+    // ... other widgets
+  }
+}
+```
+
+### Vue
+
+```typescript
+// shims-vue.d.ts
+declare module "vue" {
+  interface GlobalComponents {
+    "fanfare-queue-widget": DefineComponent<{
+      "queue-id": string;
+      "show-header"?: string;
+    }>;
+    // ... other widgets
+  }
+}
+```
+
+## Lazy Loading
+
+Register web components lazily:
+
+```typescript
+// Only load when needed
+async function loadFanfareWidgets() {
+  const { registerWebComponents } = await import("@waitify-io/fanfare-sdk-solid");
+
+  registerWebComponents({
+    organizationId: "org_xxx",
+    publishableKey: "pk_live_xxx",
+  });
+}
+
+// Load when user navigates to queue page
+if (window.location.pathname === "/queue") {
+  loadFanfareWidgets();
+}
+```
+
+## Related
+
+- [Overview](/sdk/solid/overview) - Solid SDK overview
+- [Components](/sdk/solid/components) - SolidJS components
+- [Widgets Overview](/sdk/react/widgets/overview) - Widget architecture
+- [Styling](/sdk/react/customization/styling) - CSS styling options

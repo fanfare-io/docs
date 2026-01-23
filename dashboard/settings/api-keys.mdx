@@ -1,0 +1,269 @@
+---
+title: API Keys
+description: Generate and manage API keys for programmatic access
+---
+
+# API Keys
+
+API keys allow you to access Fanfare's API programmatically, enabling integrations with your own systems, automation, and custom workflows.
+
+## Accessing API Keys
+
+API key management is available through the developer settings or integrations section.
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/settings/api-keys or developer section
+Shows: API keys management interface
+Annotations: Highlight the create key button and key list
+Alt text: "API keys management showing existing keys and create option"
+*/}
+
+![API keys](./images/settings-api-keys.png)
+_Caption: Manage your API keys for programmatic access_
+
+## API Key Types
+
+| Type           | Description                      | Use Case                       |
+| -------------- | -------------------------------- | ------------------------------ |
+| **Public Key** | Client-side, limited permissions | Browser SDK, embedded widgets  |
+| **Secret Key** | Server-side, full permissions    | Backend integrations, webhooks |
+| **Test Key**   | Testing environment only         | Development and testing        |
+
+## Creating API Keys
+
+### Generate a New Key
+
+1. Navigate to API Keys settings
+2. Click **Create API Key**
+3. Select the key type
+4. Name the key (for identification)
+5. Set permissions (if applicable)
+6. Click **Create**
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: API key creation dialog
+Shows: Create API key form with name and type fields
+Annotations: Label the form fields
+Alt text: "Create API key dialog with name and type selection"
+*/}
+
+![Create API key](./images/settings-create-api-key.png)
+_Caption: Create a new API key with appropriate permissions_
+
+### Key Configuration
+
+| Field           | Required | Description                      |
+| --------------- | -------- | -------------------------------- |
+| **Name**        | Yes      | Descriptive name for the key     |
+| **Type**        | Yes      | Public, Secret, or Test          |
+| **Permissions** | No       | Scope limitations (if supported) |
+| **Expiration**  | No       | Optional expiration date         |
+
+### After Creation
+
+When a key is created:
+
+1. The key is displayed **once**
+2. Copy and store it securely
+3. You cannot view the full key again
+4. The key appears in your key list
+
+<Warning>
+Secret keys are shown only once when created. Store them securely immediately. If lost, you must create a new key.
+</Warning>
+
+## Managing Keys
+
+### Key List
+
+View all your API keys:
+
+| Column        | Description                  |
+| ------------- | ---------------------------- |
+| **Name**      | Key identifier               |
+| **Type**      | Public, Secret, or Test      |
+| **Created**   | When the key was generated   |
+| **Last Used** | Most recent API call         |
+| **Status**    | Active, Inactive, or Expired |
+
+### Key Actions
+
+| Action         | Description                      |
+| -------------- | -------------------------------- |
+| **Regenerate** | Create a new key, invalidate old |
+| **Deactivate** | Temporarily disable the key      |
+| **Delete**     | Permanently remove the key       |
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: API keys list
+Shows: Key row with action menu expanded
+Annotations: Show action options
+Alt text: "API key row showing regenerate, deactivate, and delete options"
+*/}
+
+![Key actions](./images/settings-key-actions.png)
+_Caption: Manage keys through the action menu_
+
+## Key Permissions
+
+### Permission Scopes
+
+If your plan supports granular permissions:
+
+| Scope                 | Description                 |
+| --------------------- | --------------------------- |
+| **read:experiences**  | View experience data        |
+| **write:experiences** | Create and edit experiences |
+| **read:consumers**    | View consumer data          |
+| **write:consumers**   | Create and edit consumers   |
+| **read:analytics**    | Access analytics data       |
+| **admin**             | Full administrative access  |
+
+### Restricting Permissions
+
+For enhanced security:
+
+1. Select only needed permissions
+2. Use separate keys for different purposes
+3. Review permissions regularly
+4. Revoke unnecessary access
+
+## Using API Keys
+
+### Authentication Methods
+
+| Method          | Format                            |
+| --------------- | --------------------------------- |
+| **Header**      | `Authorization: Bearer <api_key>` |
+| **Query Param** | `?api_key=<api_key>`              |
+
+### Example Request
+
+```bash
+curl -X GET "https://api.fanfare.io/v1/experiences" \
+  -H "Authorization: Bearer sk_live_xxxxx"
+```
+
+### SDK Usage
+
+```javascript
+import { FanfareClient } from "@waitify-io/fanfare-sdk-core";
+
+const client = new FanfareClient({
+  apiKey: "sk_live_xxxxx",
+});
+```
+
+## Key Security
+
+### Best Practices
+
+1. **Never expose secret keys** - Keep server-side only
+2. **Use environment variables** - Don't hardcode keys
+3. **Rotate regularly** - Replace keys periodically
+4. **Monitor usage** - Watch for unusual activity
+5. **Limit permissions** - Use minimal required scope
+
+### Environment Variables
+
+Store keys securely:
+
+```bash
+# .env file (never commit to version control)
+FANFARE_API_KEY=sk_live_xxxxx
+FANFARE_PUBLIC_KEY=pk_live_xxxxx
+```
+
+### Key Rotation
+
+Schedule regular key rotation:
+
+| Scenario               | Rotation Frequency |
+| ---------------------- | ------------------ |
+| **Production**         | Every 90 days      |
+| **After breach**       | Immediately        |
+| **Team member leaves** | Immediately        |
+| **Test environments**  | As needed          |
+
+## Rate Limits
+
+API keys are subject to rate limits:
+
+| Plan           | Rate Limit             |
+| -------------- | ---------------------- |
+| **Free**       | 100 requests/minute    |
+| **Basic**      | 1,000 requests/minute  |
+| **Pro**        | 10,000 requests/minute |
+| **Enterprise** | Custom limits          |
+
+### Rate Limit Headers
+
+Responses include rate limit information:
+
+| Header                  | Description                   |
+| ----------------------- | ----------------------------- |
+| `X-RateLimit-Limit`     | Maximum requests allowed      |
+| `X-RateLimit-Remaining` | Requests remaining            |
+| `X-RateLimit-Reset`     | When limit resets (timestamp) |
+
+## Monitoring Usage
+
+### Usage Statistics
+
+Track API key usage:
+
+| Metric             | Description                    |
+| ------------------ | ------------------------------ |
+| **Total Requests** | Requests in current period     |
+| **Success Rate**   | Percentage of successful calls |
+| **Error Rate**     | Percentage of failed calls     |
+| **Last Used**      | Most recent API call           |
+
+### Usage Alerts
+
+Configure alerts for:
+
+- Approaching rate limits
+- Unusual activity patterns
+- Error rate thresholds
+- Unused keys
+
+## Troubleshooting
+
+### Invalid API Key
+
+1. Verify the key is correct
+2. Check the key hasn't expired
+3. Ensure the key is active
+4. Confirm correct environment (test vs. live)
+
+### Permission Denied
+
+1. Check key has required permissions
+2. Verify the endpoint requires no additional auth
+3. Review permission scopes
+4. Try regenerating the key
+
+### Rate Limited
+
+1. Check current usage against limits
+2. Implement exponential backoff
+3. Cache responses where appropriate
+4. Consider upgrading plan
+
+## API Documentation
+
+For detailed API documentation:
+
+- [API Reference](/api/reference) - Complete endpoint documentation
+- [Authentication Guide](/api/authentication) - Auth details
+- [SDK Documentation](/sdk/overview) - Client libraries
+
+## Related Guides
+
+- [Settings Overview](/dashboard/settings/overview) - All settings
+- [Integrations](/dashboard/settings/integrations) - Third-party connections
+- [Developer Documentation](/api/overview) - API usage guides

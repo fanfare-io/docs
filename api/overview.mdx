@@ -1,0 +1,180 @@
+---
+title: API Overview
+description: Introduction to the Fanfare REST API architecture, base URLs, and versioning
+---
+
+# API Overview
+
+The Fanfare API provides programmatic access to the Fanfare platform, enabling you to build integrations for virtual waiting rooms, queues, auctions, draws, and appointment scheduling.
+
+## Architecture
+
+Fanfare exposes two primary APIs:
+
+| API              | Purpose                                                                     | Base URL                             |
+| ---------------- | --------------------------------------------------------------------------- | ------------------------------------ |
+| **Consumer API** | End-user facing operations (joining queues, placing bids, checking status)  | `https://consumer.fanfare.io/api/v1` |
+| **Admin API**    | Management operations (creating experiences, managing audiences, analytics) | `https://admin.fanfare.io/api/v1`    |
+
+Both APIs follow REST conventions and return JSON responses.
+
+## API Versioning
+
+The current API version is **v1**. The version is included in the URL path:
+
+```
+https://consumer.fanfare.io/api/v1/experiences/{experienceId}
+https://admin.fanfare.io/api/v1/experiences
+```
+
+### Version Lifecycle
+
+- **Current**: `v1` - Full support, actively maintained
+- **Deprecated**: Versions are deprecated with 12 months notice before removal
+- **Sunset**: Deprecated versions are eventually removed
+
+## Request Format
+
+### Headers
+
+All API requests should include:
+
+```http
+Content-Type: application/json
+Authorization: Bearer {access_token}
+```
+
+For Consumer API with publishable key:
+
+```http
+X-Publishable-Key: pk_live_xxxxxxxxxxxx
+```
+
+For Admin API or Consumer API server-side calls:
+
+```http
+Authorization: Bearer {secret_key}
+```
+
+### Request Body
+
+Request bodies should be JSON-encoded:
+
+```json
+{
+  "name": "Holiday Sale Queue",
+  "capacity": 1000,
+  "openAt": "2024-12-01T09:00:00Z"
+}
+```
+
+## Response Format
+
+### Success Responses
+
+Successful responses return the appropriate HTTP status code with a JSON body:
+
+```json
+{
+  "id": "exp_01HXYZ123456789",
+  "name": "Holiday Sale Queue",
+  "capacity": 1000,
+  "openAt": "2024-12-01T09:00:00Z",
+  "createdAt": "2024-11-01T10:00:00Z",
+  "updatedAt": "2024-11-01T10:00:00Z"
+}
+```
+
+### List Responses
+
+List endpoints return arrays, often with pagination metadata:
+
+```json
+{
+  "data": [
+    { "id": "exp_01HXYZ123456789", "name": "Holiday Sale Queue" },
+    { "id": "exp_01HXYZ987654321", "name": "VIP Early Access" }
+  ],
+  "pageInfo": {
+    "startCursor": "eyJpZCI6ImV4cF8wMUhYWVoxMjM0NTY3ODkifQ==",
+    "endCursor": "eyJpZCI6ImV4cF8wMUhYWVo5ODc2NTQzMjEifQ=="
+  }
+}
+```
+
+### Error Responses
+
+Errors return appropriate HTTP status codes with error details:
+
+```json
+{
+  "error": "Validation failed",
+  "details": [
+    {
+      "field": "capacity",
+      "message": "Must be a positive integer"
+    }
+  ]
+}
+```
+
+## HTTP Status Codes
+
+| Code  | Description                                                |
+| ----- | ---------------------------------------------------------- |
+| `200` | Success - Request completed successfully                   |
+| `201` | Created - Resource created successfully                    |
+| `204` | No Content - Request completed, no response body           |
+| `400` | Bad Request - Invalid request parameters                   |
+| `401` | Unauthorized - Missing or invalid authentication           |
+| `403` | Forbidden - Insufficient permissions                       |
+| `404` | Not Found - Resource does not exist                        |
+| `409` | Conflict - Resource state conflict                         |
+| `423` | Locked - Resource not yet available (e.g., queue not open) |
+| `429` | Too Many Requests - Rate limit exceeded                    |
+| `500` | Internal Server Error - Server-side error                  |
+
+## Multi-Tenancy
+
+Fanfare is a multi-tenant platform. All API requests are scoped to your organization based on your API credentials. You cannot access resources belonging to other organizations.
+
+## Timestamps
+
+All timestamps in the API are in ISO 8601 format with UTC timezone:
+
+```
+2024-12-01T09:00:00Z
+```
+
+When creating or updating resources with timestamps, you can specify any valid timezone, but responses will always return UTC.
+
+## IDs
+
+Fanfare uses UUIDv7 identifiers for all resources. These IDs are:
+
+- Globally unique
+- Time-ordered (lexicographically sortable)
+- URL-safe
+
+Example: `01HXYZ123456789ABCDEFGHIJ`
+
+## SDKs
+
+Official SDKs are available for common platforms:
+
+- **JavaScript/TypeScript**: `@fanfare/sdk-core`, `@fanfare/sdk-react`
+- **SolidJS**: `@fanfare/sdk-solid`
+
+Install via npm:
+
+```bash
+npm install @fanfare/sdk-react
+```
+
+## Next Steps
+
+- [Authentication](/api/authentication) - Learn about API authentication methods
+- [Error Handling](/api/errors) - Understand error response formats
+- [Rate Limiting](/api/rate-limiting) - Review rate limits and quotas
+- [Consumer API](/api/consumer-api/overview) - Explore consumer-facing endpoints
+- [Admin API](/api/admin-api/overview) - Explore management endpoints

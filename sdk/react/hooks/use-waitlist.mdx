@@ -1,0 +1,378 @@
+---
+title: useWaitlist Hook
+description: React hook for waitlist operations
+---
+
+# useWaitlist
+
+The `useWaitlist` hook provides reactive state and methods for waitlist signups. A waitlist is a simple notification signup system for pre-launch or out-of-stock items.
+
+## Signature
+
+```typescript
+function useWaitlist(waitlistId: string, sequenceId?: string): UseWaitlistReturn;
+```
+
+## Parameters
+
+| Parameter    | Type     | Description                                           |
+| ------------ | -------- | ----------------------------------------------------- |
+| `waitlistId` | `string` | The waitlist identifier                               |
+| `sequenceId` | `string` | Optional sequence identifier (defaults to waitlistId) |
+
+## Return Type
+
+```typescript
+interface UseWaitlistReturn {
+  // State
+  status: UseWaitlistClientStatus;
+  waitlistStatus: WaitlistStatus | null;
+  isEntered: boolean;
+  enteredAt: Date | null;
+  isLoading: boolean;
+  error: Error | null;
+
+  // Actions
+  enter: () => Promise<WaitlistEntry>;
+  leave: () => Promise<void>;
+  refreshStatus: () => Promise<WaitlistStatus | null>;
+}
+```
+
+## Client Status
+
+```typescript
+type UseWaitlistClientStatus =
+  | "idle" // Initial state
+  | "available" // Waitlist available, not entered
+  | "entered" // On the waitlist
+  | "loading" // Loading state
+  | "error"; // Error state
+```
+
+## State Properties
+
+### waitlistStatus
+
+The waitlist status from the API.
+
+```typescript
+interface WaitlistStatus {
+  waitlistId: string;
+  isEntered: boolean;
+  enteredAt?: string;
+}
+```
+
+### isEntered
+
+Convenience boolean indicating if the consumer is on the waitlist.
+
+### enteredAt
+
+Date when the consumer joined the waitlist.
+
+## Actions
+
+### enter()
+
+Join the waitlist.
+
+```typescript
+enter(): Promise<WaitlistEntry>
+
+interface WaitlistEntry {
+  id: string;
+  waitlistId: string;
+  sequenceId: string;
+  consumerId: string;
+  enteredAt: string;
+}
+```
+
+### leave()
+
+Leave the waitlist.
+
+```typescript
+leave(): Promise<void>
+```
+
+### refreshStatus()
+
+Refresh the waitlist status from the server.
+
+```typescript
+refreshStatus(): Promise<WaitlistStatus | null>
+```
+
+## Basic Usage
+
+```tsx
+import { useWaitlist, useFanfareAuth } from "@waitify-io/fanfare-sdk-react";
+
+function WaitlistPage() {
+  const { isAuthenticated, guest } = useFanfareAuth();
+  const { status, isEntered, enteredAt, isLoading, error, enter, leave } = useWaitlist("waitlist_123");
+
+  const handleJoin = async () => {
+    if (!isAuthenticated) {
+      await guest();
+    }
+    try {
+      await enter();
+    } catch (err) {
+      console.error("Failed to join:", err);
+    }
+  };
+
+  if (error) {
+    return <div className="error">Error: {error.message}</div>;
+  }
+
+  return (
+    <div className="waitlist-page">
+      <h1>Join Our Waitlist</h1>
+      <p>Be the first to know when we launch!</p>
+
+      {status === "available" && (
+        <button onClick={handleJoin} disabled={isLoading}>
+          {isLoading ? "Joining..." : "Join Waitlist"}
+        </button>
+      )}
+
+      {status === "entered" && (
+        <div className="entered-state">
+          <div className="success-icon">You are on the list!</div>
+          <p>Joined: {enteredAt?.toLocaleDateString()}</p>
+          <button onClick={leave} className="secondary">
+            Leave Waitlist
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+```
+
+## Product Waitlist
+
+```tsx
+function ProductWaitlist({ productId }: { productId: string }) {
+  const { status, isEntered, enter, leave, isLoading } = useWaitlist(`waitlist_${productId}`);
+
+  return (
+    <div className="product-waitlist">
+      <h3>Out of Stock</h3>
+      <p>Get notified when this item is back in stock.</p>
+
+      {!isEntered ? (
+        <button onClick={enter} disabled={isLoading} className="notify-btn">
+          {isLoading ? "..." : "Notify Me"}
+        </button>
+      ) : (
+        <div className="waitlist-confirmed">
+          <span className="check-icon">Email notification active</span>
+          <button onClick={leave} className="cancel-btn">
+            Cancel Notification
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+```
+
+## Email Collection Pattern
+
+```tsx
+import { useState } from "react";
+import { useWaitlist, useFanfareAuth } from "@waitify-io/fanfare-sdk-react";
+
+function WaitlistWithEmail({ waitlistId }: { waitlistId: string }) {
+  const { isAuthenticated, requestOtp, verifyOtp } = useFanfareAuth();
+  const { status, enter, isLoading } = useWaitlist(waitlistId);
+
+  const [email, setEmail] = useState("");
+  const [code, setCode] = useState("");
+  const [step, setStep] = useState<"email" | "code" | "done">("email");
+
+  const handleSubmitEmail = async () => {
+    if (!email) return;
+    await requestOtp({ email });
+    setStep("code");
+  };
+
+  const handleVerifyCode = async () => {
+    if (!code) return;
+    await verifyOtp({ email, code });
+    await enter();
+    setStep("done");
+  };
+
+  if (step === "done" || status === "entered") {
+    return (
+      <div className="waitlist-success">
+        <h3>You are on the list!</h3>
+        <p>We will notify you at {email}</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="waitlist-form">
+      <h3>Join Our Waitlist</h3>
+
+      {step === "email" && (
+        <div className="email-step">
+          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Enter your email" />
+          <button onClick={handleSubmitEmail} disabled={isLoading || !email}>
+            Continue
+          </button>
+        </div>
+      )}
+
+      {step === "code" && (
+        <div className="code-step">
+          <p>Enter the code sent to {email}</p>
+          <input
+            type="text"
+            value={code}
+            onChange={(e) => setCode(e.target.value)}
+            placeholder="Enter code"
+            maxLength={6}
+          />
+          <button onClick={handleVerifyCode} disabled={isLoading || !code}>
+            Verify & Join
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+```
+
+## Multiple Waitlists
+
+```tsx
+function WaitlistCollection() {
+  const earlyAccess = useWaitlist("waitlist_early_access");
+  const betaProgram = useWaitlist("waitlist_beta");
+  const newsletter = useWaitlist("waitlist_newsletter");
+
+  return (
+    <div className="waitlist-collection">
+      <h2>Stay in the Loop</h2>
+
+      <div className="waitlist-option">
+        <h3>Early Access</h3>
+        <p>Be first to try new features</p>
+        {earlyAccess.isEntered ? (
+          <span className="badge">Joined</span>
+        ) : (
+          <button onClick={earlyAccess.enter}>Join</button>
+        )}
+      </div>
+
+      <div className="waitlist-option">
+        <h3>Beta Program</h3>
+        <p>Help shape our product</p>
+        {betaProgram.isEntered ? (
+          <span className="badge">Joined</span>
+        ) : (
+          <button onClick={betaProgram.enter}>Join</button>
+        )}
+      </div>
+
+      <div className="waitlist-option">
+        <h3>Newsletter</h3>
+        <p>Weekly updates and tips</p>
+        {newsletter.isEntered ? (
+          <span className="badge">Subscribed</span>
+        ) : (
+          <button onClick={newsletter.enter}>Subscribe</button>
+        )}
+      </div>
+    </div>
+  );
+}
+```
+
+## Event Handling
+
+The hook subscribes to these events:
+
+- `waitlist:entered` - Successfully joined waitlist
+- `waitlist:left` - Left the waitlist
+- `waitlist:error` - Error occurred
+
+```tsx
+function WaitlistWithEvents({ waitlistId }: { waitlistId: string }) {
+  const { status, enter } = useWaitlist(waitlistId);
+  const [message, setMessage] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (status === "entered") {
+      setMessage("You have joined the waitlist!");
+    }
+  }, [status]);
+
+  return (
+    <div>
+      {message && <div className="toast">{message}</div>}
+      <button onClick={enter}>Join</button>
+    </div>
+  );
+}
+```
+
+## With Sequence ID
+
+When using sequences within an experience:
+
+```tsx
+function SequenceWaitlist({ experienceId, sequenceId }: { experienceId: string; sequenceId: string }) {
+  const waitlistId = `exp_${experienceId}_seq_${sequenceId}`;
+  const { status, enter, leave } = useWaitlist(waitlistId, sequenceId);
+
+  return (
+    <div className="sequence-waitlist">
+      {status === "available" && <button onClick={enter}>Join Waitlist for This Drop</button>}
+      {status === "entered" && (
+        <div>
+          <p>You will be notified when this sequence opens!</p>
+          <button onClick={leave}>Leave</button>
+        </div>
+      )}
+    </div>
+  );
+}
+```
+
+## TypeScript
+
+```typescript
+import { useWaitlist } from "@waitify-io/fanfare-sdk-react";
+import type { WaitlistEntry, WaitlistStatus, UseWaitlistClientStatus } from "@waitify-io/fanfare-sdk-react";
+
+function TypedWaitlist({ waitlistId }: { waitlistId: string }) {
+  const {
+    status,
+    waitlistStatus,
+    enter,
+  }: {
+    status: UseWaitlistClientStatus;
+    waitlistStatus: WaitlistStatus | null;
+    enter: () => Promise<WaitlistEntry>;
+  } = useWaitlist(waitlistId);
+
+  return null;
+}
+```
+
+## Important Notes
+
+- Waitlists are simple notification signups, not position-based queues
+- There is no position tracking - consumers are either on or off the list
+- Waitlists are typically used for pre-launch signups or back-in-stock notifications
+- For position-based waiting, use [useQueue](/sdk/react/hooks/use-queue) instead

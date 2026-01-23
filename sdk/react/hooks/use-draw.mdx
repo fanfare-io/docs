@@ -1,0 +1,448 @@
+---
+title: useDraw Hook
+description: React hook for draw/lottery operations
+---
+
+# useDraw
+
+The `useDraw` hook provides reactive state and methods for interacting with a Fanfare draw (lottery/raffle).
+
+## Signature
+
+```typescript
+function useDraw(drawId: string): UseDrawReturn;
+```
+
+## Return Type
+
+```typescript
+interface UseDrawReturn {
+  // State
+  draw: Draw | null;
+  consumerState: DrawConsumerState | null;
+  result: DrawResult | null;
+  status: UseDrawClientStatus;
+  isEntered: boolean;
+  isWinner: boolean;
+  admissionToken: string | null;
+  isLoading: boolean;
+  error: Error | null;
+
+  // Actions
+  enter: (metadata?: Record<string, unknown>) => Promise<DrawConsumerState>;
+  withdraw: () => Promise<void>;
+  refreshStatus: () => Promise<DrawConsumerState | null>;
+  checkResult: () => Promise<DrawResult | null>;
+}
+```
+
+## Client Status
+
+```typescript
+type UseDrawClientStatus =
+  | "idle" // Initial state
+  | "not_entered" // Draw available but not entered
+  | "entered" // Entered and waiting for draw
+  | "won" // Won the draw
+  | "completed" // Completed after winning
+  | "denied" // Denied entry
+  | "expired" // Entry expired
+  | "loading" // Loading state
+  | "error"; // Error state
+```
+
+## State Properties
+
+### draw
+
+The draw details fetched from the API.
+
+```typescript
+interface Draw {
+  id: string;
+  openAt?: string | null;
+  closeAt?: string | null;
+  timeZone: string;
+  supportsGuest: boolean;
+  drawAt: string;
+  capacity?: number | null;
+  continueSelectingUntilCompleted?: boolean | null;
+}
+```
+
+### consumerState
+
+The raw consumer state from the API.
+
+```typescript
+type DrawConsumerState = DrawNotEnteredState | DrawEnteredState | DrawWonState | DrawCompletedState | DrawDeniedState;
+```
+
+### result
+
+The draw result (if available).
+
+```typescript
+interface DrawResult {
+  won: boolean;
+  drawTime: string;
+  admissionToken?: string;
+  prizeDetails?: Record<string, unknown>;
+  nextSteps?: string;
+}
+```
+
+### isEntered
+
+Convenience boolean indicating if the consumer has entered.
+
+### isWinner
+
+Convenience boolean indicating if the consumer won.
+
+### admissionToken
+
+The admission token if the consumer won.
+
+## Actions
+
+### enter(metadata?)
+
+Enter the draw. The hook automatically schedules a result check for the draw time.
+
+```typescript
+enter(metadata?: Record<string, unknown>): Promise<DrawConsumerState>
+```
+
+### withdraw()
+
+Withdraw from the draw before it occurs.
+
+```typescript
+withdraw(): Promise<void>
+```
+
+### refreshStatus()
+
+Refresh the consumer's status from the server.
+
+```typescript
+refreshStatus(): Promise<DrawConsumerState | null>
+```
+
+### checkResult()
+
+Manually check the draw result.
+
+```typescript
+checkResult(): Promise<DrawResult | null>
+```
+
+## Basic Usage
+
+```tsx
+import { useDraw, useFanfareAuth } from "@waitify-io/fanfare-sdk-react";
+
+function DrawPage() {
+  const { isAuthenticated, guest } = useFanfareAuth();
+  const { draw, status, isEntered, isWinner, admissionToken, result, isLoading, error, enter, withdraw, checkResult } =
+    useDraw("draw_123");
+
+  const handleEnter = async () => {
+    if (!isAuthenticated) {
+      await guest();
+    }
+    try {
+      await enter();
+    } catch (err) {
+      console.error("Failed to enter:", err);
+    }
+  };
+
+  if (error) {
+    return <div className="error">Error: {error.message}</div>;
+  }
+
+  if (isLoading && !draw) {
+    return <div className="loading">Loading draw...</div>;
+  }
+
+  return (
+    <div className="draw-page">
+      <h1>Prize Draw</h1>
+      <p>Draw time: {draw && new Date(draw.drawAt).toLocaleString()}</p>
+
+      {status === "not_entered" && <button onClick={handleEnter}>Enter Draw</button>}
+
+      {status === "entered" && (
+        <div className="entered">
+          <p>You are entered!</p>
+          <p>Good luck!</p>
+          <button onClick={withdraw}>Withdraw Entry</button>
+        </div>
+      )}
+
+      {status === "won" && (
+        <div className="winner">
+          <h2>Congratulations! You won!</h2>
+          <a href={`/checkout?token=${admissionToken}`}>Claim Your Prize</a>
+        </div>
+      )}
+
+      {status === "completed" && <p>Thank you for participating!</p>}
+
+      {status === "denied" && <p>Sorry, you were not selected.</p>}
+    </div>
+  );
+}
+```
+
+## Countdown to Draw Time
+
+```tsx
+import { useState, useEffect } from "react";
+import { useDraw } from "@waitify-io/fanfare-sdk-react";
+
+function DrawCountdown({ drawId }: { drawId: string }) {
+  const { draw, isEntered } = useDraw(drawId);
+  const [countdown, setCountdown] = useState<string>("");
+
+  useEffect(() => {
+    if (!draw?.drawAt) return;
+
+    const drawTime = new Date(draw.drawAt).getTime();
+
+    const updateCountdown = () => {
+      const now = Date.now();
+      const diff = drawTime - now;
+
+      if (diff <= 0) {
+        setCountdown("Drawing now...");
+        return;
+      }
+
+      const hours = Math.floor(diff / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+      setCountdown(`${hours}h ${minutes}m ${seconds}s`);
+    };
+
+    updateCountdown();
+    const interval = setInterval(updateCountdown, 1000);
+
+    return () => clearInterval(interval);
+  }, [draw?.drawAt]);
+
+  if (!draw) return null;
+
+  return (
+    <div className="countdown">
+      <p>Time until draw:</p>
+      <div className="countdown-display">{countdown}</div>
+      {isEntered && <p className="entered-badge">You are entered!</p>}
+    </div>
+  );
+}
+```
+
+## Handling Events
+
+The hook subscribes to these events:
+
+- `draw:entered` - Entry confirmed
+- `draw:won` - Consumer won
+- `draw:lost` - Consumer did not win
+- `draw:expired` - Entry expired
+- `draw:status-updated` - Status changed
+- `draw:error` - Error occurred
+
+```tsx
+function DrawWithNotifications({ drawId }: { drawId: string }) {
+  const { status, isWinner } = useDraw(drawId);
+  const [notification, setNotification] = useState<string | null>(null);
+
+  useEffect(() => {
+    switch (status) {
+      case "entered":
+        setNotification("Entry confirmed! Good luck!");
+        break;
+      case "won":
+        setNotification("Congratulations! You won!");
+        break;
+      case "denied":
+        setNotification("Better luck next time!");
+        break;
+    }
+  }, [status]);
+
+  return (
+    <div>
+      {notification && <div className={`notification ${isWinner ? "winner" : ""}`}>{notification}</div>}
+      <DrawDisplay drawId={drawId} />
+    </div>
+  );
+}
+```
+
+## Automatic Result Check
+
+The hook automatically schedules a result check when you enter:
+
+```tsx
+function AutoResultCheck({ drawId }: { drawId: string }) {
+  const { draw, status, result, enter } = useDraw(drawId);
+
+  // When enter() is called:
+  // 1. API call to enter the draw
+  // 2. Result check is scheduled for draw.drawAt + 30 second buffer
+  // 3. When draw time passes, checkResult() is called automatically
+  // 4. Result events (draw:won or draw:lost) are emitted
+
+  const handleEnter = async () => {
+    await enter();
+    // No need to manually schedule result check - it is automatic
+  };
+
+  return (
+    <div>
+      <button onClick={handleEnter}>Enter Draw</button>
+      {status === "entered" && <p>Result will be checked automatically at draw time.</p>}
+      {result && <p>Result: {result.won ? "Winner!" : "Not selected"}</p>}
+    </div>
+  );
+}
+```
+
+## Manual Result Check
+
+You can also manually check results:
+
+```tsx
+function ManualResultCheck({ drawId }: { drawId: string }) {
+  const { checkResult, result, isWinner } = useDraw(drawId);
+  const [checking, setChecking] = useState(false);
+
+  const handleCheck = async () => {
+    setChecking(true);
+    try {
+      const res = await checkResult();
+      if (res) {
+        console.log("Result:", res.won ? "Won!" : "Did not win");
+      }
+    } finally {
+      setChecking(false);
+    }
+  };
+
+  return (
+    <div>
+      <button onClick={handleCheck} disabled={checking}>
+        {checking ? "Checking..." : "Check Result"}
+      </button>
+      {result && (
+        <div className={isWinner ? "winner" : "not-winner"}>{isWinner ? "You won!" : "Better luck next time"}</div>
+      )}
+    </div>
+  );
+}
+```
+
+## Status-Based UI
+
+```tsx
+function DrawStatusUI({ drawId }: { drawId: string }) {
+  const { status, draw, result, admissionToken, enter, withdraw } = useDraw(drawId);
+
+  const renderContent = () => {
+    switch (status) {
+      case "idle":
+      case "not_entered":
+        return (
+          <div className="enter-section">
+            <p>Enter for a chance to win!</p>
+            <button onClick={() => enter()}>Enter Now</button>
+          </div>
+        );
+
+      case "entered":
+        return (
+          <div className="entered-section">
+            <div className="checkmark">You are in!</div>
+            <p>Draw time: {draw && new Date(draw.drawAt).toLocaleString()}</p>
+            <button className="secondary" onClick={withdraw}>
+              Withdraw
+            </button>
+          </div>
+        );
+
+      case "won":
+        return (
+          <div className="winner-section">
+            <div className="celebration">Congratulations!</div>
+            <p>You have been selected!</p>
+            <a href={`/claim?token=${admissionToken}`} className="claim-button">
+              Claim Your Prize
+            </a>
+          </div>
+        );
+
+      case "completed":
+        return (
+          <div className="completed-section">
+            <p>Thank you for participating!</p>
+          </div>
+        );
+
+      case "denied":
+        return (
+          <div className="denied-section">
+            <p>You were not selected this time.</p>
+            <p>Better luck next time!</p>
+          </div>
+        );
+
+      case "expired":
+        return (
+          <div className="expired-section">
+            <p>Your entry has expired.</p>
+          </div>
+        );
+
+      case "loading":
+        return <div className="loading">Loading...</div>;
+
+      case "error":
+        return <div className="error">Something went wrong</div>;
+
+      default:
+        return null;
+    }
+  };
+
+  return <div className="draw-status">{renderContent()}</div>;
+}
+```
+
+## TypeScript
+
+```typescript
+import { useDraw } from "@waitify-io/fanfare-sdk-react";
+import type { Draw, DrawConsumerState, DrawResult, UseDrawClientStatus } from "@waitify-io/fanfare-sdk-react";
+
+function TypedDraw({ drawId }: { drawId: string }) {
+  const {
+    draw,
+    status,
+    result,
+    enter,
+  }: {
+    draw: Draw | null;
+    status: UseDrawClientStatus;
+    result: DrawResult | null;
+    enter: (metadata?: Record<string, unknown>) => Promise<DrawConsumerState>;
+  } = useDraw(drawId);
+
+  return null;
+}
+```

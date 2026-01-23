@@ -1,0 +1,206 @@
+---
+title: "Custom API Integration"
+description: "Build custom e-commerce integrations with the Fanfare API"
+---
+
+## Overview
+
+For e-commerce platforms not directly supported, Fanfare provides a comprehensive REST API for building custom integrations. This enables:
+
+- Product catalog management
+- Consumer data synchronization
+- Order creation and tracking
+- Experience management
+
+## API Capabilities
+
+### Product Management
+
+Create and manage products programmatically:
+
+```bash
+# Create a product
+POST /api/products
+Content-Type: application/json
+
+{
+  "name": "Limited Edition Sneakers",
+  "description": "Exclusive release",
+  "price": 199.99,
+  "sku": "SNKR-001",
+  "inventory": 100
+}
+```
+
+### Consumer Sync
+
+Import consumers from your e-commerce platform:
+
+```bash
+# Create a consumer
+POST /api/consumers
+Content-Type: application/json
+
+{
+  "email": "customer@example.com",
+  "fullName": "John Doe",
+  "phone": "+15551234567"
+}
+```
+
+### Order Integration
+
+Report orders back to Fanfare:
+
+```bash
+# Create an order
+POST /api/orders
+Content-Type: application/json
+
+{
+  "consumerId": "con_123",
+  "distributionId": "dist_456",
+  "externalOrderId": "YOUR-ORDER-123",
+  "totalAmount": 199.99
+}
+```
+
+## Integration Patterns
+
+### Product Sync
+
+```
+┌─────────────┐     ┌─────────────┐     ┌─────────────┐
+│    Your     │────▶│   Fanfare   │────▶│   Fanfare   │
+│   E-comm    │     │    API      │     │   Products  │
+└─────────────┘     └─────────────┘     └─────────────┘
+```
+
+**Recommended approach:**
+
+1. Export products from your platform
+2. Transform to Fanfare format
+3. POST to `/api/products`
+4. Store the mapping of IDs
+
+### Checkout Flow
+
+```
+┌─────────────┐     ┌─────────────┐     ┌─────────────┐
+│   Fanfare   │────▶│   Checkout  │────▶│    Your     │
+│   Winner    │     │   Redirect  │     │  Checkout   │
+└─────────────┘     └─────────────┘     └─────────────┘
+        │                                       │
+        │                                       │
+        └───────────────────────────────────────┘
+                    Order Callback
+```
+
+**Implementation:**
+
+1. Configure checkout URL in experience settings
+2. Fanfare redirects winners with consumer/product data
+3. Process payment on your platform
+4. Callback to Fanfare with order confirmation
+
+## Authentication
+
+API requests require authentication:
+
+```bash
+Authorization: Bearer YOUR_API_TOKEN
+```
+
+Obtain tokens from **Settings** > **API Keys** in the admin dashboard.
+
+## Rate Limits
+
+| Endpoint  | Rate Limit  |
+| --------- | ----------- |
+| Products  | 100 req/min |
+| Consumers | 100 req/min |
+| Orders    | 50 req/min  |
+
+## Best Practices
+
+### Idempotency
+
+Use idempotency keys for create operations:
+
+```bash
+X-Idempotency-Key: unique-request-id-123
+```
+
+### Error Handling
+
+Handle common error responses:
+
+| Status | Description             |
+| ------ | ----------------------- |
+| 400    | Invalid request data    |
+| 401    | Authentication required |
+| 403    | Permission denied       |
+| 429    | Rate limit exceeded     |
+| 500    | Server error            |
+
+### Pagination
+
+List endpoints support cursor pagination:
+
+```bash
+GET /api/products?cursor=abc123&limit=50
+```
+
+## Example Integrations
+
+### Node.js
+
+```typescript
+import { FanfareClient } from "@fanfare/sdk";
+
+const client = new FanfareClient({
+  apiKey: process.env.FANFARE_API_KEY,
+});
+
+// Sync a product
+await client.products.create({
+  name: "Product Name",
+  price: 99.99,
+  sku: "SKU-123",
+});
+```
+
+### Python
+
+```python
+import requests
+
+headers = {
+    "Authorization": f"Bearer {api_key}",
+    "Content-Type": "application/json"
+}
+
+response = requests.post(
+    "https://api.fanfare.io/products",
+    headers=headers,
+    json={
+        "name": "Product Name",
+        "price": 99.99,
+        "sku": "SKU-123"
+    }
+)
+```
+
+## Support
+
+For integration assistance:
+
+- Review the [API Reference](/api-reference)
+- Contact support@fanfare.io
+- Request integration consulting
+
+## Related Resources
+
+- [API Reference](/api-reference)
+- [Authentication](/api-reference/authentication)
+- [Webhooks](/integrations/webhooks/custom-webhooks)

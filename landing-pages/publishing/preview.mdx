@@ -1,0 +1,307 @@
+---
+title: "Preview and Testing"
+description: "Test your landing page before publishing"
+---
+
+{/* TODO: MISSING_FUNCTIONALITY
+Feature: Landing page preview functionality
+Expected behavior: Multi-device preview in editor with shareable preview links
+Current state: Preview panel exists in editor prototypes; preview URLs not implemented
+Blocking: partial - Editor preview works; shareable preview links pending
+*/}
+
+<Note>
+**In Development**
+
+Preview functionality within the editor is working in prototypes. Shareable preview links and device simulation are coming with the full landing page builder launch.
+
+</Note>
+
+## Preview Overview
+
+Before publishing your landing page, preview it to:
+
+- Verify content displays correctly
+- Test responsive behavior across devices
+- Check the experience widget functionality
+- Review load performance
+- Validate accessibility
+
+## In-Editor Preview
+
+The landing page editor includes a real-time preview panel.
+
+### Preview Mode
+
+Click **Preview** in the editor toolbar to:
+
+```
+┌─────────────────────────────────────────────────────────┐
+│  ← Back to Editor    Desktop | Tablet | Mobile    100%  │
+├─────────────────────────────────────────────────────────┤
+│  ┌─────────────────────────────────────────────────┐   │
+│  │                                                 │   │
+│  │              Your Landing Page                  │   │
+│  │                                                 │   │
+│  │              As Visitors See It                 │   │
+│  │                                                 │   │
+│  │              [Experience Widget]                │   │
+│  │                                                 │   │
+│  │                                                 │   │
+│  └─────────────────────────────────────────────────┘   │
+│                                                         │
+└─────────────────────────────────────────────────────────┘
+```
+
+### Device Simulation
+
+Preview across different screen sizes:
+
+| Device  | Width  | Aspect |
+| ------- | ------ | ------ |
+| Desktop | 1440px | 16:9   |
+| Laptop  | 1024px | 16:10  |
+| Tablet  | 768px  | 4:3    |
+| Mobile  | 375px  | 9:16   |
+
+<Tip>Always test mobile first - most landing page traffic comes from mobile devices.</Tip>
+
+### Zoom Controls
+
+Adjust preview zoom to see the full page:
+
+| Zoom | Use Case                   |
+| ---- | -------------------------- |
+| 50%  | See full page layout       |
+| 75%  | Balance detail and context |
+| 100% | Actual size rendering      |
+| Fit  | Auto-fit to preview panel  |
+
+## Shareable Preview Links
+
+{/* TODO: MISSING_FUNCTIONALITY
+Feature: Shareable preview links
+Expected behavior: Generate temporary URLs for stakeholder review
+Current state: Planned feature
+Blocking: true
+*/}
+
+<Info>Shareable preview links are coming soon. Until then, use screen recordings or arrange live demo sessions.</Info>
+
+### Planned Features
+
+Generate temporary preview links for stakeholder review:
+
+```
+https://preview.fanfare.io/abc123xyz?token=preview_...
+```
+
+Preview links will:
+
+- Expire after 24 hours (configurable)
+- Show a preview banner
+- Track view count
+- Allow annotation/feedback (future)
+
+## Testing Checklist
+
+### Content Review
+
+- [ ] All text is correct and free of typos
+- [ ] Images load properly and are not stretched
+- [ ] Videos play (if applicable)
+- [ ] Links point to correct destinations
+- [ ] CTA buttons have appropriate text
+
+### Layout Review
+
+- [ ] Sections appear in correct order
+- [ ] Spacing is consistent
+- [ ] No overflow or clipping issues
+- [ ] Footer appears at page bottom
+
+### Responsive Review
+
+| Breakpoint       | Check                                          |
+| ---------------- | ---------------------------------------------- |
+| Desktop (1440px) | Full layout, multi-column sections             |
+| Tablet (768px)   | Adjusted columns, touch-friendly spacing       |
+| Mobile (375px)   | Single column, stacked elements, readable text |
+
+### Experience Widget Review
+
+- [ ] Widget loads without errors
+- [ ] Correct experience is displayed
+- [ ] Authentication flows work
+- [ ] Countdown (if applicable) shows correct time
+- [ ] Entry/registration works in test mode
+
+### Performance Review
+
+| Metric                   | Target | Tool       |
+| ------------------------ | ------ | ---------- |
+| First Contentful Paint   | < 1.8s | Lighthouse |
+| Largest Contentful Paint | < 2.5s | Lighthouse |
+| Cumulative Layout Shift  | < 0.1  | Lighthouse |
+| Total Page Size          | < 3MB  | DevTools   |
+
+### Accessibility Review
+
+- [ ] All images have alt text
+- [ ] Color contrast meets WCAG AA (4.5:1)
+- [ ] Keyboard navigation works
+- [ ] Focus states are visible
+- [ ] Screen reader announces content correctly
+
+## Testing the Experience Widget
+
+### Test Mode
+
+Test the widget without affecting production data:
+
+```typescript
+<ExperienceWidget
+  experienceId="exp_..."
+  testMode={true}  // Enables test mode
+/>
+```
+
+In test mode:
+
+- Entries are not recorded to production
+- Countdowns can be skipped
+- Sequences can be advanced manually
+- No rate limiting
+
+### Test Scenarios
+
+| Scenario         | How to Test                  |
+| ---------------- | ---------------------------- |
+| Before launch    | Set experience to "upcoming" |
+| During launch    | Set experience to "active"   |
+| After capacity   | Set distribution to "full"   |
+| Different auth   | Test guest, email, phone     |
+| With access code | Enter valid/invalid codes    |
+
+## Browser Testing
+
+Test across major browsers:
+
+| Browser          | Priority | Notes               |
+| ---------------- | -------- | ------------------- |
+| Chrome           | High     | Primary target      |
+| Safari           | High     | iOS default browser |
+| Firefox          | Medium   | Desktop users       |
+| Edge             | Medium   | Windows default     |
+| Samsung Internet | Low      | Android variant     |
+
+### Browser-Specific Checks
+
+| Browser        | Watch For                          |
+| -------------- | ---------------------------------- |
+| Safari         | Date input styling, video autoplay |
+| Firefox        | Form validation styling            |
+| Mobile Safari  | Viewport height (100vh issues)     |
+| Chrome Android | Touch target sizing                |
+
+## Load Testing
+
+For high-traffic launches, test page performance under load:
+
+### Pre-Launch Checklist
+
+- [ ] CDN caching configured
+- [ ] Images optimized
+- [ ] No blocking resources
+- [ ] Widget API endpoints ready
+- [ ] Database indices in place
+
+### Expected Traffic Planning
+
+| Traffic Level     | Preparation             |
+| ----------------- | ----------------------- |
+| < 1K concurrent   | Standard setup          |
+| 1K-10K concurrent | Verify CDN config       |
+| 10K+ concurrent   | Contact Fanfare support |
+
+## Preview Environment
+
+{/* TODO: MISSING_FUNCTIONALITY
+Feature: Dedicated preview environment
+Expected behavior: Preview environment with isolated data
+Current state: Test mode available; full environment isolation pending
+Blocking: partial
+*/}
+
+### Current Options
+
+| Environment   | Purpose                               |
+| ------------- | ------------------------------------- |
+| Production    | Live pages, real data                 |
+| Test mode     | Same infrastructure, isolated entries |
+| Local preview | Editor preview only                   |
+
+### Coming Soon
+
+Dedicated preview environments with:
+
+- Complete data isolation
+- Ability to simulate scenarios
+- Performance testing support
+- Team collaboration features
+
+## Feedback Collection
+
+### Internal Review Process
+
+1. **Self-review** - Editor preview for quick checks
+2. **Peer review** - Screen share or recording
+3. **Stakeholder review** - Scheduled demo or preview link
+4. **QA review** - Full testing checklist
+
+### External Feedback (Future)
+
+Preview links will support:
+
+- Comment annotations
+- Issue flagging
+- Approval workflows
+
+## Current Workarounds
+
+### Screen Recording
+
+Record preview walkthrough for stakeholders:
+
+1. Open preview in editor
+2. Use screen recording (Loom, QuickTime)
+3. Walk through each section
+4. Test widget interactions
+5. Share recording for feedback
+
+### Staging Experience
+
+Create a duplicate experience for testing:
+
+1. Clone the production experience
+2. Set to "test" mode
+3. Connect landing page to test experience
+4. Test full flow safely
+5. Delete test experience when done
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Custom Domains" icon="globe" href="/landing-pages/publishing/domains">
+    Configure your domain
+  </Card>
+  <Card title="SEO" icon="magnifying-glass" href="/landing-pages/publishing/seo">
+    Optimize for search
+  </Card>
+  <Card title="Analytics" icon="chart-line" href="/landing-pages/publishing/analytics">
+    Track page performance
+  </Card>
+  <Card title="Getting Started" icon="rocket" href="/landing-pages/getting-started">
+    Publish your first page
+  </Card>
+</CardGroup>

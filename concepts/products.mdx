@@ -1,0 +1,544 @@
+---
+title: Products
+description: Product catalog, variants, inventory, and media management in Fanfare
+---
+
+# Products
+
+A **Product** is an item available for purchase through experiences. Fanfare's product model supports variants, inventory tracking, media assets, and synchronization with external catalogs.
+
+## Product Model
+
+```typescript
+interface Product {
+  // Identity
+  id: string; // UUID
+  organizationId: string; // Parent organization
+
+  // Core Fields
+  name: string; // Display name
+  description?: string; // Rich text description
+  url: string; // Product page URL
+  handle?: string; // URL-friendly slug
+  sku?: string; // Stock keeping unit
+
+  // Pricing
+  basePrice?: string; // Base price (decimal string)
+
+  // Custom Data
+  metadata?: Record<string, unknown>;
+
+  // Sync Source (if imported)
+  primarySyncSourceId?: string;
+  primarySyncSourceType?: string;
+  primarySyncSourceExternalId?: string;
+
+  // Audit
+  createdAt: string;
+  updatedAt: string;
+  archived: boolean;
+}
+```
+
+## Product with Relations
+
+When queried with includes, products contain variants and media:
+
+```typescript
+interface ProductWithRelations extends Product {
+  // Variants
+  variants?: ProductVariant[];
+  defaultVariantId?: string;
+
+  // Media
+  productMediaAssets?: ProductMediaAsset[];
+
+  // Sync
+  primarySyncSource?: SyncSource;
+}
+```
+
+## Product Variants
+
+Variants represent different options of a product (size, color, etc.):
+
+```typescript
+interface ProductVariant {
+  // Identity
+  id: string;
+  organizationId: string;
+  productId: string;
+
+  // Identification
+  sku: string; // Unique SKU for this variant
+
+  // Pricing
+  priceOverride?: string; // Override base product price
+
+  // Inventory
+  inventoryQuantity: number; // Current stock count
+  inventoryTracked: boolean; // Whether to track inventory
+
+  // Custom Data
+  metadata?: Record<string, unknown>;
+
+  // Option Values (when included)
+  options?: VariantOptionDetail[];
+
+  // Sync
+  primarySyncSourceId?: string;
+  primarySyncSourceType?: string;
+  primarySyncSourceExternalId?: string;
+
+  // Audit
+  createdAt: string;
+  updatedAt: string;
+  archived: boolean;
+}
+```
+
+### Variant Options
+
+Options define the dimensions of variation (Size, Color, etc.):
+
+```typescript
+interface VariantOptionDetail {
+  optionId: string;                  // Option ID (e.g., "size")
+  optionName: string;                // Display name (e.g., "Size")
+  valueId: string;                   // Value ID
+  value: string;                     // Display value (e.g., "Medium")
+}
+
+// Example variant with options
+{
+  sku: "SNEAKER-RED-10",
+  priceOverride: "149.99",
+  inventoryQuantity: 25,
+  inventoryTracked: true,
+  options: [
+    { optionName: "Color", value: "Red" },
+    { optionName: "Size", value: "10" }
+  ]
+}
+```
+
+### Creating Variants
+
+Variants can be created with option name/value pairs:
+
+```typescript
+interface NewProductVariantWithOptionValues {
+  sku: string;
+  priceOverride?: string;
+  inventoryQuantity: number;
+  inventoryTracked: boolean;
+  optionValues: Array<{
+    optionName: string;              // Creates option if doesn't exist
+    value: string;                   // Creates value if doesn't exist
+  }>;
+  metadata?: Record<string, unknown>;
+}
+
+// Example: Creating a product with variants
+{
+  name: "Classic Sneaker",
+  basePrice: "129.99",
+  url: "https://shop.example.com/sneaker",
+  variants: [
+    {
+      sku: "SNKR-WHT-9",
+      inventoryQuantity: 50,
+      inventoryTracked: true,
+      optionValues: [
+        { optionName: "Color", value: "White" },
+        { optionName: "Size", value: "9" }
+      ]
+    },
+    {
+      sku: "SNKR-WHT-10",
+      inventoryQuantity: 45,
+      inventoryTracked: true,
+      optionValues: [
+        { optionName: "Color", value: "White" },
+        { optionName: "Size", value: "10" }
+      ]
+    },
+    {
+      sku: "SNKR-BLK-9",
+      inventoryQuantity: 30,
+      inventoryTracked: true,
+      optionValues: [
+        { optionName: "Color", value: "Black" },
+        { optionName: "Size", value: "9" }
+      ]
+    }
+  ]
+}
+```
+
+## Media Assets
+
+Products and variants can have associated media:
+
+```typescript
+interface ProductMediaAsset {
+  id: string;
+  organizationId: string;
+  productId: string;
+  mediaAssetId: string;
+  position: number; // Display order
+  alt?: string; // Alt text
+
+  // Populated when included
+  mediaAsset?: MediaAsset;
+}
+
+interface MediaAsset {
+  id: string;
+  organizationId: string;
+  url: string; // CDN URL
+  mimeType: string; // e.g., "image/jpeg"
+  width?: number;
+  height?: number;
+  size?: number; // Bytes
+}
+```
+
+### Media Hierarchy
+
+```
+Product
+├── ProductMediaAssets (ordered)
+│   ├── [0] Primary image
+│   ├── [1] Gallery image 2
+│   └── [2] Gallery image 3
+│
+└── Variants
+    └── Variant
+        └── VariantMediaAssets (ordered)
+            └── [0] Variant-specific image
+```
+
+## Pricing
+
+### Price Resolution
+
+Prices are resolved in order of specificity:
+
+```typescript
+function getEffectivePrice(product: ProductWithRelations, variantId?: string): string | null {
+  // 1. Check variant override
+  if (variantId && product.variants) {
+    const variant = product.variants.find((v) => v.id === variantId);
+    if (variant?.priceOverride) {
+      return variant.priceOverride;
+    }
+  }
+
+  // 2. Fall back to base price
+  return product.basePrice || null;
+}
+```
+
+### Price Format
+
+Prices are stored as decimal strings to avoid floating-point issues:
+
+```typescript
+// Correct
+basePrice: "129.99";
+priceOverride: "149.99";
+
+// Incorrect
+basePrice: 129.99; // Floating point
+```
+
+## Inventory Management
+
+### Tracked vs Untracked
+
+```typescript
+// Tracked inventory - quantity matters
+{
+  inventoryTracked: true,
+  inventoryQuantity: 50  // Will decrement on purchase
+}
+
+// Untracked inventory - always available
+{
+  inventoryTracked: false,
+  inventoryQuantity: 0  // Ignored
+}
+```
+
+### Availability Check
+
+```typescript
+function isVariantAvailable(variant: ProductVariant): boolean {
+  // Untracked = always available
+  if (!variant.inventoryTracked) return true;
+
+  // Tracked = check quantity
+  return variant.inventoryQuantity > 0;
+}
+```
+
+### Inventory Sync
+
+When products are synced from external systems (Shopify, etc.), inventory updates flow automatically:
+
+```
+External System ──webhook──► Fanfare ──update──► Product Variant
+                             │
+                             └──► Distributions (queue capacity, etc.)
+```
+
+## Sync Sources
+
+Products can be imported from external systems:
+
+```typescript
+interface SyncSource {
+  id: string;
+  organizationId: string;
+  sourceType: string; // "SHOPIFY", "CUSTOM", etc.
+  externalId: string; // ID in external system
+  sourceUrl?: string; // URL in external system
+  lastSyncedAt?: string;
+  syncStatus?: string;
+  metadata?: Record<string, unknown>;
+}
+```
+
+### Supported Sync Sources
+
+| Source    | Description        | Sync Direction |
+| --------- | ------------------ | -------------- |
+| `SHOPIFY` | Shopify product    | Bidirectional  |
+| `CUSTOM`  | Custom integration | Bidirectional  |
+| `CSV`     | CSV import         | One-time       |
+
+### Sync Behavior
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                        SYNC FLOW                                 │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  External System                     Fanfare                    │
+│  ┌─────────────┐                    ┌─────────────┐            │
+│  │   Product   │──── Create ───────►│   Product   │            │
+│  │   Updated   │                    │   Created   │            │
+│  └─────────────┘                    └─────────────┘            │
+│        │                                   │                    │
+│        │◄────── Inventory Sync ────────────│                    │
+│        │                                   │                    │
+│  ┌─────────────┐                    ┌─────────────┐            │
+│  │  Inventory  │──── Webhook ──────►│  Inventory  │            │
+│  │   Changed   │                    │   Updated   │            │
+│  └─────────────┘                    └─────────────┘            │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+## Experience Products
+
+Products are associated with experiences through a junction:
+
+```typescript
+interface ExperienceProduct {
+  id: string;
+  experienceId: string;
+  productId: string;
+  productVariantId?: string; // Specific variant (optional)
+  isPrimary: boolean; // Primary product for display
+  position: number; // Display order
+}
+```
+
+### Single vs Multi-Product
+
+**Single Product Experience:**
+
+```typescript
+{
+  name: "iPhone 16 Launch",
+  products: [
+    { productId: "iphone-16", isPrimary: true, position: 0 }
+  ]
+}
+```
+
+**Multi-Product Experience:**
+
+```typescript
+{
+  name: "Sneaker Drop",
+  products: [
+    { productId: "sneaker-a", isPrimary: true, position: 0 },
+    { productId: "sneaker-b", isPrimary: false, position: 1 },
+    { productId: "sneaker-c", isPrimary: false, position: 2 }
+  ]
+}
+```
+
+### Variant-Specific Experience
+
+Link an experience to a specific variant:
+
+```typescript
+{
+  name: "Limited Red Edition",
+  products: [
+    {
+      productId: "sneaker-a",
+      productVariantId: "red-variant-id",  // Only this variant
+      isPrimary: true
+    }
+  ]
+}
+```
+
+## API Operations
+
+### Create Product
+
+```bash
+POST /v1/products
+Authorization: Bearer sk_live_...
+Content-Type: application/json
+
+{
+  "name": "Classic Sneaker",
+  "description": "Premium leather sneaker",
+  "url": "https://shop.example.com/sneaker",
+  "basePrice": "129.99",
+  "variants": [
+    {
+      "sku": "SNKR-WHT-9",
+      "inventoryQuantity": 50,
+      "inventoryTracked": true,
+      "optionValues": [
+        { "optionName": "Color", "value": "White" },
+        { "optionName": "Size", "value": "9" }
+      ]
+    }
+  ]
+}
+```
+
+### Get Product with Relations
+
+```bash
+GET /v1/products/:id?include=variants,mediaAssets
+Authorization: Bearer sk_live_...
+
+# Response
+{
+  "id": "product-uuid",
+  "name": "Classic Sneaker",
+  "basePrice": "129.99",
+  "variants": [
+    {
+      "id": "variant-uuid",
+      "sku": "SNKR-WHT-9",
+      "inventoryQuantity": 50,
+      "options": [
+        { "optionName": "Color", "value": "White" },
+        { "optionName": "Size", "value": "9" }
+      ]
+    }
+  ],
+  "productMediaAssets": [
+    {
+      "position": 0,
+      "mediaAsset": {
+        "url": "https://cdn.example.com/sneaker.jpg"
+      }
+    }
+  ]
+}
+```
+
+### Update Product
+
+```bash
+PATCH /v1/products/:id
+Authorization: Bearer sk_live_...
+Content-Type: application/json
+
+{
+  "name": "Classic Sneaker - Updated",
+  "basePrice": "139.99"
+}
+```
+
+### Update Variant Inventory
+
+```bash
+PATCH /v1/products/:productId/variants/:variantId
+Authorization: Bearer sk_live_...
+Content-Type: application/json
+
+{
+  "inventoryQuantity": 45
+}
+```
+
+### List Products
+
+```bash
+GET /v1/products?include=variants
+Authorization: Bearer sk_live_...
+
+# Response
+{
+  "data": [...],
+  "pagination": {
+    "cursor": "...",
+    "hasMore": true
+  }
+}
+```
+
+## Best Practices
+
+### 1. SKU Strategy
+
+Use consistent, meaningful SKUs:
+
+```
+PROD-COLOR-SIZE
+SNKR-RED-10
+TSHIRT-BLU-M
+```
+
+### 2. Inventory Accuracy
+
+- Sync inventory frequently for tracked products
+- Use webhooks for real-time updates
+- Set appropriate safety stock levels
+
+### 3. Media Optimization
+
+- Use CDN-hosted images
+- Provide multiple angles (position order)
+- Include alt text for accessibility
+
+### 4. Variant Organization
+
+- Limit to 2-3 option types (Color, Size)
+- Use consistent option names across products
+- Pre-create all valid combinations
+
+### 5. Price Management
+
+- Always use decimal strings for prices
+- Consider variant-specific pricing for premium options
+- Keep prices synced with source systems
+
+## Related Concepts
+
+- [Experiences](/docs/concepts/experiences) - Associating products with experiences
+- [Distributions](/docs/concepts/distributions/overview) - Product selection in distributions
+- [Consumers](/docs/concepts/consumers) - Order history and LTV calculation

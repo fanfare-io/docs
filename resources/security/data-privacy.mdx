@@ -1,0 +1,300 @@
+---
+title: Data Privacy
+description: Data handling practices, GDPR compliance, and privacy controls in Fanfare.
+---
+
+# Data Privacy
+
+Fanfare is committed to protecting consumer privacy and helping you comply with data protection regulations.
+
+## Privacy by Design
+
+Fanfare implements privacy by design principles:
+
+- **Data minimization**: We collect only what's necessary
+- **Purpose limitation**: Data used only for stated purposes
+- **Storage limitation**: Automatic data retention policies
+- **Transparency**: Clear documentation of data practices
+
+## Data Collection
+
+### Consumer Data
+
+| Data                    | Purpose                       | Retention          |
+| ----------------------- | ----------------------------- | ------------------ |
+| Email address           | Authentication, notifications | Account lifetime   |
+| Phone number (optional) | OTP authentication            | Account lifetime   |
+| Device fingerprint hash | Fraud prevention              | Session + 30 days  |
+| Queue activity          | Service delivery              | 90 days            |
+| Purchase history        | Order management              | As required by law |
+
+### What We Don't Collect
+
+- Precise geolocation
+- Browsing history
+- Social media profiles
+- Financial information (handled by payment providers)
+- Detailed device specifications
+
+### SDK Data Collection
+
+The Fanfare SDK collects minimal data:
+
+```typescript
+// Data included in SDK requests
+{
+  sessionId: "sess_...",        // Anonymous session
+  fingerprint: "hash...",       // Device hash (not specifications)
+  timestamp: "2024-...",        // Request timing
+  userAgent: "Mozilla/...",     // Browser identification
+}
+```
+
+To minimize collection further:
+
+```typescript
+const client = new FanfareClient({
+  publishableKey: "pk_live_...",
+  privacy: {
+    collectFingerprint: true, // Set to false if not needed
+    collectUserAgent: true, // Set to false if not needed
+  },
+});
+```
+
+## GDPR Compliance
+
+### Lawful Basis
+
+Fanfare processes data under these lawful bases:
+
+| Processing Activity | Lawful Basis         |
+| ------------------- | -------------------- |
+| Account management  | Contract performance |
+| Queue participation | Contract performance |
+| Fraud prevention    | Legitimate interest  |
+| Marketing (opt-in)  | Consent              |
+| Analytics           | Legitimate interest  |
+
+### Consumer Rights
+
+Fanfare supports all GDPR consumer rights:
+
+<CardGroup cols={2}>
+  <Card title="Right to Access" icon="eye">
+    Consumers can request their data
+  </Card>
+  <Card title="Right to Rectification" icon="pen">
+    Consumers can correct their data
+  </Card>
+  <Card title="Right to Erasure" icon="trash">
+    Consumers can request deletion
+  </Card>
+  <Card title="Right to Portability" icon="download">
+    Consumers can export their data
+  </Card>
+</CardGroup>
+
+### Implementing Consumer Rights
+
+#### Data Access Requests
+
+```typescript
+// Retrieve consumer data
+const response = await fetch(`https://admin.fanfare.io/api/consumers/${consumerId}/data`, {
+  headers: {
+    Authorization: `Bearer ${secretKey}`,
+  },
+});
+
+const consumerData = await response.json();
+// Returns all data associated with the consumer
+```
+
+#### Data Deletion Requests
+
+```typescript
+// Delete consumer data (GDPR right to erasure)
+const response = await fetch(`https://admin.fanfare.io/api/consumers/${consumerId}`, {
+  method: "DELETE",
+  headers: {
+    Authorization: `Bearer ${secretKey}`,
+  },
+});
+
+// Consumer data is queued for deletion
+// Some data may be retained for legal requirements
+```
+
+<Note>
+  Deletion requests are processed within 30 days. Some data may be retained longer for legal compliance (e.g.,
+  transaction records for tax purposes).
+</Note>
+
+### Data Processing Agreement
+
+Fanfare provides a Data Processing Agreement (DPA) for EU customers:
+
+1. Download the DPA from your dashboard
+2. Sign and return to legal@fanfare.io
+3. We'll countersign and return a copy
+
+## CCPA Compliance
+
+### California Consumer Rights
+
+Fanfare supports CCPA requirements:
+
+- **Right to Know**: What data is collected
+- **Right to Delete**: Request data deletion
+- **Right to Opt-Out**: No sale of personal information
+- **Non-Discrimination**: Equal service regardless of privacy choices
+
+### Do Not Sell
+
+Fanfare does not sell personal information. Our business model is subscription-based, not data-driven.
+
+## Privacy Controls
+
+### Organization-Level Settings
+
+Configure privacy settings for your organization:
+
+```typescript
+// Dashboard settings or API configuration
+const privacySettings = {
+  dataRetention: {
+    consumerActivity: 90, // days
+    auditLogs: 365, // days
+    deletedData: 30, // days before permanent deletion
+  },
+  collection: {
+    deviceFingerprint: true,
+    ipAddress: false, // Disable IP logging
+  },
+  marketing: {
+    requireExplicitConsent: true,
+    doubleOptIn: true,
+  },
+};
+```
+
+### Consumer-Level Controls
+
+Allow consumers to manage their privacy:
+
+```typescript
+// Consumer privacy preferences
+const preferences = {
+  marketingEmails: false,
+  activityTracking: true,
+  dataSharing: false,
+};
+
+await client.consumers.updatePreferences(consumerId, preferences);
+```
+
+## Cookie Usage
+
+### SDK Cookies
+
+The Fanfare SDK uses cookies for session management:
+
+| Cookie            | Purpose       | Duration | Type      |
+| ----------------- | ------------- | -------- | --------- |
+| `fanfare_session` | Session ID    | Session  | Essential |
+| `fanfare_consent` | Consent state | 1 year   | Essential |
+
+### Cookie Consent
+
+Implement cookie consent for your integration:
+
+```typescript
+// Check consent before initializing SDK
+if (hasConsentForEssentialCookies()) {
+  const client = new FanfareClient({
+    publishableKey: "pk_live_...",
+  });
+}
+```
+
+## Data Transfers
+
+### International Transfers
+
+Fanfare processes data in the United States. For EU data:
+
+- **Standard Contractual Clauses**: Included in our DPA
+- **Data localization**: EU-only processing available for Enterprise
+- **Adequacy decisions**: We follow applicable frameworks
+
+### Sub-Processors
+
+Fanfare uses these sub-processors:
+
+| Provider   | Service        | Location |
+| ---------- | -------------- | -------- |
+| AWS        | Infrastructure | US/EU    |
+| Cloudflare | CDN, Security  | Global   |
+| Resend     | Email delivery | US       |
+| Twilio     | SMS delivery   | US       |
+
+Current sub-processor list available in your dashboard.
+
+## Security Measures
+
+### Technical Measures
+
+- **Encryption**: TLS 1.3 in transit, AES-256 at rest
+- **Access controls**: Role-based, audit logged
+- **Anonymization**: PII hashed where possible
+- **Pseudonymization**: Consumer IDs instead of direct identifiers
+
+### Organizational Measures
+
+- Employee training on data protection
+- Background checks for data handlers
+- Incident response procedures
+- Regular security audits
+
+## Data Breach Response
+
+### Our Commitment
+
+In case of a data breach affecting your consumers:
+
+1. **Detection**: Continuous monitoring
+2. **Assessment**: Within 24 hours
+3. **Notification**: Within 72 hours if required
+4. **Remediation**: Immediate action
+5. **Documentation**: Full incident report
+
+### Your Responsibilities
+
+As a data controller, you should:
+
+- Notify affected consumers if required
+- Report to supervisory authorities if required
+- Document the breach and response
+- Update security measures as needed
+
+## Privacy Resources
+
+### Documentation
+
+- [Privacy Policy](https://fanfare.io/privacy) - Our privacy policy
+- [DPA Template](https://fanfare.io/dpa) - Data Processing Agreement
+- [Sub-processor List](https://fanfare.io/subprocessors) - Current list
+
+### Support
+
+For privacy-related inquiries:
+
+- Email: privacy@fanfare.io
+- DPO: dpo@fanfare.io (for GDPR matters)
+
+## Related Resources
+
+- [Security Overview](/resources/security/overview) - Security architecture
+- [Authentication](/resources/security/authentication) - Secure auth practices
+- [Contact Support](/resources/support/contact) - Get help

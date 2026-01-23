@@ -1,0 +1,294 @@
+---
+title: Getting Started
+description: Complete first-time setup and configure your Fanfare organization
+---
+
+# Getting Started
+
+This guide walks you through the initial setup process for your Fanfare account and helps you configure your organization for the first time.
+
+## Account Creation
+
+### Sign Up
+
+1. Navigate to the Fanfare sign-up page
+2. Enter your email address and create a password
+3. Verify your email address by clicking the confirmation link
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /auth/sign-up
+Shows: Sign-up form with email and password fields
+Annotations: None needed
+Alt text: "Fanfare sign-up form for creating a new account"
+*/}
+
+![Sign up form](./images/sign-up.png)
+_Caption: Create your Fanfare account with email and password_
+
+### Organization Setup
+
+After verifying your email, you'll be prompted to set up your organization. This is a one-time setup process.
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /auth/organization-setup
+Shows: Organization setup wizard
+Annotations: Highlight required fields
+Alt text: "Organization setup wizard for new accounts"
+*/}
+
+![Organization setup](./images/organization-setup.png)
+_Caption: Complete the organization setup to access the dashboard_
+
+#### Required Information
+
+| Field            | Description                        | Example            |
+| ---------------- | ---------------------------------- | ------------------ |
+| **Company Name** | Your business or organization name | "Acme Inc."        |
+| **Time Zone**    | Default time zone for experiences  | "America/New_York" |
+
+## First-Time Dashboard Experience
+
+When you first access the dashboard, you'll see the quick actions panel instead of analytics data. This is because you haven't created any experiences yet.
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/dashboard
+Shows: Empty dashboard state with quick actions
+Annotations: Point to the three quick action cards
+Alt text: "Empty dashboard showing quick action cards for new users"
+*/}
+
+![Empty dashboard](./images/empty-dashboard.png)
+_Caption: New accounts see quick actions to help get started_
+
+### Recommended Setup Order
+
+For the best experience, we recommend completing setup in this order:
+
+1. **Configure Organization Settings** - Set up your basic organization details
+2. **Set Up Branding** - Customize colors and logos for your experiences
+3. **Create Products** - Add products that consumers will access through experiences
+4. **Create Audiences** - Define consumer segments for targeted access
+5. **Launch Your First Experience** - Create a queue, auction, draw, or appointment
+
+## Step 1: Configure Organization Settings
+
+Navigate to **Settings > Organization** to configure your basic organization details.
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/settings/organization
+Shows: Organization settings form with fields filled in
+Annotations: Highlight save button
+Alt text: "Organization settings form with company name and time zone fields"
+*/}
+
+![Organization settings](./images/organization-settings.png)
+_Caption: Configure your organization's basic settings_
+
+### Key Settings
+
+- **Company Name** - Displayed in consumer-facing experiences
+- **Time Zone** - Used as the default for all experience scheduling
+- **Logo** - Your organization's logo (configured in Brand settings)
+
+## Step 2: Set Up Branding
+
+Navigate to **Settings > Brand** to customize how your experiences look.
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/settings/brand
+Shows: Brand settings form showing color pickers and logo upload
+Annotations: Highlight theme color options
+Alt text: "Brand settings form with theme customization options"
+*/}
+
+![Brand settings](./images/brand-settings.png)
+_Caption: Customize your brand colors and logo_
+
+### Brand Customization Options
+
+| Setting              | Description                                      |
+| -------------------- | ------------------------------------------------ |
+| **Primary Color**    | Main brand color used for buttons and accents    |
+| **Background Color** | Background color for experience pages            |
+| **Text Color**       | Default text color                               |
+| **Logo**             | Header logo displayed on experience pages        |
+| **Email Settings**   | From name and reply-to address for notifications |
+
+## Step 3: Create Your First Product
+
+Before creating experiences, add at least one product to your catalog.
+
+1. Navigate to **Products** in the sidebar
+2. Click **Create Product**
+3. Fill in the product details
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/products/create
+Shows: Product creation form
+Annotations: Highlight required fields (name, description)
+Alt text: "Product creation form with name and description fields"
+*/}
+
+![Create product](./images/create-product.png)
+_Caption: Add a product to make available through experiences_
+
+### Product Fields
+
+| Field           | Required | Description                           |
+| --------------- | -------- | ------------------------------------- |
+| **Name**        | Yes      | Product display name                  |
+| **Description** | No       | Detailed product description          |
+| **Image**       | No       | Product image URL or upload           |
+| **External ID** | No       | Your internal product SKU or ID       |
+| **Variants**    | No       | Size, color, or other variant options |
+
+## Step 4: Create Your First Audience
+
+Audiences define who can access your experiences.
+
+1. Navigate to **Audiences** in the sidebar
+2. Click **Create Audience**
+3. Define audience rules or import consumers
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/audiences/create
+Shows: Audience creation form with rule builder
+Annotations: Highlight rule configuration section
+Alt text: "Audience creation form with membership rule builder"
+*/}
+
+![Create audience](./images/create-audience.png)
+_Caption: Create an audience to control access to experiences_
+
+### Audience Types
+
+- **Dynamic Audiences** - Membership determined by rules (e.g., loyalty tier, purchase history)
+- **Static Audiences** - Manually added or imported consumers
+- **Loyalty Tier Audiences** - Automatically created based on loyalty levels
+
+## Step 5: Launch Your First Experience
+
+Now you're ready to create your first experience.
+
+1. Navigate to **Experiences** in the sidebar
+2. Click **Create Experience**
+3. Choose an experience type:
+   - **Queue** - First-come, first-served access
+   - **Draw** - Random selection from entries
+   - **Auction** - Competitive bidding
+   - **Appointment** - Scheduled time slots
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/experiences/create
+Shows: Experience type selection cards
+Annotations: Highlight the four experience type options
+Alt text: "Experience creation showing queue, draw, auction, and appointment options"
+*/}
+
+![Experience types](./images/experience-types.png)
+_Caption: Choose from four experience types based on your use case_
+
+### Quick Start: Creating a Queue
+
+1. Select **Queue** as the experience type
+2. Enter a name for your experience
+3. Select the product to offer
+4. Choose the audience that can access it
+5. Set the start and end dates
+6. Configure inventory limits
+7. Click **Create Experience**
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/experiences/create?type=QUEUE
+Shows: Queue creation form with all fields
+Annotations: Number the steps in the form
+Alt text: "Queue experience creation form with step-by-step fields"
+*/}
+
+![Create queue](./images/create-queue.png)
+_Caption: Complete the queue creation form to launch your first experience_
+
+## Subscription Plans
+
+Fanfare offers multiple subscription tiers based on your needs:
+
+| Plan           | Monthly Entries | Best For               |
+| -------------- | --------------- | ---------------------- |
+| **Free**       | 100             | Testing and evaluation |
+| **Basic**      | 10,000          | Small businesses       |
+| **Pro**        | 100,000         | Growing businesses     |
+| **Enterprise** | Unlimited       | Large organizations    |
+
+Navigate to **Billing** from the user menu to view plans and upgrade.
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/billing/plans
+Shows: Pricing plans comparison
+Annotations: None needed
+Alt text: "Subscription plans showing Free, Basic, Pro, and Enterprise tiers"
+*/}
+
+![Subscription plans](./images/subscription-plans.png)
+_Caption: Choose a subscription plan based on your expected usage_
+
+## Integrations
+
+Fanfare integrates with popular platforms to enhance your workflows:
+
+### Available Integrations
+
+| Integration | Description                         | Setup Location          |
+| ----------- | ----------------------------------- | ----------------------- |
+| **Klaviyo** | Import audiences from Klaviyo lists | Settings > Integrations |
+| **Stripe**  | Accept payments for auctions        | Settings > Payments     |
+| **Shopify** | Sync products and audiences         | Shopify App Store       |
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/settings/integrations
+Shows: Integrations grid showing available connections
+Annotations: None needed
+Alt text: "Integrations page showing available third-party connections"
+*/}
+
+![Integrations](./images/integrations.png)
+_Caption: Connect Fanfare with your existing tools_
+
+## Getting Help
+
+### In-App Support
+
+- Click the help icon in the navigation for contextual help
+- Toast notifications provide feedback on actions
+- Error messages include actionable guidance
+
+### Documentation
+
+- Browse this documentation for detailed guides
+- Use the search to find specific topics
+
+### Contact Support
+
+For additional help:
+
+- Email: support@fanfare.io
+- Response time: Within 24 hours
+
+## Next Steps
+
+Now that you've completed initial setup, explore these guides:
+
+- [Experience Configuration](/dashboard/experiences/overview) - Deep dive into experience settings
+- [Audience Management](/dashboard/audiences/overview) - Advanced audience rules and imports
+- [Analytics Dashboard](/dashboard/analytics/overview) - Understanding your metrics
+- [API Integration](/sdk/introduction) - Embed experiences in your site

@@ -1,0 +1,331 @@
+---
+title: Experiences API
+description: Consumer API endpoints for experiences
+---
+
+# Experiences API
+
+Experiences are the top-level containers for all distribution types (queues, draws, auctions, etc.). Consumers interact with experiences to access products or services.
+
+## Get Experience
+
+Retrieve experience details including all associated sequences and distributions.
+
+`GET /api/v1/experiences/:experienceId`
+
+### Authentication
+
+- Publishable key required
+- Consumer authentication optional (for public experience details)
+
+### Path Parameters
+
+| Parameter      | Type   | Description       |
+| -------------- | ------ | ----------------- |
+| `experienceId` | string | The experience ID |
+
+### Response
+
+```typescript
+interface Experience {
+  id: string;
+  name: string;
+  openAt: string | null;
+  closeAt: string | null;
+  timeZone: string | null;
+  theme: ExperienceTheme | null;
+  i18n: ExperienceI18n | null;
+  sequences: Sequence[] | null;
+}
+
+interface Sequence {
+  id: string;
+  name: string;
+  color: string;
+  priority: number;
+  waitlist: Waitlist | null;
+  queues: Queue[];
+  draws: Draw[];
+  auctions: Auction[];
+  appointments: Appointment[];
+  timedReleases: TimedRelease[];
+}
+```
+
+### Example
+
+```bash
+curl -X GET https://consumer.fanfare.io/api/v1/experiences/exp_01HXYZ123456789 \
+  -H "X-Publishable-Key: pk_live_xxxxxxxxxxxx"
+```
+
+**Response:**
+
+```json
+{
+  "id": "exp_01HXYZ123456789",
+  "name": "Holiday Sale",
+  "openAt": "2024-12-01T09:00:00Z",
+  "closeAt": "2024-12-01T18:00:00Z",
+  "timeZone": "America/New_York",
+  "theme": {
+    "primaryColor": "#4F46E5",
+    "backgroundColor": "#FFFFFF",
+    "logoUrl": "https://cdn.fanfare.io/logos/holiday-sale.png"
+  },
+  "sequences": [
+    {
+      "id": "seq_01HXYZ123456789",
+      "name": "Main Queue",
+      "color": "#4F46E5",
+      "priority": 1,
+      "waitlist": null,
+      "queues": [
+        {
+          "id": "queue_01HXYZ123456789",
+          "name": "Holiday Queue",
+          "capacity": 1000,
+          "openAt": "2024-12-01T09:00:00Z",
+          "closeAt": "2024-12-01T18:00:00Z",
+          "status": "OPEN"
+        }
+      ],
+      "draws": [],
+      "auctions": [],
+      "appointments": [],
+      "timedReleases": []
+    }
+  ]
+}
+```
+
+### Error Responses
+
+| Status | Error                  | Description                      |
+| ------ | ---------------------- | -------------------------------- |
+| 404    | `Experience not found` | The experience ID does not exist |
+
+---
+
+## Enter Experience
+
+Enter an experience and receive the experience details with current state.
+
+`POST /api/v1/experiences/:experienceId/enter`
+
+### Authentication
+
+- Publishable key required
+- Consumer authentication **required**
+
+### Path Parameters
+
+| Parameter      | Type   | Description       |
+| -------------- | ------ | ----------------- |
+| `experienceId` | string | The experience ID |
+
+### Response
+
+```typescript
+interface EnterExperienceResponse {
+  experienceId: string;
+  enteredAt: string;
+  experience: Experience;
+}
+```
+
+### Example
+
+```bash
+curl -X POST https://consumer.fanfare.io/api/v1/experiences/exp_01HXYZ123456789/enter \
+  -H "X-Publishable-Key: pk_live_xxxxxxxxxxxx" \
+  -H "Authorization: Bearer eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9..."
+```
+
+**Response:**
+
+```json
+{
+  "experienceId": "exp_01HXYZ123456789",
+  "enteredAt": "2024-12-01T09:00:00Z",
+  "experience": {
+    "id": "exp_01HXYZ123456789",
+    "name": "Holiday Sale",
+    "openAt": "2024-12-01T09:00:00Z",
+    "closeAt": "2024-12-01T18:00:00Z",
+    "sequences": [...]
+  }
+}
+```
+
+### Error Responses
+
+| Status | Error                     | Description                      |
+| ------ | ------------------------- | -------------------------------- |
+| 401    | `Authentication required` | No valid consumer session        |
+| 404    | `Experience not found`    | The experience ID does not exist |
+
+---
+
+## Leave Experience
+
+Leave an experience. This is typically used for cleanup or tracking purposes.
+
+`DELETE /api/v1/experiences/:experienceId/leave`
+
+### Authentication
+
+- Publishable key required
+- Consumer authentication **required**
+
+### Path Parameters
+
+| Parameter      | Type   | Description       |
+| -------------- | ------ | ----------------- |
+| `experienceId` | string | The experience ID |
+
+### Response
+
+```typescript
+interface LeaveExperienceResponse {
+  left: boolean;
+}
+```
+
+### Example
+
+```bash
+curl -X DELETE https://consumer.fanfare.io/api/v1/experiences/exp_01HXYZ123456789/leave \
+  -H "X-Publishable-Key: pk_live_xxxxxxxxxxxx" \
+  -H "Authorization: Bearer eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9..."
+```
+
+**Response:**
+
+```json
+{
+  "left": true
+}
+```
+
+### Error Responses
+
+| Status | Error                     | Description               |
+| ------ | ------------------------- | ------------------------- |
+| 401    | `Authentication required` | No valid consumer session |
+
+---
+
+## Experience Theme
+
+The experience theme controls the visual appearance of the consumer-facing UI:
+
+```typescript
+interface ExperienceTheme {
+  primaryColor?: string;
+  secondaryColor?: string;
+  backgroundColor?: string;
+  textColor?: string;
+  logoUrl?: string;
+  headerImageUrl?: string;
+  fontFamily?: string;
+}
+```
+
+## Experience I18n
+
+Internationalization settings for the experience:
+
+```typescript
+interface ExperienceI18n {
+  title?: Record<string, string>;
+  description?: Record<string, string>;
+  messages?: Record<string, Record<string, string>>;
+}
+```
+
+Example:
+
+```json
+{
+  "title": {
+    "en": "Holiday Sale",
+    "es": "Venta de Navidad"
+  },
+  "description": {
+    "en": "Join our exclusive holiday sale queue",
+    "es": "Unase a nuestra cola exclusiva de venta navideña"
+  }
+}
+```
+
+## Distribution Types
+
+An experience can contain multiple sequences, each with different distribution types:
+
+### Queue
+
+First-come, first-served waiting room. Consumers are admitted in order.
+
+### Draw (Lottery)
+
+Random selection from entered consumers. Winners are selected at a scheduled time.
+
+### Auction
+
+Competitive bidding. Highest bidder wins.
+
+### Timed Release
+
+Scheduled access at a specific time. All eligible consumers gain access simultaneously.
+
+### Appointment
+
+Time slot booking for scheduled access.
+
+## SDK Usage
+
+### React
+
+```typescript
+import { useExperience } from "@fanfare/sdk-react";
+
+function ExperiencePage({ experienceId }: { experienceId: string }) {
+  const { experience, isLoading, error, enter, leave } = useExperience(experienceId);
+
+  if (isLoading) return <Loading />;
+  if (error) return <Error message={error.message} />;
+  if (!experience) return <NotFound />;
+
+  return (
+    <div style={{ backgroundColor: experience.theme?.backgroundColor }}>
+      <h1>{experience.name}</h1>
+      <p>Opens: {experience.openAt}</p>
+
+      {experience.sequences?.map((sequence) => (
+        <SequenceCard key={sequence.id} sequence={sequence} />
+      ))}
+
+      <button onClick={enter}>Enter Experience</button>
+    </div>
+  );
+}
+```
+
+### Direct API
+
+```typescript
+async function getExperience(experienceId: string, publishableKey: string) {
+  const response = await fetch(`https://consumer.fanfare.io/api/v1/experiences/${experienceId}`, {
+    headers: {
+      "X-Publishable-Key": publishableKey,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch experience: ${response.statusText}`);
+  }
+
+  return response.json();
+}
+```

@@ -1,0 +1,168 @@
+---
+title: Introduction to Fanfare
+description: Learn what Fanfare is and how it helps you manage high-demand product launches, virtual queues, draws, and auctions.
+---
+
+# Introduction to Fanfare
+
+Fanfare is a SaaS platform that helps e-commerce businesses manage high-demand product launches through virtual waiting rooms, queues, draws, auctions, and timed releases. When you have more demand than supply, Fanfare ensures a fair, engaging experience for your customers while protecting your infrastructure from traffic spikes.
+
+## What Problems Does Fanfare Solve?
+
+### Traffic Management
+
+When you launch a limited-edition product or run a flash sale, thousands of visitors can hit your site simultaneously. Without proper management, this leads to:
+
+- Server crashes and downtime
+- Frustrated customers who cannot complete purchases
+- Unfair advantages for users with faster connections or bots
+
+Fanfare acts as a controlled entry point, managing the flow of customers to your checkout process.
+
+### Fair Access
+
+Traditional "first-come-first-served" systems disadvantage users with slower internet connections or those who arrive a few seconds late. Fanfare offers multiple distribution mechanisms:
+
+- **Queues**: First-in-first-out with estimated wait times
+- **Draws**: Random selection giving everyone an equal chance
+- **Auctions**: Price-based allocation for high-value items
+- **Timed Releases**: Scheduled access windows for product drops
+
+### Customer Experience
+
+Instead of showing error pages or loading spinners, Fanfare provides a polished waiting experience with:
+
+- Real-time position updates
+- Estimated wait times
+- Interactive elements to keep users engaged
+- Automatic notification when admitted
+
+## Key Concepts
+
+Before diving into the SDK, you need to understand these core concepts:
+
+### Organization
+
+Your Fanfare account is an **organization**. All experiences, consumers, and API keys belong to your organization. You receive an `organizationId` when you sign up.
+
+### Experience
+
+An **experience** is a customer-facing event that manages access to your product or service. For example, "Summer Sneaker Drop 2025" or "Concert Ticket Sale". Each experience contains one or more sequences.
+
+### Sequence
+
+A **sequence** defines the rules for a group of consumers within an experience. You can have:
+
+- A **general admission** sequence for all visitors
+- A **VIP sequence** requiring an access code
+- An **audience-specific** sequence for newsletter subscribers
+
+Sequences let you offer different waiting experiences to different customer segments.
+
+### Distribution
+
+A **distribution** is the mechanism that allocates access within a sequence. Distribution types include:
+
+| Type          | Description                     | Best For                       |
+| ------------- | ------------------------------- | ------------------------------ |
+| Queue         | First-in-first-out waiting line | Flash sales, product launches  |
+| Draw          | Random selection from entrants  | Fair allocation, limited drops |
+| Auction       | Highest bidder wins             | High-value items, collectibles |
+| Timed Release | Opens at a specific time        | Pre-orders, scheduled releases |
+
+### Consumer
+
+A **consumer** is a visitor participating in your experience. Consumers can be:
+
+- **Guests**: Anonymous users identified by device fingerprint
+- **Authenticated**: Users who verify via email, phone, or your existing auth system
+
+### Admission
+
+When a consumer gains access through a distribution (reaches the front of a queue, wins a draw, etc.), they receive an **admission token**. Your backend validates this token to authorize the purchase.
+
+## How the SDK Works
+
+The Fanfare SDK runs in your customer's browser and handles:
+
+1. **Session Management**: Creating and restoring consumer sessions across page refreshes and tabs
+2. **Experience Entry**: Joining queues, draws, auctions, or timed releases
+3. **Real-time Updates**: Receiving position changes, admission notifications, and auction updates
+4. **State Synchronization**: Keeping multiple browser tabs in sync
+5. **UI Components**: Pre-built widgets you can customize or build from scratch
+
+```tsx
+import { FanfareProvider } from "@fanfare/react";
+
+function App() {
+  return (
+    <FanfareProvider organizationId="org_abc123" publishableKey="pk_live_xyz789">
+      <ProductPage />
+    </FanfareProvider>
+  );
+}
+```
+
+The SDK communicates with Fanfare's API to manage consumer state. Your backend never handles the queue logic directly.
+
+## Architecture Overview
+
+```
+┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
+│                 │     │                 │     │                 │
+│  Your Website   │────▶│  Fanfare SDK    │────▶│  Fanfare API    │
+│  (Frontend)     │     │  (Browser)      │     │  (Cloud)        │
+│                 │     │                 │     │                 │
+└─────────────────┘     └─────────────────┘     └─────────────────┘
+         │                                               │
+         │              ┌─────────────────┐              │
+         │              │                 │              │
+         └─────────────▶│  Your Backend   │◀─────────────┘
+                        │  (Validation)   │
+                        │                 │
+                        └─────────────────┘
+```
+
+1. Your frontend loads the Fanfare SDK
+2. The SDK manages the consumer's journey through experiences
+3. When admitted, the SDK provides a token
+4. Your backend validates the token with Fanfare's API
+5. Your backend completes the transaction
+
+## Framework Support
+
+Fanfare provides official SDK packages for:
+
+| Package          | Framework  | Description                     |
+| ---------------- | ---------- | ------------------------------- |
+| `@fanfare/sdk`   | Vanilla JS | Core SDK, framework-agnostic    |
+| `@fanfare/react` | React 18+  | React hooks and components      |
+| `@fanfare/solid` | SolidJS    | Solid primitives and components |
+
+The React and SolidJS packages include pre-built UI components you can use directly or customize. The core SDK provides all the functionality without framework-specific bindings.
+
+## What You Need
+
+To integrate Fanfare, you need:
+
+1. **A Fanfare account**: Sign up at [fanfare.io](https://fanfare.io)
+2. **API credentials**: Your `organizationId` and `publishableKey` from the dashboard
+3. **An experience**: Create at least one experience in the dashboard
+4. **Frontend integration**: Install the SDK in your website
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page/Component: Fanfare Dashboard - API Keys section
+Shows: Location of organizationId and publishableKey in the dashboard settings
+Alt text: "Fanfare dashboard showing API credentials in the settings page"
+*/}
+
+## Next Steps
+
+Ready to get started? Continue to the [Quickstart Guide](/getting-started/quickstart) to build your first integration in 5 minutes.
+
+Or explore more detailed topics:
+
+- [Installation](/getting-started/installation) - Package installation for your framework
+- [Configuration](/getting-started/configuration) - Provider setup and options
+- [First Experience](/getting-started/first-experience) - Create your first queue, draw, or auction

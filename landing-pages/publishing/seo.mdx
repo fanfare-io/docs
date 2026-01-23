@@ -1,0 +1,364 @@
+---
+title: "SEO Configuration"
+description: "Optimize landing pages for search engines and social sharing"
+---
+
+{/* TODO: MISSING_FUNCTIONALITY
+Feature: SEO configuration in landing page editor
+Expected behavior: Title, description, OG tags, structured data configuration
+Current state: Database supports SEO metadata; UI not implemented
+Blocking: partial - Data model ready; configuration UI pending
+*/}
+
+<Note>
+**In Development**
+
+The landing page database schema includes SEO metadata fields. The configuration UI will be available when the landing page editor launches.
+
+</Note>
+
+## SEO Overview
+
+Search Engine Optimization (SEO) helps your landing pages:
+
+- Appear in search results
+- Display correctly when shared on social media
+- Provide context to search engines and assistants
+
+## Meta Tags
+
+### Page Title
+
+The title appears in:
+
+- Browser tab
+- Search engine results
+- Social media shares
+
+```html
+<title>Limited Edition Sneaker Drop | Your Brand</title>
+```
+
+| Guideline  | Recommendation                       |
+| ---------- | ------------------------------------ | ----- |
+| Length     | 50-60 characters                     |
+| Format     | Primary keyword                      | Brand |
+| Uniqueness | Each page should have a unique title |
+
+### Meta Description
+
+The description appears in search results below the title:
+
+```html
+<meta
+  name="description"
+  content="Join the queue for exclusive access to our limited edition sneaker release. First come, first served. Available March 15, 2024."
+/>
+```
+
+| Guideline | Recommendation                         |
+| --------- | -------------------------------------- |
+| Length    | 150-160 characters                     |
+| Content   | Compelling summary with call-to-action |
+| Keywords  | Include naturally, don't stuff         |
+
+## Open Graph Tags
+
+Open Graph (OG) tags control how your page appears when shared on Facebook, LinkedIn, and other platforms.
+
+### Required Tags
+
+```html
+<meta property="og:title" content="Limited Edition Sneaker Drop" />
+<meta property="og:description" content="Join the queue for exclusive access..." />
+<meta property="og:image" content="https://your-cdn.com/share-image.jpg" />
+<meta property="og:url" content="https://acme.fanfare.io/sneaker-drop/register" />
+<meta property="og:type" content="website" />
+```
+
+### Share Image Specifications
+
+| Property  | Recommendation                |
+| --------- | ----------------------------- |
+| Size      | 1200x630 pixels               |
+| Format    | JPG or PNG                    |
+| File size | Under 1MB                     |
+| Safe zone | Keep text centered, 800x400px |
+
+<Tip>Design share images with the assumption that edges may be cropped on some platforms.</Tip>
+
+### Optional Tags
+
+```html
+<meta property="og:site_name" content="Your Brand" /> <meta property="og:locale" content="en_US" />
+```
+
+## Twitter Cards
+
+Twitter uses its own card system, falling back to OG tags when not specified.
+
+### Summary Card with Large Image
+
+```html
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:site" content="@yourbrand" />
+<meta name="twitter:title" content="Limited Edition Sneaker Drop" />
+<meta name="twitter:description" content="Join the queue for exclusive access..." />
+<meta name="twitter:image" content="https://your-cdn.com/share-image.jpg" />
+```
+
+### Card Types
+
+| Type                  | Description             | Best For                 |
+| --------------------- | ----------------------- | ------------------------ |
+| `summary`             | Small square image      | General content          |
+| `summary_large_image` | Large rectangular image | Product launches, events |
+| `player`              | Embedded media          | Video content            |
+
+## Structured Data
+
+Structured data helps search engines understand your content:
+
+### Event Schema
+
+For experience launches:
+
+```json
+{
+  "@context": "https://schema.org",
+  "@type": "Event",
+  "name": "Limited Edition Sneaker Drop",
+  "startDate": "2024-03-15T10:00:00-05:00",
+  "description": "Exclusive access to limited edition sneakers",
+  "eventStatus": "https://schema.org/EventScheduled",
+  "eventAttendanceMode": "https://schema.org/OnlineEventAttendanceMode",
+  "location": {
+    "@type": "VirtualLocation",
+    "url": "https://acme.fanfare.io/sneaker-drop/register"
+  },
+  "organizer": {
+    "@type": "Organization",
+    "name": "Your Brand",
+    "url": "https://your-brand.com"
+  }
+}
+```
+
+### Product Schema
+
+For product drops:
+
+```json
+{
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": "Limited Edition Sneakers",
+  "description": "Exclusive release sneakers",
+  "brand": {
+    "@type": "Brand",
+    "name": "Your Brand"
+  },
+  "offers": {
+    "@type": "Offer",
+    "availability": "https://schema.org/PreOrder",
+    "price": "199.00",
+    "priceCurrency": "USD",
+    "availabilityStarts": "2024-03-15T10:00:00-05:00"
+  }
+}
+```
+
+## Canonical URLs
+
+Specify the authoritative URL for your page:
+
+```html
+<link rel="canonical" href="https://acme.fanfare.io/sneaker-drop/register" />
+```
+
+### When to Use
+
+| Scenario                       | Canonical URL   |
+| ------------------------------ | --------------- |
+| Default domain                 | Fanfare URL     |
+| Custom domain                  | Your custom URL |
+| Multiple paths to same content | Primary path    |
+
+## Robots Directives
+
+Control search engine behavior:
+
+### Index/Follow (Default)
+
+```html
+<meta name="robots" content="index, follow" />
+```
+
+### Prevent Indexing
+
+For draft or test pages:
+
+```html
+<meta name="robots" content="noindex, nofollow" />
+```
+
+{/* TODO: MISSING_FUNCTIONALITY
+Feature: Robots directive configuration per page
+Expected behavior: Toggle indexing on/off in page settings
+Current state: Planned feature
+Blocking: true
+*/}
+
+## Configuration Options
+
+### Database Schema
+
+The landing page metadata supports:
+
+```typescript
+{
+  metadata: {
+    seoTitle?: string;           // Page title
+    seoDescription?: string;     // Meta description
+    shareImageUrl?: string;      // OG/Twitter image
+  }
+}
+```
+
+### Future Configuration UI
+
+The landing page editor will include an SEO panel:
+
+```
+┌─────────────────────────────────────────────────┐
+│  SEO Settings                                   │
+├─────────────────────────────────────────────────┤
+│  Page Title                                     │
+│  ┌─────────────────────────────────────────┐   │
+│  │ Limited Edition Sneaker Drop            │   │
+│  └─────────────────────────────────────────┘   │
+│  55 / 60 characters                            │
+│                                                 │
+│  Meta Description                              │
+│  ┌─────────────────────────────────────────┐   │
+│  │ Join the queue for exclusive access...  │   │
+│  │                                         │   │
+│  └─────────────────────────────────────────┘   │
+│  142 / 160 characters                          │
+│                                                 │
+│  Share Image                                   │
+│  ┌─────────────────────────────────────────┐   │
+│  │ [Upload] or drag image here             │   │
+│  │ 1200x630px recommended                  │   │
+│  └─────────────────────────────────────────┘   │
+│                                                 │
+│  Preview                                        │
+│  ┌─────────────────────────────────────────┐   │
+│  │ Google | Facebook | Twitter             │   │
+│  │ [Search result preview]                 │   │
+│  └─────────────────────────────────────────┘   │
+│                                                 │
+└─────────────────────────────────────────────────┘
+```
+
+## Testing SEO
+
+### Validation Tools
+
+| Tool                                                                      | Purpose         |
+| ------------------------------------------------------------------------- | --------------- |
+| [Google Rich Results Test](https://search.google.com/test/rich-results)   | Structured data |
+| [Facebook Sharing Debugger](https://developers.facebook.com/tools/debug/) | OG tags         |
+| [Twitter Card Validator](https://cards-dev.twitter.com/validator)         | Twitter cards   |
+| [LinkedIn Post Inspector](https://www.linkedin.com/post-inspector/)       | LinkedIn shares |
+
+### Common Issues
+
+| Issue                | Cause             | Solution                       |
+| -------------------- | ----------------- | ------------------------------ |
+| Wrong image on share | Cache             | Use debug tools to clear cache |
+| Missing description  | No meta tag       | Add meta description           |
+| Title truncated      | Too long          | Keep under 60 characters       |
+| Image not showing    | Wrong size or URL | Use 1200x630px, absolute URL   |
+
+## Current Workarounds
+
+### Manual Meta Tags
+
+Until the configuration UI is available, meta tags can be set through the creative document system:
+
+```typescript
+{
+  creativeDocument: {
+    schemaVersion: 1,
+    kind: "landing-page",
+    editor: "section-builder",
+    body: {
+      // Page content
+    }
+  },
+  metadata: {
+    seoTitle: "Your Custom Title",
+    seoDescription: "Your custom description for search results.",
+    shareImageUrl: "https://your-cdn.com/share-image.jpg"
+  }
+}
+```
+
+### SDK Integration
+
+For pages using the SDK, control meta tags in your application:
+
+```tsx
+// Using React Helmet or Next.js Head
+<Head>
+  <title>Limited Edition Sneaker Drop | Your Brand</title>
+  <meta name="description" content="Join the queue..." />
+  <meta property="og:title" content="Limited Edition Sneaker Drop" />
+  <meta property="og:image" content="https://..." />
+</Head>
+```
+
+## Best Practices
+
+### Writing Effective Titles
+
+| Do                              | Don't              |
+| ------------------------------- | ------------------ |
+| Include primary keyword         | Keyword stuff      |
+| Add brand name                  | Use generic titles |
+| Create urgency when appropriate | Be misleading      |
+| Be specific                     | Be vague           |
+
+**Good**: "Limited Edition Air Max Release | Nike"
+**Bad**: "Best Sneakers - Buy Now - Limited - Exclusive - Sale"
+
+### Writing Effective Descriptions
+
+| Do                     | Don't                 |
+| ---------------------- | --------------------- |
+| Summarize the page     | Repeat the title      |
+| Include call-to-action | Be purely promotional |
+| Mention unique value   | Use generic copy      |
+| Match search intent    | Mislead about content |
+
+**Good**: "Join the queue for exclusive access to Nike's limited edition Air Max release. First 500 entries guaranteed. Launching March 15, 2024."
+
+**Bad**: "Click here to see our amazing products. We have the best deals and lowest prices!"
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Analytics" icon="chart-line" href="/landing-pages/publishing/analytics">
+    Track page performance
+  </Card>
+  <Card title="Custom Domains" icon="globe" href="/landing-pages/publishing/domains">
+    Use your own domain
+  </Card>
+  <Card title="Preview" icon="eye" href="/landing-pages/publishing/preview">
+    Test your SEO settings
+  </Card>
+  <Card title="Media" icon="image" href="/landing-pages/customization/media">
+    Optimize share images
+  </Card>
+</CardGroup>

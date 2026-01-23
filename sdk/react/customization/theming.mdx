@@ -1,0 +1,269 @@
+---
+title: Theming
+description: Customize the appearance of Fanfare widgets
+---
+
+# Theming
+
+The Fanfare SDK supports extensive theming through CSS custom properties and a theme configuration object.
+
+## CSS Custom Properties
+
+Widgets use CSS custom properties (variables) for styling:
+
+```css
+:root {
+  /* Colors */
+  --fanfare-primary: #3b82f6;
+  --fanfare-primary-hover: #2563eb;
+  --fanfare-primary-foreground: #ffffff;
+  --fanfare-background: #ffffff;
+  --fanfare-foreground: #1f2937;
+  --fanfare-muted: #f3f4f6;
+  --fanfare-muted-foreground: #6b7280;
+  --fanfare-border: #e5e7eb;
+  --fanfare-destructive: #ef4444;
+  --fanfare-success: #22c55e;
+  --fanfare-warning: #f59e0b;
+
+  /* Typography */
+  --fanfare-font-family: system-ui, -apple-system, sans-serif;
+  --fanfare-font-size-xs: 0.75rem;
+  --fanfare-font-size-sm: 0.875rem;
+  --fanfare-font-size-base: 1rem;
+  --fanfare-font-size-lg: 1.125rem;
+  --fanfare-font-size-xl: 1.25rem;
+
+  /* Spacing */
+  --fanfare-spacing-xs: 0.25rem;
+  --fanfare-spacing-sm: 0.5rem;
+  --fanfare-spacing-md: 1rem;
+  --fanfare-spacing-lg: 1.5rem;
+  --fanfare-spacing-xl: 2rem;
+
+  /* Border Radius */
+  --fanfare-radius: 0.5rem;
+  --fanfare-radius-sm: 0.25rem;
+  --fanfare-radius-lg: 0.75rem;
+  --fanfare-radius-full: 9999px;
+
+  /* Shadows */
+  --fanfare-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --fanfare-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  --fanfare-shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+}
+```
+
+## Theme Configuration
+
+Pass a theme configuration object when initializing:
+
+```tsx
+import { registerWebComponents } from "@waitify-io/fanfare-sdk-solid";
+
+registerWebComponents({
+  organizationId: "org_xxx",
+  publishableKey: "pk_live_xxx",
+  themeConfig: {
+    colors: {
+      primary: "#8b5cf6",
+      primaryHover: "#7c3aed",
+      background: "#ffffff",
+      foreground: "#1f2937",
+      muted: "#f9fafb",
+      border: "#e5e7eb",
+    },
+    borderRadius: "lg", // "none" | "sm" | "md" | "lg" | "full"
+    fontFamily: "Inter, system-ui, sans-serif",
+  },
+});
+```
+
+## ExperienceTheme Interface
+
+```typescript
+interface ExperienceTheme {
+  colors?: {
+    primary?: string;
+    primaryHover?: string;
+    primaryForeground?: string;
+    background?: string;
+    foreground?: string;
+    muted?: string;
+    mutedForeground?: string;
+    border?: string;
+    destructive?: string;
+    success?: string;
+    warning?: string;
+  };
+  borderRadius?: "none" | "sm" | "md" | "lg" | "full";
+  fontFamily?: string;
+}
+```
+
+## Widget Variants
+
+Widgets support different visual variants:
+
+```tsx
+registerWebComponents({
+  organizationId: "org_xxx",
+  publishableKey: "pk_live_xxx",
+  variant: "rounded", // "default" | "rounded" | "retro" | "clean"
+});
+```
+
+| Variant   | Description                             |
+| --------- | --------------------------------------- |
+| `default` | Standard appearance                     |
+| `rounded` | More rounded corners, softer appearance |
+| `retro`   | Vintage/retro styling                   |
+| `clean`   | Minimal, flat design                    |
+
+## Dark Mode
+
+Support dark mode with CSS:
+
+```css
+/* Light mode */
+:root {
+  --fanfare-background: #ffffff;
+  --fanfare-foreground: #1f2937;
+  --fanfare-muted: #f3f4f6;
+  --fanfare-border: #e5e7eb;
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --fanfare-background: #1f2937;
+    --fanfare-foreground: #f9fafb;
+    --fanfare-muted: #374151;
+    --fanfare-border: #4b5563;
+  }
+}
+
+/* Or with a class toggle */
+.dark {
+  --fanfare-background: #1f2937;
+  --fanfare-foreground: #f9fafb;
+  --fanfare-muted: #374151;
+  --fanfare-border: #4b5563;
+}
+```
+
+## ThemeProvider (React)
+
+Use the ThemeProvider for React component trees:
+
+```tsx
+import { ThemeProvider } from "@waitify-io/fanfare-sdk-react";
+
+function App() {
+  return (
+    <FanfareProvider organizationId="org_xxx" publishableKey="pk_live_xxx">
+      <ThemeProvider
+        theme={{
+          colors: {
+            primary: "#8b5cf6",
+          },
+        }}
+        variant="rounded"
+      >
+        <YourApp />
+      </ThemeProvider>
+    </FanfareProvider>
+  );
+}
+```
+
+### Nested Themes
+
+Themes can be nested for section-specific styling:
+
+```tsx
+function App() {
+  return (
+    <ThemeProvider theme={{ colors: { primary: "#3b82f6" } }}>
+      <MainContent />
+
+      <ThemeProvider theme={{ colors: { primary: "#10b981" } }}>
+        <PromoSection />
+      </ThemeProvider>
+    </ThemeProvider>
+  );
+}
+```
+
+## Experience-Level Theming
+
+Themes can be configured per-experience in the Fanfare dashboard. The SDK automatically applies these when using `useExperienceJourney`:
+
+```tsx
+function ExperiencePage({ experienceId }: { experienceId: string }) {
+  // Theme is automatically loaded from the experience
+  const { status } = useExperienceJourney(experienceId, { autoStart: true });
+
+  return <ExperienceContent />;
+}
+```
+
+## Brand Color Examples
+
+```css
+/* Blue (Default) */
+:root {
+  --fanfare-primary: #3b82f6;
+  --fanfare-primary-hover: #2563eb;
+}
+
+/* Purple */
+:root {
+  --fanfare-primary: #8b5cf6;
+  --fanfare-primary-hover: #7c3aed;
+}
+
+/* Green */
+:root {
+  --fanfare-primary: #10b981;
+  --fanfare-primary-hover: #059669;
+}
+
+/* Orange */
+:root {
+  --fanfare-primary: #f97316;
+  --fanfare-primary-hover: #ea580c;
+}
+
+/* Pink */
+:root {
+  --fanfare-primary: #ec4899;
+  --fanfare-primary-hover: #db2777;
+}
+```
+
+## Scoped Styling
+
+Scope styles to specific widgets:
+
+```css
+/* Style only the queue widget */
+fanfare-queue-widget {
+  --fanfare-primary: #3b82f6;
+  --fanfare-radius: 1rem;
+}
+
+/* Style only the auction widget */
+fanfare-auction-widget {
+  --fanfare-primary: #ef4444;
+  --fanfare-radius: 0;
+}
+```
+
+## Best Practices
+
+1. **Use CSS variables** for easy theme switching
+2. **Test both light and dark modes**
+3. **Ensure sufficient contrast** for accessibility
+4. **Keep consistent with your brand** guidelines
+5. **Test on multiple screen sizes**

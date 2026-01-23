@@ -1,0 +1,445 @@
+---
+title: Webhook Retry Policy
+description: How Fanfare handles webhook delivery failures and retries
+---
+
+# Webhook Retry Policy
+
+Fanfare implements a robust retry mechanism to ensure reliable webhook delivery. When a webhook delivery fails, we automatically retry with exponential backoff.
+
+## Delivery Expectations
+
+### Successful Delivery
+
+A webhook is considered successfully delivered when your endpoint returns:
+
+- HTTP status code in the 2xx range (200-299)
+- Response received within the timeout period (30 seconds)
+
+```typescript
+// Success responses
+app.post("/webhooks/fanfare", (req, res) => {
+  // Process the webhook...
+
+  // Any 2xx status is acceptable
+  res.status(200).send("OK");
+  // or
+  res.status(202).json({ received: true });
+  // or
+  res.status(204).send();
+});
+```
+
+### Failed Delivery
+
+A webhook delivery is considered failed when:
+
+| Condition                      | Description                       |
+| ------------------------------ | --------------------------------- |
+| Connection error               | Cannot establish TCP connection   |
+| Timeout                        | No response within 30 seconds     |
+| DNS resolution failure         | Cannot resolve hostname           |
+| TLS/SSL error                  | Certificate validation failed     |
+| HTTP 4xx response (except 410) | Client error (will still retry)   |
+| HTTP 5xx response              | Server error                      |
+| HTTP 410 Gone                  | Endpoint disabled (stops retries) |
+
+## Retry Schedule
+
+When delivery fails, Fanfare retries with exponential backoff:
+
+| Attempt | Delay After Previous | Cumulative Time |
+| ------- | -------------------- | --------------- |
+| 1       | Immediate            | 0               |
+| 2       | 1 minute             | 1 minute        |
+| 3       | 5 minutes            | 6 minutes       |
+| 4       | 30 minutes           | 36 minutes      |
+| 5       | 2 hours              | ~2.5 hours      |
+| 6       | 6 hours              | ~8.5 hours      |
+| 7       | 12 hours             | ~20.5 hours     |
+| 8       | 24 hours             | ~44.5 hours     |
+
+After 8 failed attempts over approximately 44 hours, the webhook delivery is marked as failed and no further retries are attempted.
+
+## Retry Headers
+
+Retry attempts include additional headers:
+
+| Header                    | Description                 |
+| ------------------------- | --------------------------- |
+| `X-Fanfare-Retry-Count`   | Current retry attempt (0-7) |
+| `X-Fanfare-Original-Time` | Timestamp of original event |
+| `X-Fanfare-Delivery-Id`   | Unique ID for this delivery |
+| `X-Fanfare-Webhook-Id`    | Webhook endpoint ID         |
+
+```typescript
+app.post("/webhooks/fanfare", (req, res) => {
+  const retryCount = parseInt(req.headers["x-fanfare-retry-count"] || "0", 10);
+  const originalTime = req.headers["x-fanfare-original-time"];
+
+  if (retryCount > 0) {
+    console.log(`Retry attempt ${retryCount}, original event from ${originalTime}`);
+  }
+
+  // Process webhook...
+  res.status(200).send("OK");
+});
+```
+
+## Handling Retries
+
+### Idempotency
+
+Because webhooks may be delivered multiple times (due to retries or network issues), your handler must be idempotent:
+
+```typescript
+import { Redis } from "ioredis";
+
+const redis = new Redis();
+const PROCESSED_TTL = 48 * 60 * 60; // 48 hours
+
+async function processWebhook(event) {
+  const deliveryId = event.id;
+
+  // Check if already processed
+  const alreadyProcessed = await redis.get(`webhook:${deliveryId}`);
+  if (alreadyProcessed) {
+    console.log(`Webhook ${deliveryId} already processed, skipping`);
+    return { duplicate: true };
+  }
+
+  // Mark as processing (with short TTL to handle crashes)
+  await redis.set(`webhook:${deliveryId}`, "processing", "EX", 300);
+
+  try {
+    // Process the event
+    await handleEvent(event);
+
+    // Mark as completed (with longer TTL)
+    await redis.set(`webhook:${deliveryId}`, "completed", "EX", PROCESSED_TTL);
+
+    return { success: true };
+  } catch (error) {
+    // Remove the processing marker so retries can work
+    await redis.del(`webhook:${deliveryId}`);
+    throw error;
+  }
+}
+```
+
+### Database-Based Idempotency
+
+For simpler setups, use database constraints:
+
+```typescript
+async function processWebhook(event) {
+  try {
+    // Attempt to insert the event ID
+    await db.insert(processedWebhooks).values({
+      id: event.id,
+      eventType: event.type,
+      processedAt: new Date(),
+    });
+  } catch (error) {
+    // Unique constraint violation = already processed
+    if (error.code === "23505") {
+      console.log(`Webhook ${event.id} already processed`);
+      return { duplicate: true };
+    }
+    throw error;
+  }
+
+  // Process the event
+  await handleEvent(event);
+
+  return { success: true };
+}
+```
+
+## Responding Appropriately
+
+### Quick Acknowledgment
+
+Always respond quickly (< 5 seconds) and process asynchronously:
+
+```typescript
+import { Queue } from "bullmq";
+
+const webhookQueue = new Queue("webhooks");
+
+app.post("/webhooks/fanfare", async (req, res) => {
+  // Verify signature first
+  if (!verifySignature(req)) {
+    return res.status(401).send("Invalid signature");
+  }
+
+  const event = JSON.parse(req.body.toString());
+
+  // Queue for background processing
+  await webhookQueue.add(event.type, event, {
+    jobId: event.id, // Prevents duplicate jobs
+    removeOnComplete: 1000,
+    attempts: 3,
+  });
+
+  // Respond immediately
+  res.status(202).json({ received: true });
+});
+```
+
+### When to Return Errors
+
+| Scenario                   | Response | Effect                     |
+| -------------------------- | -------- | -------------------------- |
+| Signature invalid          | 401      | Will retry (check config)  |
+| Event already processed    | 200      | No retry (success)         |
+| Temporary processing error | 500      | Will retry                 |
+| Event type not supported   | 200      | No retry (acknowledge)     |
+| Endpoint permanently gone  | 410      | Stops all retries          |
+| Payload validation error   | 400      | Will retry (review schema) |
+
+```typescript
+app.post("/webhooks/fanfare", async (req, res) => {
+  // Signature errors should return 401
+  if (!verifySignature(req)) {
+    return res.status(401).send("Invalid signature");
+  }
+
+  const event = JSON.parse(req.body.toString());
+
+  // Check for duplicates - return success
+  if (await isDuplicate(event.id)) {
+    return res.status(200).send("Already processed");
+  }
+
+  // Unknown event types - acknowledge but don't process
+  if (!SUPPORTED_EVENTS.includes(event.type)) {
+    console.log(`Ignoring unsupported event type: ${event.type}`);
+    return res.status(200).send("Event type not handled");
+  }
+
+  try {
+    await processEvent(event);
+    return res.status(200).send("OK");
+  } catch (error) {
+    // Temporary errors - allow retry
+    console.error("Processing error:", error);
+    return res.status(500).send("Processing failed");
+  }
+});
+```
+
+## Monitoring Webhook Health
+
+### Dashboard Monitoring
+
+Monitor webhook delivery in your Fanfare dashboard:
+
+1. Go to Settings > Webhooks
+2. Select your endpoint
+3. View delivery history and success rates
+
+### Webhook Events
+
+You can also receive webhooks about webhook delivery status:
+
+```json
+{
+  "id": "whk_01HXYZ123456789",
+  "type": "webhook.delivery.failed",
+  "timestamp": "2024-12-01T12:00:00Z",
+  "organizationId": "org_01HXYZ123456789",
+  "data": {
+    "endpointId": "whe_01HXYZ123456789",
+    "endpointUrl": "https://your-server.com/webhooks/fanfare",
+    "eventId": "evt_01HXYZ123456789",
+    "eventType": "queue.consumer.admitted",
+    "retryCount": 8,
+    "lastError": "Connection timeout",
+    "willRetry": false
+  }
+}
+```
+
+## Disabling an Endpoint
+
+### Automatic Disabling
+
+Endpoints are automatically disabled after consecutive failures:
+
+- 100 consecutive failures over 7 days
+- Manual re-enabling required in dashboard
+
+### Manual Disabling
+
+To stop receiving webhooks temporarily:
+
+1. Dashboard: Settings > Webhooks > Disable
+2. API: Update endpoint status
+
+```bash
+curl -X PATCH https://admin.fanfare.io/api/v1/webhooks/whe_01HXYZ123456789 \
+  -H "Authorization: Bearer sk_live_xxxxxxxxxxxx" \
+  -H "Content-Type: application/json" \
+  -d '{"enabled": false}'
+```
+
+### Returning 410 Gone
+
+If your endpoint is permanently removed, return 410 to stop retries:
+
+```typescript
+app.post("/webhooks/fanfare", (req, res) => {
+  // Endpoint is being decommissioned
+  return res.status(410).send("Endpoint removed");
+});
+```
+
+## Recovering Missed Events
+
+### Event Replay
+
+Request replay of events for a time window:
+
+```bash
+curl -X POST https://admin.fanfare.io/api/v1/webhooks/whe_01HXYZ123456789/replay \
+  -H "Authorization: Bearer sk_live_xxxxxxxxxxxx" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "startTime": "2024-12-01T00:00:00Z",
+    "endTime": "2024-12-01T12:00:00Z",
+    "eventTypes": ["queue.consumer.admitted", "order.created"]
+  }'
+```
+
+### Event Listing
+
+List recent events for manual processing:
+
+```bash
+curl -X GET "https://admin.fanfare.io/api/v1/webhooks/events?startTime=2024-12-01T00:00:00Z&limit=100" \
+  -H "Authorization: Bearer sk_live_xxxxxxxxxxxx"
+```
+
+## Best Practices
+
+### 1. Implement Circuit Breakers
+
+Prevent cascade failures when your system is overloaded:
+
+```typescript
+import CircuitBreaker from "opossum";
+
+const breaker = new CircuitBreaker(processEvent, {
+  timeout: 10000,
+  errorThresholdPercentage: 50,
+  resetTimeout: 30000,
+});
+
+app.post("/webhooks/fanfare", async (req, res) => {
+  if (!verifySignature(req)) {
+    return res.status(401).send("Invalid signature");
+  }
+
+  const event = JSON.parse(req.body.toString());
+
+  try {
+    await breaker.fire(event);
+    res.status(200).send("OK");
+  } catch (error) {
+    if (breaker.opened) {
+      // Circuit is open - return 503 to trigger retry
+      return res.status(503).send("Service temporarily unavailable");
+    }
+    res.status(500).send("Processing failed");
+  }
+});
+```
+
+### 2. Log Delivery Metadata
+
+Log retry information for debugging:
+
+```typescript
+app.post("/webhooks/fanfare", (req, res) => {
+  const deliveryId = req.headers["x-fanfare-delivery-id"];
+  const retryCount = req.headers["x-fanfare-retry-count"] || "0";
+  const eventType = req.headers["x-fanfare-event-type"];
+
+  console.log(
+    JSON.stringify({
+      type: "webhook_received",
+      deliveryId,
+      retryCount: parseInt(retryCount, 10),
+      eventType,
+      timestamp: new Date().toISOString(),
+    })
+  );
+
+  // Process...
+});
+```
+
+### 3. Set Up Alerts
+
+Configure alerts for webhook failures:
+
+```typescript
+async function monitorWebhookHealth() {
+  const recentFailures = await getRecentFailures(24 * 60 * 60); // Last 24 hours
+  const failureRate = recentFailures.failed / recentFailures.total;
+
+  if (failureRate > 0.1) {
+    // More than 10% failure rate
+    await sendAlert({
+      type: "webhook_health",
+      message: `Webhook failure rate is ${(failureRate * 100).toFixed(1)}%`,
+      failures: recentFailures.failed,
+      total: recentFailures.total,
+    });
+  }
+}
+```
+
+### 4. Test Retry Handling
+
+Verify your retry handling in development:
+
+```typescript
+// Simulate retry scenario
+let requestCount = 0;
+
+app.post("/webhooks/test", (req, res) => {
+  requestCount++;
+
+  if (requestCount < 3) {
+    // Fail first two attempts
+    console.log(`Attempt ${requestCount}: Simulating failure`);
+    return res.status(500).send("Simulated failure");
+  }
+
+  // Succeed on third attempt
+  console.log(`Attempt ${requestCount}: Success`);
+  return res.status(200).send("OK");
+});
+```
+
+## Troubleshooting
+
+### Common Issues
+
+| Issue                  | Cause                         | Solution                               |
+| ---------------------- | ----------------------------- | -------------------------------------- |
+| All retries failing    | Endpoint unreachable          | Check firewall, DNS, SSL certificates  |
+| Intermittent failures  | Timeout exceeded              | Optimize handler, use async processing |
+| Duplicate processing   | No idempotency check          | Implement deduplication using event ID |
+| Events arriving late   | Previous retries queued       | Check X-Fanfare-Original-Time header   |
+| Endpoint auto-disabled | Too many consecutive failures | Fix issues, re-enable in dashboard     |
+
+### Debug Checklist
+
+1. **Verify connectivity**: Can you reach your endpoint from external networks?
+2. **Check certificates**: Is your SSL certificate valid and properly configured?
+3. **Review logs**: What status codes are you returning?
+4. **Test manually**: Can you process a test event successfully?
+5. **Check timing**: Are you responding within 30 seconds?

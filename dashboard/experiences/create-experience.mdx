@@ -1,0 +1,287 @@
+---
+title: Creating Experiences
+description: Step-by-step guide to creating new experiences in Fanfare
+---
+
+# Creating Experiences
+
+This guide walks you through the experience creation process, covering all the configuration options available for queues, draws, auctions, and appointments.
+
+## Starting the Creation Process
+
+1. Navigate to **Experiences** in the sidebar
+2. Click the **Create Experience** button
+3. Choose your experience type
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/experiences/create
+Shows: Experience creation page with type selection
+Annotations: Highlight the four type options
+Alt text: "Experience creation page showing Queue, Draw, Auction, and Appointment options"
+*/}
+
+![Create experience](./images/create-experience-start.png)
+_Caption: Select an experience type to begin configuration_
+
+## Quick Links by Type
+
+For type-specific configuration details, see:
+
+- [Queue Configuration](/dashboard/experiences/configure-queue)
+- [Draw Configuration](/dashboard/experiences/configure-lottery)
+- [Auction Configuration](/dashboard/experiences/configure-auction)
+- [Appointment Configuration](/dashboard/experiences/configure-appointment)
+
+## Common Configuration Fields
+
+All experience types share these configuration sections:
+
+### Basic Information
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/experiences/create
+Shows: Basic information section of the form
+Annotations: Label each field
+Alt text: "Basic information form fields for experience creation"
+*/}
+
+![Basic information](./images/create-basic-info.png)
+_Caption: Enter basic information about your experience_
+
+| Field               | Required | Description                                   |
+| ------------------- | -------- | --------------------------------------------- |
+| **Name**            | Yes      | Display name for the experience               |
+| **Description**     | No       | Internal description (not shown to consumers) |
+| **Experience Type** | Yes      | Queue, Draw, Auction, or Appointment          |
+
+### Product Selection
+
+Select the product that consumers will access through this experience.
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/experiences/create
+Shows: Product selector dropdown or search field
+Annotations: Show the product dropdown expanded
+Alt text: "Product selection dropdown showing available products"
+*/}
+
+![Product selection](./images/create-product-select.png)
+_Caption: Select a product from your catalog_
+
+| Field               | Required | Description                                            |
+| ------------------- | -------- | ------------------------------------------------------ |
+| **Product**         | Yes      | The product to offer                                   |
+| **Variant Options** | No       | Specific variants to include (if product has variants) |
+
+<Tip>
+Create products before experiences. Navigate to **Products** to add items to your catalog.
+</Tip>
+
+### Audience Selection
+
+Control who can access the experience by selecting an audience.
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/experiences/create
+Shows: Audience selector with dropdown options
+Annotations: Show audience dropdown
+Alt text: "Audience selection dropdown showing available audiences"
+*/}
+
+![Audience selection](./images/create-audience-select.png)
+_Caption: Select which audience can access this experience_
+
+| Field        | Required | Description                       |
+| ------------ | -------- | --------------------------------- |
+| **Audience** | Yes      | The audience that can participate |
+
+**Options:**
+
+- Select a specific audience
+- Select multiple audiences (consumers in any selected audience can participate)
+- Leave empty for public access (no restrictions)
+
+### Schedule Configuration
+
+Set when the experience starts and ends.
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/experiences/create
+Shows: Date/time pickers for start and end dates
+Annotations: Label start date, end date, and time zone
+Alt text: "Schedule configuration with date and time pickers"
+*/}
+
+![Schedule configuration](./images/create-schedule.png)
+_Caption: Configure when your experience runs_
+
+| Field          | Required | Description                                                          |
+| -------------- | -------- | -------------------------------------------------------------------- |
+| **Start Date** | Yes      | When the experience opens for entries                                |
+| **Start Time** | Yes      | Time of day the experience starts                                    |
+| **End Date**   | Varies   | When the experience closes (not required for all types)              |
+| **End Time**   | Varies   | Time of day the experience ends                                      |
+| **Time Zone**  | Yes      | Time zone for all scheduled times (defaults to organization setting) |
+
+### Inventory Settings
+
+Configure how many consumers can successfully complete the experience.
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/experiences/create
+Shows: Inventory configuration fields
+Annotations: Label quantity and limit fields
+Alt text: "Inventory settings showing quantity limits"
+*/}
+
+![Inventory settings](./images/create-inventory.png)
+_Caption: Set inventory limits for your experience_
+
+| Field                  | Required | Description                          |
+| ---------------------- | -------- | ------------------------------------ |
+| **Total Quantity**     | Varies   | Maximum successful entries/purchases |
+| **Per-Consumer Limit** | No       | Maximum entries per consumer         |
+
+## Form Progress Saving
+
+The experience creation form automatically saves your progress as you work. If you navigate away accidentally, your entered data will be restored when you return.
+
+<Info>
+Form progress is stored locally in your browser. Clearing browser data will reset your progress.
+</Info>
+
+## Validation and Errors
+
+The form validates your input as you type:
+
+- **Required fields** - Highlighted if empty when submitting
+- **Date validation** - End date must be after start date
+- **Inventory validation** - Quantities must be positive numbers
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/experiences/create
+Shows: Form with validation errors displayed
+Annotations: Point to error messages
+Alt text: "Form showing validation error messages"
+*/}
+
+![Validation errors](./images/create-validation.png)
+_Caption: Validation errors appear inline as you complete the form_
+
+## Creating the Experience
+
+Once all required fields are complete:
+
+1. Review your configuration
+2. Click **Create Experience**
+3. Wait for confirmation
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/experiences/create
+Shows: Bottom of form with Create Experience button
+Annotations: Highlight the Create button
+Alt text: "Create Experience button at the bottom of the form"
+*/}
+
+![Create button](./images/create-submit.png)
+_Caption: Click Create Experience to finish_
+
+### After Creation
+
+After successful creation:
+
+- You'll see a success notification
+- You'll be redirected to the experience detail page
+- The experience will be in **Draft** status
+
+## Canceling Creation
+
+To cancel and discard your progress:
+
+1. Click the **Cancel** button
+2. Confirm you want to discard changes
+3. You'll return to the experiences list
+
+<Warning>
+Canceling clears your saved form progress. This cannot be undone.
+</Warning>
+
+## URL Parameters
+
+You can pre-fill certain fields using URL parameters when linking to the creation page:
+
+| Parameter    | Description         | Example               |
+| ------------ | ------------------- | --------------------- |
+| `type`       | Experience type     | `?type=QUEUE`         |
+| `name`       | Experience name     | `?name=Summer%20Sale` |
+| `productId`  | Pre-select product  | `?productId=prod_123` |
+| `audienceId` | Pre-select audience | `?audienceId=aud_456` |
+
+Example URL:
+
+```
+/app/experiences/create?type=QUEUE&name=Summer%20Sale&productId=prod_123
+```
+
+This is useful for:
+
+- Creating experiences from other parts of the app
+- Building custom workflows
+- Developer integrations
+
+## Best Practices
+
+### Before Creating
+
+1. **Prepare your product** - Ensure the product exists with correct details
+2. **Set up audiences** - Create audience segments if you need restricted access
+3. **Plan your schedule** - Know your start/end times before beginning
+
+### During Configuration
+
+1. **Use descriptive names** - Include product and date for easy identification
+2. **Double-check time zones** - Verify the time zone matches your intended schedule
+3. **Review inventory limits** - Ensure quantities match your available stock
+
+### After Creation
+
+1. **Preview the experience** - Check how it appears to consumers
+2. **Test with a sample entry** - Verify the flow works correctly
+3. **Set up notifications** - Configure alerts for key events
+
+## Troubleshooting
+
+### Common Issues
+
+| Issue                   | Solution                                                  |
+| ----------------------- | --------------------------------------------------------- |
+| Can't find product      | Create the product first in Products section              |
+| Audience not appearing  | Verify the audience exists and has at least one consumer  |
+| Date picker not working | Ensure JavaScript is enabled in your browser              |
+| Form won't submit       | Check for validation errors (scroll up to see all fields) |
+
+### Getting Help
+
+If you encounter issues:
+
+1. Check the error message for specific guidance
+2. Review the documentation for the specific experience type
+3. Contact support with the error details and request ID
+
+## Next Steps
+
+After creating your experience:
+
+- [Configure Queue Settings](/dashboard/experiences/configure-queue) - For queue experiences
+- [Configure Draw Settings](/dashboard/experiences/configure-lottery) - For draw experiences
+- [Configure Auction Settings](/dashboard/experiences/configure-auction) - For auction experiences
+- [Configure Appointment Settings](/dashboard/experiences/configure-appointment) - For appointment experiences
+- [Experience Lifecycle](/dashboard/experiences/experience-lifecycle) - Publish and manage your experience

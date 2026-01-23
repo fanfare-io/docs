@@ -1,0 +1,299 @@
+---
+title: Ensuring Fair Distribution
+description: Best practices for creating fair and equitable access to your products and experiences.
+---
+
+# Ensuring Fair Distribution
+
+Fairness is critical for maintaining consumer trust during high-demand events. This guide covers strategies for equitable distribution and common pitfalls to avoid.
+
+## Why Fairness Matters
+
+Unfair distribution can lead to:
+
+- **Loss of trust**: Consumers who feel cheated won't return
+- **Negative publicity**: Social media amplifies unfair experiences
+- **Reseller dominance**: Bots and bad actors capture inventory
+- **Brand damage**: Long-term reputation harm
+
+## Distribution Type Selection
+
+Choose the right distribution type based on your fairness goals.
+
+| Type              | Fairness Model           | Best For                               |
+| ----------------- | ------------------------ | -------------------------------------- |
+| **Queue**         | First-come, first-served | Rewarding early engagement             |
+| **Draw**          | Random selection         | Equal opportunity regardless of timing |
+| **Timed Release** | Simultaneous access      | High-volume, self-serve purchases      |
+| **Auction**       | Highest value            | Price-based allocation                 |
+
+### When to Use Queues
+
+Queues work well when you want to reward:
+
+- Early awareness and preparation
+- Dedicated fans who show up first
+- Organic demand signals
+
+```typescript
+// Queue configuration example
+const queueConfig = {
+  type: "queue",
+  accessMode: "sequential",
+  batchSize: 50, // How many users get access at once
+  batchIntervalSeconds: 30, // Time between batches
+};
+```
+
+<Note>
+  Queues can disadvantage users in different time zones or with slower internet connections. Consider draws for global
+  fairness.
+</Note>
+
+### When to Use Draws
+
+Draws provide equal opportunity regardless of:
+
+- Geographic location
+- Device speed
+- Internet connection quality
+- Time zone
+
+```typescript
+// Draw configuration example
+const drawConfig = {
+  type: "draw",
+  selectionMethod: "random",
+  winnersCount: 500,
+  registrationPeriodMinutes: 60, // Give everyone time to register
+};
+```
+
+## Sequence-Based Access
+
+Use sequences to provide different access levels while maintaining fairness within each tier.
+
+### VIP/Priority Access
+
+Allow loyal customers priority access without excluding general audiences.
+
+```typescript
+// Multiple sequences with staggered timing
+const sequences = [
+  {
+    name: "VIP Members",
+    audienceId: "aud_vip_members",
+    startsAt: "2024-01-15T09:00:00Z", // 1 hour early
+    maxParticipants: 200,
+  },
+  {
+    name: "Email Subscribers",
+    audienceId: "aud_email_list",
+    startsAt: "2024-01-15T10:00:00Z", // 30 min early
+    maxParticipants: 500,
+  },
+  {
+    name: "General Access",
+    startsAt: "2024-01-15T10:30:00Z",
+    maxParticipants: 1000,
+  },
+];
+```
+
+### Fair Allocation Across Sequences
+
+Reserve inventory proportionally across access tiers.
+
+```
+Total Inventory: 1000 units
+
+VIP Members (10%):     100 units
+Email Subscribers:     200 units
+General Access:        700 units
+```
+
+## Purchase Limits
+
+Implement limits to prevent stockpiling and ensure broader access.
+
+### Per-Consumer Limits
+
+Restrict how much any single consumer can purchase.
+
+```typescript
+// Configure per-consumer limits
+const orderLimits = {
+  maxQuantityPerOrder: 2,
+  maxOrdersPerConsumer: 1,
+  enforcementScope: "experience", // or "product", "organization"
+};
+```
+
+### Enforcement Strategies
+
+| Strategy           | Description                  | Strength |
+| ------------------ | ---------------------------- | -------- |
+| Account-based      | Limit per authenticated user | Medium   |
+| Device fingerprint | Limit per device             | High     |
+| Combined           | Account + device + behavior  | Highest  |
+
+## Device Verification
+
+Device fingerprinting helps ensure one person doesn't gain unfair advantage with multiple accounts.
+
+### How It Works
+
+The SDK collects device characteristics to create a unique fingerprint:
+
+```typescript
+// Fingerprint is automatically included in SDK requests
+const client = new FanfareClient({
+  publishableKey: "pk_live_...",
+  // Fingerprinting is enabled by default
+});
+```
+
+### Privacy Considerations
+
+- Fingerprints are hashed and cannot identify individuals
+- No personal data is collected
+- Users can clear fingerprints by clearing browser data
+- Compliant with GDPR and privacy regulations
+
+## Access Codes for Fair Distribution
+
+Use access codes to control who can participate.
+
+### Unique Codes
+
+Generate unique codes for each entitled participant.
+
+```typescript
+// Each code can only be used once
+const codes = [
+  { code: "VIP-ABCD-1234", maxUses: 1 },
+  { code: "VIP-EFGH-5678", maxUses: 1 },
+];
+```
+
+### Shared Codes with Limits
+
+Allow a code to be used by a limited number of people.
+
+```typescript
+// Shared code with limit
+const promotionCode = {
+  code: "FLASH-SALE-2024",
+  maxUses: 100, // First 100 users only
+  expiresAt: "2024-01-15T12:00:00Z",
+};
+```
+
+## Timing Fairness
+
+### Synchronized Start Times
+
+Ensure all users experience the same start time.
+
+```typescript
+// Server-synchronized countdown
+client.on("experience:countdown", ({ serverTime, startsAt }) => {
+  const remaining = startsAt - serverTime;
+  updateCountdown(remaining);
+});
+```
+
+### Grace Periods
+
+Allow a window for late arrivals to still participate fairly.
+
+```typescript
+const experienceConfig = {
+  startsAt: "2024-01-15T10:00:00Z",
+  lateEntryGracePeriodSeconds: 60, // Allow entry up to 1 min late
+};
+```
+
+## Monitoring Fairness
+
+### Key Metrics
+
+Track these metrics to ensure fair distribution:
+
+| Metric                  | Target   | Concern Threshold        |
+| ----------------------- | -------- | ------------------------ |
+| Unique participants     | High     | < 80% unique devices     |
+| Geographic distribution | Broad    | Single region > 80%      |
+| Entry time spread       | Even     | > 50% in first second    |
+| Purchase completion     | Balanced | Wide variance by segment |
+
+### Detecting Anomalies
+
+Watch for patterns that indicate unfair advantage:
+
+- Many accounts from same IP address
+- Identical device fingerprints across accounts
+- Unusually fast form completion
+- Automated request patterns
+
+## Common Pitfalls
+
+<AccordionGroup>
+  <Accordion title="Starting without announcement">
+    Always give consumers advance notice of when an experience starts. Surprise launches benefit only those who happen to be watching.
+  </Accordion>
+
+<Accordion title="Too-short registration windows">
+  For draws, allow enough time for all interested parties to register. Consider time zones and typical user schedules.
+</Accordion>
+
+<Accordion title="Unlimited quantities">
+  Without purchase limits, determined resellers can sweep inventory. Always set reasonable per-person limits.
+</Accordion>
+
+<Accordion title="No device verification">
+  Without fingerprinting, a single person can create multiple accounts to improve their chances unfairly.
+</Accordion>
+
+  <Accordion title="Ignoring geographic fairness">
+    If your audience is global, queue-based launches at a single time disadvantage some regions. Consider regional releases or draws.
+  </Accordion>
+</AccordionGroup>
+
+## Communicating Fairness
+
+Be transparent about your distribution approach.
+
+### Pre-Launch Communication
+
+```markdown
+## How This Launch Works
+
+- **Registration opens**: January 14, 10:00 AM EST
+- **Draw held**: January 15, 10:00 AM EST
+- **Winners notified**: January 15, 10:15 AM EST
+
+Everyone who registers has an equal chance of being selected.
+Winners will have 30 minutes to complete their purchase.
+
+**Limits**: 1 item per person
+```
+
+### During the Experience
+
+```tsx
+function FairnessNotice() {
+  return (
+    <div className="fairness-notice">
+      <h4>Fair Access</h4>
+      <p>This experience uses random selection to give everyone an equal chance, regardless of when you registered.</p>
+    </div>
+  );
+}
+```
+
+## Next Steps
+
+- [Bot Protection](/resources/security/bot-protection) - Prevent automated abuse
+- [Testing Strategies](/resources/best-practices/testing) - Validate your fairness measures
+- [UX Patterns](/resources/best-practices/ux-patterns) - Communicate fairness to users

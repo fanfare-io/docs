@@ -1,0 +1,242 @@
+---
+title: FanfareProvider
+description: SolidJS context provider for the Fanfare SDK
+---
+
+# FanfareProvider
+
+The `FanfareProvider` component provides the Fanfare SDK instance to all child components in your SolidJS application.
+
+## Signature
+
+```typescript
+interface FanfareProviderProps {
+  sdk: FanfareSDK;
+  locale?: Locale;
+  translations?: PartialTranslationMessages;
+  children: JSX.Element;
+}
+
+function FanfareProvider(props: FanfareProviderProps): JSX.Element;
+```
+
+## Props
+
+| Prop           | Type                         | Required | Description                  |
+| -------------- | ---------------------------- | -------- | ---------------------------- |
+| `sdk`          | `FanfareSDK`                 | Yes      | Initialized SDK instance     |
+| `locale`       | `Locale`                     | No       | Language locale              |
+| `translations` | `PartialTranslationMessages` | No       | Custom translation overrides |
+| `children`     | `JSX.Element`                | Yes      | Child components             |
+
+## Basic Usage
+
+```tsx
+import { Fanfare } from "@waitify-io/fanfare-sdk-core";
+import { FanfareProvider } from "@waitify-io/fanfare-sdk-solid";
+import { createResource, Show } from "solid-js";
+
+function App() {
+  const [sdk] = createResource(async () => {
+    return Fanfare.init({
+      organizationId: "org_xxx",
+      publishableKey: "pk_live_xxx",
+    });
+  });
+
+  return (
+    <Show when={sdk()} fallback={<LoadingScreen />}>
+      <FanfareProvider sdk={sdk()!}>
+        <MainApp />
+      </FanfareProvider>
+    </Show>
+  );
+}
+```
+
+## With Locale
+
+```tsx
+import { FanfareProvider } from "@waitify-io/fanfare-sdk-solid";
+
+function App() {
+  const [sdk] = createResource(() => Fanfare.init({ ... }));
+  const [locale, setLocale] = createSignal<Locale>("en");
+
+  return (
+    <Show when={sdk()}>
+      <FanfareProvider sdk={sdk()!} locale={locale()}>
+        <LocaleSelector onChange={setLocale} />
+        <MainApp />
+      </FanfareProvider>
+    </Show>
+  );
+}
+```
+
+## With Custom Translations
+
+```tsx
+import { FanfareProvider } from "@waitify-io/fanfare-sdk-solid";
+
+const customTranslations = {
+  "queue.enter": "Get in Line",
+  "queue.leave": "Exit Line",
+  "queue.position": "Your spot: {{position}}",
+  "admitted.title": "You Made It!",
+  "admitted.cta": "Shop Now",
+};
+
+function App() {
+  const [sdk] = createResource(() => Fanfare.init({ ... }));
+
+  return (
+    <Show when={sdk()}>
+      <FanfareProvider
+        sdk={sdk()!}
+        locale="en"
+        translations={customTranslations}
+      >
+        <MainApp />
+      </FanfareProvider>
+    </Show>
+  );
+}
+```
+
+## useFanfare Hook
+
+Access the SDK instance from any child component:
+
+```tsx
+import { useFanfare } from "@waitify-io/fanfare-sdk-solid";
+
+function MyComponent() {
+  const sdk = useFanfare();
+
+  const handleAction = async () => {
+    // Direct SDK access
+    const session = await sdk.auth.guest();
+    console.log("Session:", session);
+  };
+
+  return <button onClick={handleAction}>Do Something</button>;
+}
+```
+
+## Error Handling
+
+The `useFanfare` hook throws if used outside the provider:
+
+```tsx
+function MyComponent() {
+  try {
+    const sdk = useFanfare();
+    return <div>SDK available</div>;
+  } catch (error) {
+    // "useFanfare must be used within FanfareProvider"
+    return <div>SDK not available</div>;
+  }
+}
+```
+
+## With Suspense
+
+```tsx
+import { Suspense, createResource } from "solid-js";
+import { FanfareProvider } from "@waitify-io/fanfare-sdk-solid";
+
+function App() {
+  return (
+    <Suspense fallback={<LoadingScreen />}>
+      <FanfareApp />
+    </Suspense>
+  );
+}
+
+function FanfareApp() {
+  const [sdk] = createResource(async () => {
+    return Fanfare.init({
+      organizationId: "org_xxx",
+      publishableKey: "pk_live_xxx",
+    });
+  });
+
+  // Suspense handles the loading state
+  return (
+    <FanfareProvider sdk={sdk()!}>
+      <MainApp />
+    </FanfareProvider>
+  );
+}
+```
+
+## Multiple Providers
+
+Nest providers for different configurations (not typically needed):
+
+```tsx
+function App() {
+  const [mainSdk] = createResource(() => Fanfare.init({ ... }));
+  const [demoSdk] = createResource(() => Fanfare.init({
+    organizationId: "org_demo",
+    publishableKey: "pk_live_demo",
+  }));
+
+  return (
+    <Show when={mainSdk() && demoSdk()}>
+      <FanfareProvider sdk={mainSdk()!}>
+        <MainSection />
+
+        {/* Demo section with different org */}
+        <FanfareProvider sdk={demoSdk()!}>
+          <DemoSection />
+        </FanfareProvider>
+      </FanfareProvider>
+    </Show>
+  );
+}
+```
+
+## Provider Internals
+
+The provider sets up:
+
+1. **SDK Context** - Makes SDK available via `useFanfare`
+2. **I18n Context** - Provides translations via `useTranslations`
+
+```tsx
+// Simplified internal structure
+function FanfareProvider(props: FanfareProviderProps) {
+  return (
+    <FanfareContext.Provider value={props.sdk}>
+      <I18nProvider locale={props.locale} translations={props.translations}>
+        {props.children}
+      </I18nProvider>
+    </FanfareContext.Provider>
+  );
+}
+```
+
+## TypeScript
+
+```typescript
+import { FanfareProvider, useFanfare } from "@waitify-io/fanfare-sdk-solid";
+import type { FanfareSDK } from "@waitify-io/fanfare-sdk-core";
+import type { Locale, PartialTranslationMessages } from "@waitify-io/fanfare-sdk-i18n";
+
+// Props interface
+interface FanfareProviderProps {
+  sdk: FanfareSDK;
+  locale?: Locale;
+  translations?: PartialTranslationMessages;
+  children: JSX.Element;
+}
+```
+
+## Related
+
+- [Overview](/sdk/solid/overview) - Solid SDK overview
+- [Components](/sdk/solid/components) - Widget components
+- [Web Components](/sdk/solid/web-components) - Web component registration
+- [Core SDK Initialization](/sdk/core/initialization) - SDK initialization

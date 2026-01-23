@@ -1,0 +1,321 @@
+---
+title: "Custom Domains"
+description: "Host landing pages on your own domain"
+---
+
+{/* TODO: MISSING_FUNCTIONALITY
+Feature: Custom domain configuration for landing pages
+Expected behavior: CNAME setup, SSL provisioning, domain verification
+Current state: Not implemented
+Blocking: true - Landing pages use fanfare.io subdomain only
+*/}
+
+<Note>
+**Coming Soon**
+
+Custom domain support is planned for a future release. Currently, landing pages are hosted on Fanfare subdomains.
+
+</Note>
+
+## Default Domain Structure
+
+Landing pages are hosted on Fanfare infrastructure:
+
+```
+https://[org-slug].fanfare.io/[experience-slug]/[page-slug]
+```
+
+Example:
+
+```
+https://acme.fanfare.io/summer-drop/register
+```
+
+### URL Components
+
+| Component       | Description                   | Example       |
+| --------------- | ----------------------------- | ------------- |
+| org-slug        | Your organization's subdomain | `acme`        |
+| experience-slug | Experience identifier         | `summer-drop` |
+| page-slug       | Landing page identifier       | `register`    |
+
+## Custom Domains (Coming Soon)
+
+{/* TODO: MISSING_FUNCTIONALITY
+Feature: Full custom domain support
+Expected behavior: Host landing pages on your own domain with SSL
+Current state: Planned feature
+Blocking: true
+*/}
+
+When custom domains launch, you will be able to:
+
+### Host on Your Domain
+
+```
+https://drop.your-brand.com
+https://your-brand.com/drops/summer
+```
+
+### Subdomain Configuration
+
+Use a dedicated subdomain:
+
+1. Choose subdomain (e.g., `drop.your-brand.com`)
+2. Add CNAME record pointing to Fanfare
+3. Verify ownership
+4. SSL automatically provisioned
+
+```
+Type: CNAME
+Host: drop
+Value: custom.fanfare.io
+TTL: 3600
+```
+
+### Apex Domain (Root)
+
+For root domains, use A records:
+
+```
+Type: A
+Host: @
+Value: [Fanfare IP addresses]
+TTL: 3600
+```
+
+<Warning>
+  Apex domain configuration requires DNS provider support for ALIAS/ANAME records or static IP pointing.
+</Warning>
+
+## SSL/TLS Configuration
+
+All landing pages are served over HTTPS:
+
+### Default (Fanfare Subdomains)
+
+- SSL included automatically
+- Managed by Fanfare
+- Auto-renewing certificates
+
+### Custom Domains (Coming Soon)
+
+- Automatic SSL provisioning via Let's Encrypt
+- Certificate management handled by Fanfare
+- No manual certificate uploads required
+
+## Domain Verification
+
+When adding a custom domain:
+
+### Step 1: Add Domain
+
+Enter your custom domain in settings:
+
+```
+Domain: drop.your-brand.com
+```
+
+### Step 2: DNS Configuration
+
+Add required DNS records:
+
+```
+# Verification record
+Type: TXT
+Host: _fanfare-verification
+Value: fanfare-verify=abc123xyz
+
+# CNAME record
+Type: CNAME
+Host: drop
+Value: custom.fanfare.io
+```
+
+### Step 3: Verification
+
+Fanfare verifies:
+
+1. TXT record present (ownership)
+2. CNAME points correctly (routing)
+3. SSL can be provisioned
+
+### Step 4: Activation
+
+Once verified:
+
+- Domain becomes active
+- SSL certificate issued
+- Traffic routes to your landing page
+
+## Multiple Domains
+
+{/* TODO: MISSING_FUNCTIONALITY
+Feature: Multiple custom domains per organization
+Expected behavior: Map different domains to different experiences
+Current state: Planned feature
+Blocking: true
+*/}
+
+Support for multiple custom domains per organization:
+
+| Domain             | Experience         |
+| ------------------ | ------------------ |
+| `summer.brand.com` | Summer Drop 2024   |
+| `vip.brand.com`    | VIP Access Portal  |
+| `events.brand.com` | Event Registration |
+
+## URL Redirects
+
+### Planned Redirect Features
+
+| Type             | Description                    |
+| ---------------- | ------------------------------ |
+| Slug change      | Redirect old slug to new       |
+| Domain migration | Old domain to new domain       |
+| Experience end   | Redirect after experience ends |
+| Custom rules     | Pattern-based redirects        |
+
+### Redirect Configuration
+
+```typescript
+{
+  redirects: [
+    {
+      from: "/old-slug",
+      to: "/new-slug",
+      type: "permanent", // 301
+    },
+    {
+      from: "/summer-2023",
+      to: "https://archive.brand.com/summer-2023",
+      type: "permanent",
+    },
+  ];
+}
+```
+
+## Current Workarounds
+
+### Using Your Own Domain with Proxy
+
+Until custom domains are supported, use a reverse proxy:
+
+#### Cloudflare Workers
+
+```javascript
+export default {
+  async fetch(request) {
+    const url = new URL(request.url);
+
+    // Rewrite to Fanfare
+    url.hostname = "your-org.fanfare.io";
+
+    return fetch(new Request(url, request));
+  },
+};
+```
+
+#### Nginx Proxy
+
+```nginx
+server {
+    listen 443 ssl;
+    server_name drop.your-brand.com;
+
+    location / {
+        proxy_pass https://your-org.fanfare.io;
+        proxy_set_header Host your-org.fanfare.io;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+}
+```
+
+<Warning>Proxy setups require careful configuration to avoid breaking cookies, sessions, and security headers.</Warning>
+
+### URL Shorteners
+
+For marketing, use shortened URLs:
+
+```
+bit.ly/your-drop → https://acme.fanfare.io/summer-drop/register
+```
+
+### QR Codes
+
+Generate QR codes pointing to Fanfare URLs:
+
+- Works with default domains
+- Update destination without reprinting
+
+## DNS Provider Guides
+
+### Cloudflare
+
+1. Go to DNS settings
+2. Add CNAME record
+3. Enable "Proxy" for additional features (optional)
+
+### GoDaddy
+
+1. Go to DNS Management
+2. Add new CNAME record
+3. Save changes (propagation: 24-48h)
+
+### Namecheap
+
+1. Advanced DNS settings
+2. Add new CNAME record
+3. TTL: Automatic
+
+### AWS Route 53
+
+1. Hosted zone for your domain
+2. Create record set
+3. Type: CNAME
+4. Value: custom.fanfare.io
+
+## Troubleshooting
+
+### DNS Not Propagating
+
+| Issue                  | Solution                            |
+| ---------------------- | ----------------------------------- |
+| Still showing old site | Wait up to 48 hours for propagation |
+| Intermittent           | Lower TTL before making changes     |
+| Wrong destination      | Verify CNAME value is correct       |
+
+### SSL Errors
+
+| Error                | Cause                        | Solution                                  |
+| -------------------- | ---------------------------- | ----------------------------------------- |
+| Not secure           | SSL not yet provisioned      | Wait 10-30 minutes after DNS verification |
+| Certificate mismatch | Wrong domain in certificate  | Verify domain configuration               |
+| Mixed content        | HTTP resources on HTTPS page | Update all resource URLs to HTTPS         |
+
+### Verification Failing
+
+| Issue                | Solution                                      |
+| -------------------- | --------------------------------------------- |
+| TXT record not found | Ensure record host is `_fanfare-verification` |
+| CNAME not found      | Verify CNAME points to `custom.fanfare.io`    |
+| Timeout              | Check DNS propagation status                  |
+
+Use [DNS Checker](https://dnschecker.org) to verify propagation globally.
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="SEO" icon="magnifying-glass" href="/landing-pages/publishing/seo">
+    Optimize for search engines
+  </Card>
+  <Card title="Analytics" icon="chart-line" href="/landing-pages/publishing/analytics">
+    Track page performance
+  </Card>
+  <Card title="Preview" icon="eye" href="/landing-pages/publishing/preview">
+    Test before publishing
+  </Card>
+  <Card title="Branding" icon="paintbrush" href="/landing-pages/customization/branding">
+    Customize your page
+  </Card>
+</CardGroup>

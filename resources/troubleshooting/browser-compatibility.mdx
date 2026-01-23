@@ -1,0 +1,410 @@
+---
+title: Browser Compatibility
+description: Browser support information and compatibility troubleshooting.
+---
+
+# Browser Compatibility
+
+This guide covers browser support, known compatibility issues, and workarounds.
+
+## Supported Browsers
+
+### Desktop Browsers
+
+| Browser | Minimum Version | Notes                  |
+| ------- | --------------- | ---------------------- |
+| Chrome  | 80+             | Recommended            |
+| Firefox | 75+             | Full support           |
+| Safari  | 13.1+           | See Safari notes below |
+| Edge    | 80+             | Chromium-based         |
+
+### Mobile Browsers
+
+| Browser           | Minimum Version | Notes                  |
+| ----------------- | --------------- | ---------------------- |
+| Chrome (Android)  | 80+             | Recommended            |
+| Safari (iOS)      | 13.4+           | See Safari notes below |
+| Samsung Internet  | 12+             | Full support           |
+| Firefox (Android) | 75+             | Full support           |
+
+### Not Supported
+
+- Internet Explorer (all versions)
+- Opera Mini
+- UC Browser
+- Older browser versions
+
+## Required Browser Features
+
+The Fanfare SDK requires these browser features:
+
+| Feature     | Usage               | Fallback             |
+| ----------- | ------------------- | -------------------- |
+| Fetch API   | API requests        | Polyfill available   |
+| Promises    | Async operations    | Polyfill available   |
+| ES2020+     | Modern JavaScript   | Transpilation        |
+| Web Storage | Session persistence | Graceful degradation |
+| WebSocket   | Real-time updates   | Polling fallback     |
+
+## Safari-Specific Issues
+
+### Intelligent Tracking Prevention (ITP)
+
+Safari's ITP can affect cookie and storage behavior.
+
+**Symptoms**:
+
+- Sessions not persisting
+- Unexpected logouts
+- Cross-site tracking issues
+
+**Solutions**:
+
+1. **Use first-party cookies**
+
+   ```typescript
+   // SDK automatically uses first-party storage when possible
+   const client = new FanfareClient({
+     publishableKey: "pk_live_...",
+     storage: "localStorage", // or "cookie"
+   });
+   ```
+
+2. **Prompt for storage access**
+   ```typescript
+   // Request storage access if needed
+   if (document.hasStorageAccess) {
+     const hasAccess = await document.hasStorageAccess();
+     if (!hasAccess) {
+       await document.requestStorageAccess();
+     }
+   }
+   ```
+
+### Private Browsing Mode
+
+In Safari private browsing, localStorage and sessionStorage may be unavailable.
+
+**Detection and handling**:
+
+```typescript
+function isStorageAvailable(): boolean {
+  try {
+    const test = "__storage_test__";
+    localStorage.setItem(test, test);
+    localStorage.removeItem(test);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+if (!isStorageAvailable()) {
+  // Use in-memory storage fallback
+  showWarning("Some features may not work in private browsing mode");
+}
+```
+
+### WebSocket Limitations
+
+Safari has stricter WebSocket handling.
+
+**Symptoms**:
+
+- Connection drops after backgrounding
+- Reconnection issues
+
+**Solution**: The SDK handles this automatically, but you can configure behavior:
+
+```typescript
+const client = new FanfareClient({
+  publishableKey: "pk_live_...",
+  realtime: {
+    reconnectOnVisible: true, // Reconnect when tab becomes visible
+    heartbeatInterval: 30000, // Keep connection alive
+  },
+});
+```
+
+## Mobile-Specific Issues
+
+### Background Tab Throttling
+
+Browsers throttle background tabs to save battery.
+
+**Impact**:
+
+- Timers may be delayed
+- Real-time updates may pause
+- Position updates may lag
+
+**Handling**:
+
+```typescript
+// Listen for visibility changes
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "visible") {
+    // Refresh state when returning to tab
+    client.refresh();
+  }
+});
+```
+
+### iOS Safari Touch Handling
+
+iOS Safari has unique touch event handling.
+
+**300ms tap delay workaround**:
+
+```html
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+```
+
+```css
+/* Prevent zoom on double-tap */
+button {
+  touch-action: manipulation;
+}
+```
+
+### Keyboard and Viewport
+
+Mobile keyboard can cause layout issues.
+
+**Solution**:
+
+```css
+/* Use visual viewport */
+.fixed-bottom {
+  position: fixed;
+  bottom: env(safe-area-inset-bottom);
+}
+```
+
+```typescript
+// Handle viewport changes
+if (window.visualViewport) {
+  window.visualViewport.addEventListener("resize", () => {
+    document.documentElement.style.setProperty("--viewport-height", `${window.visualViewport.height}px`);
+  });
+}
+```
+
+## Feature Detection
+
+### Recommended Approach
+
+Use feature detection rather than browser detection.
+
+```typescript
+function checkBrowserSupport(): { supported: boolean; issues: string[] } {
+  const issues: string[] = [];
+
+  // Check Fetch API
+  if (!window.fetch) {
+    issues.push("Fetch API not supported");
+  }
+
+  // Check Promises
+  if (!window.Promise) {
+    issues.push("Promises not supported");
+  }
+
+  // Check Web Storage
+  try {
+    localStorage.setItem("test", "test");
+    localStorage.removeItem("test");
+  } catch {
+    issues.push("Local storage not available");
+  }
+
+  // Check WebSocket
+  if (!window.WebSocket) {
+    issues.push("WebSocket not supported");
+  }
+
+  return {
+    supported: issues.length === 0,
+    issues,
+  };
+}
+
+// Usage
+const { supported, issues } = checkBrowserSupport();
+if (!supported) {
+  showBrowserUpgradeMessage(issues);
+}
+```
+
+### Show Upgrade Message
+
+```tsx
+function BrowserUpgradeMessage({ issues }: { issues: string[] }) {
+  return (
+    <div className="browser-upgrade">
+      <h2>Please upgrade your browser</h2>
+      <p>
+        Your browser doesn't support some features needed for this experience. Please upgrade to a modern browser like
+        Chrome, Firefox, or Safari.
+      </p>
+      <ul>
+        {issues.map((issue) => (
+          <li key={issue}>{issue}</li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+```
+
+## Polyfills
+
+### Adding Polyfills
+
+For older browsers, add polyfills:
+
+```typescript
+// polyfills.ts
+import "core-js/stable";
+import "regenerator-runtime/runtime";
+
+// Or use a polyfill service
+// <script src="https://polyfill.io/v3/polyfill.min.js?features=fetch,Promise,Array.from"></script>
+```
+
+### Conditional Loading
+
+Load polyfills only when needed:
+
+```html
+<script>
+  if (!window.fetch) {
+    document.write('<script src="/polyfills/fetch.js"><\/script>');
+  }
+</script>
+```
+
+## Common Issues by Browser
+
+### Chrome
+
+**Issue**: Extensions blocking requests
+
+**Solution**: Test in incognito mode or disable extensions
+
+```typescript
+// Detect if request was blocked
+fetch(url).catch((error) => {
+  if (error.message.includes("blocked")) {
+    showMessage("Browser extension may be blocking requests");
+  }
+});
+```
+
+### Firefox
+
+**Issue**: Enhanced Tracking Protection
+
+**Solution**: Ensure your domain is not on tracking lists
+
+**Issue**: Container tabs isolation
+
+**Solution**: Sessions may not share between containers by design
+
+### Safari
+
+**Issue**: Aggressive caching
+
+**Solution**: Add cache-busting headers
+
+```typescript
+fetch(url, {
+  headers: {
+    "Cache-Control": "no-cache",
+  },
+});
+```
+
+### Edge (Legacy)
+
+**Issue**: Not supported
+
+**Solution**: Redirect to modern Edge or Chrome
+
+```typescript
+// Detect legacy Edge
+const isLegacyEdge = navigator.userAgent.includes("Edge/");
+if (isLegacyEdge) {
+  showUpgradeMessage();
+}
+```
+
+## Testing Across Browsers
+
+### Recommended Testing Matrix
+
+| Priority | Browsers                                        |
+| -------- | ----------------------------------------------- |
+| Critical | Chrome (latest), Safari (latest), iOS Safari    |
+| High     | Firefox (latest), Edge (latest), Chrome Android |
+| Medium   | Chrome (-1), Safari (-1), Samsung Internet      |
+
+### Testing Tools
+
+- **BrowserStack**: Cross-browser testing
+- **Sauce Labs**: Automated browser testing
+- **Chrome DevTools**: Device emulation
+- **Safari Technology Preview**: Test upcoming Safari features
+
+### Mobile Testing
+
+```typescript
+// Detect mobile for testing
+const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+// Or use media query
+const isMobile = window.matchMedia("(max-width: 768px)").matches;
+```
+
+## Performance Considerations
+
+### Browser-Specific Optimizations
+
+```typescript
+// Safari: Prefer smaller bundle chunks
+if (isSafari) {
+  // Safari has stricter memory limits
+}
+
+// Mobile: Reduce animation complexity
+if (isMobile) {
+  // Use simpler animations
+  document.documentElement.classList.add("reduced-motion");
+}
+```
+
+### Memory Management
+
+```typescript
+// Clean up properly to avoid memory leaks
+useEffect(() => {
+  const subscription = client.subscribe(handler);
+
+  return () => {
+    subscription.unsubscribe();
+  };
+}, []);
+```
+
+## Getting Help
+
+If you encounter browser-specific issues:
+
+1. **Check browser console** for errors
+2. **Test in incognito/private mode** to rule out extensions
+3. **Note exact browser version** when reporting issues
+4. **Provide reproduction steps** if possible
+
+<Card title="Contact Support" icon="headset" href="/resources/support/contact">
+  Report browser-specific issues to our support team
+</Card>

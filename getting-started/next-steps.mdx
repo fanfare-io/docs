@@ -1,0 +1,273 @@
+---
+title: Next Steps
+description: Where to go after completing the Fanfare getting started guide.
+---
+
+# Next Steps
+
+Congratulations on completing the Getting Started guide. You now have a working Fanfare integration. Here is where to go from here to make the most of the platform.
+
+## Explore by Use Case
+
+### Building a Queue Experience
+
+If you are implementing a virtual waiting room for high-demand products:
+
+- [Queue Concepts](/concepts/queues) - Understand queue mechanics and admission strategies
+- [Queue Widget Customization](/components/queue-widget) - Customize the queue UI
+- [Queue Events](/events/queue) - Handle queue position changes and admissions
+- [Queue Best Practices](/guides/queue-best-practices) - Optimize conversion rates
+
+{/* TODO: MISSING_FUNCTIONALITY
+Feature: Queue concepts documentation
+Expected behavior: Detailed documentation about queue mechanics
+Current state: Documentation section not yet created
+*/}
+
+### Building a Draw Experience
+
+For random allocation (raffles, limited drops):
+
+- [Draw Concepts](/concepts/draws) - How draws work, selection algorithms
+- [Draw Widget Customization](/components/draw-widget) - Customize the draw UI
+- [Draw Events](/events/draw) - Handle entry and result notifications
+- [Draw Best Practices](/guides/draw-best-practices) - Maximize participation
+
+### Building an Auction Experience
+
+For price-based allocation:
+
+- [Auction Concepts](/concepts/auctions) - Auction types and bidding mechanics
+- [Auction Widget Customization](/components/auction-widget) - Customize the auction UI
+- [Auction Events](/events/auction) - Handle bids and auction completion
+- [Auto-rebid Configuration](/guides/auto-rebid) - Set up automatic bidding
+
+### Building a Timed Release
+
+For scheduled product drops:
+
+- [Timed Release Concepts](/concepts/timed-releases) - How timed releases work
+- [Countdown Components](/components/countdown) - Build countdown UIs
+- [Timed Release Events](/events/timed-release) - Handle release timing
+
+## SDK Deep Dives
+
+### React SDK
+
+Detailed documentation for React developers:
+
+- [Provider API](/sdk/react/provider) - All provider configuration options
+- [Hooks Reference](/sdk/react/hooks) - Complete hooks documentation
+  - `useExperienceJourney` - Journey state management
+  - `useQueue` - Direct queue operations
+  - `useDraw` - Direct draw operations
+  - `useAuction` - Direct auction operations
+  - `useWaitlist` - Waitlist management
+  - `useTimedRelease` - Timed release operations
+  - `useFanfareAuth` - Authentication methods
+- [Components Reference](/sdk/react/components) - Pre-built components
+- [Theming](/sdk/react/theming) - Customize widget appearance
+
+### SolidJS SDK
+
+For SolidJS developers:
+
+- [Provider Setup](/sdk/solid/provider) - SolidJS provider configuration
+- [Primitives Reference](/sdk/solid/primitives) - SolidJS-specific hooks
+- [Web Components](/sdk/solid/web-components) - Using Fanfare as web components
+- [Theming](/sdk/solid/theming) - Style customization for Solid
+
+### Core SDK
+
+Framework-agnostic documentation:
+
+- [Initialization](/sdk/core/init) - SDK initialization options
+- [Authentication](/sdk/core/auth) - Session management and auth flows
+- [State Management](/sdk/core/state) - Understanding SDK state
+- [Events](/sdk/core/events) - Complete events reference
+- [Error Handling](/sdk/core/errors) - Error types and recovery
+- [Multi-tab Sync](/sdk/core/sync) - Cross-tab synchronization
+
+## Common Patterns
+
+### Authentication Integration
+
+Connect Fanfare with your existing auth system:
+
+- [Guest to Authenticated Flow](/guides/auth-upgrade) - Upgrade guest sessions
+- [External Identity Exchange](/guides/external-auth) - Use your auth provider
+- [OTP Authentication](/guides/otp-auth) - Email and phone verification
+- [Session Management](/guides/sessions) - Handle session lifecycle
+
+### Access Control
+
+Control who can access your experiences:
+
+- [Sequence Routing](/guides/sequences) - Route users to different experiences
+- [Access Codes](/guides/access-codes) - Implement VIP or invite-only access
+- [Audience Targeting](/guides/audiences) - Target specific user segments
+
+### UI Customization
+
+Make Fanfare match your brand:
+
+- [Theming Guide](/guides/theming) - Colors, fonts, and spacing
+- [Custom Components](/guides/custom-components) - Build your own UI
+- [Internationalization](/guides/i18n) - Multi-language support
+- [Accessibility](/guides/accessibility) - A11y best practices
+
+### Backend Integration
+
+Server-side implementation:
+
+- [Webhook Reference](/api/webhooks) - All webhook events and payloads
+- [Admission Validation](/api/admissions) - Validate admission tokens
+- [API Reference](/api/reference) - Complete REST API documentation
+
+## Advanced Topics
+
+### Performance
+
+Optimize your integration:
+
+- [Bundle Optimization](/advanced/bundle-size) - Minimize SDK footprint
+- [Lazy Loading](/advanced/lazy-loading) - Load SDK on demand
+- [Caching Strategies](/advanced/caching) - Optimize API calls
+
+### Reliability
+
+Build robust integrations:
+
+- [Error Recovery](/advanced/error-handling) - Handle failures gracefully
+- [Offline Support](/advanced/offline) - Handle network interruptions
+- [Retry Strategies](/advanced/retries) - Configure retry behavior
+
+### Analytics
+
+Track and measure:
+
+- [Beacon Events](/advanced/beacon) - Client-side analytics
+- [Conversion Tracking](/advanced/conversions) - Measure success rates
+- [Custom Events](/advanced/custom-events) - Track custom metrics
+
+## Platform Resources
+
+### Dashboard
+
+- [Experience Management](/dashboard/experiences) - Create and manage experiences
+- [Consumer Management](/dashboard/consumers) - View and manage consumers
+- [Analytics Dashboard](/dashboard/analytics) - View metrics and reports
+- [Settings](/dashboard/settings) - Organization configuration
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page/Component: Fanfare Dashboard - Overview
+Shows: The main dashboard showing active experiences and key metrics
+Alt text: "Fanfare dashboard overview with active experiences and metrics"
+*/}
+
+### API
+
+- [REST API Reference](/api/reference) - Complete API documentation
+- [API Authentication](/api/authentication) - API key management
+- [Rate Limits](/api/rate-limits) - Understanding rate limits
+- [API Versioning](/api/versioning) - API version policy
+
+## Community and Support
+
+### Get Help
+
+- [Troubleshooting Guide](/troubleshooting) - Common issues and solutions
+- [FAQ](/faq) - Frequently asked questions
+- [Support Portal](https://support.fanfare.io) - Contact support
+- [Status Page](https://status.fanfare.io) - API status and incidents
+
+### Stay Updated
+
+- [Changelog](/changelog) - SDK and API updates
+- [Migration Guides](/migrations) - Upgrade between versions
+- [Blog](https://fanfare.io/blog) - Product updates and best practices
+
+## Quick Reference
+
+### Package Names
+
+| Package  | npm              | Description                |
+| -------- | ---------------- | -------------------------- |
+| Core SDK | `@fanfare/sdk`   | Framework-agnostic core    |
+| React    | `@fanfare/react` | React hooks and components |
+| SolidJS  | `@fanfare/solid` | SolidJS primitives         |
+
+### Key Hooks
+
+```tsx
+// Journey management (recommended)
+const { status, journey, start } = useExperienceJourney(experienceId);
+
+// Direct distribution access
+const { enter, leave, position } = useQueue(queueId);
+const { enter, withdraw, isWinner } = useDraw(drawId);
+const { placeBid, currentBid, isWinning } = useAuction(auctionId);
+
+// Authentication
+const { session, login, logout } = useFanfareAuth();
+```
+
+### Common Events
+
+```tsx
+// Listen for SDK events
+fanfare.on("queue:admitted", (data) => {
+  /* ... */
+});
+fanfare.on("queue:position-changed", (data) => {
+  /* ... */
+});
+fanfare.on("draw:won", (data) => {
+  /* ... */
+});
+fanfare.on("draw:lost", (data) => {
+  /* ... */
+});
+fanfare.on("auction:outbid", (data) => {
+  /* ... */
+});
+fanfare.on("auction:won", (data) => {
+  /* ... */
+});
+```
+
+### Environment URLs
+
+| Environment | API URL                          |
+| ----------- | -------------------------------- |
+| Production  | `https://api.fanfare.io`         |
+| Staging     | `https://api-staging.fanfare.io` |
+| Development | `http://localhost:4802`          |
+
+## Example Projects
+
+Explore complete example implementations:
+
+{/* TODO: MISSING_FUNCTIONALITY
+Feature: Example project repositories
+Expected behavior: Links to example repositories demonstrating common patterns
+Current state: Example repositories not yet created
+*/}
+
+<Callout type="info">Example projects are coming soon. Check the [changelog](/changelog) for updates.</Callout>
+
+- **Next.js E-commerce** - Queue integration for product launches
+- **Remix Sneaker Drop** - Draw-based allocation for limited releases
+- **Astro Auction Site** - Live auction integration
+- **SvelteKit + Solid** - Web components integration
+
+## Feedback
+
+We are constantly improving Fanfare. Let us know how we can help:
+
+- [Feature Requests](https://feedback.fanfare.io)
+- [Bug Reports](https://github.com/fanfare-io/sdk/issues)
+- [Documentation Feedback](mailto:docs@fanfare.io)
+
+Thank you for choosing Fanfare!

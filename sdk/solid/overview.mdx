@@ -1,0 +1,175 @@
+---
+title: Solid SDK Overview
+description: SolidJS SDK for Fanfare widgets and components
+---
+
+# Solid SDK Overview
+
+The `@waitify-io/fanfare-sdk-solid` package provides SolidJS components and web components for the Fanfare platform. It is the foundation for all Fanfare widgets, which can be used directly in SolidJS applications or as web components in any framework.
+
+## Installation
+
+```bash
+npm install @waitify-io/fanfare-sdk-solid @waitify-io/fanfare-sdk-core
+```
+
+## Architecture
+
+The Solid SDK serves two purposes:
+
+1. **SolidJS Components** - Native SolidJS components for SolidJS applications
+2. **Web Components** - Framework-agnostic widgets that work in React, Vue, Angular, or vanilla HTML
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                Your Application                              │
+├─────────────────────────────────────────────────────────────┤
+│  Web Components (any framework)                              │
+│  - <fanfare-queue-widget>                                    │
+│  - <fanfare-draw-widget>                                     │
+│  - <fanfare-auction-widget>                                  │
+│  - <fanfare-experience-widget>                               │
+├─────────────────────────────────────────────────────────────┤
+│  SolidJS Components (SolidJS apps)                           │
+│  - <QueueWidget>                                             │
+│  - <DrawWidget>                                              │
+│  - <AuctionWidget>                                           │
+│  - <ExperienceWidget>                                        │
+├─────────────────────────────────────────────────────────────┤
+│  @waitify-io/fanfare-sdk-solid                               │
+├─────────────────────────────────────────────────────────────┤
+│  @waitify-io/fanfare-sdk-core                                │
+└─────────────────────────────────────────────────────────────┘
+```
+
+## Quick Start
+
+### SolidJS Application
+
+```tsx
+import { Fanfare } from "@waitify-io/fanfare-sdk-core";
+import { FanfareProvider, QueueWidget } from "@waitify-io/fanfare-sdk-solid";
+import { createResource } from "solid-js";
+
+function App() {
+  const [sdk] = createResource(async () => {
+    return Fanfare.init({
+      organizationId: "org_xxx",
+      publishableKey: "pk_live_xxx",
+    });
+  });
+
+  return (
+    <Show when={sdk()}>
+      <FanfareProvider sdk={sdk()!}>
+        <QueueWidget queueId="queue_123" />
+      </FanfareProvider>
+    </Show>
+  );
+}
+```
+
+### Web Components (Any Framework)
+
+```tsx
+import { registerWebComponents } from "@waitify-io/fanfare-sdk-solid";
+
+// Register once at app startup
+registerWebComponents({
+  organizationId: "org_xxx",
+  publishableKey: "pk_live_xxx",
+});
+
+// Then use anywhere in your HTML/JSX
+function QueuePage() {
+  return <fanfare-queue-widget queue-id="queue_123" />;
+}
+```
+
+## Package Exports
+
+### Components
+
+| Component            | Description                 |
+| -------------------- | --------------------------- |
+| `FanfareProvider`    | Context provider for SDK    |
+| `ThemeProvider`      | Theme context provider      |
+| `QueueWidget`        | Virtual waiting room widget |
+| `DrawWidget`         | Lottery/raffle widget       |
+| `AuctionWidget`      | Real-time bidding widget    |
+| `WaitlistWidget`     | Pre-registration widget     |
+| `TimedReleaseWidget` | Flash sale widget           |
+| `ExperienceWidget`   | Full journey orchestration  |
+
+### Primitives
+
+| Primitive   | Description               |
+| ----------- | ------------------------- |
+| `Button`    | Styled button component   |
+| `Card`      | Card container components |
+| `Input`     | Form input component      |
+| `Badge`     | Status badge component    |
+| `Spinner`   | Loading spinner           |
+| `Countdown` | Countdown timer display   |
+| `Progress`  | Progress bar component    |
+
+### Hooks
+
+| Hook                   | Description                 |
+| ---------------------- | --------------------------- |
+| `useFanfare`           | Access SDK instance         |
+| `useQueue`             | Queue state and actions     |
+| `useDraw`              | Draw state and actions      |
+| `useAuction`           | Auction state and actions   |
+| `useWaitlist`          | Waitlist state and actions  |
+| `useTimedRelease`      | Timed release state/actions |
+| `useExperienceJourney` | Journey orchestration       |
+| `useTranslations`      | i18n translations           |
+
+### Web Component Registration
+
+```typescript
+import { registerWebComponents } from "@waitify-io/fanfare-sdk-solid";
+
+registerWebComponents({
+  organizationId: string;
+  publishableKey: string;
+  locale?: Locale;
+  translations?: PartialTranslationMessages;
+  themeConfig?: ExperienceTheme;
+  variant?: WidgetVariant;
+});
+```
+
+## Why SolidJS?
+
+The Fanfare SDK uses SolidJS for widgets because:
+
+1. **Small Bundle Size** - SolidJS compiles to minimal JavaScript
+2. **No Virtual DOM** - Direct DOM updates for better performance
+3. **Web Component Support** - Native custom elements compilation
+4. **Fine-grained Reactivity** - Efficient state updates
+
+## TypeScript Support
+
+Full TypeScript support with exported types:
+
+```typescript
+import type {
+  QueueWidgetProps,
+  DrawWidgetProps,
+  AuctionWidgetProps,
+  ExperienceWidgetProps,
+  QueueSlotProps,
+  QueueRenderProps,
+  ExperienceTheme,
+  WidgetVariant,
+} from "@waitify-io/fanfare-sdk-solid";
+```
+
+## Related
+
+- [Provider](/sdk/solid/provider) - FanfareProvider setup
+- [Primitives](/sdk/solid/primitives) - Primitive components
+- [Components](/sdk/solid/components) - Widget components
+- [Web Components](/sdk/solid/web-components) - Web component registration

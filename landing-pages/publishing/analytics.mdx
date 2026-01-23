@@ -1,0 +1,404 @@
+---
+title: "Landing Page Analytics"
+description: "Track and analyze landing page performance"
+---
+
+{/* TODO: MISSING_FUNCTIONALITY
+Feature: Landing page analytics dashboard
+Expected behavior: Page views, engagement, conversion tracking in admin
+Current state: Beacon tracking exists; landing page-specific analytics not implemented
+Blocking: true - No landing page analytics dashboard yet
+*/}
+
+<Note>
+**Coming Soon**
+
+Landing page analytics will be integrated with the Fanfare analytics system. Currently, you can use the Beacon tracking system and third-party analytics.
+
+</Note>
+
+## Analytics Overview
+
+Understanding landing page performance helps you:
+
+- Measure campaign effectiveness
+- Identify optimization opportunities
+- Track conversion from view to entry
+- Compare page variants
+- Plan capacity for high-traffic events
+
+## Planned Metrics
+
+### Traffic Metrics
+
+| Metric          | Description                      |
+| --------------- | -------------------------------- |
+| Page Views      | Total page loads                 |
+| Unique Visitors | Distinct visitors (cookie-based) |
+| Sessions        | Visitor sessions                 |
+| Bounce Rate     | Single-page visits               |
+| Time on Page    | Average engagement duration      |
+
+### Conversion Metrics
+
+| Metric                     | Description                                  |
+| -------------------------- | -------------------------------------------- |
+| Widget Impressions         | Experience widget loads                      |
+| Authentication Starts      | Users who begin auth flow                    |
+| Authentication Completions | Users who complete auth                      |
+| Experience Entries         | Successful queue joins / draw entries / bids |
+| Conversion Rate            | Entries / Page Views                         |
+
+### Source Metrics
+
+| Metric         | Description                      |
+| -------------- | -------------------------------- |
+| Traffic Source | Direct, search, social, referral |
+| Campaign       | UTM campaign tracking            |
+| Device Type    | Desktop, tablet, mobile          |
+| Geography      | Country, region, city            |
+
+## Beacon Tracking
+
+Fanfare's Beacon system provides analytics infrastructure:
+
+### How Beacon Works
+
+```
+Page Load → Beacon Initialized → Events Tracked → Analytics Processed
+```
+
+### Tracked Events
+
+The Beacon automatically tracks:
+
+| Event               | Trigger                       |
+| ------------------- | ----------------------------- |
+| `page_view`         | Page load                     |
+| `widget_load`       | Experience widget initializes |
+| `auth_start`        | User begins authentication    |
+| `auth_complete`     | User completes authentication |
+| `experience_join`   | User enters experience        |
+| `experience_action` | User takes action (bid, etc.) |
+
+### Custom Events
+
+Track additional events with the Beacon API:
+
+```typescript
+import { beacon } from "@waitify-io/fanfare-sdk-core";
+
+// Track custom event
+beacon.track("cta_click", {
+  section: "hero",
+  button: "join-queue",
+});
+
+// Track with experience context
+beacon.track("video_play", {
+  experienceId: "exp_...",
+  videoId: "intro-video",
+});
+```
+
+## Third-Party Analytics
+
+### Google Analytics 4
+
+Add GA4 to landing pages:
+
+{/* TODO: MISSING_FUNCTIONALITY
+Feature: Native GA4 integration in landing page settings
+Expected behavior: Enter GA4 measurement ID in page settings
+Current state: Requires custom integration
+Blocking: true
+*/}
+
+Until native integration is available, use the SDK:
+
+```tsx
+// In your SDK integration
+import { useEffect } from "react";
+
+function LandingPage() {
+  useEffect(() => {
+    // Initialize GA4
+    window.gtag("config", "G-XXXXXXXXXX", {
+      page_path: window.location.pathname,
+    });
+  }, []);
+
+  // Track conversion
+  const handleEntrySuccess = () => {
+    window.gtag("event", "conversion", {
+      send_to: "AW-XXXXXXXXXX/XXXXX",
+      value: 1.0,
+      currency: "USD",
+    });
+  };
+}
+```
+
+### Facebook Pixel
+
+Track Facebook ad conversions:
+
+```tsx
+// Initialize Pixel
+useEffect(() => {
+  fbq("init", "PIXEL_ID");
+  fbq("track", "PageView");
+}, []);
+
+// Track conversion
+const handleEntrySuccess = () => {
+  fbq("track", "Lead", {
+    content_name: "Experience Entry",
+    content_category: "Queue",
+  });
+};
+```
+
+### Segment
+
+Use Segment as a unified analytics layer:
+
+```tsx
+import { AnalyticsBrowser } from "@segment/analytics-next";
+
+const analytics = AnalyticsBrowser.load({
+  writeKey: "YOUR_WRITE_KEY",
+});
+
+// Track events
+analytics.page("Landing Page", {
+  experienceId: "exp_...",
+  experienceName: "Summer Drop",
+});
+
+analytics.track("Experience Entry", {
+  experienceId: "exp_...",
+  method: "queue",
+});
+```
+
+## UTM Tracking
+
+Track campaign performance with UTM parameters:
+
+### UTM Parameters
+
+| Parameter      | Purpose          | Example            |
+| -------------- | ---------------- | ------------------ |
+| `utm_source`   | Traffic source   | `instagram`        |
+| `utm_medium`   | Marketing medium | `social`           |
+| `utm_campaign` | Campaign name    | `summer-drop-2024` |
+| `utm_content`  | Content variant  | `hero-video`       |
+| `utm_term`     | Paid keywords    | `limited-sneakers` |
+
+### Example URL
+
+```
+https://acme.fanfare.io/summer-drop/register
+  ?utm_source=instagram
+  &utm_medium=social
+  &utm_campaign=summer-drop-2024
+  &utm_content=story-link
+```
+
+### UTM Capture
+
+Fanfare captures UTM parameters automatically:
+
+```typescript
+// UTM data available in consumer context
+{
+  consumer: {
+    attributionSource: "instagram",
+    attributionMedium: "social",
+    attributionCampaign: "summer-drop-2024",
+    // ...
+  }
+}
+```
+
+## Performance Monitoring
+
+### Core Web Vitals
+
+Monitor landing page performance:
+
+| Metric | Good    | Description              |
+| ------ | ------- | ------------------------ |
+| LCP    | < 2.5s  | Largest Contentful Paint |
+| FID    | < 100ms | First Input Delay        |
+| CLS    | < 0.1   | Cumulative Layout Shift  |
+
+### Real User Monitoring (RUM)
+
+Beacon collects performance data:
+
+```typescript
+// Automatic performance tracking
+beacon.trackPerformance({
+  lcp: 1800, // Measured LCP
+  fid: 45, // Measured FID
+  cls: 0.05, // Measured CLS
+});
+```
+
+## Conversion Funnels
+
+Track the visitor journey:
+
+```
+Page View
+    ↓ (80% continue)
+Widget Visible
+    ↓ (60% continue)
+Auth Started
+    ↓ (75% complete)
+Auth Completed
+    ↓ (95% continue)
+Experience Entry
+    ↓ (varies by type)
+Admission / Win / Purchase
+```
+
+### Funnel Analysis (Coming Soon)
+
+{/* TODO: MISSING_FUNCTIONALITY
+Feature: Funnel visualization in analytics dashboard
+Expected behavior: Visual funnel showing drop-off at each stage
+Current state: Data collected; visualization pending
+Blocking: true
+*/}
+
+Planned features:
+
+- Visual funnel diagrams
+- Stage-by-stage drop-off rates
+- Segment by source, device, etc.
+- A/B test comparison
+
+## A/B Testing
+
+{/* TODO: MISSING_FUNCTIONALITY
+Feature: Native A/B testing for landing pages
+Expected behavior: Create variants, split traffic, measure results
+Current state: Not implemented
+Blocking: true
+*/}
+
+A/B testing capabilities are planned:
+
+### Test Types
+
+| Test          | Description            |
+| ------------- | ---------------------- |
+| Page variants | Different page designs |
+| CTA text      | Button copy variations |
+| Hero image    | Image variants         |
+| Section order | Content arrangement    |
+
+### Current Workarounds
+
+Use third-party A/B testing tools:
+
+- **Optimizely** - Enterprise A/B testing
+- **VWO** - Visual Website Optimizer
+- **Google Optimize** - Free A/B testing (sunset 2023)
+- **Split.io** - Feature flags and experiments
+
+## Analytics Dashboard (Coming Soon)
+
+The Fanfare dashboard will include landing page analytics:
+
+```
+┌─────────────────────────────────────────────────────────┐
+│  Landing Page Analytics                                 │
+│  Summer Drop 2024 • Last 7 days                        │
+├─────────────────────────────────────────────────────────┤
+│                                                         │
+│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐│
+│  │  12,450  │  │  8,200   │  │  4,500   │  │  36.1%   ││
+│  │  Views   │  │  Unique  │  │  Entries │  │  Conv.   ││
+│  │  +24%    │  │  +18%    │  │  +31%    │  │  +4.2%   ││
+│  └──────────┘  └──────────┘  └──────────┘  └──────────┘│
+│                                                         │
+│  Traffic Over Time                                      │
+│  ┌─────────────────────────────────────────────────┐   │
+│  │  📈 [Chart showing daily traffic]               │   │
+│  └─────────────────────────────────────────────────┘   │
+│                                                         │
+│  Traffic Sources                                        │
+│  ┌─────────────────────────────────────────────────┐   │
+│  │  Instagram    ████████████████████████  45%     │   │
+│  │  Direct       ██████████████████        35%     │   │
+│  │  Email        ████████                  15%     │   │
+│  │  Other        ██                        5%      │   │
+│  └─────────────────────────────────────────────────┘   │
+│                                                         │
+└─────────────────────────────────────────────────────────┘
+```
+
+## Data Export
+
+### API Access
+
+Export analytics data via API:
+
+```typescript
+// Coming soon
+const analytics = await adminApi.analytics.landingPages({
+  pageId: "lp_...",
+  startDate: "2024-03-01",
+  endDate: "2024-03-15",
+  metrics: ["pageViews", "uniqueVisitors", "entries"],
+});
+```
+
+### Export Formats
+
+| Format | Use Case             |
+| ------ | -------------------- |
+| JSON   | API integration      |
+| CSV    | Spreadsheet analysis |
+| PDF    | Stakeholder reports  |
+
+## Privacy Compliance
+
+### GDPR Considerations
+
+- Beacon respects Do Not Track
+- Cookie consent required for EU visitors
+- Data retention policies apply
+- Right to erasure supported
+
+### Cookie Consent
+
+Display cookie consent for tracking:
+
+```typescript
+// Check consent before tracking
+if (hasTrackingConsent()) {
+  beacon.track("page_view");
+}
+```
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Beacon Tracking" icon="broadcast-tower" href="/integrations/analytics/beacon">
+    Learn about Fanfare analytics
+  </Card>
+  <Card title="Webhooks" icon="webhook" href="/integrations/webhooks/overview">
+    Real-time event notifications
+  </Card>
+  <Card title="Preview" icon="eye" href="/landing-pages/publishing/preview">
+    Test before launching
+  </Card>
+  <Card title="Experience Metrics" icon="chart-bar" href="/dashboard/analytics/experience-metrics">
+    View experience analytics
+  </Card>
+</CardGroup>

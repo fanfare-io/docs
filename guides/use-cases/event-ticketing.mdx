@@ -1,0 +1,1134 @@
+---
+title: Event Ticketing Use Case
+description: Manage ticket sales for high-demand events with fair access and controlled distribution.
+---
+
+# Event Ticketing Use Case
+
+Learn how to use Fanfare to manage ticket sales for high-demand events with fair access and controlled distribution.
+
+## Overview
+
+Popular events often see massive demand that exceeds available tickets. Fanfare helps you manage ticket sales fairly, prevent scalping, and create a positive experience for fans.
+
+**What you'll learn:**
+
+- Setting up event ticket queues
+- Managing tiered ticket releases
+- Implementing purchase limits
+- Preventing scalping and bots
+- Handling ticket transfers
+
+**Complexity:** Intermediate
+**Time to complete:** 45 minutes
+
+## Prerequisites
+
+- Fanfare account with queue feature enabled
+- Event and ticketing system configured
+- Understanding of your venue capacity
+- Marketing plan for ticket release
+
+## When to Use Fanfare for Ticketing
+
+| Scenario                    | Fanfare Solution            |
+| --------------------------- | --------------------------- |
+| High demand (>10x capacity) | Queue with rate limiting    |
+| VIP/presale access          | Audience-based early access |
+| Fair distribution required  | Strict FIFO queue           |
+| Bot prevention needed       | Authentication + CAPTCHA    |
+| Multiple ticket tiers       | Separate queues per tier    |
+
+## Step 1: Configure Event Structure
+
+### Event and Ticket Configuration
+
+```typescript
+// types/event-ticketing.ts
+interface EventConfig {
+  eventId: string;
+  eventName: string;
+  venue: {
+    name: string;
+    city: string;
+    capacity: number;
+  };
+  date: Date;
+  doors: string;
+  startTime: string;
+
+  // Ticket tiers
+  ticketTiers: TicketTier[];
+
+  // Purchase rules
+  maxTicketsPerOrder: number;
+  maxOrdersPerCustomer: number;
+  requireIdentification: boolean;
+
+  // Anti-scalping
+  ticketsNonTransferable: boolean;
+  requireBuyerAttendance: boolean;
+}
+
+interface TicketTier {
+  tierId: string;
+  name: string;
+  price: number;
+  quantity: number;
+  description: string;
+  perks?: string[];
+  releaseTime?: Date; // If different from general sale
+}
+
+// Example event configuration
+const concertConfig: EventConfig = {
+  eventId: "concert-2024-fall-tour",
+  eventName: "Fall Tour 2024 - New York",
+  venue: {
+    name: "Madison Square Garden",
+    city: "New York, NY",
+    capacity: 20000,
+  },
+  date: new Date("2024-11-15"),
+  doors: "7:00 PM",
+  startTime: "8:00 PM",
+
+  ticketTiers: [
+    {
+      tierId: "vip",
+      name: "VIP Experience",
+      price: 500,
+      quantity: 500,
+      description: "Premium seating + meet & greet",
+      perks: [
+        "Meet & Greet",
+        "Early entry",
+        "Exclusive merch",
+        "Premium seating",
+      ],
+    },
+    {
+      tierId: "floor",
+      name: "Floor (General Admission)",
+      price: 150,
+      quantity: 5000,
+      description: "Standing floor access",
+    },
+    {
+      tierId: "lower-bowl",
+      name: "Lower Bowl",
+      price: 100,
+      quantity: 8000,
+      description: "Lower level reserved seating",
+    },
+    {
+      tierId: "upper-bowl",
+      name: "Upper Bowl",
+      price: 60,
+      quantity: 6500,
+      description: "Upper level reserved seating",
+    },
+  ],
+
+  maxTicketsPerOrder: 4,
+  maxOrdersPerCustomer: 1,
+  requireIdentification: true,
+  ticketsNonTransferable: true,
+  requireBuyerAttendance: true,
+};
+```
+
+## Step 2: Create Ticket Sale Queues
+
+### Admin Configuration
+
+```typescript
+import { FanfareAdminClient } from "@waitify-io/fanfare-admin-sdk";
+
+const adminClient = new FanfareAdminClient({
+  apiKey: process.env.FANFARE_ADMIN_API_KEY!,
+  organizationId: process.env.FANFARE_ORGANIZATION_ID!,
+});
+
+async function createEventTicketingExperience(event: EventConfig) {
+  // Main ticket sale queue
+  const mainQueue = await adminClient.queues.create({
+    name: `${event.eventName} - General Sale`,
+    slug: `tickets-${event.eventId}`,
+
+    // Sale timing
+    scheduledStart: new Date("2024-09-01T10:00:00Z"),
+
+    config: {
+      // Capacity management
+      maxConcurrentAdmissions: 200,
+      admissionWindowSeconds: 600, // 10 minutes to complete purchase
+      admissionRatePerMinute: 300,
+
+      // Fair access
+      fairnessMode: "strict",
+      requireAuthentication: true,
+
+      // Bot prevention
+      enableCaptcha: true,
+      captchaThreshold: "medium",
+
+      // Purchase limits
+      maxPurchasesPerConsumer: event.maxOrdersPerCustomer,
+    },
+
+    metadata: {
+      eventId: event.eventId,
+      eventName: event.eventName,
+      eventDate: event.date.toISOString(),
+      venue: event.venue.name,
+      totalTickets: event.ticketTiers.reduce((sum, t) => sum + t.quantity, 0),
+    },
+  });
+
+  // Create presale queues for different audiences
+  await createPresaleQueues(event, mainQueue.id);
+
+  return mainQueue;
+}
+
+async function createPresaleQueues(event: EventConfig, mainQueueId: string) {
+  // Artist presale
+  const artistPresale = await adminClient.queues.create({
+    name: `${event.eventName} - Artist Presale`,
+    slug: `presale-artist-${event.eventId}`,
+    scheduledStart: new Date("2024-08-28T10:00:00Z"),
+    scheduledEnd: new Date("2024-08-28T22:00:00Z"),
+
+    config: {
+      maxConcurrentAdmissions: 100,
+      admissionWindowSeconds: 600,
+      requireAuthentication: true,
+      requireAccessCode: true,
+    },
+
+    accessCodes: [
+      {
+        code: "FALLVIBES2024",
+        maxUses: 5000,
+        description: "Artist fan club presale",
+      },
+    ],
+  });
+
+  // Venue presale
+  const venuePresale = await adminClient.queues.create({
+    name: `${event.eventName} - Venue Presale`,
+    slug: `presale-venue-${event.eventId}`,
+    scheduledStart: new Date("2024-08-29T10:00:00Z"),
+    scheduledEnd: new Date("2024-08-29T22:00:00Z"),
+
+    config: {
+      maxConcurrentAdmissions: 100,
+      admissionWindowSeconds: 600,
+      requireAuthentication: true,
+      requireAccessCode: true,
+    },
+
+    accessCodes: [
+      {
+        code: "MSGVIP2024",
+        maxUses: 3000,
+        description: "MSG member presale",
+      },
+    ],
+  });
+
+  // Credit card presale
+  const ccPresale = await adminClient.queues.create({
+    name: `${event.eventName} - Card Presale`,
+    slug: `presale-card-${event.eventId}`,
+    scheduledStart: new Date("2024-08-30T10:00:00Z"),
+    scheduledEnd: new Date("2024-08-30T22:00:00Z"),
+
+    config: {
+      maxConcurrentAdmissions: 150,
+      admissionWindowSeconds: 600,
+      requireAuthentication: true,
+    },
+
+    metadata: {
+      presaleType: "credit_card",
+      eligibleCards: ["amex", "chase"],
+    },
+  });
+
+  return { artistPresale, venuePresale, ccPresale };
+}
+```
+
+## Step 3: Build the Ticket Purchase Experience
+
+### Event Ticket Page
+
+```tsx
+// pages/events/[eventId]/tickets.tsx
+import { FanfareProvider } from "@waitify-io/fanfare-sdk-react";
+import { TicketPurchaseExperience } from "@/components/TicketPurchaseExperience";
+import { EventInfo } from "@/components/EventInfo";
+
+interface TicketPageProps {
+  experienceId: string;
+  event: EventConfig;
+  salePhase: "presale" | "general" | "ended";
+  presaleCode?: string;
+}
+
+export default function TicketPage({
+  experienceId,
+  event,
+  salePhase,
+  presaleCode,
+}: TicketPageProps) {
+  return (
+    <FanfareProvider
+      organizationId={process.env.NEXT_PUBLIC_FANFARE_ORG_ID!}
+      options={{ environment: "production" }}
+    >
+      <div className="ticket-page">
+        <EventInfo event={event} />
+
+        {salePhase === "ended" ? (
+          <SoldOutState event={event} />
+        ) : (
+          <TicketPurchaseExperience
+            experienceId={experienceId}
+            event={event}
+            presaleCode={presaleCode}
+          />
+        )}
+      </div>
+    </FanfareProvider>
+  );
+}
+
+function SoldOutState({ event }: { event: EventConfig }) {
+  return (
+    <div className="sold-out-state">
+      <h2>Sold Out</h2>
+      <p>All tickets for {event.eventName} have been sold.</p>
+
+      <div className="alternatives">
+        <h3>Options</h3>
+        <ul>
+          <li>
+            <a href={`/events/${event.eventId}/waitlist`}>Join the waitlist</a>
+          </li>
+          <li>
+            <a href={`/events/${event.eventId}/resale`}>
+              Check official resale
+            </a>
+          </li>
+          <li>
+            <a href="/events">Browse other events</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  );
+}
+```
+
+### Ticket Purchase Experience Component
+
+```tsx
+// components/TicketPurchaseExperience.tsx
+import { useExperienceJourney } from "@waitify-io/fanfare-sdk-react";
+import { useState, useEffect } from "react";
+
+interface TicketPurchaseExperienceProps {
+  experienceId: string;
+  event: EventConfig;
+  presaleCode?: string;
+}
+
+export function TicketPurchaseExperience({
+  experienceId,
+  event,
+  presaleCode,
+}: TicketPurchaseExperienceProps) {
+  const { journey, state, start } = useExperienceJourney(experienceId, {
+    autoStart: !presaleCode, // Auto-start if no presale code needed
+  });
+
+  const snapshot = state?.snapshot;
+  const stage = snapshot?.sequenceStage;
+
+  // Handle presale code entry
+  const [codeEntered, setCodeEntered] = useState(false);
+
+  const handleCodeSubmit = (code: string) => {
+    // Validate code and start journey
+    journey.start({ accessCode: code });
+    setCodeEntered(true);
+  };
+
+  // Show presale code form if required
+  if (presaleCode && !codeEntered && stage === "not_started") {
+    return <PresaleCodeForm onSubmit={handleCodeSubmit} />;
+  }
+
+  switch (stage) {
+    case "not_started":
+      return <SaleNotStartedState snapshot={snapshot} event={event} />;
+
+    case "entering":
+    case "routing":
+      return <LoadingState message="Joining the queue..." />;
+
+    case "waiting":
+      return <QueueState snapshot={snapshot} event={event} />;
+
+    case "admitted":
+      return <TicketSelectionState snapshot={snapshot} event={event} />;
+
+    case "completed":
+      return <PurchaseConfirmedState snapshot={snapshot} event={event} />;
+
+    case "expired":
+      return <SessionExpiredState onRetry={start} />;
+
+    default:
+      return null;
+  }
+}
+
+function PresaleCodeForm({ onSubmit }: { onSubmit: (code: string) => void }) {
+  const [code, setCode] = useState("");
+  const [error, setError] = useState("");
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!code.trim()) {
+      setError("Please enter your presale code");
+      return;
+    }
+    onSubmit(code.toUpperCase());
+  };
+
+  return (
+    <div className="presale-code-form">
+      <h2>Enter Presale Code</h2>
+      <p>You need a valid presale code to access this sale.</p>
+
+      <form onSubmit={handleSubmit}>
+        <input
+          type="text"
+          value={code}
+          onChange={(e) => setCode(e.target.value)}
+          placeholder="Enter code"
+          maxLength={20}
+        />
+        {error && <span className="error">{error}</span>}
+        <button type="submit">Access Presale</button>
+      </form>
+    </div>
+  );
+}
+
+function SaleNotStartedState({
+  snapshot,
+  event,
+}: {
+  snapshot: JourneySnapshot;
+  event: EventConfig;
+}) {
+  const startsAt = snapshot?.context?.startsAt;
+
+  return (
+    <div className="sale-not-started">
+      <h2>Tickets On Sale Soon</h2>
+
+      {startsAt && (
+        <div className="countdown-section">
+          <p>Sale begins in:</p>
+          <CountdownTimer targetTime={startsAt} />
+        </div>
+      )}
+
+      <div className="event-preview">
+        <h3>{event.eventName}</h3>
+        <p>
+          {event.venue.name} - {event.venue.city}
+        </p>
+        <p>{event.date.toLocaleDateString()}</p>
+      </div>
+
+      <div className="ticket-tiers-preview">
+        <h3>Ticket Options</h3>
+        <ul>
+          {event.ticketTiers.map((tier) => (
+            <li key={tier.tierId}>
+              <strong>{tier.name}</strong> - ${tier.price}
+              <p>{tier.description}</p>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div className="preparation-tips">
+        <h3>Get Ready</h3>
+        <ul>
+          <li>Create an account now to save time</li>
+          <li>Have your payment information ready</li>
+          <li>Know which ticket type you want</li>
+          <li>You'll have 10 minutes to complete your purchase</li>
+        </ul>
+      </div>
+    </div>
+  );
+}
+
+function QueueState({
+  snapshot,
+  event,
+}: {
+  snapshot: JourneySnapshot;
+  event: EventConfig;
+}) {
+  const position = snapshot?.context?.position;
+  const estimatedWait = snapshot?.context?.estimatedWaitSeconds;
+  const queueSize = snapshot?.context?.queueSize;
+
+  return (
+    <div className="queue-state">
+      <div className="queue-header">
+        <h2>You're in the Queue</h2>
+        <p>Please keep this page open</p>
+      </div>
+
+      <div className="queue-position">
+        <div className="position-circle">
+          <span className="position">{position?.toLocaleString()}</span>
+          <span className="label">Your position</span>
+        </div>
+      </div>
+
+      <div className="queue-stats">
+        <div className="stat">
+          <span className="value">{formatWaitTime(estimatedWait)}</span>
+          <span className="label">Estimated wait</span>
+        </div>
+        {queueSize && (
+          <div className="stat">
+            <span className="value">{queueSize.toLocaleString()}</span>
+            <span className="label">People in queue</span>
+          </div>
+        )}
+      </div>
+
+      <div className="queue-animation">
+        <QueueVisualizer position={position} total={queueSize} />
+      </div>
+
+      <div className="event-reminder">
+        <p>
+          <strong>{event.eventName}</strong>
+        </p>
+        <p>
+          {event.venue.name} - {event.date.toLocaleDateString()}
+        </p>
+      </div>
+
+      <div className="queue-tips">
+        <h4>While you wait:</h4>
+        <ul>
+          <li>Don't refresh this page</li>
+          <li>Decide on your ticket preference</li>
+          <li>Have payment info ready</li>
+        </ul>
+      </div>
+    </div>
+  );
+}
+
+function TicketSelectionState({
+  snapshot,
+  event,
+}: {
+  snapshot: JourneySnapshot;
+  event: EventConfig;
+}) {
+  const expiresAt = snapshot?.context?.admittanceExpiresAt;
+  const [selectedTier, setSelectedTier] = useState<TicketTier | null>(null);
+  const [quantity, setQuantity] = useState(1);
+  const [ticketAvailability, setTicketAvailability] = useState<
+    Map<string, number>
+  >(new Map());
+
+  // Fetch live availability
+  useEffect(() => {
+    const fetchAvailability = async () => {
+      const availability = await getTicketAvailability(event.eventId);
+      setTicketAvailability(availability);
+    };
+
+    fetchAvailability();
+    const interval = setInterval(fetchAvailability, 10000);
+    return () => clearInterval(interval);
+  }, [event.eventId]);
+
+  const handleProceedToCheckout = () => {
+    if (!selectedTier) return;
+
+    const orderData = {
+      eventId: event.eventId,
+      tierId: selectedTier.tierId,
+      quantity,
+      admissionToken: snapshot?.context?.admittanceToken,
+      consumerId: snapshot?.context?.consumerId,
+    };
+
+    sessionStorage.setItem("ticket_order", JSON.stringify(orderData));
+    window.location.href = `/events/${event.eventId}/checkout`;
+  };
+
+  return (
+    <div className="ticket-selection">
+      <div className="selection-header">
+        <h2>Select Your Tickets</h2>
+        <div className="session-timer urgent">
+          <span className="label">Time remaining:</span>
+          <CountdownTimer targetTime={expiresAt} />
+        </div>
+      </div>
+
+      <div className="ticket-tiers">
+        {event.ticketTiers.map((tier) => {
+          const available =
+            ticketAvailability.get(tier.tierId) ?? tier.quantity;
+          const isAvailable = available > 0;
+          const isSelected = selectedTier?.tierId === tier.tierId;
+
+          return (
+            <div
+              key={tier.tierId}
+              className={`ticket-tier ${isSelected ? "selected" : ""} ${!isAvailable ? "sold-out" : ""}`}
+              onClick={() => isAvailable && setSelectedTier(tier)}
+            >
+              <div className="tier-info">
+                <h3>{tier.name}</h3>
+                <p className="description">{tier.description}</p>
+                {tier.perks && (
+                  <ul className="perks">
+                    {tier.perks.map((perk) => (
+                      <li key={perk}>{perk}</li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+
+              <div className="tier-price">
+                <span className="price">${tier.price}</span>
+                {isAvailable ? (
+                  <span className="availability">
+                    {available.toLocaleString()} available
+                  </span>
+                ) : (
+                  <span className="sold-out-badge">Sold Out</span>
+                )}
+              </div>
+
+              {isSelected && <span className="selected-badge">Selected</span>}
+            </div>
+          );
+        })}
+      </div>
+
+      {selectedTier && (
+        <div className="quantity-selection">
+          <h3>How many tickets?</h3>
+          <div className="quantity-controls">
+            <button
+              onClick={() => setQuantity(Math.max(1, quantity - 1))}
+              disabled={quantity <= 1}
+            >
+              -
+            </button>
+            <span className="quantity">{quantity}</span>
+            <button
+              onClick={() =>
+                setQuantity(Math.min(event.maxTicketsPerOrder, quantity + 1))
+              }
+              disabled={quantity >= event.maxTicketsPerOrder}
+            >
+              +
+            </button>
+          </div>
+          <p className="limit-notice">
+            Maximum {event.maxTicketsPerOrder} tickets per order
+          </p>
+        </div>
+      )}
+
+      {selectedTier && (
+        <div className="order-summary">
+          <h3>Order Summary</h3>
+          <div className="summary-line">
+            <span>
+              {quantity}x {selectedTier.name}
+            </span>
+            <span>${(selectedTier.price * quantity).toFixed(2)}</span>
+          </div>
+          <div className="summary-line fees">
+            <span>Service fees</span>
+            <span>${(selectedTier.price * quantity * 0.1).toFixed(2)}</span>
+          </div>
+          <div className="summary-line total">
+            <span>Total</span>
+            <span>${(selectedTier.price * quantity * 1.1).toFixed(2)}</span>
+          </div>
+
+          <button onClick={handleProceedToCheckout} className="checkout-btn">
+            Proceed to Checkout
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function PurchaseConfirmedState({
+  snapshot,
+  event,
+}: {
+  snapshot: JourneySnapshot;
+  event: EventConfig;
+}) {
+  const order = snapshot?.context?.order;
+
+  return (
+    <div className="purchase-confirmed">
+      <div className="success-header">
+        <div className="success-icon">✓</div>
+        <h2>Tickets Secured!</h2>
+      </div>
+
+      <div className="confirmation-details">
+        <p className="confirmation-number">
+          Confirmation: {order?.confirmationNumber}
+        </p>
+
+        <div className="ticket-details">
+          <h3>{event.eventName}</h3>
+          <p>
+            {event.venue.name} - {event.venue.city}
+          </p>
+          <p>{event.date.toLocaleDateString()}</p>
+          <p>
+            Doors: {event.doors} | Show: {event.startTime}
+          </p>
+        </div>
+
+        <div className="order-details">
+          <h4>Your Tickets</h4>
+          <p>
+            {order?.quantity}x {order?.tierName}
+          </p>
+          <p>Total: ${order?.total}</p>
+        </div>
+      </div>
+
+      <div className="next-steps">
+        <h3>What's Next</h3>
+        <ul>
+          <li>Confirmation email sent to {snapshot?.context?.email}</li>
+          <li>
+            Tickets will be available in your account 48 hours before the event
+          </li>
+          <li>Bring valid photo ID matching the purchaser name</li>
+        </ul>
+      </div>
+
+      <div className="actions">
+        <button onClick={() => (window.location.href = "/account/tickets")}>
+          View My Tickets
+        </button>
+        <button onClick={() => addEventToCalendar(event)}>
+          Add to Calendar
+        </button>
+      </div>
+    </div>
+  );
+}
+```
+
+## Step 4: Anti-Scalping Measures
+
+### Purchase Verification
+
+```typescript
+// services/ticket-verification.ts
+interface PurchaseVerification {
+  consumerId: string;
+  eventId: string;
+  orderDetails: OrderDetails;
+}
+
+export async function verifyTicketPurchase(verification: PurchaseVerification) {
+  const { consumerId, eventId, orderDetails } = verification;
+
+  // Check purchase limits
+  const existingOrders = await db.query.ticketOrders.findMany({
+    where: and(
+      eq(ticketOrders.consumerId, consumerId),
+      eq(ticketOrders.eventId, eventId),
+    ),
+  });
+
+  if (existingOrders.length >= event.maxOrdersPerCustomer) {
+    throw new Error("Maximum orders per customer exceeded");
+  }
+
+  const totalTickets = existingOrders.reduce((sum, o) => sum + o.quantity, 0);
+  if (
+    totalTickets + orderDetails.quantity >
+    event.maxTicketsPerOrder * event.maxOrdersPerCustomer
+  ) {
+    throw new Error("Maximum tickets per customer exceeded");
+  }
+
+  // Verify consumer identity
+  const consumer = await db.query.consumers.findFirst({
+    where: eq(consumers.id, consumerId),
+  });
+
+  if (!consumer?.emailVerified) {
+    throw new Error("Email verification required");
+  }
+
+  if (event.requireIdentification && !consumer?.identityVerified) {
+    throw new Error("Identity verification required");
+  }
+
+  return true;
+}
+```
+
+### Ticket Transfer Controls
+
+```typescript
+// services/ticket-transfer.ts
+export async function requestTicketTransfer(params: {
+  ticketId: string;
+  currentOwnerId: string;
+  recipientEmail: string;
+}) {
+  const { ticketId, currentOwnerId, recipientEmail } = params;
+
+  const ticket = await db.query.tickets.findFirst({
+    where: eq(tickets.id, ticketId),
+  });
+
+  if (!ticket) {
+    throw new Error("Ticket not found");
+  }
+
+  if (ticket.ownerId !== currentOwnerId) {
+    throw new Error("Not authorized");
+  }
+
+  const event = await getEvent(ticket.eventId);
+
+  // Check if transfers allowed
+  if (event.ticketsNonTransferable) {
+    throw new Error("Tickets for this event are non-transferable");
+  }
+
+  // Check transfer window
+  const eventDate = new Date(event.date);
+  const cutoffDate = new Date(eventDate.getTime() - 24 * 60 * 60 * 1000); // 24h before
+
+  if (Date.now() > cutoffDate.getTime()) {
+    throw new Error("Transfer window has closed");
+  }
+
+  // Create transfer request
+  const transfer = await db
+    .insert(ticketTransfers)
+    .values({
+      ticketId,
+      fromConsumerId: currentOwnerId,
+      recipientEmail,
+      status: "pending",
+      expiresAt: new Date(Date.now() + 48 * 60 * 60 * 1000), // 48h to accept
+    })
+    .returning();
+
+  // Notify recipient
+  await sendTransferInvitation(recipientEmail, ticket, transfer[0]);
+
+  return transfer[0];
+}
+```
+
+## Step 5: Inventory Management
+
+### Real-Time Availability
+
+```typescript
+// services/ticket-inventory.ts
+import { redis } from "../cache";
+
+export async function getTicketAvailability(
+  eventId: string,
+): Promise<Map<string, number>> {
+  const cacheKey = `event:${eventId}:availability`;
+
+  // Try cache first
+  const cached = await redis.get(cacheKey);
+  if (cached) {
+    return new Map(Object.entries(JSON.parse(cached)));
+  }
+
+  // Fetch from database
+  const tiers = await db.query.ticketTiers.findMany({
+    where: eq(ticketTiers.eventId, eventId),
+    columns: {
+      tierId: true,
+      quantity: true,
+      soldCount: true,
+      reservedCount: true,
+    },
+  });
+
+  const availability = new Map<string, number>();
+  for (const tier of tiers) {
+    const available = tier.quantity - tier.soldCount - tier.reservedCount;
+    availability.set(tier.tierId, Math.max(0, available));
+  }
+
+  // Cache for 10 seconds
+  await redis.setex(
+    cacheKey,
+    10,
+    JSON.stringify(Object.fromEntries(availability)),
+  );
+
+  return availability;
+}
+
+export async function reserveTickets(
+  eventId: string,
+  tierId: string,
+  quantity: number,
+) {
+  return await db.transaction(async (tx) => {
+    const tier = await tx
+      .select()
+      .from(ticketTiers)
+      .where(
+        and(eq(ticketTiers.eventId, eventId), eq(ticketTiers.tierId, tierId)),
+      )
+      .for("update");
+
+    if (!tier[0]) {
+      throw new Error("Ticket tier not found");
+    }
+
+    const available =
+      tier[0].quantity - tier[0].soldCount - tier[0].reservedCount;
+    if (available < quantity) {
+      throw new Error("Not enough tickets available");
+    }
+
+    await tx
+      .update(ticketTiers)
+      .set({ reservedCount: tier[0].reservedCount + quantity })
+      .where(eq(ticketTiers.id, tier[0].id));
+
+    // Invalidate cache
+    await redis.del(`event:${eventId}:availability`);
+
+    return { reserved: quantity, remaining: available - quantity };
+  });
+}
+```
+
+## Step 6: Webhook Integration
+
+```typescript
+// routes/webhooks/fanfare-tickets.ts
+import express from "express";
+import { verifyFanfareWebhook } from "../middleware/webhook-verification";
+
+const router = express.Router();
+
+router.post("/", verifyFanfareWebhook, async (req, res) => {
+  const event = req.body;
+
+  switch (event.type) {
+    case "admission.created":
+      // Consumer entered queue
+      await trackQueueEntry(event.data);
+      break;
+
+    case "admission.admitted":
+      // Consumer reached front of queue
+      await prepareTicketSession(event.data);
+      break;
+
+    case "admission.expired":
+      // Consumer didn't complete purchase
+      await releaseReservedTickets(event.data);
+      break;
+
+    case "admission.completed":
+      // Purchase completed
+      await finalizeTicketSale(event.data);
+      break;
+
+    case "queue.sold_out":
+      // All tickets sold
+      await handleSoldOut(event.data);
+      break;
+  }
+
+  res.json({ received: true });
+});
+
+async function handleSoldOut(data: QueueSoldOutEvent) {
+  const { experienceId, eventId } = data;
+
+  // Update event status
+  await db
+    .update(events)
+    .set({ saleStatus: "sold_out" })
+    .where(eq(events.id, eventId));
+
+  // Notify remaining queue members
+  await adminClient.queues.notifyWaiting(experienceId, {
+    type: "sold_out",
+    message:
+      "All tickets have been sold. You can join the waitlist for cancelled tickets.",
+  });
+
+  // Open waitlist
+  await openEventWaitlist(eventId);
+}
+```
+
+## Best Practices
+
+### 1. Clear Communication
+
+```tsx
+function TicketPurchaseRules({ event }: { event: EventConfig }) {
+  return (
+    <section className="purchase-rules">
+      <h3>Purchase Information</h3>
+      <ul>
+        <li>Maximum {event.maxTicketsPerOrder} tickets per order</li>
+        <li>Maximum {event.maxOrdersPerCustomer} order per customer</li>
+        {event.requireIdentification && (
+          <li>Valid photo ID required at venue</li>
+        )}
+        {event.ticketsNonTransferable && <li>Tickets are non-transferable</li>}
+        {event.requireBuyerAttendance && (
+          <li>Purchaser must be present at entry</li>
+        )}
+      </ul>
+    </section>
+  );
+}
+```
+
+### 2. Mobile-Optimized Queue
+
+```css
+/* Mobile queue experience */
+.queue-state {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 20px;
+}
+
+.position-circle {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+}
+
+.position-circle .position {
+  font-size: 48px;
+  font-weight: bold;
+  color: white;
+}
+
+.session-timer.urgent {
+  background: #ff5722;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 20px;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+```
+
+### 3. Handle High Concurrency
+
+```typescript
+// Use optimistic locking for ticket reservations
+async function reserveWithOptimisticLock(
+  tierId: string,
+  quantity: number,
+  retries = 3,
+) {
+  for (let i = 0; i < retries; i++) {
+    try {
+      return await reserveTickets(tierId, quantity);
+    } catch (error) {
+      if (i === retries - 1) throw error;
+      await sleep(100 * (i + 1)); // Exponential backoff
+    }
+  }
+}
+```
+
+## Troubleshooting
+
+### Queue Moving Slowly
+
+1. Increase admission rate
+2. Check for failed completions blocking slots
+3. Verify infrastructure can handle load
+
+### Tickets Showing Sold Out Incorrectly
+
+1. Check reserved vs. sold counts
+2. Verify cache invalidation working
+3. Review transaction rollbacks
+
+### Access Code Not Working
+
+1. Verify code is active and not expired
+2. Check remaining uses
+3. Confirm case sensitivity
+
+## What's Next
+
+- [Webhooks Guide](/guides/advanced/webhooks-guide) - Advanced event handling
+- [Error Handling](/guides/advanced/error-handling) - Handle purchase failures
+- [Real-time Updates](/guides/advanced/real-time-updates) - Live availability updates

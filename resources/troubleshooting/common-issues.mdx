@@ -1,0 +1,368 @@
+---
+title: Common Issues
+description: Solutions to frequently encountered problems with Fanfare integration.
+---
+
+# Common Issues
+
+This guide covers the most frequently encountered issues and their solutions.
+
+## SDK Initialization Issues
+
+### SDK Not Initializing
+
+**Symptoms**: SDK methods throw "not initialized" errors.
+
+**Common Causes**:
+
+1. **Missing publishable key**
+
+   ```typescript
+   // Wrong
+   const client = new FanfareClient({});
+
+   // Correct
+   const client = new FanfareClient({
+     publishableKey: "pk_live_...",
+   });
+   ```
+
+2. **Invalid key format**
+   - Publishable keys start with `pk_test_` or `pk_live_`
+   - Secret keys start with `sk_test_` or `sk_live_`
+   - Don't mix test and live keys
+
+3. **Client created multiple times**
+
+   ```typescript
+   // Wrong: Creates new client on every render
+   function Component() {
+     const client = new FanfareClient({ publishableKey: "..." });
+   }
+
+   // Correct: Single client instance
+   const client = new FanfareClient({ publishableKey: "..." });
+   function Component() {
+     // Use the shared client
+   }
+   ```
+
+### "Already Initialized" Error
+
+**Symptom**: Error when calling SDK methods.
+
+**Solution**: Ensure you only create one client instance per application.
+
+```typescript
+// Create client once at app startup
+let fanfareClient: FanfareClient | null = null;
+
+export function getClient() {
+  if (!fanfareClient) {
+    fanfareClient = new FanfareClient({
+      publishableKey: process.env.NEXT_PUBLIC_FANFARE_KEY!,
+    });
+  }
+  return fanfareClient;
+}
+```
+
+## Authentication Issues
+
+### "Unauthorized" Errors (401)
+
+**Common Causes**:
+
+1. **Missing authentication header**
+
+   ```typescript
+   // Ensure consumer token is included
+   const client = new FanfareClient({
+     publishableKey: "pk_live_...",
+   });
+
+   // Start a session before making authenticated calls
+   await client.auth.guest(); // or client.auth.login()
+   ```
+
+2. **Expired session**
+
+   ```typescript
+   // Handle session expiration
+   client.on("auth:session-expired", async () => {
+     await client.auth.refresh();
+   });
+   ```
+
+3. **Wrong API key type**
+   - Use publishable keys for client-side SDK
+   - Use secret keys only for server-to-server calls
+
+### Session Not Persisting
+
+**Symptom**: User loses session on page refresh.
+
+**Solutions**:
+
+1. **Check browser storage**
+   - Ensure cookies/localStorage aren't blocked
+   - Check for private browsing mode
+
+2. **Verify session initialization**
+
+   ```typescript
+   // The SDK automatically restores sessions
+   const client = new FanfareClient({ publishableKey: "..." });
+
+   // Check if session exists
+   const session = client.auth.getSession();
+   if (!session) {
+     await client.auth.guest();
+   }
+   ```
+
+## Experience Entry Issues
+
+### "Experience Not Found" Error
+
+**Causes**:
+
+- Invalid experience ID
+- Experience not published
+- Experience not yet active
+
+**Debug steps**:
+
+1. Verify the experience ID in your dashboard
+2. Check that the experience is published
+3. Confirm the experience's start time has passed
+
+### "Already in Experience" Error
+
+**Symptom**: Error when trying to enter an experience.
+
+**Explanation**: This is actually expected behavior. The SDK returns the existing session.
+
+```typescript
+try {
+  const session = await client.experiences.enter(experienceId);
+  // session is returned whether new or existing
+} catch (error) {
+  if (error.code === "ALREADY_IN_EXPERIENCE") {
+    // Get existing session
+    const session = client.experiences.getActiveSession();
+  }
+}
+```
+
+### Queue Not Moving
+
+**Symptoms**: Position stays the same for extended periods.
+
+**Possible reasons**:
+
+1. **Low throughput**: Queue is processing slowly
+2. **Users ahead**: Many users in front are still active
+3. **Checkout delays**: Users are taking time to complete purchases
+
+**What to check**:
+
+- Dashboard shows queue activity
+- Access grant rate is configured correctly
+- No errors in webhook processing
+
+## Real-Time Update Issues
+
+### Position Not Updating
+
+**Symptoms**: Queue position doesn't change despite being connected.
+
+**Solutions**:
+
+1. **Check event subscription**
+
+   ```typescript
+   // Ensure you're subscribed to the event
+   client.on("queue:position-updated", ({ position }) => {
+     console.log("Position updated:", position);
+     setPosition(position);
+   });
+   ```
+
+2. **Verify connection status**
+
+   ```typescript
+   // Check connection state
+   client.on("connection:lost", () => {
+     showConnectionWarning();
+   });
+
+   client.on("connection:restored", () => {
+     hideConnectionWarning();
+   });
+   ```
+
+3. **Network issues**
+   - Check browser console for WebSocket errors
+   - Verify no firewall/proxy blocking
+   - Try refreshing the page
+
+### Events Not Firing
+
+**Debug steps**:
+
+1. **Enable debug mode**
+
+   ```typescript
+   const client = new FanfareClient({
+     publishableKey: "pk_test_...",
+     debug: true, // Logs all events
+   });
+   ```
+
+2. **Check event registration timing**
+
+   ```typescript
+   // Register events before entering experiences
+   client.on("queue:position-updated", handler);
+   await client.experiences.enter(experienceId);
+   ```
+
+3. **Verify handler function**
+   ```typescript
+   // Make sure handler is a function
+   const handler = (data) => {
+     console.log("Event received:", data);
+   };
+   client.on("queue:position-updated", handler);
+   ```
+
+## Checkout/Handoff Issues
+
+### Handoff Token Invalid
+
+**Symptoms**: Checkout fails with "invalid token" error.
+
+**Causes**:
+
+1. **Token expired**: Handoff tokens have a limited validity period
+2. **Token already used**: Each token can only be used once
+3. **Wrong environment**: Token from test mode used in production
+
+**Solutions**:
+
+```typescript
+// Handle handoff properly
+client.on("queue:access-granted", async ({ handoffToken, expiresAt }) => {
+  // Check if token is still valid
+  if (new Date(expiresAt) < new Date()) {
+    showExpiredMessage();
+    return;
+  }
+
+  // Use token immediately
+  window.location.href = `/checkout?token=${handoffToken}`;
+});
+```
+
+### User Kicked from Checkout
+
+**Symptom**: User removed from checkout before completing purchase.
+
+**Causes**:
+
+- Access window expired
+- Session timed out
+- Another session took priority
+
+**Prevention**:
+
+- Show countdown timer in checkout
+- Warn users when time is running low
+- Implement session keep-alive
+
+## Mobile-Specific Issues
+
+### SDK Not Working on Mobile Safari
+
+**Common issues**:
+
+1. **Private browsing mode**
+   - Storage APIs may be restricted
+   - Inform users if detected
+
+2. **ITP (Intelligent Tracking Prevention)**
+   - May affect cross-site storage
+   - Use first-party cookies when possible
+
+3. **WebSocket restrictions**
+   ```typescript
+   // Handle Safari WebSocket limitations
+   client.on("connection:error", () => {
+     // Fall back to polling if needed
+   });
+   ```
+
+### Touch Events Not Registering
+
+**Solution**: Ensure proper touch event handling.
+
+```tsx
+<button
+  onClick={handleClick}
+  onTouchEnd={(e) => {
+    e.preventDefault();
+    handleClick();
+  }}
+>
+  Enter Queue
+</button>
+```
+
+## Performance Issues
+
+### Slow Initial Load
+
+**Solutions**:
+
+1. **Lazy load the SDK**
+
+   ```typescript
+   const client = await import("@fanfare/sdk").then((m) => new m.FanfareClient({ publishableKey: "..." }));
+   ```
+
+2. **Preconnect to API**
+   ```html
+   <link rel="preconnect" href="https://consumer.fanfare.io" />
+   ```
+
+### Memory Leaks
+
+**Symptoms**: Page becomes slow over time.
+
+**Solution**: Clean up event handlers properly.
+
+```typescript
+useEffect(() => {
+  const handler = (data) => setPosition(data.position);
+  client.on("queue:position-updated", handler);
+
+  return () => {
+    client.off("queue:position-updated", handler);
+  };
+}, []);
+```
+
+## Getting More Help
+
+If you can't resolve your issue:
+
+1. **Enable debug logging** and capture the output
+2. **Note the error code** from any error messages
+3. **Check the [SDK Errors](/resources/troubleshooting/sdk-errors)** reference
+4. **Check the [API Errors](/resources/troubleshooting/api-errors)** reference
+5. **Contact support** with your findings
+
+<Card title="Contact Support" icon="headset" href="/resources/support/contact">
+  Get help from our support team
+</Card>

@@ -1,0 +1,313 @@
+---
+title: Configure Auction
+description: Set up competitive bidding auctions for high-value items and price discovery
+---
+
+# Configure Auction Experience
+
+Auction experiences enable competitive bidding on products, allowing the market to determine fair prices. This is ideal for high-value items, collectibles, and unique products where demand exceeds supply.
+
+## When to Use Auctions
+
+Auctions are best for:
+
+- **High-value items** - Luxury goods, rare collectibles
+- **Price discovery** - Let the market set the price
+- **Unique products** - One-of-a-kind or limited items
+- **Charity events** - Fundraising with competitive bidding
+- **Overstock liquidation** - Clear inventory at market prices
+
+## Creating an Auction Experience
+
+1. Navigate to **Experiences > Create Experience**
+2. Select **Auction** from the experience type options
+3. Complete the auction configuration form
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/experiences/create?type=AUCTION
+Shows: Auction creation form with all fields visible
+Annotations: Number the main sections of the form
+Alt text: "Auction experience creation form showing all configuration options"
+*/}
+
+![Auction creation](./images/auction-create.png)
+_Caption: The auction creation form with all configuration options_
+
+## Auction-Specific Settings
+
+### Auction Type
+
+Choose the auction format:
+
+| Type                    | Description                      | Best For                         |
+| ----------------------- | -------------------------------- | -------------------------------- |
+| **English (Ascending)** | Bids increase until time expires | Most common, transparent         |
+| **Dutch (Descending)**  | Price drops until someone bids   | Quick sales, perishables         |
+| **Sealed Bid**          | Hidden bids revealed at end      | Fair allocation, no bidding wars |
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/experiences/create?type=AUCTION
+Shows: Auction type selector
+Annotations: Label each auction type option
+Alt text: "Auction type selection showing English, Dutch, and Sealed bid options"
+*/}
+
+![Auction types](./images/auction-types.png)
+_Caption: Choose from three auction formats_
+
+### Pricing Configuration
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/experiences/create?type=AUCTION
+Shows: Pricing configuration section
+Annotations: Label reserve price, starting bid, and bid increment fields
+Alt text: "Auction pricing configuration with reserve price and bid settings"
+*/}
+
+![Auction pricing](./images/auction-pricing.png)
+_Caption: Configure pricing rules for your auction_
+
+| Field             | Required | Description                          |
+| ----------------- | -------- | ------------------------------------ |
+| **Starting Bid**  | Yes      | Minimum first bid amount             |
+| **Reserve Price** | No       | Minimum price for the item to sell   |
+| **Bid Increment** | Yes      | Minimum increase between bids        |
+| **Buy Now Price** | No       | Price to immediately win the auction |
+
+<Info title="Reserve Price">
+If the reserve price isn't met, the item won't sell even if there are bids. The reserve is hidden from bidders by default.
+</Info>
+
+### Schedule Configuration
+
+| Field             | Required | Description                             |
+| ----------------- | -------- | --------------------------------------- |
+| **Auction Start** | Yes      | When bidding opens                      |
+| **Auction End**   | Yes      | When bidding closes                     |
+| **Soft Close**    | No       | Extend auction if bid placed near end   |
+| **Settle By**     | No       | Deadline for winner to complete payment |
+
+### Soft Close (Anti-Sniping)
+
+Prevent last-second bidding from unfairly winning auctions:
+
+| Setting                | Description                                               |
+| ---------------------- | --------------------------------------------------------- |
+| **Extension Window**   | Time before end that triggers extension (e.g., 5 minutes) |
+| **Extension Duration** | How long to extend (e.g., 5 minutes)                      |
+| **Max Extensions**     | Maximum number of extensions allowed                      |
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/experiences/create?type=AUCTION
+Shows: Soft close configuration
+Annotations: Label extension settings
+Alt text: "Soft close anti-sniping configuration"
+*/}
+
+![Soft close](./images/auction-soft-close.png)
+_Caption: Prevent sniping with automatic auction extension_
+
+## Payment Integration
+
+Auctions require payment integration to collect from winners.
+
+### Stripe Connect
+
+Connect your Stripe account to process auction payments:
+
+1. Navigate to **Settings > Payments**
+2. Connect your Stripe account
+3. Enable auction payments
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/settings/payments
+Shows: Stripe connect section showing connected status
+Annotations: Highlight the connection status
+Alt text: "Stripe Connect integration for auction payments"
+*/}
+
+![Payment integration](./images/auction-payments.png)
+_Caption: Connect Stripe to process auction payments_
+
+### Payment Terms
+
+| Setting          | Description                          |
+| ---------------- | ------------------------------------ |
+| **Payment Due**  | Hours after auction ends for payment |
+| **Auto-charge**  | Automatically charge winning bidder  |
+| **Payment Hold** | Authorize payment before bidding     |
+
+## Bidder Requirements
+
+Control who can participate:
+
+| Setting                     | Description                         |
+| --------------------------- | ----------------------------------- |
+| **Audience Restriction**    | Limit to specific audiences         |
+| **Payment Method Required** | Require card on file before bidding |
+| **Bid Approval**            | Manually approve bidders            |
+| **Bid Limit**               | Maximum bid amount per bidder       |
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/experiences/create?type=AUCTION
+Shows: Bidder requirements section
+Annotations: None needed
+Alt text: "Bidder requirements configuration"
+*/}
+
+![Bidder requirements](./images/auction-bidder-reqs.png)
+_Caption: Set requirements for auction participants_
+
+## Notifications
+
+### Bidder Notifications
+
+| Event                   | Notification                           |
+| ----------------------- | -------------------------------------- |
+| **Bid Placed**          | Confirmation of your bid               |
+| **Outbid**              | Someone bid higher                     |
+| **Auction Ending Soon** | Reminder before close                  |
+| **You Won**             | Congratulations + payment instructions |
+| **You Lost**            | Auction ended, you didn't win          |
+| **Payment Reminder**    | Reminder to complete payment           |
+
+### Seller Notifications
+
+| Event                | Notification                  |
+| -------------------- | ----------------------------- |
+| **New Bid**          | Someone placed a bid          |
+| **Reserve Met**      | Bidding reached reserve price |
+| **Auction Ended**    | Final results                 |
+| **Payment Received** | Winner completed payment      |
+
+## Auction States
+
+```
+Draft → Scheduled → Active → Settling → Completed
+                      ↓         ↓
+                   Paused    Failed
+```
+
+| State         | Description                        |
+| ------------- | ---------------------------------- |
+| **Draft**     | Not published                      |
+| **Scheduled** | Published, waiting for start       |
+| **Active**    | Bidding in progress                |
+| **Settling**  | Auction ended, awaiting payment    |
+| **Completed** | Payment received, auction finished |
+| **Failed**    | Reserve not met or payment failed  |
+
+## Example: Collectible Auction
+
+### Scenario
+
+- Item: Signed memorabilia
+- Expected value: $500-1,000
+- Duration: 7 days
+
+### Configuration
+
+```yaml
+Name: "Signed Championship Jersey Auction"
+Product: Signed Jersey #23
+Audience: All Registered Users
+
+Auction Type: English (Ascending)
+
+Pricing:
+  Starting Bid: $100
+  Reserve Price: $500
+  Bid Increment: $25
+  Buy Now: $1,500
+
+Schedule:
+  Auction Start: Monday 9 AM
+  Auction End: Sunday 9 PM
+
+Soft Close:
+  Extension Window: 5 minutes
+  Extension Duration: 5 minutes
+  Max Extensions: 10
+
+Payment:
+  Payment Due: 48 hours
+  Auto-charge: No (manual confirmation)
+
+Notifications:
+  - All bidder notifications
+  - Seller notifications for new bids
+```
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/experiences/{experienceId}
+Shows: Example auction experience detail page
+Annotations: None needed
+Alt text: "Configured auction experience for collectible item"
+*/}
+
+![Example auction](./images/auction-example.png)
+_Caption: A fully configured collectible auction_
+
+## Best Practices
+
+### Setting Prices
+
+1. **Research comparable sales** - Check what similar items sold for
+2. **Start low to attract bidders** - Low starting bids drive competition
+3. **Set realistic reserves** - Too high and you won't sell
+4. **Consider no reserve** - Guaranteed sale, potentially lower price
+
+### Auction Duration
+
+| Duration   | Best For                           |
+| ---------- | ---------------------------------- |
+| 3 days     | Low-value items, quick sales       |
+| 7 days     | Standard auctions                  |
+| 10-14 days | High-value items, maximum exposure |
+
+### Timing
+
+- **Start mid-week** - Avoid Monday/Friday when people are busy
+- **End on Sunday evening** - Maximum bidder availability
+- **Avoid holidays** - Reduced participation
+
+## Handling Issues
+
+### Reserve Not Met
+
+Options when reserve isn't met:
+
+1. Contact highest bidder to negotiate
+2. Relist with lower reserve
+3. Accept the highest bid anyway
+
+### Payment Failure
+
+If winner doesn't pay:
+
+1. Send payment reminders
+2. Contact winner directly
+3. Offer to second-highest bidder
+4. Relist the item
+
+### Disputed Bids
+
+If a bidder disputes:
+
+1. Review bid history
+2. Check for technical issues
+3. Contact bidder for clarification
+4. Consider canceling problematic bids
+
+## Related Guides
+
+- [Payment Settings](/dashboard/settings/payments) - Configure Stripe Connect
+- [Experience Lifecycle](/dashboard/experiences/experience-lifecycle) - Managing active auctions
+- [Experience Analytics](/dashboard/experiences/experience-analytics) - Auction metrics

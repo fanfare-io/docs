@@ -1,0 +1,189 @@
+---
+title: Dashboard Overview
+description: Navigate the Fanfare admin console and understand the main dashboard layout
+---
+
+# Dashboard Overview
+
+The Fanfare admin console provides a centralized interface for managing your experiences, audiences, consumers, products, and organization settings. This guide walks you through the main navigation and dashboard features.
+
+## Accessing the Dashboard
+
+After signing in to your Fanfare account, you'll land on the main dashboard at `/app/dashboard`. If you're signing in for the first time, you may be prompted to complete organization setup before accessing the dashboard.
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/dashboard
+Shows: Full dashboard view with sidebar navigation visible, analytics panels, and experiences calendar
+Annotations: Highlight sidebar navigation, main content area, and user menu
+Alt text: "Fanfare admin dashboard showing the main layout with sidebar navigation and analytics overview"
+*/}
+
+![Dashboard overview](./images/dashboard-overview.png)
+_Caption: The main Fanfare admin dashboard with sidebar navigation and analytics panels_
+
+## Navigation Structure
+
+The admin console uses a collapsible sidebar for primary navigation. The sidebar contains the following main sections:
+
+| Section         | Description                                             | Route              |
+| --------------- | ------------------------------------------------------- | ------------------ |
+| **Home**        | Main dashboard with analytics and experience calendar   | `/app/dashboard`   |
+| **Products**    | Product catalog management                              | `/app/products`    |
+| **Experiences** | Queue, auction, draw, and appointment management        | `/app/experiences` |
+| **Audiences**   | Audience segmentation and membership rules              | `/app/audiences`   |
+| **Customers**   | Consumer profiles and activity history                  | `/app/customers`   |
+| **Loyalty**     | Loyalty program and tier management                     | `/app/loyalty`     |
+| **Locations**   | Physical location management                            | `/app/locations`   |
+| **Settings**    | Organization, brand, integrations, and payment settings | `/app/settings`    |
+
+### Sidebar Behavior
+
+The sidebar can be collapsed to show only icons, providing more screen space for content. Click the sidebar trigger button to toggle between expanded and collapsed states.
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/dashboard
+Shows: Sidebar in both expanded and collapsed states (side by side comparison)
+Annotations: Highlight the sidebar trigger button
+Alt text: "Sidebar navigation in expanded and collapsed states"
+*/}
+
+![Sidebar states](./images/sidebar-states.png)
+_Caption: The sidebar can be collapsed to maximize content area_
+
+## Main Dashboard Components
+
+### Analytics Panels
+
+The dashboard provides real-time analytics with two main views:
+
+1. **Channel Attribution View** - Shows traffic sources and conversion funnels
+2. **Audience Segmentation View** - Displays metrics broken down by audience segments
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/dashboard
+Shows: Analytics panel toggle between "Attribution" and "Segmentation" views
+Annotations: Highlight the view toggle buttons
+Alt text: "Analytics view toggle showing attribution and segmentation options"
+*/}
+
+![Analytics views](./images/analytics-views.png)
+_Caption: Toggle between channel attribution and audience segmentation analytics_
+
+### Time Period Selection
+
+Use the time period selector to adjust the analytics date range:
+
+- **24 hours** - Last 24 hours of activity
+- **7 days** - Previous 7 days
+- **30 days** - Previous 30 days
+- **90 days** - Previous 90 days
+
+### Auto-Refresh
+
+The dashboard supports automatic data refresh every 30 seconds. Toggle auto-refresh on or off using the button next to the refresh icon.
+
+### Experiences Calendar
+
+Below the analytics panels, the dashboard displays your experiences in a calendar view. This provides a visual timeline of scheduled, active, and completed experiences.
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/dashboard
+Shows: Experiences calendar showing multiple experiences across different dates
+Annotations: Point out experience status indicators and date navigation
+Alt text: "Experiences calendar view showing scheduled and active experiences"
+*/}
+
+![Experiences calendar](./images/experiences-calendar.png)
+_Caption: The experiences calendar provides a timeline view of all your experiences_
+
+### Quick Actions (Empty State)
+
+If you haven't created any experiences yet, the dashboard displays quick action cards to help you get started:
+
+- **Create Experience** - Launch the experience creation wizard
+- **Create Audience** - Define a new audience segment
+- **Create Product** - Add a product to your catalog
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/dashboard
+Shows: Empty state with quick action cards for creating experiences, audiences, and products
+Annotations: None needed
+Alt text: "Quick action cards displayed when no experiences exist"
+*/}
+
+![Quick actions](./images/quick-actions.png)
+_Caption: Quick action cards help new users get started_
+
+## Title Bar and Breadcrumbs
+
+The top of each page displays:
+
+- **Page title** - Current page name
+- **Breadcrumb navigation** - Hierarchical path showing your location in the app
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/experiences
+Shows: Title bar with breadcrumbs showing "Experiences"
+Annotations: Label the title and breadcrumb elements
+Alt text: "Title bar showing page title and breadcrumb navigation"
+*/}
+
+![Title bar](./images/title-bar.png)
+_Caption: The title bar provides context and navigation breadcrumbs_
+
+## User Menu
+
+Access your account settings and organization information from the user menu in the sidebar footer:
+
+- View current organization
+- Switch organizations (if you have access to multiple)
+- Access billing settings
+- Sign out
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/dashboard
+Shows: User menu expanded showing account options
+Annotations: Highlight sign out and organization options
+Alt text: "User menu showing account and organization options"
+*/}
+
+![User menu](./images/user-menu.png)
+_Caption: Access account settings and sign out from the user menu_
+
+## Billing Alerts
+
+If your subscription requires attention (approaching limits, trial ending, payment issues), an alert banner appears below the title bar. Click the banner to navigate to billing settings.
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/dashboard
+Shows: Alert banner showing a subscription warning (e.g., trial ending soon)
+Annotations: None needed
+Alt text: "Billing alert banner showing subscription warning"
+*/}
+
+![Billing alert](./images/billing-alert.png)
+_Caption: Billing alerts appear when your subscription needs attention_
+
+## Keyboard Shortcuts
+
+The dashboard supports the following keyboard navigation:
+
+| Shortcut | Action                                |
+| -------- | ------------------------------------- |
+| `Tab`    | Navigate between interactive elements |
+| `Enter`  | Activate focused button or link       |
+| `Escape` | Close modals or sheets                |
+
+## Next Steps
+
+- [Getting Started Guide](/dashboard/getting-started) - Complete initial setup
+- [Create Your First Experience](/dashboard/experiences/create-experience) - Launch a queue, auction, draw, or appointment
+- [Manage Audiences](/dashboard/audiences/overview) - Set up audience segmentation

@@ -1,0 +1,386 @@
+---
+title: Membership Rules
+description: Configure dynamic audience membership rules based on consumer attributes
+---
+
+# Membership Rules
+
+Membership rules define who belongs to a dynamic audience. When consumers match the rules, they're automatically included in the audience. This guide covers all available rule types and configuration options.
+
+## Rule Basics
+
+### How Rules Work
+
+1. Rules evaluate consumer attributes
+2. If conditions are met, the consumer is a member
+3. Membership updates automatically as data changes
+4. No manual maintenance required
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/audiences/{audienceId}
+Shows: Rules tab on audience detail page showing configured rules
+Annotations: Label the rule components
+Alt text: "Audience rules tab showing configured membership rules"
+*/}
+
+![Rules overview](./images/rules-overview.png)
+_Caption: Membership rules automatically determine audience membership_
+
+## Rule Components
+
+Each rule consists of:
+
+| Component    | Description                 | Example                       |
+| ------------ | --------------------------- | ----------------------------- |
+| **Field**    | Consumer attribute to check | email, loyaltyPoints, tags    |
+| **Operator** | How to compare              | equals, contains, greaterThan |
+| **Value**    | What to compare against     | "@company.com", 1000, "VIP"   |
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/audiences/create
+Shows: Single rule being configured with field, operator, and value
+Annotations: Label each component
+Alt text: "Rule configuration showing field, operator, and value selection"
+*/}
+
+![Rule components](./images/rules-components.png)
+_Caption: Each rule has three main components_
+
+## Available Fields
+
+### Contact Information
+
+| Field           | Type   | Description                    |
+| --------------- | ------ | ------------------------------ |
+| **email**       | String | Consumer's email address       |
+| **emailDomain** | String | Domain part of email (after @) |
+| **phone**       | String | Phone number                   |
+| **fullName**    | String | Full name                      |
+| **firstName**   | String | First name                     |
+| **lastName**    | String | Last name                      |
+
+### Loyalty & Engagement
+
+| Field                 | Type   | Description                       |
+| --------------------- | ------ | --------------------------------- |
+| **loyaltyPoints**     | Number | Current loyalty points balance    |
+| **loyaltyTier**       | String | Current tier (Gold, Silver, etc.) |
+| **totalOrders**       | Number | Total order count                 |
+| **totalSpend**        | Number | Lifetime spend amount             |
+| **averageOrderValue** | Number | Average order value               |
+
+### Dates & Timing
+
+| Field               | Type | Description               |
+| ------------------- | ---- | ------------------------- |
+| **createdAt**       | Date | When consumer was created |
+| **lastActivityAt**  | Date | Most recent activity      |
+| **firstPurchaseAt** | Date | First purchase date       |
+| **lastPurchaseAt**  | Date | Most recent purchase      |
+
+### Tags & Attributes
+
+| Field          | Type   | Description               |
+| -------------- | ------ | ------------------------- |
+| **tags**       | Array  | Consumer tags             |
+| **externalId** | String | External system ID        |
+| **source**     | String | Where consumer originated |
+
+### Custom Attributes
+
+Custom attributes you've defined for consumers can also be used in rules:
+
+| Field              | Type   | Description           |
+| ------------------ | ------ | --------------------- |
+| `metadata.{key}`   | Varies | Custom metadata field |
+| `attributes.{key}` | Varies | Custom attribute      |
+
+## Operators
+
+### String Operators
+
+| Operator        | Description               | Example                             |
+| --------------- | ------------------------- | ----------------------------------- |
+| **equals**      | Exact match               | email equals "user@example.com"     |
+| **notEquals**   | Not an exact match        | email notEquals "test@example.com"  |
+| **contains**    | Contains substring        | email contains "@company.com"       |
+| **notContains** | Doesn't contain substring | email notContains "@competitor.com" |
+| **startsWith**  | Begins with               | email startsWith "vip"              |
+| **endsWith**    | Ends with                 | email endsWith ".edu"               |
+| **isEmpty**     | Field is empty            | firstName isEmpty                   |
+| **isNotEmpty**  | Field has a value         | phone isNotEmpty                    |
+
+### Number Operators
+
+| Operator           | Description        | Example                          |
+| ------------------ | ------------------ | -------------------------------- |
+| **equals**         | Exact match        | loyaltyPoints equals 1000        |
+| **notEquals**      | Not equal          | loyaltyPoints notEquals 0        |
+| **greaterThan**    | Greater than value | totalSpend greaterThan 500       |
+| **greaterOrEqual** | Greater or equal   | totalOrders greaterOrEqual 5     |
+| **lessThan**       | Less than value    | loyaltyPoints lessThan 100       |
+| **lessOrEqual**    | Less or equal      | averageOrderValue lessOrEqual 50 |
+| **between**        | Within range       | loyaltyPoints between 500-1000   |
+
+### Date Operators
+
+| Operator      | Description       | Example                            |
+| ------------- | ----------------- | ---------------------------------- |
+| **equals**    | Exact date        | createdAt equals "2024-01-01"      |
+| **before**    | Before date       | lastPurchaseAt before "2024-01-01" |
+| **after**     | After date        | createdAt after "2024-06-01"       |
+| **within**    | Within period     | lastActivityAt within "30 days"    |
+| **notWithin** | Not within period | lastPurchaseAt notWithin "90 days" |
+
+### Array Operators
+
+| Operator        | Description           | Example                         |
+| --------------- | --------------------- | ------------------------------- |
+| **contains**    | Array includes value  | tags contains "VIP"             |
+| **notContains** | Array doesn't include | tags notContains "blocked"      |
+| **isEmpty**     | Array is empty        | tags isEmpty                    |
+| **isNotEmpty**  | Array has items       | tags isNotEmpty                 |
+| **hasAll**      | Has all values        | tags hasAll ["VIP", "Verified"] |
+| **hasAny**      | Has any value         | tags hasAny ["Gold", "Silver"]  |
+
+## Combining Rules
+
+### AND Logic
+
+When rules are combined with AND, consumers must match **all** rules:
+
+```
+Rule 1: loyaltyPoints greaterThan 1000
+AND
+Rule 2: totalOrders greaterThan 5
+```
+
+Result: Only consumers with 1000+ points AND 5+ orders are included.
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/audiences/create
+Shows: Multiple rules combined with AND logic
+Annotations: Highlight AND indicator between rules
+Alt text: "Rules combined with AND logic"
+*/}
+
+![AND logic](./images/rules-and.png)
+_Caption: AND logic requires all conditions to be true_
+
+### OR Logic
+
+When rules are combined with OR, consumers must match **any** rule:
+
+```
+Rule 1: loyaltyTier equals "Gold"
+OR
+Rule 2: totalSpend greaterThan 5000
+```
+
+Result: Consumers with Gold tier OR $5000+ spend are included.
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/audiences/create
+Shows: Multiple rules combined with OR logic
+Annotations: Highlight OR indicator between rules
+Alt text: "Rules combined with OR logic"
+*/}
+
+![OR logic](./images/rules-or.png)
+_Caption: OR logic requires any condition to be true_
+
+### Complex Logic
+
+Combine AND and OR for complex targeting:
+
+```
+(Rule 1: loyaltyTier equals "Gold" OR Rule 2: loyaltyTier equals "Platinum")
+AND
+Rule 3: lastActivityAt within "30 days"
+```
+
+Result: Gold OR Platinum members who were active in the last 30 days.
+
+## Rule Groups
+
+Group rules for cleaner organization and complex logic:
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/audiences/create
+Shows: Rules organized into groups
+Annotations: Show group containers and logic between groups
+Alt text: "Rules organized into logical groups"
+*/}
+
+![Rule groups](./images/rules-groups.png)
+_Caption: Group rules for complex logic_
+
+### Creating Groups
+
+1. Click **Add Group**
+2. Add rules within the group
+3. Set logic within the group (AND/OR)
+4. Set logic between groups (AND/OR)
+
+## Common Rule Patterns
+
+### VIP Customers
+
+```
+loyaltyTier equals "Gold"
+OR
+loyaltyTier equals "Platinum"
+OR
+totalSpend greaterThan 10000
+```
+
+### Active Customers
+
+```
+lastActivityAt within "30 days"
+AND
+totalOrders greaterThan 0
+```
+
+### High-Value Prospects
+
+```
+totalSpend between 500-2000
+AND
+lastPurchaseAt within "60 days"
+AND
+averageOrderValue greaterThan 100
+```
+
+### New Customers
+
+```
+createdAt within "30 days"
+AND
+totalOrders lessOrEqual 1
+```
+
+### Corporate Customers
+
+```
+emailDomain notContains "@gmail.com"
+AND
+emailDomain notContains "@yahoo.com"
+AND
+emailDomain notContains "@hotmail.com"
+```
+
+### Lapsed Customers
+
+```
+totalOrders greaterThan 2
+AND
+lastPurchaseAt notWithin "90 days"
+```
+
+## Testing Rules
+
+### Preview Matching Consumers
+
+Before saving, preview which consumers match:
+
+1. Configure your rules
+2. Click **Preview Matches**
+3. Review the list of matching consumers
+4. Adjust rules if needed
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/audiences/create
+Shows: Rule preview showing matching consumers
+Annotations: Highlight the preview count and sample list
+Alt text: "Rule preview showing matching consumer count and samples"
+*/}
+
+![Rule preview](./images/rules-preview.png)
+_Caption: Preview which consumers match your rules_
+
+### Test Specific Consumer
+
+Check if a specific consumer matches:
+
+1. Click **Test Consumer**
+2. Search for a consumer
+3. See which rules they match/fail
+4. Understand why they're included or excluded
+
+## Rule Performance
+
+### Best Practices
+
+1. **Use indexed fields** - Email, phone, and ID fields are fastest
+2. **Avoid complex calculations** - Simple rules perform better
+3. **Limit nested groups** - Keep logic straightforward
+4. **Test with samples** - Preview before saving
+
+### Performance Considerations
+
+| Rule Type            | Performance | Notes                    |
+| -------------------- | ----------- | ------------------------ |
+| Email equals         | Fast        | Direct lookup            |
+| Tags contains        | Fast        | Indexed search           |
+| Custom metadata      | Medium      | May require scan         |
+| Complex calculations | Slow        | Avoid in large audiences |
+
+## Editing Rules
+
+### Modifying Existing Rules
+
+1. Navigate to the audience detail page
+2. Go to the **Rules** tab
+3. Click on a rule to edit
+4. Save changes
+
+### Adding Rules to Existing Audience
+
+1. Click **Add Rule** on the Rules tab
+2. Configure the new rule
+3. Set logic connection (AND/OR)
+4. Save
+
+### Removing Rules
+
+1. Click the delete icon on the rule
+2. Confirm removal
+3. Membership updates automatically
+
+<Warning>
+Removing rules may significantly change audience membership. Preview changes before saving.
+</Warning>
+
+## Troubleshooting
+
+### Rules Not Matching Expected Consumers
+
+1. **Check field names** - Ensure using correct field
+2. **Verify operators** - equals vs. contains
+3. **Check data types** - String vs. number
+4. **Review logic** - AND vs. OR
+
+### Rules Matching Too Many Consumers
+
+1. **Add more restrictive conditions**
+2. **Change OR to AND logic**
+3. **Add exclusion rules**
+
+### Rules Matching Too Few Consumers
+
+1. **Relax conditions** (greaterThan 500 vs. 1000)
+2. **Change AND to OR logic**
+3. **Remove restrictive rules**
+
+## Related Guides
+
+- [Create Audience](/dashboard/audiences/create-audience) - Build new audiences
+- [Audiences Overview](/dashboard/audiences/overview) - Managing audiences
+- [Consumer Management](/dashboard/consumers/overview) - Understanding consumer data

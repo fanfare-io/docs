@@ -1,0 +1,219 @@
+---
+title: "Custom Webhooks"
+description: "Receive real-time notifications when events occur in Fanfare"
+---
+
+## Overview
+
+{/* TODO: MISSING_FUNCTIONALITY
+Feature: Custom webhook configuration via admin UI
+Expected behavior: Users can configure webhook endpoints, select events, and manage delivery
+Current state: Webhook receiving is implemented for providers (Stripe, Twilio, Resend) but custom outbound webhooks for customers are not yet available
+*/}
+
+<Callout type="warning">
+  **Coming Soon**: Custom webhook configuration is under development. This page documents the planned functionality.
+</Callout>
+
+Custom webhooks allow you to receive HTTP callbacks when events occur in Fanfare. This enables you to:
+
+- Sync data with external systems in real-time
+- Trigger automations in your own applications
+- Build custom integrations without polling the API
+
+## Planned Features
+
+### Event Types
+
+The following events will be available for webhook subscriptions:
+
+#### Consumer Events
+
+| Event              | Description              |
+| ------------------ | ------------------------ |
+| `consumer.created` | New consumer registered  |
+| `consumer.updated` | Consumer profile updated |
+| `consumer.deleted` | Consumer removed         |
+
+#### Experience Events
+
+| Event                  | Description            |
+| ---------------------- | ---------------------- |
+| `experience.created`   | New experience created |
+| `experience.activated` | Experience went live   |
+| `experience.completed` | Experience finished    |
+| `experience.cancelled` | Experience cancelled   |
+
+#### Distribution Events
+
+| Event                          | Description                  |
+| ------------------------------ | ---------------------------- |
+| `distribution.joined`          | Consumer joined queue/draw   |
+| `distribution.admitted`        | Consumer admitted from queue |
+| `distribution.winner_selected` | Draw winner selected         |
+| `distribution.bid_placed`      | Auction bid received         |
+| `distribution.completed`       | Consumer completed checkout  |
+
+#### Order Events
+
+| Event             | Description               |
+| ----------------- | ------------------------- |
+| `order.created`   | New order placed          |
+| `order.paid`      | Order payment confirmed   |
+| `order.fulfilled` | Order marked as fulfilled |
+| `order.cancelled` | Order cancelled           |
+
+### Webhook Configuration
+
+When available, you will be able to configure webhooks via:
+
+**Admin Dashboard:**
+
+1. Navigate to **Settings** > **Integrations** > **Webhooks**
+2. Click **Add Webhook**
+3. Configure:
+   - Endpoint URL
+   - Events to subscribe
+   - Secret for signature verification
+
+**API:**
+
+```bash
+POST /api/webhooks
+Content-Type: application/json
+
+{
+  "url": "https://example.com/webhooks/fanfare",
+  "events": [
+    "consumer.created",
+    "distribution.winner_selected"
+  ],
+  "secret": "whsec_your_secret_key"
+}
+```
+
+### Webhook Payload Format
+
+Webhooks will use the following payload structure:
+
+```json
+{
+  "id": "wh_evt_abc123",
+  "type": "distribution.winner_selected",
+  "timestamp": "2024-06-20T15:30:00Z",
+  "organization_id": "org_xyz789",
+  "data": {
+    "consumer_id": "con_123",
+    "distribution_id": "dist_456",
+    "experience_id": "exp_789",
+    "product_id": "prod_012"
+  }
+}
+```
+
+### Signature Verification
+
+Webhooks will include a signature header for verification:
+
+```
+X-Fanfare-Signature: sha256=abc123...
+X-Fanfare-Timestamp: 1687273800
+```
+
+**Verification (Node.js example):**
+
+```typescript
+import crypto from "crypto";
+
+function verifyWebhook(payload: string, signature: string, secret: string): boolean {
+  const expected = crypto.createHmac("sha256", secret).update(payload).digest("hex");
+
+  return crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(`sha256=${expected}`));
+}
+```
+
+### Retry Policy
+
+Failed webhook deliveries will be retried:
+
+| Attempt | Delay      |
+| ------- | ---------- |
+| 1       | Immediate  |
+| 2       | 1 minute   |
+| 3       | 5 minutes  |
+| 4       | 30 minutes |
+| 5       | 2 hours    |
+| 6       | 12 hours   |
+
+After 6 failed attempts, the webhook will be marked as failed and you will be notified.
+
+### Delivery Status
+
+Each webhook delivery will track:
+
+- Delivery timestamp
+- HTTP response code
+- Response body (truncated)
+- Retry count
+- Success/failure status
+
+## Current Integrations
+
+While custom webhooks are under development, Fanfare currently supports receiving webhooks from:
+
+### Stripe Webhooks
+
+Receive payment and subscription events from Stripe:
+
+- [Stripe Integration](/integrations/payments/stripe)
+
+### Twilio Webhooks
+
+Receive SMS delivery status callbacks from Twilio:
+
+- [Twilio Integration](/integrations/messaging/twilio)
+
+### Resend Webhooks
+
+Receive email delivery events from Resend:
+
+- [Resend Integration](/integrations/messaging/resend)
+
+## Workarounds
+
+Until custom webhooks are available, you can:
+
+### Poll the API
+
+Use the Fanfare API to periodically check for changes:
+
+```bash
+# Get recent consumers
+GET /api/consumers?sort=-createdAt&limit=100
+
+# Get distribution participants
+GET /api/distributions/:id/consumers?status=SELECTED
+```
+
+### Use Third-Party Integration Platforms
+
+Connect Fanfare to automation platforms that support API polling:
+
+- Zapier (planned)
+- Make (planned)
+- n8n
+- Pipedream
+
+## Requesting Access
+
+If you have an urgent need for webhook functionality:
+
+1. Contact support at support@fanfare.io
+2. Describe your use case
+3. We may be able to provide early access or a custom solution
+
+## Related Resources
+
+- [Zapier Integration](/integrations/webhooks/zapier) (Planned)
+- [Make Integration](/integrations/webhooks/make) (Planned)
+- [API Overview](/api-reference/overview)

@@ -1,0 +1,888 @@
+---
+title: WooCommerce Integration Guide
+description: Integrate Fanfare experiences with your WooCommerce store on WordPress.
+---
+
+# WooCommerce Integration Guide
+
+Learn how to integrate Fanfare experiences with your WooCommerce store on WordPress.
+
+## Overview
+
+This guide covers integrating Fanfare virtual queues, draws, and auctions with WooCommerce. You can use either the official WordPress plugin or implement a custom integration.
+
+**What you'll learn:**
+
+- Installing the Fanfare WordPress plugin
+- Embedding experiences on product pages
+- Connecting to WooCommerce checkout
+- Processing orders via webhooks
+- Customizing the experience display
+
+**Complexity:** Intermediate
+**Time to complete:** 40 minutes
+
+## Prerequisites
+
+- WordPress site with WooCommerce installed
+- Fanfare account with active organization
+- Access to WordPress admin panel
+- Basic understanding of WordPress hooks and filters
+
+## Installation Options
+
+### Option 1: WordPress Plugin (Recommended)
+
+1. Download the Fanfare plugin from [WordPress Plugin Directory](https://wordpress.org/plugins/fanfare)
+2. Upload to your WordPress installation
+3. Activate the plugin
+4. Navigate to **Fanfare** > **Settings**
+5. Enter your Organization ID and API Key
+
+### Option 2: Manual Integration
+
+Add the Fanfare SDK directly to your theme:
+
+```php
+// functions.php
+function fanfare_enqueue_scripts() {
+    if (is_product()) {
+        wp_enqueue_script(
+            'fanfare-sdk',
+            'https://cdn.fanfare.io/sdk/v1/fanfare-sdk.min.js',
+            array(),
+            '1.0.0',
+            true
+        );
+
+        wp_enqueue_script(
+            'fanfare-integration',
+            get_template_directory_uri() . '/js/fanfare-integration.js',
+            array('fanfare-sdk', 'jquery'),
+            '1.0.0',
+            true
+        );
+
+        wp_localize_script('fanfare-integration', 'FanfareConfig', array(
+            'organizationId' => get_option('fanfare_organization_id'),
+            'ajaxUrl' => admin_url('admin-ajax.php'),
+            'nonce' => wp_create_nonce('fanfare_nonce'),
+        ));
+    }
+}
+add_action('wp_enqueue_scripts', 'fanfare_enqueue_scripts');
+```
+
+## Step 1: Configure Organization Settings
+
+### Plugin Settings Page
+
+Navigate to **Fanfare** > **Settings** in WordPress admin:
+
+| Setting         | Description                            |
+| --------------- | -------------------------------------- |
+| Organization ID | Your Fanfare organization identifier   |
+| API Key         | Server-side API key (keep secret)      |
+| Public Key      | Client-side key for SDK initialization |
+| Environment     | Production or Sandbox                  |
+| Default Display | Inline, modal, or shortcode only       |
+
+### Manual Configuration
+
+```php
+// wp-config.php or settings page
+define('FANFARE_ORGANIZATION_ID', 'org_your_org_id');
+define('FANFARE_API_KEY', 'sk_live_your_api_key');
+define('FANFARE_PUBLIC_KEY', 'pk_live_your_public_key');
+define('FANFARE_ENVIRONMENT', 'production');
+```
+
+## Step 2: Product Meta Box
+
+Add Fanfare configuration to products:
+
+```php
+// Add meta box to product edit screen
+function fanfare_add_product_meta_box() {
+    add_meta_box(
+        'fanfare_experience',
+        'Fanfare Experience',
+        'fanfare_product_meta_box_callback',
+        'product',
+        'side',
+        'default'
+    );
+}
+add_action('add_meta_boxes', 'fanfare_add_product_meta_box');
+
+function fanfare_product_meta_box_callback($post) {
+    wp_nonce_field('fanfare_save_product_meta', 'fanfare_product_nonce');
+
+    $experience_id = get_post_meta($post->ID, '_fanfare_experience_id', true);
+    $enabled = get_post_meta($post->ID, '_fanfare_enabled', true);
+    $display_mode = get_post_meta($post->ID, '_fanfare_display_mode', true);
+
+    ?>
+    <p>
+        <label>
+            <input type="checkbox" name="fanfare_enabled" value="1" <?php checked($enabled, '1'); ?>>
+            Enable Fanfare Experience
+        </label>
+    </p>
+    <p>
+        <label for="fanfare_experience_id">Experience ID:</label>
+        <input type="text" id="fanfare_experience_id" name="fanfare_experience_id"
+               value="<?php echo esc_attr($experience_id); ?>" class="widefat">
+    </p>
+    <p>
+        <label for="fanfare_display_mode">Display Mode:</label>
+        <select id="fanfare_display_mode" name="fanfare_display_mode" class="widefat">
+            <option value="inline" <?php selected($display_mode, 'inline'); ?>>Inline</option>
+            <option value="modal" <?php selected($display_mode, 'modal'); ?>>Modal</option>
+            <option value="replace" <?php selected($display_mode, 'replace'); ?>>Replace Add to Cart</option>
+        </select>
+    </p>
+    <?php
+}
+
+function fanfare_save_product_meta($post_id) {
+    if (!isset($_POST['fanfare_product_nonce']) ||
+        !wp_verify_nonce($_POST['fanfare_product_nonce'], 'fanfare_save_product_meta')) {
+        return;
+    }
+
+    if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+        return;
+    }
+
+    if (!current_user_can('edit_post', $post_id)) {
+        return;
+    }
+
+    $enabled = isset($_POST['fanfare_enabled']) ? '1' : '0';
+    update_post_meta($post_id, '_fanfare_enabled', $enabled);
+
+    if (isset($_POST['fanfare_experience_id'])) {
+        update_post_meta($post_id, '_fanfare_experience_id',
+            sanitize_text_field($_POST['fanfare_experience_id']));
+    }
+
+    if (isset($_POST['fanfare_display_mode'])) {
+        update_post_meta($post_id, '_fanfare_display_mode',
+            sanitize_text_field($_POST['fanfare_display_mode']));
+    }
+}
+add_action('save_post_product', 'fanfare_save_product_meta');
+```
+
+## Step 3: Frontend Integration
+
+### Display Experience on Product Page
+
+```php
+// Hook into WooCommerce product page
+function fanfare_display_experience() {
+    global $product;
+
+    $enabled = get_post_meta($product->get_id(), '_fanfare_enabled', true);
+    if ($enabled !== '1') {
+        return;
+    }
+
+    $experience_id = get_post_meta($product->get_id(), '_fanfare_experience_id', true);
+    $display_mode = get_post_meta($product->get_id(), '_fanfare_display_mode', true);
+
+    if (empty($experience_id)) {
+        return;
+    }
+
+    ?>
+    <div id="fanfare-experience"
+         class="fanfare-experience fanfare-mode-<?php echo esc_attr($display_mode); ?>"
+         data-experience-id="<?php echo esc_attr($experience_id); ?>"
+         data-product-id="<?php echo esc_attr($product->get_id()); ?>"
+         data-display-mode="<?php echo esc_attr($display_mode); ?>">
+        <div class="fanfare-loading">Loading experience...</div>
+    </div>
+    <?php
+}
+
+// Choose hook based on display mode
+function fanfare_init_display_hook() {
+    global $product;
+
+    if (!$product) return;
+
+    $display_mode = get_post_meta($product->get_id(), '_fanfare_display_mode', true);
+
+    if ($display_mode === 'replace') {
+        // Replace add to cart button
+        remove_action('woocommerce_single_product_summary', 'woocommerce_template_single_add_to_cart', 30);
+        add_action('woocommerce_single_product_summary', 'fanfare_display_experience', 30);
+    } else {
+        // Display before add to cart
+        add_action('woocommerce_before_add_to_cart_form', 'fanfare_display_experience');
+    }
+}
+add_action('woocommerce_before_single_product', 'fanfare_init_display_hook');
+```
+
+### JavaScript Integration
+
+```javascript
+// js/fanfare-integration.js
+(function ($) {
+  "use strict";
+
+  $(document).ready(function () {
+    initFanfareExperience();
+  });
+
+  function initFanfareExperience() {
+    var $container = $("#fanfare-experience");
+    if (!$container.length) return;
+
+    var experienceId = $container.data("experience-id");
+    var productId = $container.data("product-id");
+    var displayMode = $container.data("display-mode");
+
+    // Initialize Fanfare SDK
+    Fanfare.init({
+      organizationId: FanfareConfig.organizationId,
+      environment: "production",
+    });
+
+    // Render experience
+    Fanfare.renderExperience($container[0], {
+      experienceId: experienceId,
+
+      onStateChange: function (state) {
+        handleStateChange($container, state, displayMode);
+      },
+
+      onAdmitted: function (admission) {
+        handleAdmission($container, admission, productId);
+      },
+
+      onError: function (error) {
+        handleError($container, error);
+      },
+    });
+  }
+
+  function handleStateChange($container, state, displayMode) {
+    // Update add-to-cart button visibility
+    var $addToCart = $("form.cart");
+
+    if (displayMode === "replace") {
+      if (state.stage === "admitted") {
+        // Show checkout button instead of add to cart
+        $container.addClass("fanfare-admitted");
+      }
+    } else {
+      // Disable add to cart until admitted
+      var $button = $addToCart.find('button[type="submit"]');
+
+      if (state.stage === "admitted") {
+        $button.prop("disabled", false);
+        $button.text($button.data("original-text") || "Add to cart");
+      } else if (state.stage === "waiting" || state.stage === "routing") {
+        if (!$button.data("original-text")) {
+          $button.data("original-text", $button.text());
+        }
+        $button.prop("disabled", true);
+        $button.text("Waiting for access...");
+      }
+    }
+
+    // Update status display
+    updateStatusDisplay($container, state);
+  }
+
+  function updateStatusDisplay($container, state) {
+    var statusHtml = "";
+
+    switch (state.stage) {
+      case "not_started":
+        if (state.startsAt) {
+          statusHtml =
+            '<div class="fanfare-countdown">Starts in: <span class="countdown-timer"></span></div>';
+        }
+        break;
+
+      case "waiting":
+        statusHtml =
+          '<div class="fanfare-queue-status">' +
+          '<div class="queue-position">Position: <strong>' +
+          state.position +
+          "</strong></div>" +
+          '<div class="queue-estimate">Estimated wait: ' +
+          formatWaitTime(state.estimatedWait) +
+          "</div>" +
+          "</div>";
+        break;
+
+      case "admitted":
+        statusHtml =
+          '<div class="fanfare-admitted-status">' +
+          '<div class="admitted-message">You have access!</div>' +
+          '<div class="admitted-timer">Time remaining: <span class="admission-countdown"></span></div>' +
+          "</div>";
+        break;
+
+      case "expired":
+        statusHtml =
+          '<div class="fanfare-expired">Your access has expired. Please try again.</div>';
+        break;
+    }
+
+    $container.find(".fanfare-status").html(statusHtml);
+  }
+
+  function handleAdmission($container, admission, productId) {
+    // Store admission data for checkout
+    $.ajax({
+      url: FanfareConfig.ajaxUrl,
+      method: "POST",
+      data: {
+        action: "fanfare_store_admission",
+        nonce: FanfareConfig.nonce,
+        product_id: productId,
+        admission_token: admission.token,
+        consumer_id: admission.consumerId,
+        experience_id: admission.experienceId,
+        distribution_type: admission.distributionType,
+        expires_at: admission.expiresAt,
+      },
+      success: function (response) {
+        if (response.success) {
+          // Enable checkout
+          enableCheckout($container, productId);
+        }
+      },
+    });
+  }
+
+  function enableCheckout($container, productId) {
+    var displayMode = $container.data("display-mode");
+
+    if (displayMode === "replace") {
+      // Show checkout button
+      var $checkoutBtn = $(
+        '<button type="button" class="fanfare-checkout-btn button alt">' +
+          "Complete Purchase" +
+          "</button>",
+      );
+
+      $checkoutBtn.on("click", function () {
+        addToCartAndCheckout(productId);
+      });
+
+      $container.append($checkoutBtn);
+    } else {
+      // Re-enable add to cart form
+      $("form.cart").removeClass("fanfare-disabled");
+      $('form.cart button[type="submit"]').prop("disabled", false);
+    }
+  }
+
+  function addToCartAndCheckout(productId) {
+    $.ajax({
+      url: FanfareConfig.ajaxUrl,
+      method: "POST",
+      data: {
+        action: "fanfare_add_to_cart",
+        nonce: FanfareConfig.nonce,
+        product_id: productId,
+        quantity: 1,
+      },
+      success: function (response) {
+        if (response.success) {
+          window.location.href = response.data.checkout_url;
+        } else {
+          alert(response.data.message || "Failed to add to cart");
+        }
+      },
+    });
+  }
+
+  function handleError($container, error) {
+    console.error("Fanfare error:", error);
+    $container.html(
+      '<div class="fanfare-error">' +
+        "<p>Unable to load experience. Please refresh the page.</p>" +
+        '<button class="fanfare-retry">Retry</button>' +
+        "</div>",
+    );
+
+    $container.find(".fanfare-retry").on("click", function () {
+      location.reload();
+    });
+  }
+
+  function formatWaitTime(seconds) {
+    if (!seconds) return "Calculating...";
+
+    var minutes = Math.floor(seconds / 60);
+    if (minutes < 1) return "Less than a minute";
+    if (minutes === 1) return "About 1 minute";
+    if (minutes < 60) return "About " + minutes + " minutes";
+
+    var hours = Math.floor(minutes / 60);
+    if (hours === 1) return "About 1 hour";
+    return "About " + hours + " hours";
+  }
+})(jQuery);
+```
+
+## Step 4: Server-Side Handling
+
+### Store Admission Data
+
+```php
+// Handle admission storage via AJAX
+function fanfare_store_admission() {
+    check_ajax_referer('fanfare_nonce', 'nonce');
+
+    $product_id = intval($_POST['product_id']);
+    $admission_token = sanitize_text_field($_POST['admission_token']);
+    $consumer_id = sanitize_text_field($_POST['consumer_id']);
+    $experience_id = sanitize_text_field($_POST['experience_id']);
+    $distribution_type = sanitize_text_field($_POST['distribution_type']);
+    $expires_at = sanitize_text_field($_POST['expires_at']);
+
+    // Store in session
+    if (!WC()->session) {
+        WC()->session = new WC_Session_Handler();
+        WC()->session->init();
+    }
+
+    $admission_data = array(
+        'product_id' => $product_id,
+        'token' => $admission_token,
+        'consumer_id' => $consumer_id,
+        'experience_id' => $experience_id,
+        'distribution_type' => $distribution_type,
+        'expires_at' => $expires_at,
+        'stored_at' => time(),
+    );
+
+    WC()->session->set('fanfare_admission_' . $product_id, $admission_data);
+
+    wp_send_json_success(array('message' => 'Admission stored'));
+}
+add_action('wp_ajax_fanfare_store_admission', 'fanfare_store_admission');
+add_action('wp_ajax_nopriv_fanfare_store_admission', 'fanfare_store_admission');
+
+// Add to cart with Fanfare data
+function fanfare_add_to_cart() {
+    check_ajax_referer('fanfare_nonce', 'nonce');
+
+    $product_id = intval($_POST['product_id']);
+    $quantity = intval($_POST['quantity']) ?: 1;
+
+    // Get stored admission data
+    $admission = WC()->session->get('fanfare_admission_' . $product_id);
+
+    if (!$admission) {
+        wp_send_json_error(array('message' => 'No valid admission found'));
+        return;
+    }
+
+    // Validate admission hasn't expired
+    if (strtotime($admission['expires_at']) < time()) {
+        wp_send_json_error(array('message' => 'Your access has expired'));
+        return;
+    }
+
+    // Add to cart with custom data
+    $cart_item_data = array(
+        'fanfare_token' => $admission['token'],
+        'fanfare_consumer_id' => $admission['consumer_id'],
+        'fanfare_experience_id' => $admission['experience_id'],
+        'fanfare_distribution_type' => $admission['distribution_type'],
+    );
+
+    $cart_item_key = WC()->cart->add_to_cart($product_id, $quantity, 0, array(), $cart_item_data);
+
+    if ($cart_item_key) {
+        wp_send_json_success(array(
+            'message' => 'Added to cart',
+            'checkout_url' => wc_get_checkout_url(),
+        ));
+    } else {
+        wp_send_json_error(array('message' => 'Failed to add to cart'));
+    }
+}
+add_action('wp_ajax_fanfare_add_to_cart', 'fanfare_add_to_cart');
+add_action('wp_ajax_nopriv_fanfare_add_to_cart', 'fanfare_add_to_cart');
+```
+
+### Preserve Cart Item Data
+
+```php
+// Save Fanfare data in cart
+function fanfare_add_cart_item_data($cart_item_data, $product_id, $variation_id) {
+    if (isset($cart_item_data['fanfare_token'])) {
+        $cart_item_data['fanfare_data'] = array(
+            'token' => $cart_item_data['fanfare_token'],
+            'consumer_id' => $cart_item_data['fanfare_consumer_id'],
+            'experience_id' => $cart_item_data['fanfare_experience_id'],
+            'distribution_type' => $cart_item_data['fanfare_distribution_type'],
+        );
+    }
+    return $cart_item_data;
+}
+add_filter('woocommerce_add_cart_item_data', 'fanfare_add_cart_item_data', 10, 3);
+
+// Restore Fanfare data from session
+function fanfare_get_cart_item_from_session($cart_item, $values) {
+    if (isset($values['fanfare_data'])) {
+        $cart_item['fanfare_data'] = $values['fanfare_data'];
+    }
+    return $cart_item;
+}
+add_filter('woocommerce_get_cart_item_from_session', 'fanfare_get_cart_item_from_session', 10, 2);
+```
+
+## Step 5: Order Processing
+
+### Save Fanfare Data to Order
+
+```php
+// Save Fanfare data when order is created
+function fanfare_checkout_create_order_line_item($item, $cart_item_key, $values, $order) {
+    if (isset($values['fanfare_data'])) {
+        $item->add_meta_data('_fanfare_token', $values['fanfare_data']['token']);
+        $item->add_meta_data('_fanfare_consumer_id', $values['fanfare_data']['consumer_id']);
+        $item->add_meta_data('_fanfare_experience_id', $values['fanfare_data']['experience_id']);
+        $item->add_meta_data('_fanfare_distribution_type', $values['fanfare_data']['distribution_type']);
+    }
+}
+add_action('woocommerce_checkout_create_order_line_item', 'fanfare_checkout_create_order_line_item', 10, 4);
+```
+
+### Complete Admission on Order
+
+```php
+// Complete Fanfare admission when order is paid
+function fanfare_order_payment_complete($order_id) {
+    $order = wc_get_order($order_id);
+
+    foreach ($order->get_items() as $item) {
+        $fanfare_token = $item->get_meta('_fanfare_token');
+        $experience_id = $item->get_meta('_fanfare_experience_id');
+        $consumer_id = $item->get_meta('_fanfare_consumer_id');
+        $distribution_type = $item->get_meta('_fanfare_distribution_type');
+
+        if ($fanfare_token && $experience_id) {
+            fanfare_complete_admission(array(
+                'experience_id' => $experience_id,
+                'consumer_id' => $consumer_id,
+                'distribution_type' => $distribution_type,
+                'order_id' => $order_id,
+                'order_amount' => $order->get_total(),
+            ));
+
+            // Mark as completed
+            $item->add_meta_data('_fanfare_completed', 'yes');
+            $item->add_meta_data('_fanfare_completed_at', current_time('mysql'));
+            $item->save();
+        }
+    }
+}
+add_action('woocommerce_payment_complete', 'fanfare_order_payment_complete');
+
+// API call to complete admission
+function fanfare_complete_admission($data) {
+    $api_key = get_option('fanfare_api_key');
+    $org_id = get_option('fanfare_organization_id');
+
+    $endpoints = array(
+        'queue' => '/queues/' . $data['experience_id'] . '/complete',
+        'draw' => '/draws/' . $data['experience_id'] . '/complete',
+        'auction' => '/auctions/' . $data['experience_id'] . '/complete',
+    );
+
+    $endpoint = $endpoints[$data['distribution_type']] ?? null;
+    if (!$endpoint) {
+        return new WP_Error('invalid_type', 'Unknown distribution type');
+    }
+
+    $response = wp_remote_post(
+        'https://api.fanfare.io/v1' . $endpoint,
+        array(
+            'headers' => array(
+                'Content-Type' => 'application/json',
+                'X-Organization-Id' => $org_id,
+                'X-Secret-Key' => $api_key,
+            ),
+            'body' => wp_json_encode(array(
+                'consumerId' => $data['consumer_id'],
+                'metadata' => array(
+                    'orderId' => $data['order_id'],
+                    'orderAmount' => $data['order_amount'],
+                    'platform' => 'woocommerce',
+                ),
+            )),
+            'timeout' => 30,
+        )
+    );
+
+    if (is_wp_error($response)) {
+        error_log('Fanfare completion failed: ' . $response->get_error_message());
+        return $response;
+    }
+
+    $body = wp_remote_retrieve_body($response);
+    $status = wp_remote_retrieve_response_code($response);
+
+    if ($status !== 200) {
+        error_log('Fanfare completion failed: ' . $body);
+        return new WP_Error('api_error', 'Failed to complete admission');
+    }
+
+    return json_decode($body, true);
+}
+```
+
+## Step 6: Webhook Handling
+
+### Register Webhook Endpoint
+
+```php
+// Register REST API endpoint for webhooks
+function fanfare_register_webhook_endpoint() {
+    register_rest_route('fanfare/v1', '/webhook', array(
+        'methods' => 'POST',
+        'callback' => 'fanfare_handle_webhook',
+        'permission_callback' => 'fanfare_verify_webhook_signature',
+    ));
+}
+add_action('rest_api_init', 'fanfare_register_webhook_endpoint');
+
+function fanfare_verify_webhook_signature($request) {
+    $signature = $request->get_header('X-Fanfare-Signature');
+    $webhook_secret = get_option('fanfare_webhook_secret');
+
+    if (!$signature || !$webhook_secret) {
+        return false;
+    }
+
+    $body = $request->get_body();
+    $expected = hash_hmac('sha256', $body, $webhook_secret);
+
+    return hash_equals($expected, $signature);
+}
+
+function fanfare_handle_webhook($request) {
+    $body = json_decode($request->get_body(), true);
+    $event_type = $body['type'] ?? '';
+
+    switch ($event_type) {
+        case 'admission.expired':
+            fanfare_handle_admission_expired($body['data']);
+            break;
+
+        case 'experience.started':
+            fanfare_handle_experience_started($body['data']);
+            break;
+
+        case 'experience.ended':
+            fanfare_handle_experience_ended($body['data']);
+            break;
+
+        default:
+            // Log unknown event types
+            error_log('Unknown Fanfare webhook event: ' . $event_type);
+    }
+
+    return new WP_REST_Response(array('received' => true), 200);
+}
+
+function fanfare_handle_admission_expired($data) {
+    // Clear any stored admission data
+    $consumer_id = $data['consumerId'];
+    $experience_id = $data['experienceId'];
+
+    // Optionally notify users or clean up sessions
+    do_action('fanfare_admission_expired', $consumer_id, $experience_id);
+}
+```
+
+## Styling
+
+### Default Styles
+
+```css
+/* css/fanfare-woocommerce.css */
+.fanfare-experience {
+  margin: 20px 0;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: #f9f9f9;
+}
+
+.fanfare-loading {
+  text-align: center;
+  padding: 40px;
+  color: #666;
+}
+
+.fanfare-queue-status {
+  text-align: center;
+}
+
+.fanfare-queue-status .queue-position {
+  font-size: 1.5em;
+  margin-bottom: 10px;
+}
+
+.fanfare-queue-status .queue-position strong {
+  color: #0073aa;
+  font-size: 1.2em;
+}
+
+.fanfare-admitted-status {
+  text-align: center;
+  background: #dff0d8;
+  padding: 20px;
+  border-radius: 4px;
+}
+
+.fanfare-admitted-status .admitted-message {
+  font-size: 1.3em;
+  font-weight: bold;
+  color: #3c763d;
+  margin-bottom: 10px;
+}
+
+.fanfare-checkout-btn {
+  width: 100%;
+  margin-top: 15px;
+}
+
+.fanfare-expired {
+  text-align: center;
+  padding: 20px;
+  background: #f2dede;
+  color: #a94442;
+  border-radius: 4px;
+}
+
+.fanfare-error {
+  text-align: center;
+  padding: 20px;
+  background: #fcf8e3;
+  color: #8a6d3b;
+  border-radius: 4px;
+}
+
+/* Disable add to cart when waiting */
+.fanfare-mode-inline ~ form.cart button[type="submit"]:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Hide add to cart in replace mode */
+.fanfare-mode-replace ~ form.cart {
+  display: none;
+}
+```
+
+## Shortcode Usage
+
+```php
+// Register shortcode for flexible placement
+function fanfare_experience_shortcode($atts) {
+    $atts = shortcode_atts(array(
+        'id' => '',
+        'product_id' => '',
+        'mode' => 'inline',
+    ), $atts);
+
+    $experience_id = $atts['id'];
+    $product_id = $atts['product_id'] ?: get_the_ID();
+
+    if (!$experience_id) {
+        $experience_id = get_post_meta($product_id, '_fanfare_experience_id', true);
+    }
+
+    if (!$experience_id) {
+        return '<!-- Fanfare: No experience ID specified -->';
+    }
+
+    ob_start();
+    ?>
+    <div id="fanfare-experience-<?php echo esc_attr($product_id); ?>"
+         class="fanfare-experience fanfare-mode-<?php echo esc_attr($atts['mode']); ?>"
+         data-experience-id="<?php echo esc_attr($experience_id); ?>"
+         data-product-id="<?php echo esc_attr($product_id); ?>"
+         data-display-mode="<?php echo esc_attr($atts['mode']); ?>">
+        <div class="fanfare-loading">Loading experience...</div>
+    </div>
+    <?php
+    return ob_get_clean();
+}
+add_shortcode('fanfare', 'fanfare_experience_shortcode');
+```
+
+Usage:
+
+```
+[fanfare id="exp_abc123" mode="inline"]
+[fanfare product_id="123"]
+```
+
+## Troubleshooting
+
+### Experience Not Loading
+
+1. Check browser console for JavaScript errors
+2. Verify Organization ID is configured
+3. Ensure SDK script is loaded (check network tab)
+4. Verify experience ID exists and is active
+
+### Cart Issues
+
+```php
+// Debug cart item data
+function fanfare_debug_cart_contents() {
+    if (!current_user_can('manage_options')) return;
+
+    foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) {
+        if (isset($cart_item['fanfare_data'])) {
+            error_log('Fanfare data in cart: ' . print_r($cart_item['fanfare_data'], true));
+        }
+    }
+}
+add_action('woocommerce_before_checkout_form', 'fanfare_debug_cart_contents');
+```
+
+### Webhook Not Working
+
+1. Verify webhook URL is accessible: `https://yoursite.com/wp-json/fanfare/v1/webhook`
+2. Check webhook secret is configured
+3. Review server error logs
+4. Test with webhook debugging tool
+
+### Session Issues
+
+```php
+// Ensure WooCommerce session is initialized
+function fanfare_init_session() {
+    if (!WC()->session) {
+        WC()->session = new WC_Session_Handler();
+        WC()->session->init();
+    }
+}
+add_action('woocommerce_init', 'fanfare_init_session');
+```
+
+## What's Next
+
+- [Custom Platform](/guides/platform-integrations/custom-platform) - Build for any platform
+- [Webhooks Guide](/guides/advanced/webhooks-guide) - Advanced webhook handling
+- [Order Completion](/guides/checkout-integration/order-completion) - Complete order processing
+- [Error Handling](/guides/advanced/error-handling) - Handle errors gracefully

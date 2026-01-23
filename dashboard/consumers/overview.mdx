@@ -1,0 +1,207 @@
+---
+title: Consumers Overview
+description: Manage your consumer database and view customer profiles
+---
+
+# Consumers Overview
+
+Consumers are the end users who participate in your experiences. The Consumers section provides tools to view, search, create, and manage consumer profiles in your organization.
+
+## Accessing Consumers
+
+Navigate to **Consumers** in the sidebar to view your consumer list. The route is `/app/customers`.
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/customers
+Shows: Consumers list with multiple consumer records showing names, emails, and status
+Annotations: Highlight the Create button and search functionality
+Alt text: "Consumers list showing customer records with search and create options"
+*/}
+
+![Consumers list](./images/consumers-list.png)
+_Caption: The consumers list shows all customers in your organization_
+
+## Consumers Table
+
+### Table Columns
+
+| Column            | Description                          |
+| ----------------- | ------------------------------------ |
+| **Name**          | Consumer's full name (click to view) |
+| **Email**         | Email address                        |
+| **Phone**         | Phone number                         |
+| **Status**        | Active or Inactive                   |
+| **Loyalty Score** | Current loyalty score                |
+| **Last Activity** | Most recent interaction              |
+| **Created**       | When the consumer was added          |
+
+### Searching Consumers
+
+Use the search bar to find consumers by:
+
+- Email address
+- Full name
+- Phone number
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/customers
+Shows: Search bar with search results
+Annotations: Highlight the search input field
+Alt text: "Consumer search showing filtered results"
+*/}
+
+![Search consumers](./images/consumers-search.png)
+_Caption: Search by email, name, or phone number_
+
+### Filtering and Sorting
+
+| Filter Option     | Description                  |
+| ----------------- | ---------------------------- |
+| **Status**        | Filter by Active or Inactive |
+| **Loyalty Tier**  | Filter by loyalty level      |
+| **Created Date**  | Filter by when added         |
+| **Last Activity** | Filter by recent activity    |
+
+## Creating Consumers
+
+To add a new consumer manually:
+
+1. Click the **Add Customer** button
+2. Fill in the consumer details
+3. Click **Save** to create
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/customers/create
+Shows: Consumer creation form with fields
+Annotations: Label the form fields
+Alt text: "Consumer creation form with email, name, and status fields"
+*/}
+
+![Create consumer](./images/consumers-create.png)
+_Caption: Add a new consumer to your database_
+
+### Required Fields
+
+| Field      | Required | Description                          |
+| ---------- | -------- | ------------------------------------ |
+| **Email**  | Yes      | Valid email address                  |
+| **Name**   | No       | Consumer's full name                 |
+| **Phone**  | No       | Phone number                         |
+| **Status** | Yes      | Active or Inactive (default: Active) |
+
+### Consumer Status
+
+| Status       | Description                       |
+| ------------ | --------------------------------- |
+| **Active**   | Can participate in experiences    |
+| **Inactive** | Cannot participate in experiences |
+
+## Consumer Data Sources
+
+Consumers can be added through multiple channels:
+
+| Source               | Description                        |
+| -------------------- | ---------------------------------- |
+| **Manual Creation**  | Added directly in the dashboard    |
+| **CSV Import**       | Bulk imported from file            |
+| **Klaviyo Sync**     | Synced from Klaviyo lists          |
+| **Experience Entry** | Created when joining an experience |
+| **API**              | Created via the Fanfare API        |
+
+## Bulk Actions
+
+Select multiple consumers to perform bulk actions:
+
+| Action              | Description                           |
+| ------------------- | ------------------------------------- |
+| **Add to Audience** | Add selected consumers to an audience |
+| **Export**          | Download consumer data as CSV         |
+| **Update Status**   | Change status for selected consumers  |
+
+## Data Syncing
+
+When integrations are configured, consumer data stays synchronized:
+
+### Klaviyo Sync
+
+- Consumer profiles sync with Klaviyo contacts
+- Tags and attributes are synchronized
+- Sync status shown on consumer profile
+
+### Sync Status Indicators
+
+| Status         | Description                     |
+| -------------- | ------------------------------- |
+| **Synced**     | Data is up to date              |
+| **Syncing**    | Sync in progress                |
+| **Error**      | Sync failed, requires attention |
+| **Not Synced** | No external sync configured     |
+
+## Exporting Consumer Data
+
+Export consumer data for external use:
+
+1. Select consumers or use filters
+2. Click **Export**
+3. Choose format (CSV, Excel)
+4. Download the file
+
+### Export Fields
+
+| Field            | Included | Description        |
+| ---------------- | -------- | ------------------ |
+| **Email**        | Always   | Consumer email     |
+| **Full Name**    | Always   | Consumer name      |
+| **Phone**        | Optional | Phone number       |
+| **Status**       | Always   | Active/Inactive    |
+| **Tags**         | Optional | Associated tags    |
+| **Loyalty Data** | Optional | Points and tier    |
+| **Created At**   | Always   | Creation timestamp |
+
+## Best Practices
+
+### Data Quality
+
+1. **Validate emails** - Ensure email addresses are valid
+2. **Normalize phone numbers** - Use E.164 format
+3. **Keep data current** - Update stale records
+4. **Remove duplicates** - Merge duplicate profiles
+
+### Privacy Compliance
+
+1. **Collect consent** - Ensure proper consent for data collection
+2. **Honor requests** - Process data deletion requests promptly
+3. **Limit access** - Only grant necessary permissions
+4. **Audit regularly** - Review data practices periodically
+
+## Troubleshooting
+
+### Consumer Not Found
+
+1. Check for typos in search terms
+2. Try alternative identifiers (email vs. phone)
+3. Verify the consumer exists in the system
+4. Check organization context
+
+### Duplicate Consumers
+
+1. Search for existing records before creating
+2. Use the merge feature if duplicates exist
+3. Check import settings for duplicate handling
+
+### Sync Issues
+
+1. Verify integration is configured correctly
+2. Check API key permissions
+3. Review sync logs for errors
+4. Retry the sync operation
+
+## Related Guides
+
+- [Consumer Details](/dashboard/consumers/consumer-details) - View individual profiles
+- [Consumer Activity](/dashboard/consumers/consumer-activity) - Activity history
+- [Import Consumers](/dashboard/audiences/import-consumers) - Bulk import
+- [Audiences](/dashboard/audiences/overview) - Segment consumers

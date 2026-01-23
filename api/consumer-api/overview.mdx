@@ -1,0 +1,263 @@
+---
+title: Consumer API Overview
+description: Introduction to the Fanfare Consumer API for end-user interactions
+---
+
+# Consumer API Overview
+
+The Consumer API enables end-user interactions with Fanfare experiences, including joining queues, entering draws, placing auction bids, and checking participation status.
+
+## Base URL
+
+```
+https://consumer.fanfare.io/api/v1
+```
+
+## Authentication
+
+The Consumer API supports multiple authentication methods depending on the use case:
+
+### Publishable Key (Client-Side)
+
+For browser and mobile app integrations:
+
+```http
+X-Publishable-Key: pk_live_xxxxxxxxxxxx
+```
+
+### Consumer Access Token
+
+After authentication (OTP, external auth), include the access token:
+
+```http
+Authorization: Bearer eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9...
+```
+
+### Secret Key (Server-Side)
+
+For server-to-server calls (requires secret key):
+
+```http
+Authorization: Bearer sk_live_xxxxxxxxxxxx
+```
+
+## API Endpoints
+
+### Authentication
+
+| Method | Endpoint                   | Description                        |
+| ------ | -------------------------- | ---------------------------------- |
+| `POST` | `/auth/guest`              | Create guest session               |
+| `POST` | `/auth/otp/request`        | Request OTP code                   |
+| `POST` | `/auth/otp/verify`         | Verify OTP and authenticate        |
+| `POST` | `/auth/external/authorize` | Create external auth exchange code |
+| `POST` | `/auth/external/exchange`  | Exchange code for session          |
+| `POST` | `/auth/refresh`            | Refresh access token               |
+| `POST` | `/auth/logout`             | Invalidate session                 |
+
+### Experiences
+
+| Method   | Endpoint                           | Description            |
+| -------- | ---------------------------------- | ---------------------- |
+| `GET`    | `/experiences/:experienceId`       | Get experience details |
+| `POST`   | `/experiences/:experienceId/enter` | Enter an experience    |
+| `DELETE` | `/experiences/:experienceId/leave` | Leave an experience    |
+
+### Queues
+
+| Method | Endpoint                    | Description                           |
+| ------ | --------------------------- | ------------------------------------- |
+| `GET`  | `/queues/:queueId`          | Get queue details                     |
+| `POST` | `/queues/:queueId/enter`    | Enter a queue                         |
+| `POST` | `/queues/:queueId/leave`    | Leave a queue                         |
+| `GET`  | `/queues/:queueId/status`   | Get consumer's queue status           |
+| `POST` | `/queues/:queueId/admit`    | Admit consumer (secret key)           |
+| `POST` | `/queues/:queueId/complete` | Complete admission (secret key)       |
+| `POST` | `/queues/:queueId/deny`     | Deny consumer (secret key)            |
+| `POST` | `/queues/:queueId/validate` | Validate admission token (secret key) |
+
+### Draws (Lotteries)
+
+| Method | Endpoint                  | Description                     |
+| ------ | ------------------------- | ------------------------------- |
+| `GET`  | `/draws/:drawId`          | Get draw details                |
+| `POST` | `/draws/:drawId/enter`    | Enter a draw                    |
+| `POST` | `/draws/:drawId/leave`    | Leave a draw                    |
+| `GET`  | `/draws/:drawId/status`   | Get consumer's draw status      |
+| `POST` | `/draws/:drawId/complete` | Complete draw win (secret key)  |
+| `POST` | `/draws/:drawId/deny`     | Deny consumer (secret key)      |
+| `POST` | `/draws/:drawId/validate` | Validate win token (secret key) |
+
+### Auctions
+
+| Method | Endpoint                            | Description                  |
+| ------ | ----------------------------------- | ---------------------------- |
+| `GET`  | `/auctions/:auctionId`              | Get auction details          |
+| `POST` | `/auctions/:auctionId/bid`          | Place a bid                  |
+| `GET`  | `/auctions/:auctionId/status`       | Get consumer's bid status    |
+| `GET`  | `/auctions/:auctionId/highest-bid`  | Get current highest bid      |
+| `GET`  | `/auctions/:auctionId/bids/history` | Get consumer's bid history   |
+| `GET`  | `/auctions/:auctionId/bids`         | Get all bids (authenticated) |
+
+### Timed Releases
+
+| Method | Endpoint                                 | Description               |
+| ------ | ---------------------------------------- | ------------------------- |
+| `GET`  | `/timed-releases/:timedReleaseId`        | Get timed release details |
+| `POST` | `/timed-releases/:timedReleaseId/enter`  | Enter a timed release     |
+| `GET`  | `/timed-releases/:timedReleaseId/status` | Get consumer's status     |
+
+### Appointments
+
+| Method   | Endpoint                              | Description             |
+| -------- | ------------------------------------- | ----------------------- |
+| `GET`    | `/appointments/:appointmentId`        | Get appointment details |
+| `GET`    | `/appointments/:appointmentId/slots`  | Get available slots     |
+| `POST`   | `/appointments/:appointmentId/book`   | Book an appointment     |
+| `DELETE` | `/appointments/:appointmentId/cancel` | Cancel appointment      |
+
+### Consumers
+
+| Method | Endpoint         | Description                                     |
+| ------ | ---------------- | ----------------------------------------------- |
+| `GET`  | `/consumers/me`  | Get current consumer with active participations |
+| `GET`  | `/consumers/:id` | Get consumer by ID (secret key)                 |
+
+### Organizations
+
+| Method | Endpoint                 | Description                       |
+| ------ | ------------------------ | --------------------------------- |
+| `GET`  | `/organizations/current` | Get current organization settings |
+
+### Waitlists
+
+| Method | Endpoint                        | Description         |
+| ------ | ------------------------------- | ------------------- |
+| `POST` | `/waitlists/:waitlistId/enter`  | Enter a waitlist    |
+| `GET`  | `/waitlists/:waitlistId/status` | Get waitlist status |
+
+## Common Response Patterns
+
+### Distribution Status Response
+
+All distribution types (queues, draws, auctions) return a consistent status structure:
+
+```typescript
+interface DistributionStatus {
+  status: "QUEUED" | "ADMITTED" | "COMPLETED" | "DENIED" | "LEFT";
+  enteredAt?: string;
+  admittedAt?: string;
+  completedAt?: string;
+  denyReason?: string;
+  position?: number;
+  admissionToken?: string;
+}
+```
+
+### Experience Response
+
+```typescript
+interface Experience {
+  id: string;
+  name: string;
+  openAt: string | null;
+  closeAt: string | null;
+  timeZone: string | null;
+  theme: ExperienceTheme | null;
+  sequences: Sequence[];
+}
+```
+
+## Device Fingerprinting
+
+For bot mitigation, some endpoints require device fingerprints:
+
+```http
+X-Fingerprint: fp_01HXYZ123456789
+```
+
+Fingerprint validation is enforced on:
+
+- Queue entry
+- Draw entry
+- Auction bidding
+- Admission validation
+
+## Rate Limits
+
+Consumer API rate limits per organization:
+
+| Endpoint Category | Limit    | Window   |
+| ----------------- | -------- | -------- |
+| Queue Entry       | 1000/min | 1 minute |
+| Draw Entry        | 1000/min | 1 minute |
+| Auction Bids      | 500/min  | 1 minute |
+| Status Checks     | 5000/min | 1 minute |
+| Authentication    | 100/min  | 1 minute |
+
+## SDK Integration
+
+### JavaScript/TypeScript SDK
+
+```typescript
+import { Fanfare, useQueue } from "@fanfare/sdk-react";
+
+// Initialize
+const fanfare = new Fanfare({
+  publishableKey: "pk_live_xxxxxxxxxxxx",
+});
+
+// React Hook
+function QueueComponent({ queueId }: { queueId: string }) {
+  const { status, enter, leave, isLoading } = useQueue(queueId);
+
+  if (status?.status === "ADMITTED") {
+    return <div>You're in! Token: {status.admissionToken}</div>;
+  }
+
+  return (
+    <button onClick={enter} disabled={isLoading}>
+      Join Queue
+    </button>
+  );
+}
+```
+
+### Direct API Usage
+
+```typescript
+// Enter a queue
+const response = await fetch("https://consumer.fanfare.io/api/v1/queues/queue_01HXYZ123456789/enter", {
+  method: "POST",
+  headers: {
+    "X-Publishable-Key": "pk_live_xxxxxxxxxxxx",
+    Authorization: `Bearer ${accessToken}`,
+    "X-Fingerprint": fingerprint,
+    "Content-Type": "application/json",
+  },
+});
+
+const status = await response.json();
+console.log(status);
+// { status: "QUEUED", position: 42, enteredAt: "2024-12-01T09:00:00Z" }
+```
+
+## Error Handling
+
+Common Consumer API errors:
+
+| Error                     | Description                    | HTTP Code |
+| ------------------------- | ------------------------------ | --------- |
+| `Authentication required` | Missing or invalid credentials | 401       |
+| `Consumer ID is required` | No authenticated consumer      | 400       |
+| `Queue not found`         | Invalid queue ID               | 404       |
+| `Queue is not open yet`   | Queue opens in the future      | 423       |
+| `Queue is full`           | Queue at capacity              | 429       |
+| `Auction is closed`       | Auction has ended              | 400       |
+
+## Next Steps
+
+- [Experiences API](/api/consumer-api/experiences) - Experience endpoints
+- [Queue API](/api/consumer-api/queue) - Queue operations
+- [Auction API](/api/consumer-api/auction) - Auction and bidding
+- [Lottery API](/api/consumer-api/lottery) - Draw/lottery endpoints

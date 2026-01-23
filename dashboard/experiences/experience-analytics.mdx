@@ -1,0 +1,348 @@
+---
+title: Experience Analytics
+description: Understand and analyze performance metrics for your experiences
+---
+
+# Experience Analytics
+
+Analytics help you understand how your experiences perform and make data-driven decisions. This guide covers the metrics available for each experience type and how to interpret them.
+
+## Analytics Overview
+
+Access experience analytics from:
+
+- **Dashboard** - Aggregate metrics across all experiences
+- **Experience Detail** - Specific experience performance
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/dashboard
+Shows: Dashboard analytics panel with key metrics
+Annotations: Label the main metric cards
+Alt text: "Dashboard analytics showing aggregate experience metrics"
+*/}
+
+![Dashboard analytics](./images/analytics-dashboard.png)
+_Caption: The dashboard provides an overview of all experience performance_
+
+## Common Metrics
+
+These metrics apply to all experience types:
+
+### Entry Metrics
+
+| Metric              | Description                        | Good Indicator             |
+| ------------------- | ---------------------------------- | -------------------------- |
+| **Total Entries**   | Number of consumers who entered    | Higher is generally better |
+| **Entry Rate**      | Entries per hour/day               | Consistent or growing      |
+| **Unique Entrants** | Distinct consumers                 | Higher conversion          |
+| **Repeat Attempts** | Consumers who tried multiple times | Interest level             |
+
+### Conversion Metrics
+
+| Metric              | Description                         | Benchmark         |
+| ------------------- | ----------------------------------- | ----------------- |
+| **Completion Rate** | Entries that completed successfully | 70-90% for queues |
+| **Drop-off Rate**   | Entries that didn't complete        | Under 30%         |
+| **Timeout Rate**    | Entries that expired                | Under 10%         |
+
+### Engagement Metrics
+
+| Metric                 | Description                       |
+| ---------------------- | --------------------------------- |
+| **Time in Experience** | Average duration of participation |
+| **Page Views**         | Total views of experience pages   |
+| **Return Visits**      | Consumers who came back           |
+
+## Queue Analytics
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/experiences/{experienceId}
+Shows: Queue-specific analytics dashboard
+Annotations: Highlight queue position chart and completion funnel
+Alt text: "Queue analytics showing position distribution and completion rates"
+*/}
+
+![Queue analytics](./images/analytics-queue.png)
+_Caption: Queue analytics show position distribution and completion rates_
+
+### Queue-Specific Metrics
+
+| Metric                    | Description                  | What It Tells You   |
+| ------------------------- | ---------------------------- | ------------------- |
+| **Current Queue Length**  | Active consumers waiting     | Current demand      |
+| **Average Wait Time**     | Time from entry to service   | Consumer experience |
+| **Processing Rate**       | Consumers served per hour    | Throughput          |
+| **Position Distribution** | Where consumers are in queue | Bottlenecks         |
+
+### Queue Funnel
+
+Track consumers through the queue stages:
+
+1. **Entered** - Joined the queue
+2. **Waiting** - Currently in line
+3. **At Front** - Ready to checkout
+4. **Completed** - Successfully purchased
+5. **Dropped** - Left without completing
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/experiences/{experienceId}
+Shows: Queue funnel visualization
+Annotations: Show conversion rates between stages
+Alt text: "Queue funnel showing conversion at each stage"
+*/}
+
+![Queue funnel](./images/analytics-queue-funnel.png)
+_Caption: The funnel shows where consumers drop off in the queue process_
+
+### Queue Performance Indicators
+
+| Indicator       | Good     | Warning   | Critical |
+| --------------- | -------- | --------- | -------- |
+| Completion Rate | > 80%    | 60-80%    | < 60%    |
+| Average Wait    | < 30 min | 30-60 min | > 60 min |
+| Timeout Rate    | < 5%     | 5-15%     | > 15%    |
+
+## Draw Analytics
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/experiences/{experienceId}
+Shows: Draw-specific analytics
+Annotations: Highlight entry timeline and winner confirmation stats
+Alt text: "Draw analytics showing entry patterns and winner outcomes"
+*/}
+
+![Draw analytics](./images/analytics-draw.png)
+_Caption: Draw analytics track entry patterns and winner outcomes_
+
+### Draw-Specific Metrics
+
+| Metric                       | Description                 |
+| ---------------------------- | --------------------------- |
+| **Entry Timeline**           | When entries were submitted |
+| **Entry Sources**            | Where entries came from     |
+| **Winner Confirmation Rate** | Winners who confirmed       |
+| **Forfeit Rate**             | Winners who didn't claim    |
+| **Alternate Promotion Rate** | Backups who became winners  |
+
+### Draw Performance Indicators
+
+| Indicator           | Good   | Warning | Critical |
+| ------------------- | ------ | ------- | -------- |
+| Entry Goal Met      | > 100% | 50-100% | < 50%    |
+| Winner Confirmation | > 90%  | 70-90%  | < 70%    |
+| Forfeit Rate        | < 10%  | 10-25%  | > 25%    |
+
+## Auction Analytics
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/experiences/{experienceId}
+Shows: Auction-specific analytics with bid history
+Annotations: Highlight bid chart and price progression
+Alt text: "Auction analytics showing bid history and final price"
+*/}
+
+![Auction analytics](./images/analytics-auction.png)
+_Caption: Auction analytics track bidding activity and price progression_
+
+### Auction-Specific Metrics
+
+| Metric                | Description                 |
+| --------------------- | --------------------------- |
+| **Total Bids**        | Number of bids placed       |
+| **Unique Bidders**    | Distinct participants       |
+| **Bid Timeline**      | When bids were placed       |
+| **Price Progression** | How the price changed       |
+| **Reserve Met**       | Whether reserve was reached |
+| **Final Price**       | Winning bid amount          |
+
+### Auction Performance Indicators
+
+| Indicator          | Good   | Warning | Critical |
+| ------------------ | ------ | ------- | -------- |
+| Bidder Count       | > 10   | 3-10    | < 3      |
+| Bids Per Bidder    | > 3    | 1-3     | 1        |
+| Reserve Met        | Yes    | Close   | No       |
+| Final vs. Expected | > 100% | 75-100% | < 75%    |
+
+## Appointment Analytics
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/experiences/{experienceId}
+Shows: Appointment-specific analytics
+Annotations: Highlight booking calendar and utilization chart
+Alt text: "Appointment analytics showing booking patterns and utilization"
+*/}
+
+![Appointment analytics](./images/analytics-appointment.png)
+_Caption: Appointment analytics show booking patterns and slot utilization_
+
+### Appointment-Specific Metrics
+
+| Metric                | Description                  |
+| --------------------- | ---------------------------- |
+| **Booking Rate**      | Slots booked vs. available   |
+| **Popular Times**     | Most requested time slots    |
+| **Lead Time**         | How far ahead people book    |
+| **Cancellation Rate** | Bookings that were cancelled |
+| **No-Show Rate**      | Consumers who didn't arrive  |
+| **Reschedule Rate**   | Bookings that were changed   |
+
+### Appointment Performance Indicators
+
+| Indicator         | Good  | Warning | Critical |
+| ----------------- | ----- | ------- | -------- |
+| Utilization       | > 80% | 50-80%  | < 50%    |
+| No-Show Rate      | < 5%  | 5-15%   | > 15%    |
+| Cancellation Rate | < 10% | 10-20%  | > 20%    |
+
+## Analytics Dashboard Features
+
+### Time Period Selection
+
+View analytics for different time ranges:
+
+- Last 24 hours
+- Last 7 days
+- Last 30 days
+- Last 90 days
+- Custom range
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/dashboard
+Shows: Time period selector
+Annotations: Show dropdown options
+Alt text: "Time period selector for analytics"
+*/}
+
+![Time selector](./images/analytics-time-selector.png)
+_Caption: Select different time periods to analyze trends_
+
+### Auto-Refresh
+
+Enable auto-refresh to see real-time updates:
+
+- Toggle auto-refresh on/off
+- 30-second refresh interval
+- Manual refresh available
+
+### View Toggle
+
+Switch between analytics views:
+
+- **Channel Attribution** - Traffic sources and conversion paths
+- **Audience Segmentation** - Metrics by audience segment
+
+## Exporting Data
+
+Export analytics for further analysis:
+
+1. Navigate to the analytics view
+2. Click **Export** or download icon
+3. Choose format (CSV, Excel)
+4. Select date range
+5. Download the file
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/experiences/{experienceId}
+Shows: Export options dialog
+Annotations: Show format and date range options
+Alt text: "Analytics export options"
+*/}
+
+![Export options](./images/analytics-export.png)
+_Caption: Export analytics data for offline analysis_
+
+### Available Exports
+
+| Export          | Contents           |
+| --------------- | ------------------ |
+| **Summary**     | High-level metrics |
+| **Entries**     | All entry records  |
+| **Timeline**    | Time-series data   |
+| **Full Detail** | Complete data dump |
+
+## Interpreting Results
+
+### Identifying Issues
+
+Use analytics to spot problems:
+
+| Symptom        | Possible Cause   | Solution           |
+| -------------- | ---------------- | ------------------ |
+| Low entries    | Poor promotion   | Increase marketing |
+| High drop-off  | Complex process  | Simplify checkout  |
+| High timeout   | Short window     | Increase timeout   |
+| Low conversion | Technical issues | Check error logs   |
+
+### Benchmarking
+
+Compare your results to benchmarks:
+
+| Metric     | Poor    | Average   | Good       | Excellent |
+| ---------- | ------- | --------- | ---------- | --------- |
+| Entry Rate | < 50/hr | 50-200/hr | 200-500/hr | > 500/hr  |
+| Completion | < 50%   | 50-70%    | 70-85%     | > 85%     |
+| Engagement | < 2 min | 2-5 min   | 5-10 min   | > 10 min  |
+
+### Trend Analysis
+
+Look for patterns over time:
+
+- **Growing** - More entries/completions each experience
+- **Stable** - Consistent performance
+- **Declining** - Investigate causes
+
+## Real-Time Monitoring
+
+### During Active Experiences
+
+Monitor these in real-time:
+
+- Current entry count
+- Processing rate
+- Error rate
+- Queue length (for queues)
+
+### Alert Thresholds
+
+Set up alerts for:
+
+- Entry rate drops suddenly
+- Error rate exceeds threshold
+- Inventory running low
+- Processing delays
+
+## Best Practices
+
+### Before Launch
+
+1. **Set goals** - Define success metrics
+2. **Establish baselines** - Know what good looks like
+3. **Configure alerts** - Get notified of issues
+
+### During Experience
+
+1. **Monitor frequently** - Check every 15-30 minutes
+2. **React quickly** - Address issues immediately
+3. **Document observations** - Note anything unusual
+
+### After Completion
+
+1. **Review thoroughly** - Analyze all metrics
+2. **Compare to goals** - Did you meet targets?
+3. **Document learnings** - Record insights
+4. **Plan improvements** - Apply to future experiences
+
+## Related Guides
+
+- [Dashboard Overview](/dashboard/overview) - Main analytics dashboard
+- [Experience Lifecycle](/dashboard/experiences/experience-lifecycle) - Managing experiences
+- [Analytics Dashboard](/dashboard/analytics/overview) - Organization-wide analytics

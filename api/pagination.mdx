@@ -1,0 +1,332 @@
+---
+title: Pagination
+description: Pagination patterns for the Fanfare API
+---
+
+# Pagination
+
+Fanfare uses cursor-based pagination for list endpoints, providing efficient traversal of large datasets.
+
+## Cursor-Based Pagination
+
+Cursor-based pagination uses opaque cursors instead of page numbers, offering several advantages:
+
+- **Consistent results**: No skipped or duplicated items when data changes
+- **Efficient**: Doesn't require counting total items
+- **Bidirectional**: Navigate forward and backward through results
+
+## Request Parameters
+
+### Query Parameters
+
+| Parameter | Type   | Description                                                      |
+| --------- | ------ | ---------------------------------------------------------------- |
+| `first`   | number | Number of items to return (max 100, default varies by endpoint)  |
+| `after`   | string | Cursor for forward pagination (return items after this cursor)   |
+| `before`  | string | Cursor for backward pagination (return items before this cursor) |
+| `last`    | number | Number of items when paginating backward                         |
+| `sortBy`  | string | Field to sort by (endpoint-specific)                             |
+| `sortDir` | string | Sort direction: `asc` or `desc`                                  |
+
+### Example Request
+
+```http
+GET /api/v1/consumers?first=20&after=eyJpZCI6ImNvbnNfMDFIWFlaIn0= HTTP/1.1
+Host: admin.fanfare.io
+Authorization: Bearer sk_live_xxxxxxxxxxxx
+```
+
+## Response Format
+
+### Paginated Response Structure
+
+```json
+{
+  "data": [
+    {
+      "id": "cons_01HXYZ123456789",
+      "email": "user1@example.com",
+      "createdAt": "2024-11-01T10:00:00Z"
+    },
+    {
+      "id": "cons_01HXYZ123456790",
+      "email": "user2@example.com",
+      "createdAt": "2024-11-01T10:01:00Z"
+    }
+  ],
+  "pageInfo": {
+    "startCursor": "eyJpZCI6ImNvbnNfMDFIWFlaIn0=",
+    "endCursor": "eyJpZCI6ImNvbnNfMDFIWFlaMn0="
+  }
+}
+```
+
+### Response Fields
+
+| Field                  | Type   | Description                              |
+| ---------------------- | ------ | ---------------------------------------- |
+| `data`                 | array  | Array of items for the current page      |
+| `pageInfo.startCursor` | string | Cursor for the first item in the results |
+| `pageInfo.endCursor`   | string | Cursor for the last item in the results  |
+
+## Pagination Examples
+
+### Forward Pagination
+
+Fetch the first page:
+
+```http
+GET /api/v1/consumers?first=20 HTTP/1.1
+```
+
+Fetch the next page using `endCursor`:
+
+```http
+GET /api/v1/consumers?first=20&after=eyJpZCI6ImNvbnNfMDFIWFlaMn0= HTTP/1.1
+```
+
+### Backward Pagination
+
+Fetch the previous page using `startCursor`:
+
+```http
+GET /api/v1/consumers?last=20&before=eyJpZCI6ImNvbnNfMDFIWFlaIn0= HTTP/1.1
+```
+
+### With Search
+
+Combine pagination with search:
+
+```http
+GET /api/v1/consumers?first=20&search=john HTTP/1.1
+```
+
+Note: Search requires at least 2 characters.
+
+### With Sorting
+
+Combine pagination with custom sorting:
+
+```http
+GET /api/v1/consumers?first=20&sortBy=createdAt&sortDir=desc HTTP/1.1
+```
+
+## Implementation Guide
+
+### JavaScript/TypeScript
+
+```typescript
+interface PageInfo {
+  startCursor: string | null;
+  endCursor: string | null;
+}
+
+interface PaginatedResponse<T> {
+  data: T[];
+  pageInfo: PageInfo;
+}
+
+async function fetchAllPages<T>(endpoint: string, options: RequestInit): Promise<T[]> {
+  const allItems: T[] = [];
+  let cursor: string | null = null;
+
+  do {
+    const url = cursor ? `${endpoint}?first=100&after=${cursor}` : `${endpoint}?first=100`;
+
+    const response = await fetch(url, options);
+    const result: PaginatedResponse<T> = await response.json();
+
+    allItems.push(...result.data);
+    cursor = result.pageInfo.endCursor;
+  } while (cursor);
+
+  return allItems;
+}
+```
+
+### React Hook Example
+
+```typescript
+import { useState, useCallback } from "react";
+
+interface UsePaginationOptions {
+  pageSize?: number;
+}
+
+function usePagination<T>(endpoint: string, options: UsePaginationOptions = {}) {
+  const { pageSize = 20 } = options;
+  const [data, setData] = useState<T[]>([]);
+  const [pageInfo, setPageInfo] = useState<PageInfo | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  const fetchPage = useCallback(
+    async (cursor?: string, direction: "forward" | "backward" = "forward") => {
+      setLoading(true);
+      try {
+        const params = new URLSearchParams();
+
+        if (direction === "forward") {
+          params.set("first", String(pageSize));
+          if (cursor) params.set("after", cursor);
+        } else {
+          params.set("last", String(pageSize));
+          if (cursor) params.set("before", cursor);
+        }
+
+        const response = await fetch(`${endpoint}?${params}`);
+        const result: PaginatedResponse<T> = await response.json();
+
+        setData(result.data);
+        setPageInfo(result.pageInfo);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [endpoint, pageSize]
+  );
+
+  const nextPage = useCallback(() => {
+    if (pageInfo?.endCursor) {
+      fetchPage(pageInfo.endCursor, "forward");
+    }
+  }, [pageInfo, fetchPage]);
+
+  const prevPage = useCallback(() => {
+    if (pageInfo?.startCursor) {
+      fetchPage(pageInfo.startCursor, "backward");
+    }
+  }, [pageInfo, fetchPage]);
+
+  return {
+    data,
+    pageInfo,
+    loading,
+    fetchPage,
+    nextPage,
+    prevPage,
+    hasNextPage: !!pageInfo?.endCursor,
+    hasPrevPage: !!pageInfo?.startCursor,
+  };
+}
+```
+
+### Infinite Scroll Example
+
+```typescript
+function useInfiniteScroll<T>(endpoint: string) {
+  const [items, setItems] = useState<T[]>([]);
+  const [cursor, setCursor] = useState<string | null>(null);
+  const [hasMore, setHasMore] = useState(true);
+  const [loading, setLoading] = useState(false);
+
+  const loadMore = useCallback(async () => {
+    if (loading || !hasMore) return;
+
+    setLoading(true);
+    try {
+      const params = new URLSearchParams({ first: "20" });
+      if (cursor) params.set("after", cursor);
+
+      const response = await fetch(`${endpoint}?${params}`);
+      const result: PaginatedResponse<T> = await response.json();
+
+      setItems((prev) => [...prev, ...result.data]);
+      setCursor(result.pageInfo.endCursor);
+      setHasMore(!!result.pageInfo.endCursor);
+    } finally {
+      setLoading(false);
+    }
+  }, [endpoint, cursor, hasMore, loading]);
+
+  return { items, loadMore, hasMore, loading };
+}
+```
+
+## Sortable Fields
+
+Different endpoints support different sortable fields:
+
+### Consumers
+
+| Field             | Description                           |
+| ----------------- | ------------------------------------- |
+| `createdAt`       | Consumer creation timestamp (default) |
+| `email`           | Consumer email address                |
+| `fullName`        | Consumer full name                    |
+| `lastOrderAt`     | Last order timestamp                  |
+| `totalOrderValue` | Lifetime order value                  |
+
+### Experiences
+
+| Field       | Description                             |
+| ----------- | --------------------------------------- |
+| `createdAt` | Experience creation timestamp (default) |
+| `name`      | Experience name                         |
+| `openAt`    | Experience open timestamp               |
+
+### Audiences
+
+| Field             | Description                           |
+| ----------------- | ------------------------------------- |
+| `createdAt`       | Audience creation timestamp (default) |
+| `name`            | Audience name                         |
+| `lastRefreshedAt` | Last refresh timestamp                |
+
+## Best Practices
+
+### 1. Use Appropriate Page Sizes
+
+- **Interactive UIs**: 20-50 items for quick loading
+- **Background sync**: 100 items for efficiency
+- **Never exceed**: Maximum of 100 items per request
+
+### 2. Handle Empty Results
+
+```typescript
+const result = await fetchPage();
+if (result.data.length === 0) {
+  // Handle empty state
+}
+```
+
+### 3. Preserve Cursor on Refresh
+
+When implementing "pull to refresh", preserve the current position:
+
+```typescript
+const currentCursor = pageInfo?.startCursor;
+await fetchPage(); // Refresh from beginning
+// Optionally navigate back to previous position
+```
+
+### 4. Combine with Filters Carefully
+
+When combining pagination with filters, cursors may become invalid if filter criteria change:
+
+```typescript
+// When filters change, reset pagination
+useEffect(() => {
+  setCursor(null);
+  fetchPage();
+}, [filters]);
+```
+
+## Cursor Format
+
+Cursors are Base64-encoded JSON objects. While the format is not guaranteed to remain stable, they typically contain:
+
+```json
+{
+  "id": "cons_01HXYZ123456789",
+  "sortValue": "2024-11-01T10:00:00Z"
+}
+```
+
+**Important**: Treat cursors as opaque strings. Do not decode or construct them manually.
+
+## Limitations
+
+- Maximum page size: 100 items
+- Cursors expire after 24 hours of inactivity
+- Cursor format may change between API versions
+- Some filtered views may not support all sort options

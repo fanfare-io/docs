@@ -1,0 +1,336 @@
+---
+title: FanfareProvider
+description: React context provider for the Fanfare SDK
+---
+
+# FanfareProvider
+
+The `FanfareProvider` component initializes the Fanfare SDK and makes it available to all child components via React Context.
+
+## Basic Usage
+
+```tsx
+import { FanfareProvider } from "@waitify-io/fanfare-sdk-react";
+
+function App() {
+  return (
+    <FanfareProvider organizationId="org_xxx" publishableKey="pk_live_xxx">
+      <YourApp />
+    </FanfareProvider>
+  );
+}
+```
+
+## Props
+
+### FanfareProviderProps
+
+```typescript
+interface FanfareProviderProps extends FanfareConfig {
+  children: React.ReactNode;
+
+  /**
+   * Whether to automatically restore session on mount
+   * @default true
+   */
+  autoRestore?: boolean;
+
+  /**
+   * Whether to automatically resume operations after restore
+   * @default true
+   */
+  autoResume?: boolean;
+
+  /**
+   * Loading component to show while initializing
+   */
+  loadingComponent?: React.ReactNode;
+
+  /**
+   * Locale for translations
+   * @default "en"
+   */
+  locale?: Locale;
+
+  /**
+   * Custom translations to merge with or override defaults
+   */
+  translations?: PartialTranslationMessages;
+}
+```
+
+### Required Props
+
+| Prop             | Type        | Description                  |
+| ---------------- | ----------- | ---------------------------- |
+| `organizationId` | `string`    | Your Fanfare organization ID |
+| `publishableKey` | `string`    | Your publishable API key     |
+| `children`       | `ReactNode` | Child components             |
+
+### Optional Props
+
+| Prop               | Type                         | Default        | Description                      |
+| ------------------ | ---------------------------- | -------------- | -------------------------------- |
+| `autoRestore`      | `boolean`                    | `true`         | Restore session on mount         |
+| `autoResume`       | `boolean`                    | `true`         | Resume operations after restore  |
+| `loadingComponent` | `ReactNode`                  | `null`         | Loading UI during initialization |
+| `locale`           | `Locale`                     | `"en"`         | Translation locale               |
+| `translations`     | `PartialTranslationMessages` | `undefined`    | Custom translations              |
+| `environment`      | `string`                     | `"production"` | API environment                  |
+| `debug`            | `boolean`                    | `false`        | Enable debug logging             |
+
+## Configuration Examples
+
+### With Loading State
+
+```tsx
+function App() {
+  return (
+    <FanfareProvider organizationId="org_xxx" publishableKey="pk_live_xxx" loadingComponent={<LoadingSpinner />}>
+      <YourApp />
+    </FanfareProvider>
+  );
+}
+
+function LoadingSpinner() {
+  return (
+    <div className="loading-container">
+      <div className="spinner" />
+      <p>Loading...</p>
+    </div>
+  );
+}
+```
+
+### With Custom Translations
+
+```tsx
+function App() {
+  return (
+    <FanfareProvider
+      organizationId="org_xxx"
+      publishableKey="pk_live_xxx"
+      translations={{
+        "queue.enter": "Join the Line",
+        "queue.leave": "Leave the Line",
+        "admitted.cta": "Go to Checkout",
+        "draw.enter": "Enter the Raffle",
+      }}
+    >
+      <YourApp />
+    </FanfareProvider>
+  );
+}
+```
+
+### With Locale
+
+```tsx
+function App() {
+  const [locale, setLocale] = useState<Locale>("en");
+
+  return (
+    <FanfareProvider organizationId="org_xxx" publishableKey="pk_live_xxx" locale={locale}>
+      <LocaleSwitcher onChange={setLocale} />
+      <YourApp />
+    </FanfareProvider>
+  );
+}
+```
+
+### Development Configuration
+
+```tsx
+function App() {
+  return (
+    <FanfareProvider organizationId="org_xxx" publishableKey="pk_test_xxx" environment="development" debug={true}>
+      <YourApp />
+    </FanfareProvider>
+  );
+}
+```
+
+### Disable Auto-Restore
+
+```tsx
+function App() {
+  return (
+    <FanfareProvider organizationId="org_xxx" publishableKey="pk_live_xxx" autoRestore={false} autoResume={false}>
+      <YourApp />
+    </FanfareProvider>
+  );
+}
+```
+
+## Initialization Lifecycle
+
+The provider follows this lifecycle:
+
+1. **Mount** - Provider renders `loadingComponent`
+2. **Initialize** - SDK is initialized with config
+3. **Restore** (if `autoRestore`) - Session is restored from storage
+4. **Resume** (if `autoResume`) - Active operations are resumed
+5. **Ready** - Children are rendered with SDK context
+
+```tsx
+// Visual representation of the lifecycle
+function ProviderLifecycle() {
+  /*
+   * Phase 1: Initializing
+   * - loadingComponent is shown
+   * - SDK is being initialized
+   *
+   * Phase 2: Restoring (if autoRestore)
+   * - loadingComponent is still shown
+   * - Session is being restored
+   *
+   * Phase 3: Resuming (if autoResume)
+   * - loadingComponent is still shown
+   * - Polling is being restarted
+   *
+   * Phase 4: Ready
+   * - Children are rendered
+   * - SDK is available via useFanfare()
+   */
+}
+```
+
+## Error Handling
+
+If initialization fails, the provider logs an error and renders `null`:
+
+```tsx
+function App() {
+  return (
+    <ErrorBoundary fallback={<InitializationError />}>
+      <FanfareProvider organizationId="org_xxx" publishableKey="pk_live_xxx">
+        <YourApp />
+      </FanfareProvider>
+    </ErrorBoundary>
+  );
+}
+
+class ErrorBoundary extends React.Component {
+  state = { hasError: false };
+
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return this.props.fallback;
+    }
+    return this.props.children;
+  }
+}
+```
+
+## Environment Variables
+
+Configure the provider with environment variables:
+
+```tsx
+// Next.js
+function App() {
+  return (
+    <FanfareProvider
+      organizationId={process.env.NEXT_PUBLIC_FANFARE_ORG_ID!}
+      publishableKey={process.env.NEXT_PUBLIC_FANFARE_KEY!}
+    >
+      <YourApp />
+    </FanfareProvider>
+  );
+}
+
+// Vite
+function App() {
+  return (
+    <FanfareProvider
+      organizationId={import.meta.env.VITE_FANFARE_ORG_ID}
+      publishableKey={import.meta.env.VITE_FANFARE_KEY}
+    >
+      <YourApp />
+    </FanfareProvider>
+  );
+}
+```
+
+## Multiple Providers
+
+For multi-organization scenarios, use separate providers:
+
+```tsx
+function MultiOrgApp() {
+  return (
+    <>
+      <FanfareProvider organizationId="org_aaa" publishableKey="pk_live_aaa">
+        <OrgAApp />
+      </FanfareProvider>
+
+      <FanfareProvider organizationId="org_bbb" publishableKey="pk_live_bbb">
+        <OrgBApp />
+      </FanfareProvider>
+    </>
+  );
+}
+```
+
+## Cleanup
+
+The provider automatically cleans up the SDK when unmounted:
+
+```tsx
+function ConditionalFanfare() {
+  const [enabled, setEnabled] = useState(true);
+
+  return (
+    <>
+      <button onClick={() => setEnabled(!enabled)}>Toggle</button>
+
+      {enabled && (
+        <FanfareProvider organizationId="org_xxx" publishableKey="pk_live_xxx">
+          <YourApp />
+        </FanfareProvider>
+      )}
+    </>
+  );
+}
+```
+
+When the provider unmounts:
+
+- SDK `destroy()` is called
+- All polling is stopped
+- Event subscriptions are cleaned up
+- Pending beacon events are flushed
+
+## TypeScript
+
+```typescript
+import type { FanfareProviderProps } from "@waitify-io/fanfare-sdk-react";
+import type { Locale, PartialTranslationMessages } from "@waitify-io/fanfare-sdk-react";
+
+const config: Omit<FanfareProviderProps, "children"> = {
+  organizationId: "org_xxx",
+  publishableKey: "pk_live_xxx",
+  locale: "en",
+  translations: {
+    "queue.enter": "Join the Waitlist",
+  },
+};
+
+function App() {
+  return (
+    <FanfareProvider {...config}>
+      <YourApp />
+    </FanfareProvider>
+  );
+}
+```
+
+## Next Steps
+
+- [Context Hook](/sdk/react/context) - Access the SDK instance
+- [Hooks Overview](/sdk/react/hooks/overview) - Available hooks
+- [Internationalization](/sdk/react/customization/i18n) - Translation system

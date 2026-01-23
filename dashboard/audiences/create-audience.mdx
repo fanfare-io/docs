@@ -1,0 +1,323 @@
+---
+title: Create Audience
+description: Build custom audiences to target specific consumer segments
+---
+
+# Create Audience
+
+This guide walks you through creating new audiences in Fanfare, including both static and dynamic audience types.
+
+## Starting Audience Creation
+
+1. Navigate to **Audiences** in the sidebar
+2. Click the **Create** button
+3. Select **Create Audience** from the dropdown
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/audiences/create
+Shows: Audience creation form with initial fields
+Annotations: Highlight the form sections
+Alt text: "Audience creation form with name and type fields"
+*/}
+
+![Create audience](./images/create-audience.png)
+_Caption: The audience creation form_
+
+## Audience Configuration
+
+### Basic Information
+
+| Field           | Required | Description                       |
+| --------------- | -------- | --------------------------------- |
+| **Name**        | Yes      | Display name for the audience     |
+| **Description** | No       | Internal notes about the audience |
+| **Type**        | Yes      | Dynamic or Static                 |
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/audiences/create
+Shows: Basic information fields filled in
+Annotations: Label each field
+Alt text: "Basic information section with name and description"
+*/}
+
+![Basic info](./images/create-audience-basic.png)
+_Caption: Enter basic audience information_
+
+### Dynamic Audiences
+
+Dynamic audiences use rules to automatically determine membership. Consumers who match the rules are automatically included.
+
+**Advantages:**
+
+- Membership updates automatically
+- No manual maintenance required
+- Scales with your customer base
+
+**Best For:**
+
+- Behavioral targeting
+- Loyalty-based access
+- Attribute-based segments
+
+See [Membership Rules](/dashboard/audiences/membership-rules) for rule configuration details.
+
+### Static Audiences
+
+Static audiences contain manually-specified members. You control exactly who is included.
+
+**Advantages:**
+
+- Complete control over membership
+- No rule complexity
+- Easy to understand
+
+**Best For:**
+
+- VIP lists
+- Invite-only access
+- Test groups
+
+## Creating a Dynamic Audience
+
+1. Set Type to **Dynamic**
+2. Click **Add Rule** to define membership criteria
+3. Configure rule conditions
+4. Save the audience
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/audiences/create
+Shows: Dynamic audience with rules being configured
+Annotations: Highlight the rule builder
+Alt text: "Dynamic audience creation with rule builder"
+*/}
+
+![Dynamic audience](./images/create-audience-dynamic.png)
+_Caption: Configure rules for dynamic audience membership_
+
+### Rule Builder
+
+The rule builder lets you define conditions:
+
+| Component    | Description                                            |
+| ------------ | ------------------------------------------------------ |
+| **Field**    | Consumer attribute to evaluate                         |
+| **Operator** | Comparison type (equals, contains, greater than, etc.) |
+| **Value**    | Value to compare against                               |
+| **Logic**    | AND/OR between multiple rules                          |
+
+Example rules:
+
+- Email domain equals "company.com"
+- Loyalty points greater than 1000
+- Purchase count greater than 5
+- Tag contains "VIP"
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/audiences/create
+Shows: Rule builder with multiple conditions
+Annotations: Label field, operator, value, and logic components
+Alt text: "Rule builder showing multiple conditions"
+*/}
+
+![Rule builder](./images/create-audience-rules.png)
+_Caption: Build complex rules with multiple conditions_
+
+## Creating a Static Audience
+
+1. Set Type to **Static**
+2. Choose how to add members:
+   - Search and add individually
+   - Import from CSV
+3. Save the audience
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/audiences/create
+Shows: Static audience with member search
+Annotations: Show search field and add button
+Alt text: "Static audience creation with member search"
+*/}
+
+![Static audience](./images/create-audience-static.png)
+_Caption: Add specific consumers to a static audience_
+
+### Adding Members Manually
+
+1. Use the search field to find consumers
+2. Search by email, name, or phone
+3. Click to add found consumers
+4. Repeat for additional members
+
+### Adding Members via Import
+
+For bulk additions:
+
+1. Click **Import from CSV**
+2. Upload a CSV with consumer identifiers
+3. Map columns to fields
+4. Confirm the import
+
+See [Import Consumers](/dashboard/audiences/import-consumers) for detailed import instructions.
+
+## Advanced Options
+
+### Audience Settings
+
+| Setting      | Description                        |
+| ------------ | ---------------------------------- |
+| **Priority** | Used when multiple audiences apply |
+| **Hidden**   | Hide from audience selectors       |
+| **Archived** | Mark as inactive without deleting  |
+
+### External Identifiers
+
+Link audiences to external systems:
+
+| Field            | Description                   |
+| ---------------- | ----------------------------- |
+| **External ID**  | Your system's identifier      |
+| **Source**       | Where the audience originated |
+| **Sync Enabled** | Keep synced with source       |
+
+## Saving the Audience
+
+1. Review all configuration
+2. Click **Create Audience**
+3. Wait for confirmation
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/audiences/create
+Shows: Bottom of form with Create button
+Annotations: Highlight the Create button
+Alt text: "Create Audience button at form bottom"
+*/}
+
+![Create button](./images/create-audience-submit.png)
+_Caption: Click Create Audience to save_
+
+### After Creation
+
+After successful creation:
+
+- You're redirected to the audience detail page
+- For dynamic audiences, membership is calculated
+- For static audiences, any imported members appear
+
+## Editing Audiences
+
+To modify an existing audience:
+
+1. Navigate to the audience detail page
+2. Edit any field directly
+3. Changes save automatically or via Save button
+
+### Changing Audience Type
+
+<Warning>
+You cannot change an audience from Dynamic to Static or vice versa after creation. Create a new audience if you need a different type.
+</Warning>
+
+## Duplicating Audiences
+
+Create a copy of an existing audience:
+
+1. From the audiences list, open the actions menu
+2. Click **Duplicate**
+3. A new audience is created with "Copy of" prefix
+4. Edit the copy as needed
+
+## Use Cases
+
+### VIP Customer List
+
+**Type:** Static
+
+1. Create a static audience named "VIP Customers"
+2. Manually add your most valuable customers
+3. Use for early access to new products
+
+### High-Value Shoppers
+
+**Type:** Dynamic
+
+1. Create a dynamic audience
+2. Add rule: Total spend > $1000
+3. Audience automatically includes qualifying customers
+
+### Beta Testers
+
+**Type:** Static
+
+1. Create a static audience named "Beta Testers"
+2. Add team members and test users
+3. Use for testing new experiences before launch
+
+### Loyalty Members
+
+**Type:** Dynamic
+
+1. Create a dynamic audience
+2. Add rule: Loyalty tier equals "Gold"
+3. Members automatically sync as loyalty status changes
+
+## Best Practices
+
+### Before Creating
+
+1. **Define your goal** - Know who should be included
+2. **Choose the right type** - Dynamic for changing criteria, Static for fixed lists
+3. **Check for duplicates** - Avoid creating overlapping audiences
+
+### During Configuration
+
+1. **Use clear names** - Include key criteria in the name
+2. **Add descriptions** - Document the audience purpose
+3. **Test rules** - Verify dynamic rules match expected consumers
+
+### After Creation
+
+1. **Verify membership** - Check the member count matches expectations
+2. **Test in experience** - Create a test experience to confirm access
+3. **Monitor growth** - Track how dynamic audiences change over time
+
+## Troubleshooting
+
+### No Members Showing
+
+For dynamic audiences:
+
+- Verify rule logic is correct
+- Check that consumers exist matching the criteria
+- Ensure operators are correct (equals vs. contains)
+
+For static audiences:
+
+- Confirm members were added successfully
+- Check the import completed without errors
+
+### Wrong Members Included
+
+For dynamic audiences:
+
+- Review rule conditions
+- Check for unintended rule combinations
+- Verify AND/OR logic
+
+### Can't Find Consumers to Add
+
+When searching for consumers to add:
+
+- Verify the consumer exists in the system
+- Try different search criteria (email, phone, name)
+- Check for typos in search terms
+
+## Related Guides
+
+- [Membership Rules](/dashboard/audiences/membership-rules) - Detailed rule configuration
+- [Import Consumers](/dashboard/audiences/import-consumers) - Bulk import guide
+- [Audiences Overview](/dashboard/audiences/overview) - Managing audiences

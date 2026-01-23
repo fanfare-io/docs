@@ -1,0 +1,324 @@
+---
+title: Authentication Best Practices
+description: Secure authentication patterns for Fanfare integrations.
+---
+
+# Authentication Best Practices
+
+This guide covers secure authentication practices for integrating with Fanfare.
+
+## API Key Management
+
+### Types of Keys
+
+| Key Type        | Format                        | Usage           | Exposure         |
+| --------------- | ----------------------------- | --------------- | ---------------- |
+| Publishable Key | `pk_test_...` / `pk_live_...` | Client-side SDK | Safe for clients |
+| Secret Key      | `sk_test_...` / `sk_live_...` | Server-side API | Never expose     |
+
+### Publishable Keys
+
+Publishable keys are designed for client-side use:
+
+```typescript
+// Client-side: OK
+const client = new FanfareClient({
+  publishableKey: process.env.NEXT_PUBLIC_FANFARE_KEY,
+});
+```
+
+**Capabilities**:
+
+- Initialize SDK
+- Enter experiences
+- Check queue status
+- Consumer authentication
+
+**Limitations**:
+
+- Cannot access admin functions
+- Cannot read other users' data
+- Rate limited more aggressively
+
+### Secret Keys
+
+Secret keys provide full API access:
+
+```typescript
+// Server-side ONLY
+const response = await fetch("https://admin.fanfare.io/api/experiences", {
+  headers: {
+    Authorization: `Bearer ${process.env.FANFARE_SECRET_KEY}`,
+  },
+});
+```
+
+<Warning>Never expose secret keys in client-side code, mobile apps, or public repositories.</Warning>
+
+### Secure Key Storage
+
+**Environment Variables**:
+
+```bash
+# .env (never commit this file)
+FANFARE_SECRET_KEY=sk_live_...
+FANFARE_PUBLISHABLE_KEY=pk_live_...
+```
+
+**Secrets Managers**:
+
+- AWS Secrets Manager
+- Google Secret Manager
+- HashiCorp Vault
+- Vercel Environment Variables
+
+### Key Rotation
+
+Rotate keys periodically or after potential exposure:
+
+1. Generate new key in dashboard
+2. Update your application
+3. Test thoroughly
+4. Revoke old key
+
+```typescript
+// Handle key rotation gracefully
+const client = new FanfareClient({
+  publishableKey: process.env.FANFARE_KEY,
+  onUnauthorized: () => {
+    // Key may have been rotated
+    console.error("API key invalid - check for rotation");
+  },
+});
+```
+
+## Consumer Authentication
+
+### Authentication Methods
+
+Fanfare supports multiple consumer authentication methods:
+
+| Method    | Use Case         | Security Level |
+| --------- | ---------------- | -------------- |
+| Guest     | Anonymous access | Basic          |
+| Email OTP | Verified email   | Medium         |
+| Phone OTP | Verified phone   | Medium         |
+| SSO       | Enterprise       | High           |
+
+### Guest Authentication
+
+For anonymous access with device binding:
+
+```typescript
+// Create guest session
+const session = await client.auth.guest();
+
+// Guest has limited capabilities
+// - Enter experiences
+// - Join queues
+// - Cannot link to authenticated account later
+```
+
+### OTP Authentication
+
+For verified consumer identity:
+
+```typescript
+// Step 1: Request OTP
+await client.auth.requestOTP({
+  method: "email",
+  email: "user@example.com",
+});
+
+// Step 2: Verify OTP
+const session = await client.auth.verifyOTP({
+  email: "user@example.com",
+  code: "123456",
+});
+```
+
+**OTP Security**:
+
+- Codes expire after 10 minutes
+- Limited retry attempts
+- Rate limited requests
+- Invalid codes logged for monitoring
+
+### Session Management
+
+```typescript
+// Get current session
+const session = client.auth.getSession();
+
+// Check authentication state
+if (session?.isAuthenticated) {
+  // User is verified
+} else if (session?.isGuest) {
+  // Guest session
+} else {
+  // No session
+}
+
+// Refresh session
+await client.auth.refresh();
+
+// Logout
+await client.auth.logout();
+```
+
+## Token Security
+
+### JWT Structure
+
+Consumer tokens are JWTs with these claims:
+
+```json
+{
+  "sub": "consumer_id",
+  "org": "organization_id",
+  "iat": 1705312800,
+  "exp": 1705399200,
+  "type": "consumer"
+}
+```
+
+### Token Handling
+
+<AccordionGroup>
+  <Accordion title="Don't store tokens in localStorage for sensitive apps">
+    localStorage is vulnerable to XSS attacks. For high-security applications, consider httpOnly cookies.
+  </Accordion>
+
+<Accordion title="Don't include tokens in URLs">
+  URLs can be logged, cached, and shared. Use headers for token transmission.
+</Accordion>
+
+  <Accordion title="Do handle token expiration">
+    ```typescript
+    client.on("auth:session-expired", async () => {
+      // Attempt refresh
+      try {
+        await client.auth.refresh();
+      } catch {
+        // Redirect to login
+        redirectToLogin();
+      }
+    });
+    ```
+  </Accordion>
+
+  <Accordion title="Do validate tokens server-side">
+    When processing handoff tokens, always validate on your server.
+    ```typescript
+    // Server-side validation
+    const isValid = await validateHandoffToken(token, secretKey);
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Server-Side Authentication
+
+### Validating Consumer Requests
+
+When consumers interact with your backend:
+
+```typescript
+// Your API endpoint
+app.post("/api/checkout", async (req, res) => {
+  const handoffToken = req.body.handoffToken;
+
+  // Validate with Fanfare
+  const response = await fetch("https://admin.fanfare.io/api/handoffs/validate", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${process.env.FANFARE_SECRET_KEY}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ token: handoffToken }),
+  });
+
+  if (!response.ok) {
+    return res.status(401).json({ error: "Invalid handoff" });
+  }
+
+  const handoff = await response.json();
+  // Process checkout with validated consumer
+});
+```
+
+### Webhook Authentication
+
+Verify webhook signatures:
+
+```typescript
+import crypto from "crypto";
+
+function verifyWebhookSignature(payload: string, signature: string, secret: string): boolean {
+  const expected = crypto.createHmac("sha256", secret).update(payload).digest("hex");
+
+  return crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expected));
+}
+
+app.post("/webhooks/fanfare", (req, res) => {
+  const signature = req.headers["x-fanfare-signature"];
+
+  if (!verifyWebhookSignature(req.rawBody, signature, WEBHOOK_SECRET)) {
+    return res.status(401).json({ error: "Invalid signature" });
+  }
+
+  // Process webhook
+});
+```
+
+## Security Checklist
+
+### Development
+
+- [ ] Use test keys only in development
+- [ ] Never commit keys to version control
+- [ ] Add `.env` to `.gitignore`
+- [ ] Use separate test and production keys
+
+### Production
+
+- [ ] Use live keys in production
+- [ ] Store keys in secrets manager
+- [ ] Enable key rotation policy
+- [ ] Monitor for unauthorized access
+- [ ] Set up alerts for authentication failures
+
+### Code Review
+
+- [ ] No hardcoded credentials
+- [ ] Secret keys only in server-side code
+- [ ] Token handling follows best practices
+- [ ] Webhook signatures verified
+- [ ] Error messages don't leak sensitive info
+
+## Common Mistakes
+
+<CardGroup cols={2}>
+  <Card title="Exposing secret keys" icon="xmark">
+    **Wrong**: Including sk_ keys in client bundles
+    **Right**: Only use pk_ keys client-side
+  </Card>
+
+<Card title="Not validating handoffs" icon="xmark">
+  **Wrong**: Trusting client-sent handoff tokens **Right**: Always validate tokens server-side
+</Card>
+
+<Card title="Ignoring token expiration" icon="xmark">
+  **Wrong**: Assuming tokens are always valid **Right**: Handle expiration and refresh
+</Card>
+
+  <Card title="Skipping webhook verification" icon="xmark">
+    **Wrong**: Processing webhooks without checking signature
+    **Right**: Always verify webhook signatures
+  </Card>
+</CardGroup>
+
+## Related Resources
+
+- [Security Overview](/resources/security/overview) - Security architecture
+- [Webhook Debugging](/resources/troubleshooting/webhook-debugging) - Webhook security
+- [API Errors](/resources/troubleshooting/api-errors) - Auth error handling

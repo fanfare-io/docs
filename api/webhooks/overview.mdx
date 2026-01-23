@@ -1,0 +1,294 @@
+---
+title: Webhooks Overview
+description: Overview of the Fanfare webhook system for real-time event notifications
+---
+
+# Webhooks Overview
+
+Webhooks allow you to receive real-time notifications when events occur in your Fanfare organization. Instead of polling the API, webhooks push events to your server as they happen.
+
+## How Webhooks Work
+
+1. You configure a webhook endpoint URL in your Fanfare dashboard
+2. When an event occurs, Fanfare sends an HTTP POST request to your endpoint
+3. Your server processes the event and responds with a 2xx status code
+4. If delivery fails, Fanfare retries with exponential backoff
+
+```
+┌─────────────┐     Event     ┌─────────────┐     POST     ┌─────────────┐
+│   Fanfare   │──────────────>│   Webhook   │─────────────>│ Your Server │
+│   Platform  │               │   Service   │              │             │
+└─────────────┘               └─────────────┘              └─────────────┘
+                                    │
+                                    │ Retry on failure
+                                    └──────────────────────────────────────┐
+                                                                           │
+                                                                           ▼
+```
+
+## Webhook Payload
+
+All webhook payloads follow a consistent structure:
+
+```json
+{
+  "id": "whk_01HXYZ123456789",
+  "type": "queue.consumer.admitted",
+  "timestamp": "2024-12-01T09:15:00Z",
+  "organizationId": "org_01HXYZ123456789",
+  "data": {
+    "queueId": "queue_01HXYZ123456789",
+    "consumerId": "cons_01HXYZ123456789",
+    "admittedAt": "2024-12-01T09:15:00Z",
+    "admissionToken": "eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9..."
+  }
+}
+```
+
+### Payload Fields
+
+| Field            | Type   | Description                                  |
+| ---------------- | ------ | -------------------------------------------- |
+| `id`             | string | Unique webhook delivery ID                   |
+| `type`           | string | Event type (e.g., `queue.consumer.admitted`) |
+| `timestamp`      | string | ISO 8601 timestamp of the event              |
+| `organizationId` | string | Your organization ID                         |
+| `data`           | object | Event-specific data                          |
+
+## Event Categories
+
+### Queue Events
+
+| Event                      | Description                  |
+| -------------------------- | ---------------------------- |
+| `queue.consumer.entered`   | Consumer joined a queue      |
+| `queue.consumer.admitted`  | Consumer admitted from queue |
+| `queue.consumer.completed` | Consumer completed checkout  |
+| `queue.consumer.left`      | Consumer left the queue      |
+| `queue.consumer.denied`    | Consumer was denied entry    |
+
+### Draw Events
+
+| Event                   | Description             |
+| ----------------------- | ----------------------- |
+| `draw.consumer.entered` | Consumer entered a draw |
+| `draw.consumer.won`     | Consumer won the draw   |
+| `draw.consumer.lost`    | Consumer did not win    |
+| `draw.completed`        | Draw has been executed  |
+
+### Auction Events
+
+| Event                  | Description          |
+| ---------------------- | -------------------- |
+| `auction.bid.placed`   | Bid was placed       |
+| `auction.bid.outbid`   | Bidder was outbid    |
+| `auction.consumer.won` | Consumer won auction |
+| `auction.settled`      | Auction has settled  |
+
+### Order Events
+
+| Event             | Description         |
+| ----------------- | ------------------- |
+| `order.created`   | New order created   |
+| `order.completed` | Order completed     |
+| `order.cancelled` | Order was cancelled |
+
+### Consumer Events
+
+| Event              | Description              |
+| ------------------ | ------------------------ |
+| `consumer.created` | New consumer created     |
+| `consumer.updated` | Consumer profile updated |
+
+### Distribution Events
+
+| Event                  | Description                          |
+| ---------------------- | ------------------------------------ |
+| `distribution.updated` | Distribution timing/settings changed |
+| `distribution.opened`  | Distribution is now open             |
+| `distribution.closed`  | Distribution has closed              |
+
+## Configuring Webhooks
+
+### Via Dashboard
+
+1. Navigate to Settings > Webhooks in your Fanfare dashboard
+2. Click "Add Endpoint"
+3. Enter your webhook URL (must be HTTPS)
+4. Select the events you want to receive
+5. Save the endpoint
+
+### Via API
+
+```bash
+curl -X POST https://admin.fanfare.io/api/v1/webhooks \
+  -H "Authorization: Bearer sk_live_xxxxxxxxxxxx" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "url": "https://your-server.com/webhooks/fanfare",
+    "events": ["queue.consumer.admitted", "order.created"],
+    "secret": "whsec_your_signing_secret"
+  }'
+```
+
+## Receiving Webhooks
+
+### Basic Handler
+
+```typescript
+import express from "express";
+import crypto from "crypto";
+
+const app = express();
+
+app.post("/webhooks/fanfare", express.raw({ type: "application/json" }), (req, res) => {
+  const signature = req.headers["x-fanfare-signature"] as string;
+  const timestamp = req.headers["x-fanfare-timestamp"] as string;
+
+  // Verify signature
+  const expectedSignature = crypto
+    .createHmac("sha256", process.env.WEBHOOK_SECRET!)
+    .update(`${timestamp}.${req.body}`)
+    .digest("hex");
+
+  if (signature !== `sha256=${expectedSignature}`) {
+    return res.status(401).send("Invalid signature");
+  }
+
+  // Parse the event
+  const event = JSON.parse(req.body.toString());
+
+  // Handle the event
+  switch (event.type) {
+    case "queue.consumer.admitted":
+      handleAdmission(event.data);
+      break;
+    case "order.created":
+      handleOrder(event.data);
+      break;
+    default:
+      console.log(`Unhandled event type: ${event.type}`);
+  }
+
+  // Respond to acknowledge receipt
+  res.status(200).send("OK");
+});
+
+app.listen(3000);
+```
+
+### Async Processing
+
+For production, process webhooks asynchronously:
+
+```typescript
+import { Queue } from "bullmq";
+
+const webhookQueue = new Queue("webhooks");
+
+app.post("/webhooks/fanfare", async (req, res) => {
+  // Verify signature first
+  if (!verifySignature(req)) {
+    return res.status(401).send("Invalid signature");
+  }
+
+  const event = JSON.parse(req.body.toString());
+
+  // Queue for processing
+  await webhookQueue.add("process", event, {
+    removeOnComplete: 1000,
+    attempts: 3,
+  });
+
+  // Respond immediately
+  res.status(200).send("OK");
+});
+```
+
+## Webhook Headers
+
+Each webhook request includes:
+
+| Header                  | Description               |
+| ----------------------- | ------------------------- |
+| `Content-Type`          | `application/json`        |
+| `X-Fanfare-Signature`   | HMAC-SHA256 signature     |
+| `X-Fanfare-Timestamp`   | Unix timestamp of request |
+| `X-Fanfare-Event-Type`  | Event type                |
+| `X-Fanfare-Delivery-Id` | Unique delivery ID        |
+| `User-Agent`            | `Fanfare-Webhooks/1.0`    |
+
+## Best Practices
+
+### 1. Respond Quickly
+
+Respond with a 2xx status code within 30 seconds. Process events asynchronously for longer operations.
+
+### 2. Handle Duplicates
+
+Webhooks may be delivered more than once. Use the event `id` to deduplicate:
+
+```typescript
+const processedEvents = new Set();
+
+function handleEvent(event) {
+  if (processedEvents.has(event.id)) {
+    return; // Already processed
+  }
+  processedEvents.add(event.id);
+  // Process event...
+}
+```
+
+### 3. Verify Signatures
+
+Always verify the webhook signature before processing. See [Webhook Signatures](/api/webhooks/signatures).
+
+### 4. Use HTTPS
+
+Webhook endpoints must use HTTPS. HTTP URLs will be rejected.
+
+### 5. Handle Retries
+
+If your endpoint fails, Fanfare will retry. See [Retry Policy](/api/webhooks/retry-policy).
+
+## Testing Webhooks
+
+### Using the Dashboard
+
+1. Go to Settings > Webhooks
+2. Select your endpoint
+3. Click "Send Test Event"
+4. Choose an event type to test
+
+### Using CLI
+
+```bash
+# Send a test webhook
+curl -X POST https://admin.fanfare.io/api/v1/webhooks/test \
+  -H "Authorization: Bearer sk_live_xxxxxxxxxxxx" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "endpointId": "whe_01HXYZ123456789",
+    "eventType": "queue.consumer.admitted"
+  }'
+```
+
+### Local Development
+
+For local development, use a tunneling service:
+
+```bash
+# Using ngrok
+ngrok http 3000
+
+# Configure webhook URL as: https://your-subdomain.ngrok.io/webhooks/fanfare
+```
+
+## Webhook Events Reference
+
+For detailed information about each event type and its payload, see:
+
+- [Webhook Events](/api/webhooks/events) - All event types and payloads
+- [Webhook Signatures](/api/webhooks/signatures) - Signature verification
+- [Retry Policy](/api/webhooks/retry-policy) - Retry behavior

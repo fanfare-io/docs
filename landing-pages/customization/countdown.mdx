@@ -1,0 +1,343 @@
+---
+title: "Countdown Timer"
+description: "Display countdown timers for experience launches"
+---
+
+{/* TODO: MISSING_FUNCTIONALITY
+Feature: Standalone countdown configuration in landing page editor
+Expected behavior: Configurable countdown section with style options
+Current state: Countdown exists in widget; standalone section pending
+Blocking: partial - Widget countdowns work; standalone section coming
+*/}
+
+## Countdown Overview
+
+Countdown timers create urgency and keep visitors informed about when your experience starts. Fanfare provides countdown functionality in two ways:
+
+1. **Experience Widget** - Built-in countdown when experience is in "upcoming" phase
+2. **Countdown Section** - Standalone countdown block for landing pages (coming soon)
+
+## Built-in Widget Countdown
+
+The experience widget automatically displays a countdown when:
+
+- The experience has a scheduled start time
+- The current time is before the start time
+- The sequence is in the "upcoming" stage
+
+```
+┌─────────────────────────────────────────────────┐
+│                                                 │
+│         Limited Edition Drop                    │
+│                                                 │
+│           Launching in                          │
+│                                                 │
+│    02d  14h  32m  45s                          │
+│                                                 │
+│   [ Get notified when we launch ]              │
+│                                                 │
+└─────────────────────────────────────────────────┘
+```
+
+### Widget Countdown Behavior
+
+| Phase      | Display                     |
+| ---------- | --------------------------- |
+| > 7 days   | Date + time display         |
+| 1-7 days   | Days, hours, minutes        |
+| < 24 hours | Hours, minutes, seconds     |
+| < 1 hour   | Minutes, seconds (updating) |
+| Ended      | Transitions to entry form   |
+
+## Countdown Section (Coming Soon)
+
+{/* TODO: MISSING_FUNCTIONALITY
+Feature: Standalone countdown section
+Expected behavior: Configurable countdown block independent of widget
+Current state: Planned feature
+Blocking: true
+*/}
+
+The landing page editor will include a dedicated countdown section with:
+
+### Configuration Options
+
+| Setting       | Description              | Options                        |
+| ------------- | ------------------------ | ------------------------------ |
+| Target        | What to count down to    | Experience start, custom date  |
+| Display Units | Which time units to show | Days, hours, minutes, seconds  |
+| Style         | Visual appearance        | Minimal, cards, flip, circular |
+| End Behavior  | What happens at zero     | Hide, show message, redirect   |
+
+### Target Options
+
+#### Experience Start
+
+Automatically syncs with your experience schedule:
+
+```typescript
+{
+  target: "experience-start",
+  experienceId: "exp_..."  // Inherits from page
+}
+```
+
+#### Custom Date
+
+Specify any date and time:
+
+```typescript
+{
+  target: "custom",
+  date: "2024-03-15T10:00:00Z",
+  timezone: "America/New_York"
+}
+```
+
+### Style Variants
+
+#### Minimal
+
+Simple numbers with labels:
+
+```
+02 Days  14 Hours  32 Minutes  45 Seconds
+```
+
+#### Cards
+
+Each unit in a separate card:
+
+```
+┌────┐  ┌────┐  ┌────┐  ┌────┐
+│ 02 │  │ 14 │  │ 32 │  │ 45 │
+│Days│  │Hrs │  │Min │  │Sec │
+└────┘  └────┘  └────┘  └────┘
+```
+
+#### Flip Clock
+
+Animated flip-style numbers (CSS animation):
+
+```
+┌─────┐ ┌─────┐   ┌─────┐ ┌─────┐   ┌─────┐ ┌─────┐
+│  0  │ │  2  │ : │  1  │ │  4  │ : │  3  │ │  2  │
+└─────┘ └─────┘   └─────┘ └─────┘   └─────┘ └─────┘
+  Hours             Minutes           Seconds
+```
+
+#### Circular Progress
+
+Numbers inside progress rings:
+
+```
+    ╭──────╮      ╭──────╮      ╭──────╮
+   ╱   02   ╲    ╱   14   ╲    ╱   32   ╲
+  │   Days   │  │   Hrs    │  │   Min    │
+   ╲        ╱    ╲        ╱    ╲        ╱
+    ╰──────╯      ╰──────╯      ╰──────╯
+```
+
+### End Behavior
+
+Configure what happens when the countdown reaches zero:
+
+| Behavior     | Description                               |
+| ------------ | ----------------------------------------- |
+| Hide         | Remove countdown section entirely         |
+| Show Message | Display custom text (e.g., "We're live!") |
+| Redirect     | Navigate to another URL                   |
+| Refresh      | Reload the page (shows updated widget)    |
+
+```typescript
+{
+  endBehavior: "showMessage",
+  endMessage: "The drop is live! Join now.",
+  endCta: {
+    text: "Join Queue",
+    scrollTo: "#experience-widget"
+  }
+}
+```
+
+## Timezone Handling
+
+Countdowns display in the visitor's local timezone by default:
+
+| Server Time (UTC) | Visitor Timezone         | Display            |
+| ----------------- | ------------------------ | ------------------ |
+| 2024-03-15T14:00Z | America/New_York (UTC-4) | March 15, 10:00 AM |
+| 2024-03-15T14:00Z | Europe/London (UTC)      | March 15, 2:00 PM  |
+| 2024-03-15T14:00Z | Asia/Tokyo (UTC+9)       | March 15, 11:00 PM |
+
+### Override Display Timezone
+
+Show a specific timezone to all visitors:
+
+```typescript
+{
+  displayTimezone: "America/Los_Angeles",
+  showTimezone: true  // Shows "PST" label
+}
+```
+
+## Countdown Labels
+
+Customize the text labels:
+
+| Unit    | Default   | Example Custom |
+| ------- | --------- | -------------- |
+| Days    | "Days"    | "D"            |
+| Hours   | "Hours"   | "H"            |
+| Minutes | "Minutes" | "M"            |
+| Seconds | "Seconds" | "S"            |
+
+### Internationalization
+
+Labels support i18n through experience settings:
+
+```typescript
+// English (default)
+{ days: "Days", hours: "Hours", minutes: "Minutes", seconds: "Seconds" }
+
+// Spanish
+{ days: "Dias", hours: "Horas", minutes: "Minutos", seconds: "Segundos" }
+
+// Japanese
+{ days: "日", hours: "時間", minutes: "分", seconds: "秒" }
+```
+
+## Theme Integration
+
+Countdown sections inherit theme settings:
+
+| Element         | Theme Property                       |
+| --------------- | ------------------------------------ |
+| Numbers         | `--ff-color-text`                    |
+| Labels          | `--ff-color-muted`                   |
+| Card background | `--ff-color-background` with opacity |
+| Card border     | `--ff-color-muted`                   |
+| Progress rings  | `--ff-color-primary`                 |
+
+### Custom Styling
+
+Override specific countdown styles:
+
+```css
+.ff-countdown {
+  --ff-countdown-number-size: 3rem;
+  --ff-countdown-label-size: 0.875rem;
+  --ff-countdown-gap: 1rem;
+}
+
+.ff-countdown-card {
+  --ff-countdown-card-bg: rgba(255, 255, 255, 0.05);
+  --ff-countdown-card-border: 1px solid rgba(255, 255, 255, 0.1);
+  --ff-countdown-card-radius: 0.75rem;
+}
+```
+
+## Current Workarounds
+
+Until standalone countdown sections are available:
+
+### Use the Experience Widget
+
+The widget provides countdown functionality automatically:
+
+```tsx
+<ExperienceWidget
+  experienceId="exp_..."
+  variant="countdown-only" // Coming soon
+/>
+```
+
+### Custom Countdown Component
+
+Create a custom countdown using the SDK:
+
+```tsx
+import { useFanfare } from "@waitify-io/fanfare-sdk-react";
+import { useState, useEffect } from "react";
+
+function CustomCountdown({ experienceId }: { experienceId: string }) {
+  const { sdk } = useFanfare();
+  const [timeLeft, setTimeLeft] = useState<TimeLeft | null>(null);
+
+  useEffect(() => {
+    // Fetch experience to get start time
+    const loadExperience = async () => {
+      const experience = await sdk.experiences.get(experienceId);
+      // Set up countdown logic
+    };
+    loadExperience();
+  }, [experienceId, sdk]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      // Update countdown
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  if (!timeLeft) return null;
+
+  return (
+    <div className="flex justify-center gap-4">
+      <div className="text-center">
+        <div className="text-4xl font-bold">{timeLeft.days}</div>
+        <div className="text-muted text-sm">Days</div>
+      </div>
+      {/* ... hours, minutes, seconds */}
+    </div>
+  );
+}
+```
+
+## Best Practices
+
+### When to Use Countdowns
+
+| Scenario                    | Recommendation                 |
+| --------------------------- | ------------------------------ |
+| Product drop                | Yes - creates urgency          |
+| Always-available experience | No - no urgency needed         |
+| Multi-day event             | Yes - shows until start        |
+| Recurring weekly            | Consider - may cause confusion |
+
+### Countdown Placement
+
+| Position        | Effect              |
+| --------------- | ------------------- |
+| Hero section    | Maximum visibility  |
+| Above fold      | Good visibility     |
+| Near widget     | Context for action  |
+| Multiple places | Can feel aggressive |
+
+<Tip>One well-placed countdown is more effective than multiple countdowns throughout the page.</Tip>
+
+### Accessibility
+
+Ensure countdowns are accessible:
+
+- Use `aria-live="polite"` for screen readers
+- Don't rely solely on visual countdown
+- Provide text alternative ("Starts March 15 at 10:00 AM EST")
+- Test with reduced motion preferences
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Media" icon="image" href="/landing-pages/customization/media">
+    Add images and videos
+  </Card>
+  <Card title="Content Blocks" icon="cube" href="/landing-pages/customization/content-blocks">
+    Other section types
+  </Card>
+  <Card title="Preview" icon="eye" href="/landing-pages/publishing/preview">
+    Test your countdown
+  </Card>
+  <Card title="Sequences" icon="clock" href="/concepts/sequences">
+    Configure experience timing
+  </Card>
+</CardGroup>

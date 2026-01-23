@@ -1,0 +1,855 @@
+---
+title: Webhooks Guide
+description: Receive and process Fanfare webhooks for real-time event notifications.
+---
+
+# Webhooks Guide
+
+Learn how to receive and process Fanfare webhooks for real-time event notifications.
+
+## Overview
+
+Fanfare webhooks notify your server when events occur in your experiences. Use webhooks to synchronize data, trigger workflows, and respond to consumer actions in real-time.
+
+**What you'll learn:**
+
+- Setting up webhook endpoints
+- Verifying webhook signatures
+- Handling different event types
+- Implementing retry logic
+- Best practices for reliability
+
+**Complexity:** Advanced
+**Time to complete:** 35 minutes
+
+## Prerequisites
+
+- Fanfare account with API access
+- Server capable of receiving HTTP POST requests
+- Understanding of webhook patterns
+- HTTPS endpoint (required for production)
+
+## Webhook Architecture
+
+```
+Fanfare Platform                    Your Server
+      │                                  │
+      │  Event occurs (e.g.,             │
+      │  consumer admitted)              │
+      │                                  │
+      │───────────────────────────────▶ │
+      │  POST /webhooks/fanfare          │
+      │  Headers: X-Fanfare-Signature    │
+      │  Body: { type, data, ... }       │
+      │                                  │
+      │                                  │ 1. Verify signature
+      │                                  │ 2. Process event
+      │                                  │ 3. Return 200 OK
+      │                                  │
+      │◀─────────────────────────────── │
+      │  200 OK                          │
+      │                                  │
+```
+
+## Step 1: Configure Webhooks
+
+### Admin Dashboard Setup
+
+1. Navigate to **Settings** > **Webhooks** in the Fanfare admin
+2. Click **Add Endpoint**
+3. Enter your endpoint URL (must be HTTPS)
+4. Select events to subscribe to
+5. Copy the signing secret
+
+### API Configuration
+
+```typescript
+import { FanfareAdminClient } from "@waitify-io/fanfare-admin-sdk";
+
+const adminClient = new FanfareAdminClient({
+  apiKey: process.env.FANFARE_ADMIN_API_KEY!,
+  organizationId: process.env.FANFARE_ORGANIZATION_ID!,
+});
+
+async function createWebhookEndpoint() {
+  const endpoint = await adminClient.webhooks.create({
+    url: "https://your-server.com/webhooks/fanfare",
+    events: [
+      // Queue events
+      "queue.consumer_entered",
+      "queue.consumer_admitted",
+      "queue.consumer_left",
+      "queue.admission_completed",
+      "queue.admission_expired",
+
+      // Draw events
+      "draw.entry_created",
+      "draw.winners_selected",
+      "draw.prize_claimed",
+
+      // Auction events
+      "auction.bid_placed",
+      "auction.auction_ended",
+      "auction.winner_notified",
+
+      // Experience lifecycle
+      "experience.started",
+      "experience.ended",
+      "experience.paused",
+      "experience.resumed",
+
+      // Consumer events
+      "consumer.authenticated",
+      "consumer.linked",
+    ],
+    description: "Main production webhook endpoint",
+    enabled: true,
+  });
+
+  console.log("Webhook secret:", endpoint.secret);
+  // Store this secret securely!
+
+  return endpoint;
+}
+```
+
+## Step 2: Create Webhook Handler
+
+### Express.js Handler
+
+```typescript
+// routes/webhooks/fanfare.ts
+import express from "express";
+import crypto from "crypto";
+
+const router = express.Router();
+const WEBHOOK_SECRET = process.env.FANFARE_WEBHOOK_SECRET!;
+
+// Middleware to capture raw body for signature verification
+router.use(
+  express.json({
+    verify: (req, res, buf) => {
+      (req as { rawBody?: Buffer }).rawBody = buf;
+    },
+  }),
+);
+
+// Verify webhook signature
+function verifySignature(payload: string | Buffer, signature: string): boolean {
+  const timestamp = signature.split(",")[0]?.split("=")[1];
+  const receivedSig = signature.split(",")[1]?.split("=")[1];
+
+  if (!timestamp || !receivedSig) {
+    return false;
+  }
+
+  // Check timestamp is within 5 minutes
+  const timestampAge = Math.abs(Date.now() - parseInt(timestamp) * 1000);
+  if (timestampAge > 5 * 60 * 1000) {
+    console.warn("Webhook timestamp too old:", timestampAge);
+    return false;
+  }
+
+  // Compute expected signature
+  const signedPayload = `${timestamp}.${payload}`;
+  const expectedSig = crypto
+    .createHmac("sha256", WEBHOOK_SECRET)
+    .update(signedPayload)
+    .digest("hex");
+
+  // Constant-time comparison
+  return crypto.timingSafeEqual(
+    Buffer.from(receivedSig),
+    Buffer.from(expectedSig),
+  );
+}
+
+router.post("/", async (req, res) => {
+  const signature = req.headers["x-fanfare-signature"] as string;
+  const rawBody = (req as { rawBody?: Buffer }).rawBody?.toString() || "";
+
+  // Verify signature
+  if (!signature || !verifySignature(rawBody, signature)) {
+    console.error("Invalid webhook signature");
+    return res.status(401).json({ error: "Invalid signature" });
+  }
+
+  const event = req.body;
+
+  // Acknowledge receipt immediately
+  res.status(200).json({ received: true });
+
+  // Process event asynchronously
+  try {
+    await processWebhookEvent(event);
+  } catch (error) {
+    console.error("Webhook processing error:", error);
+    // Event already acknowledged - log for monitoring
+  }
+});
+
+export default router;
+```
+
+### Next.js API Route Handler
+
+```typescript
+// pages/api/webhooks/fanfare.ts (Next.js Pages Router)
+import { NextApiRequest, NextApiResponse } from "next";
+import crypto from "crypto";
+
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};
+
+async function getRawBody(req: NextApiRequest): Promise<string> {
+  const chunks: Buffer[] = [];
+  for await (const chunk of req) {
+    chunks.push(typeof chunk === "string" ? Buffer.from(chunk) : chunk);
+  }
+  return Buffer.concat(chunks).toString("utf8");
+}
+
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse,
+) {
+  if (req.method !== "POST") {
+    return res.status(405).json({ error: "Method not allowed" });
+  }
+
+  const rawBody = await getRawBody(req);
+  const signature = req.headers["x-fanfare-signature"] as string;
+
+  if (!verifySignature(rawBody, signature)) {
+    return res.status(401).json({ error: "Invalid signature" });
+  }
+
+  const event = JSON.parse(rawBody);
+
+  // Acknowledge immediately
+  res.status(200).json({ received: true });
+
+  // Process asynchronously
+  await processWebhookEvent(event);
+}
+
+function verifySignature(payload: string, signature: string): boolean {
+  const WEBHOOK_SECRET = process.env.FANFARE_WEBHOOK_SECRET!;
+
+  const timestamp = signature.split(",")[0]?.split("=")[1];
+  const receivedSig = signature.split(",")[1]?.split("=")[1];
+
+  if (!timestamp || !receivedSig) return false;
+
+  const signedPayload = `${timestamp}.${payload}`;
+  const expectedSig = crypto
+    .createHmac("sha256", WEBHOOK_SECRET)
+    .update(signedPayload)
+    .digest("hex");
+
+  return crypto.timingSafeEqual(
+    Buffer.from(receivedSig),
+    Buffer.from(expectedSig),
+  );
+}
+```
+
+## Step 3: Process Webhook Events
+
+### Event Processor
+
+```typescript
+// services/webhook-processor.ts
+interface WebhookEvent {
+  id: string;
+  type: string;
+  created: number;
+  data: Record<string, unknown>;
+  organizationId: string;
+  experienceId?: string;
+}
+
+export async function processWebhookEvent(event: WebhookEvent) {
+  // Idempotency check
+  const processed = await db.query.webhookEvents.findFirst({
+    where: eq(webhookEvents.eventId, event.id),
+  });
+
+  if (processed) {
+    console.log("Event already processed:", event.id);
+    return;
+  }
+
+  // Record event receipt
+  await db.insert(webhookEvents).values({
+    eventId: event.id,
+    eventType: event.type,
+    receivedAt: new Date(),
+    status: "processing",
+  });
+
+  try {
+    // Route to appropriate handler
+    await routeWebhookEvent(event);
+
+    // Mark as processed
+    await db
+      .update(webhookEvents)
+      .set({ status: "completed", processedAt: new Date() })
+      .where(eq(webhookEvents.eventId, event.id));
+  } catch (error) {
+    // Mark as failed
+    await db
+      .update(webhookEvents)
+      .set({
+        status: "failed",
+        error: error instanceof Error ? error.message : "Unknown error",
+      })
+      .where(eq(webhookEvents.eventId, event.id));
+
+    throw error;
+  }
+}
+
+async function routeWebhookEvent(event: WebhookEvent) {
+  const handlers: Record<
+    string,
+    (data: WebhookEvent["data"]) => Promise<void>
+  > = {
+    // Queue events
+    "queue.consumer_entered": handleConsumerEntered,
+    "queue.consumer_admitted": handleConsumerAdmitted,
+    "queue.consumer_left": handleConsumerLeft,
+    "queue.admission_completed": handleAdmissionCompleted,
+    "queue.admission_expired": handleAdmissionExpired,
+
+    // Draw events
+    "draw.entry_created": handleDrawEntry,
+    "draw.winners_selected": handleWinnersSelected,
+    "draw.prize_claimed": handlePrizeClaimed,
+
+    // Auction events
+    "auction.bid_placed": handleBidPlaced,
+    "auction.auction_ended": handleAuctionEnded,
+
+    // Experience events
+    "experience.started": handleExperienceStarted,
+    "experience.ended": handleExperienceEnded,
+
+    // Consumer events
+    "consumer.authenticated": handleConsumerAuthenticated,
+    "consumer.linked": handleConsumerLinked,
+  };
+
+  const handler = handlers[event.type];
+  if (!handler) {
+    console.warn("Unhandled webhook event type:", event.type);
+    return;
+  }
+
+  await handler(event.data);
+}
+```
+
+### Event Handlers
+
+```typescript
+// handlers/queue-events.ts
+
+interface ConsumerAdmittedData {
+  consumerId: string;
+  experienceId: string;
+  distributionId: string;
+  admissionToken: string;
+  admittedAt: string;
+  expiresAt: string;
+  position: number;
+  waitTimeSeconds: number;
+}
+
+async function handleConsumerAdmitted(data: ConsumerAdmittedData) {
+  const {
+    consumerId,
+    experienceId,
+    distributionId,
+    admissionToken,
+    expiresAt,
+  } = data;
+
+  // Store admission record
+  await db.insert(admissions).values({
+    consumerId,
+    experienceId,
+    distributionId,
+    token: admissionToken,
+    expiresAt: new Date(expiresAt),
+    status: "active",
+  });
+
+  // Get consumer contact info
+  const consumer = await db.query.consumers.findFirst({
+    where: eq(consumers.id, consumerId),
+  });
+
+  // Send notification
+  if (consumer?.email) {
+    await sendEmail({
+      to: consumer.email,
+      subject: "You're in! Complete your purchase",
+      template: "admission-granted",
+      data: {
+        expiresAt: new Date(expiresAt).toLocaleString(),
+        checkoutUrl: `https://your-store.com/checkout?token=${admissionToken}`,
+      },
+    });
+  }
+
+  // Track analytics
+  await analytics.track("admission_granted", {
+    consumerId,
+    experienceId,
+    waitTime: data.waitTimeSeconds,
+  });
+}
+
+interface AdmissionCompletedData {
+  consumerId: string;
+  experienceId: string;
+  distributionId: string;
+  orderId?: string;
+  completedAt: string;
+}
+
+async function handleAdmissionCompleted(data: AdmissionCompletedData) {
+  const { consumerId, experienceId, orderId, completedAt } = data;
+
+  // Update admission status
+  await db
+    .update(admissions)
+    .set({
+      status: "completed",
+      completedAt: new Date(completedAt),
+      orderId,
+    })
+    .where(
+      and(
+        eq(admissions.consumerId, consumerId),
+        eq(admissions.experienceId, experienceId),
+      ),
+    );
+
+  // Track conversion
+  await analytics.track("admission_converted", {
+    consumerId,
+    experienceId,
+    orderId,
+  });
+}
+
+interface AdmissionExpiredData {
+  consumerId: string;
+  experienceId: string;
+  distributionId: string;
+  expiredAt: string;
+}
+
+async function handleAdmissionExpired(data: AdmissionExpiredData) {
+  const { consumerId, experienceId, expiredAt } = data;
+
+  // Update admission status
+  await db
+    .update(admissions)
+    .set({
+      status: "expired",
+      expiredAt: new Date(expiredAt),
+    })
+    .where(
+      and(
+        eq(admissions.consumerId, consumerId),
+        eq(admissions.experienceId, experienceId),
+      ),
+    );
+
+  // Release any reserved inventory
+  await releaseReservations(consumerId, experienceId);
+
+  // Track abandonment
+  await analytics.track("admission_expired", {
+    consumerId,
+    experienceId,
+  });
+}
+```
+
+### Draw Event Handlers
+
+```typescript
+// handlers/draw-events.ts
+
+interface WinnersSelectedData {
+  drawId: string;
+  experienceId: string;
+  winners: Array<{
+    consumerId: string;
+    position: number;
+    claimToken: string;
+    claimDeadline: string;
+  }>;
+  totalEntries: number;
+  selectionMethod: string;
+}
+
+async function handleWinnersSelected(data: WinnersSelectedData) {
+  const { drawId, winners, totalEntries } = data;
+
+  // Store winners
+  for (const winner of winners) {
+    await db.insert(drawWinners).values({
+      drawId,
+      consumerId: winner.consumerId,
+      position: winner.position,
+      claimToken: winner.claimToken,
+      claimDeadline: new Date(winner.claimDeadline),
+      status: "pending_claim",
+    });
+
+    // Get consumer and send notification
+    const consumer = await db.query.consumers.findFirst({
+      where: eq(consumers.id, winner.consumerId),
+    });
+
+    if (consumer) {
+      await sendWinnerNotification(consumer, winner, drawId);
+    }
+  }
+
+  // Track draw completion
+  await analytics.track("draw_completed", {
+    drawId,
+    winnerCount: winners.length,
+    totalEntries,
+  });
+}
+```
+
+## Step 4: Handle Failures and Retries
+
+### Retry Logic
+
+Fanfare automatically retries failed webhooks with exponential backoff:
+
+| Attempt | Delay      |
+| ------- | ---------- |
+| 1       | Immediate  |
+| 2       | 1 minute   |
+| 3       | 5 minutes  |
+| 4       | 30 minutes |
+| 5       | 2 hours    |
+| 6       | 8 hours    |
+
+### Handling Retries in Your Code
+
+```typescript
+// Ensure idempotency
+async function processWebhookIdempotent(event: WebhookEvent) {
+  const lockKey = `webhook:${event.id}`;
+
+  // Try to acquire distributed lock
+  const acquired = await redis.set(lockKey, "1", "EX", 300, "NX");
+  if (!acquired) {
+    console.log("Event already being processed:", event.id);
+    return;
+  }
+
+  try {
+    // Check if already processed
+    const existing = await db.query.webhookEvents.findFirst({
+      where: eq(webhookEvents.eventId, event.id),
+    });
+
+    if (existing?.status === "completed") {
+      return;
+    }
+
+    await processWebhookEvent(event);
+  } finally {
+    await redis.del(lockKey);
+  }
+}
+```
+
+### Dead Letter Queue
+
+```typescript
+// Handle events that fail repeatedly
+async function handleFailedWebhook(event: WebhookEvent, error: Error) {
+  // Store in dead letter queue
+  await db.insert(webhookDeadLetterQueue).values({
+    eventId: event.id,
+    eventType: event.type,
+    payload: JSON.stringify(event),
+    error: error.message,
+    failedAt: new Date(),
+    retryCount: 0,
+  });
+
+  // Alert operations team
+  await sendAlert({
+    type: "webhook_failure",
+    eventId: event.id,
+    eventType: event.type,
+    error: error.message,
+  });
+}
+
+// Periodic job to retry dead letter queue
+async function processDeadLetterQueue() {
+  const deadLetters = await db.query.webhookDeadLetterQueue.findMany({
+    where: and(
+      lt(webhookDeadLetterQueue.retryCount, 3),
+      lt(webhookDeadLetterQueue.failedAt, new Date(Date.now() - 3600000)),
+    ),
+    limit: 10,
+  });
+
+  for (const item of deadLetters) {
+    try {
+      const event = JSON.parse(item.payload);
+      await processWebhookEvent(event);
+
+      // Remove from dead letter queue
+      await db
+        .delete(webhookDeadLetterQueue)
+        .where(eq(webhookDeadLetterQueue.id, item.id));
+    } catch (error) {
+      // Increment retry count
+      await db
+        .update(webhookDeadLetterQueue)
+        .set({ retryCount: item.retryCount + 1 })
+        .where(eq(webhookDeadLetterQueue.id, item.id));
+    }
+  }
+}
+```
+
+## Step 5: Testing Webhooks
+
+### Local Development with Tunnels
+
+```bash
+# Using ngrok
+ngrok http 3000
+
+# Using cloudflared
+cloudflared tunnel --url http://localhost:3000
+```
+
+### Test Webhook Delivery
+
+```typescript
+// Admin API: Trigger test webhook
+async function sendTestWebhook(endpointId: string, eventType: string) {
+  await adminClient.webhooks.sendTest(endpointId, {
+    eventType,
+    data: {
+      consumerId: "test_consumer_123",
+      experienceId: "test_experience_456",
+      // ... test data
+    },
+  });
+}
+
+// Verify endpoint health
+async function verifyWebhookEndpoint(endpointId: string) {
+  const status = await adminClient.webhooks.verify(endpointId);
+  console.log("Endpoint status:", status);
+  // { healthy: true, lastDelivery: "2024-01-15T10:30:00Z", successRate: 0.99 }
+}
+```
+
+### Unit Testing Handlers
+
+```typescript
+// tests/webhook-handlers.test.ts
+import { handleConsumerAdmitted } from "../handlers/queue-events";
+
+describe("handleConsumerAdmitted", () => {
+  it("should store admission and send notification", async () => {
+    const mockData = {
+      consumerId: "consumer_123",
+      experienceId: "exp_456",
+      distributionId: "dist_789",
+      admissionToken: "token_abc",
+      admittedAt: new Date().toISOString(),
+      expiresAt: new Date(Date.now() + 600000).toISOString(),
+      position: 1,
+      waitTimeSeconds: 120,
+    };
+
+    await handleConsumerAdmitted(mockData);
+
+    // Verify admission stored
+    const admission = await db.query.admissions.findFirst({
+      where: eq(admissions.consumerId, mockData.consumerId),
+    });
+
+    expect(admission).toBeDefined();
+    expect(admission?.status).toBe("active");
+
+    // Verify email sent
+    expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
+      expect.objectContaining({
+        template: "admission-granted",
+      }),
+    );
+  });
+});
+```
+
+## Event Reference
+
+### Queue Events
+
+| Event                       | Description             | Key Data                  |
+| --------------------------- | ----------------------- | ------------------------- |
+| `queue.consumer_entered`    | Consumer joined queue   | consumerId, position      |
+| `queue.consumer_admitted`   | Consumer reached front  | admissionToken, expiresAt |
+| `queue.consumer_left`       | Consumer left queue     | consumerId, reason        |
+| `queue.admission_completed` | Purchase completed      | orderId                   |
+| `queue.admission_expired`   | Admission window closed | expiredAt                 |
+
+### Draw Events
+
+| Event                   | Description          | Key Data                |
+| ----------------------- | -------------------- | ----------------------- |
+| `draw.entry_created`    | New draw entry       | consumerId, entryNumber |
+| `draw.winners_selected` | Draw completed       | winners[], totalEntries |
+| `draw.prize_claimed`    | Winner claimed prize | consumerId, orderId     |
+| `draw.prize_expired`    | Claim window closed  | consumerId, expiresAt   |
+
+### Auction Events
+
+| Event                     | Description         | Key Data               |
+| ------------------------- | ------------------- | ---------------------- |
+| `auction.bid_placed`      | New bid received    | consumerId, amount     |
+| `auction.outbid`          | Consumer was outbid | consumerId, newHighBid |
+| `auction.auction_ended`   | Auction completed   | winnerId, finalBid     |
+| `auction.winner_notified` | Winner notified     | consumerId             |
+
+### Experience Events
+
+| Event                | Description          | Key Data           |
+| -------------------- | -------------------- | ------------------ |
+| `experience.started` | Experience went live | experienceId, type |
+| `experience.ended`   | Experience concluded | totalParticipants  |
+| `experience.paused`  | Experience paused    | reason             |
+| `experience.resumed` | Experience resumed   | pausedDuration     |
+
+## Best Practices
+
+### 1. Acknowledge Quickly
+
+```typescript
+// Good: Acknowledge then process
+router.post("/", async (req, res) => {
+  // Verify signature first
+  if (!verifySignature(req)) {
+    return res.status(401).end();
+  }
+
+  // Acknowledge immediately
+  res.status(200).json({ received: true });
+
+  // Process asynchronously
+  processWebhookEvent(req.body).catch(console.error);
+});
+
+// Bad: Process then acknowledge
+router.post("/", async (req, res) => {
+  await processWebhookEvent(req.body); // May timeout
+  res.status(200).json({ received: true });
+});
+```
+
+### 2. Handle Out-of-Order Events
+
+```typescript
+// Events may arrive out of order
+async function handleWithOrdering(event: WebhookEvent) {
+  const timestamp = event.created;
+
+  // Check if we have a newer event already
+  const existing = await db.query.eventState.findFirst({
+    where: eq(eventState.entityId, event.data.consumerId),
+  });
+
+  if (existing && existing.lastEventTimestamp > timestamp) {
+    console.log("Ignoring out-of-order event");
+    return;
+  }
+
+  // Process and update timestamp
+  await processEvent(event);
+  await db
+    .update(eventState)
+    .set({ lastEventTimestamp: timestamp })
+    .where(eq(eventState.entityId, event.data.consumerId));
+}
+```
+
+### 3. Monitor Webhook Health
+
+```typescript
+// Track webhook metrics
+async function recordWebhookMetrics(
+  event: WebhookEvent,
+  processingTime: number,
+  success: boolean,
+) {
+  await metrics.record("webhook_processed", {
+    eventType: event.type,
+    success,
+    processingTimeMs: processingTime,
+  });
+
+  // Alert on high failure rate
+  const recentFailures = await getRecentFailureCount(event.type);
+  if (recentFailures > 10) {
+    await sendAlert({
+      type: "webhook_failures_high",
+      eventType: event.type,
+      failureCount: recentFailures,
+    });
+  }
+}
+```
+
+## Troubleshooting
+
+### Signature Verification Failing
+
+1. Ensure you're using the raw request body
+2. Check webhook secret is correct
+3. Verify timestamp is within acceptable range
+
+### Events Not Being Received
+
+1. Check endpoint URL is publicly accessible
+2. Verify HTTPS certificate is valid
+3. Review Fanfare webhook delivery logs
+4. Check firewall rules
+
+### Duplicate Events
+
+1. Implement idempotency checks
+2. Use event IDs for deduplication
+3. Check for distributed lock issues
+
+## What's Next
+
+- [Real-time Updates](/guides/advanced/real-time-updates) - Client-side real-time data
+- [Error Handling](/guides/advanced/error-handling) - Comprehensive error management
+- [Custom Platform](/guides/platform-integrations/custom-platform) - Full integration guide

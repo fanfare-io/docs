@@ -1,0 +1,343 @@
+---
+title: Reports
+description: Generate and export custom reports for detailed analysis
+---
+
+# Reports
+
+Reports allow you to generate detailed analytics exports for specific metrics, time periods, and segments. Use reports for deeper analysis, stakeholder presentations, and compliance requirements.
+
+## Report Types
+
+### Standard Reports
+
+| Report                 | Description                            |
+| ---------------------- | -------------------------------------- |
+| **Experience Summary** | Overview of all experience performance |
+| **Consumer Activity**  | Consumer engagement and participation  |
+| **Revenue Report**     | Financial performance analysis         |
+| **Conversion Report**  | Funnel and conversion analytics        |
+| **Usage Report**       | Platform usage and consumption         |
+
+### Experience Reports
+
+| Report                  | Description                        |
+| ----------------------- | ---------------------------------- |
+| **Queue Performance**   | Wait times, completion, throughput |
+| **Draw Results**        | Entry counts, winner distribution  |
+| **Auction Analysis**    | Bidding patterns, final prices     |
+| **Appointment Summary** | Booking rates, attendance metrics  |
+
+## Generating Reports
+
+### Standard Report Generation
+
+1. Navigate to the reports section
+2. Select a report type
+3. Configure parameters
+4. Generate the report
+5. Download or view online
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/reports or analytics section
+Shows: Report generation interface with options
+Annotations: Label the report type selector and parameters
+Alt text: "Report generation interface with type selection and date range"
+*/}
+
+![Generate report](./images/reports-generate.png)
+_Caption: Configure and generate custom reports_
+
+### Report Parameters
+
+| Parameter       | Description                 |
+| --------------- | --------------------------- |
+| **Date Range**  | Start and end dates         |
+| **Experiences** | All or selected experiences |
+| **Audiences**   | All or specific audiences   |
+| **Metrics**     | Which metrics to include    |
+| **Grouping**    | How to group data           |
+
+## Date Range Selection
+
+### Preset Ranges
+
+| Preset           | Description             |
+| ---------------- | ----------------------- |
+| **Today**        | Current day             |
+| **Yesterday**    | Previous day            |
+| **Last 7 days**  | Rolling week            |
+| **Last 30 days** | Rolling month           |
+| **This month**   | Calendar month to date  |
+| **Last month**   | Previous calendar month |
+| **This quarter** | Quarter to date         |
+| **Last quarter** | Previous quarter        |
+| **Custom**       | Specify exact dates     |
+
+### Custom Date Range
+
+1. Click **Custom**
+2. Select start date
+3. Select end date
+4. Apply the range
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: Report date picker
+Shows: Custom date range selector with calendar
+Annotations: Highlight start and end date fields
+Alt text: "Custom date range picker with calendar selection"
+*/}
+
+![Date range](./images/reports-date-range.png)
+_Caption: Select custom date ranges for reports_
+
+## Report Metrics
+
+### Experience Metrics
+
+| Metric                | Description                  |
+| --------------------- | ---------------------------- |
+| **Total Entries**     | Number of experience entries |
+| **Unique Entrants**   | Distinct consumers           |
+| **Completion Rate**   | Percentage completed         |
+| **Average Wait Time** | Mean time in experience      |
+| **Drop-off Rate**     | Percentage who left early    |
+
+### Consumer Metrics
+
+| Metric                  | Description             |
+| ----------------------- | ----------------------- |
+| **New Consumers**       | First-time participants |
+| **Returning Consumers** | Repeat participants     |
+| **Consumer Growth**     | Net new consumers       |
+| **Engagement Rate**     | Activity per consumer   |
+
+### Revenue Metrics
+
+| Metric                  | Description                |
+| ----------------------- | -------------------------- |
+| **Total Revenue**       | Sum of transactions        |
+| **Average Order Value** | Mean transaction amount    |
+| **Revenue Per Entry**   | Revenue divided by entries |
+| **Transaction Count**   | Number of transactions     |
+
+## Report Formats
+
+### Available Formats
+
+| Format            | Best For                    |
+| ----------------- | --------------------------- |
+| **CSV**           | Data analysis, spreadsheets |
+| **Excel (.xlsx)** | Formatted reports, formulas |
+| **PDF**           | Presentations, sharing      |
+| **JSON**          | API integration, automation |
+
+### Format-Specific Options
+
+#### CSV Options
+
+- Include headers
+- Date format
+- Number format
+- Delimiter choice
+
+#### Excel Options
+
+- Multiple sheets
+- Charts included
+- Formatting applied
+- Summary sheet
+
+#### PDF Options
+
+- Include charts
+- Page orientation
+- Paper size
+- Branding
+
+## Scheduled Reports
+
+### Setting Up Scheduled Reports
+
+1. Create a report configuration
+2. Click **Schedule**
+3. Set frequency
+4. Choose delivery method
+5. Save the schedule
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: Report scheduling dialog
+Shows: Schedule configuration with frequency and delivery options
+Annotations: Label frequency and delivery method fields
+Alt text: "Report scheduling dialog with frequency and email delivery options"
+*/}
+
+![Schedule report](./images/reports-schedule.png)
+_Caption: Set up automatic report delivery_
+
+### Frequency Options
+
+| Frequency     | Description                 |
+| ------------- | --------------------------- |
+| **Daily**     | Every day at specified time |
+| **Weekly**    | Specific day each week      |
+| **Monthly**   | Specific day each month     |
+| **Quarterly** | End of each quarter         |
+
+### Delivery Methods
+
+| Method       | Description                  |
+| ------------ | ---------------------------- |
+| **Email**    | Send to specified addresses  |
+| **Download** | Available in reports section |
+| **Webhook**  | POST to specified URL        |
+
+## Report History
+
+### Viewing Past Reports
+
+Access previously generated reports:
+
+| Information      | Description                  |
+| ---------------- | ---------------------------- |
+| **Report Name**  | Type and parameters          |
+| **Generated At** | When the report was created  |
+| **Generated By** | Who requested the report     |
+| **Status**       | Complete, pending, or failed |
+| **Download**     | Link to download             |
+
+### Report Retention
+
+| Plan           | Report History |
+| -------------- | -------------- |
+| **Free**       | 7 days         |
+| **Basic**      | 30 days        |
+| **Pro**        | 90 days        |
+| **Enterprise** | 1 year         |
+
+## Advanced Reporting
+
+### Filtering Data
+
+Apply filters to narrow report scope:
+
+| Filter              | Options                           |
+| ------------------- | --------------------------------- |
+| **Experience Type** | Queue, Draw, Auction, Appointment |
+| **Audience**        | Specific audience segments        |
+| **Status**          | Completed, pending, cancelled     |
+| **Consumer Status** | New, returning                    |
+
+### Grouping Data
+
+Group report data by:
+
+| Grouping       | Description              |
+| -------------- | ------------------------ |
+| **Day**        | Daily aggregation        |
+| **Week**       | Weekly aggregation       |
+| **Month**      | Monthly aggregation      |
+| **Experience** | Per-experience breakdown |
+| **Audience**   | Per-audience breakdown   |
+
+### Comparing Periods
+
+Compare metrics across time periods:
+
+1. Select primary period
+2. Enable comparison
+3. Select comparison period
+4. View side-by-side metrics
+
+## Report Templates
+
+### Saving Templates
+
+Save report configurations for reuse:
+
+1. Configure report parameters
+2. Click **Save as Template**
+3. Name the template
+4. Access from template library
+
+### Using Templates
+
+1. Open template library
+2. Select a template
+3. Adjust parameters if needed
+4. Generate the report
+
+## API Access
+
+### Report API
+
+Programmatically generate reports:
+
+```bash
+curl -X POST "https://api.fanfare.io/v1/reports" \
+  -H "Authorization: Bearer sk_live_xxxxx" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "type": "experience_summary",
+    "startDate": "2024-01-01",
+    "endDate": "2024-01-31",
+    "format": "json"
+  }'
+```
+
+### Webhook Delivery
+
+Receive reports via webhook:
+
+1. Configure webhook URL
+2. Set report parameters
+3. Schedule or generate
+4. Report POSTed to URL
+
+## Best Practices
+
+### Report Design
+
+1. **Start with questions** - Know what you want to learn
+2. **Choose appropriate metrics** - Select relevant data
+3. **Use meaningful ranges** - Compare like periods
+4. **Include context** - Add notes and explanations
+
+### Report Distribution
+
+1. **Schedule regular reports** - Automate routine reports
+2. **Use appropriate formats** - Match format to audience
+3. **Secure sensitive data** - Limit access as needed
+4. **Archive important reports** - Download for records
+
+## Troubleshooting
+
+### Report Generation Failed
+
+1. Check date range is valid
+2. Verify you have data for the period
+3. Ensure you have permission
+4. Try a smaller date range
+
+### Data Looks Incorrect
+
+1. Verify date range selection
+2. Check timezone settings
+3. Confirm metric definitions
+4. Compare with dashboard data
+
+### Scheduled Report Not Delivered
+
+1. Check email spam folder
+2. Verify email addresses
+3. Confirm schedule is active
+4. Check report generation status
+
+## Related Guides
+
+- [Analytics Overview](/dashboard/analytics/overview) - Dashboard analytics
+- [Experience Analytics](/dashboard/experiences/experience-analytics) - Per-experience metrics
+- [API Documentation](/api/reports) - Report API reference

@@ -1,0 +1,418 @@
+---
+title: User Experience Patterns
+description: Design patterns for creating engaging and informative waiting experiences.
+---
+
+# User Experience Patterns
+
+Create waiting experiences that keep consumers engaged, informed, and confident. A well-designed waiting experience can turn a potentially frustrating wait into a positive brand interaction.
+
+## Core UX Principles
+
+### Transparency
+
+Always keep users informed about their status and what to expect.
+
+<CardGroup cols={2}>
+  <Card title="Show position" icon="list-ol">
+    Display queue position or entry status clearly
+  </Card>
+  <Card title="Estimate waits" icon="clock">
+    Provide realistic time estimates when available
+  </Card>
+  <Card title="Explain the process" icon="circle-info">
+    Help users understand what happens next
+  </Card>
+  <Card title="Confirm actions" icon="check">
+    Provide clear feedback for user actions
+  </Card>
+</CardGroup>
+
+### Engagement
+
+Keep users engaged while they wait.
+
+```typescript
+// Example: Rich waiting experience with progress updates
+function WaitingExperience({ queueStatus }) {
+  return (
+    <div className="waiting-experience">
+      {/* Position indicator */}
+      <PositionDisplay
+        position={queueStatus.position}
+        total={queueStatus.totalAhead}
+      />
+
+      {/* Progress visualization */}
+      <ProgressBar progress={queueStatus.progressPercent} />
+
+      {/* Estimated time */}
+      <TimeEstimate minutes={queueStatus.estimatedWaitMinutes} />
+
+      {/* Engagement content */}
+      <ProductPreview product={product} />
+      <BrandContent />
+    </div>
+  );
+}
+```
+
+## Queue Experience Patterns
+
+### Position Display
+
+Show queue position in a meaningful way.
+
+```tsx
+function PositionDisplay({ position, total }) {
+  // For small queues, show exact position
+  if (total <= 100) {
+    return (
+      <div className="position">
+        <span className="position-number">{position}</span>
+        <span className="position-label">of {total} in line</span>
+      </div>
+    );
+  }
+
+  // For large queues, use percentile or rounded numbers
+  const percentile = Math.round((1 - position / total) * 100);
+  return (
+    <div className="position">
+      <span className="position-percent">Top {100 - percentile}%</span>
+      <span className="position-label">You're ahead of most people</span>
+    </div>
+  );
+}
+```
+
+### Wait Time Estimation
+
+Provide realistic wait time estimates.
+
+```tsx
+function TimeEstimate({ minutes }) {
+  if (minutes === null || minutes === undefined) {
+    return <p>Calculating estimated wait...</p>;
+  }
+
+  if (minutes < 1) {
+    return <p>Almost there! Just a moment...</p>;
+  }
+
+  if (minutes < 5) {
+    return (
+      <p>
+        About {minutes} minute{minutes > 1 ? "s" : ""} remaining
+      </p>
+    );
+  }
+
+  // Round to 5-minute increments for longer waits
+  const rounded = Math.ceil(minutes / 5) * 5;
+  return <p>Approximately {rounded} minutes remaining</p>;
+}
+```
+
+### Progress Visualization
+
+Visual progress indicators help users understand their advancement.
+
+```tsx
+function QueueProgress({ position, initialPosition }) {
+  const progress = initialPosition > 0 ? ((initialPosition - position) / initialPosition) * 100 : 0;
+
+  return (
+    <div className="queue-progress">
+      <div className="progress-bar" style={{ width: `${progress}%` }} />
+      <span className="progress-text">{Math.round(progress)}% of the way there</span>
+    </div>
+  );
+}
+```
+
+## Draw Experience Patterns
+
+### Registration Confirmation
+
+Clearly confirm draw registration.
+
+```tsx
+function DrawRegistration({ drawStatus }) {
+  return (
+    <div className="draw-registration">
+      <CheckCircleIcon className="success-icon" />
+      <h2>You're registered!</h2>
+      <p>Draw #{drawStatus.entryNumber}</p>
+
+      <div className="draw-details">
+        <p>
+          <strong>Draw time:</strong> {formatDateTime(drawStatus.drawTime)}
+        </p>
+        <p>
+          <strong>Total entries:</strong> {drawStatus.totalEntries.toLocaleString()}
+        </p>
+      </div>
+
+      <p className="instructions">We'll notify you when the draw is complete. No need to stay on this page.</p>
+    </div>
+  );
+}
+```
+
+### Draw Results
+
+Present results clearly with appropriate emotional context.
+
+```tsx
+function DrawResults({ result }) {
+  if (result.isWinner) {
+    return (
+      <div className="draw-result winner">
+        <ConfettiAnimation />
+        <h2>Congratulations! You've been selected!</h2>
+        <p>You have {result.timeRemaining} to complete your purchase.</p>
+        <CountdownTimer deadline={result.deadline} />
+        <Button onClick={result.proceedToCheckout}>Complete Purchase</Button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="draw-result not-selected">
+      <h2>Not selected this time</h2>
+      <p>Thank you for participating. Better luck next time!</p>
+      {result.waitlistAvailable && <Button onClick={result.joinWaitlist}>Join Waitlist for Updates</Button>}
+    </div>
+  );
+}
+```
+
+## Auction Experience Patterns
+
+### Bid Status Display
+
+Keep bidders informed of their status.
+
+```tsx
+function BidStatus({ auction, userBid }) {
+  const isWinning = userBid?.amount === auction.currentBid;
+  const isOutbid = userBid && !isWinning;
+
+  return (
+    <div className={`bid-status ${isWinning ? "winning" : ""} ${isOutbid ? "outbid" : ""}`}>
+      {isWinning && (
+        <>
+          <TrophyIcon />
+          <p>You're the highest bidder!</p>
+        </>
+      )}
+      {isOutbid && (
+        <>
+          <AlertIcon />
+          <p>You've been outbid. Place a new bid to stay in the running.</p>
+        </>
+      )}
+      {!userBid && <p>Place a bid to participate</p>}
+    </div>
+  );
+}
+```
+
+## Error State Patterns
+
+### Friendly Error Messages
+
+Convert technical errors into user-friendly messages.
+
+```typescript
+const ERROR_MESSAGES = {
+  NETWORK_ERROR: {
+    title: "Connection issue",
+    message: "Please check your internet connection and try again.",
+    action: "Retry",
+  },
+  RATE_LIMITED: {
+    title: "Too many requests",
+    message: "Please wait a moment before trying again.",
+    action: "Wait",
+  },
+  SESSION_EXPIRED: {
+    title: "Session expired",
+    message: "Your session has expired. Please refresh the page.",
+    action: "Refresh",
+  },
+  QUEUE_FULL: {
+    title: "Queue is full",
+    message: "This experience has reached capacity. Join the waitlist for future access.",
+    action: "Join Waitlist",
+  },
+};
+
+function ErrorDisplay({ error, onRetry }) {
+  const errorInfo = ERROR_MESSAGES[error.code] || {
+    title: "Something went wrong",
+    message: "Please try again or contact support if the problem persists.",
+    action: "Try Again",
+  };
+
+  return (
+    <div className="error-display">
+      <h3>{errorInfo.title}</h3>
+      <p>{errorInfo.message}</p>
+      <Button onClick={onRetry}>{errorInfo.action}</Button>
+    </div>
+  );
+}
+```
+
+### Loading States
+
+Show clear loading states for asynchronous operations.
+
+```tsx
+function LoadingState({ operation }) {
+  const messages = {
+    entering: "Joining the queue...",
+    checking: "Checking your position...",
+    processing: "Processing your request...",
+  };
+
+  return (
+    <div className="loading-state">
+      <Spinner />
+      <p>{messages[operation] || "Loading..."}</p>
+    </div>
+  );
+}
+```
+
+## Mobile-First Design
+
+### Responsive Layout
+
+Ensure the experience works well on mobile devices.
+
+```css
+.queue-status {
+  /* Mobile-first base styles */
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem;
+
+  /* Larger screens */
+  @media (min-width: 768px) {
+    flex-direction: row;
+    padding: 2rem;
+  }
+}
+
+.position-number {
+  font-size: 3rem;
+
+  @media (min-width: 768px) {
+    font-size: 4rem;
+  }
+}
+```
+
+### Touch-Friendly Interactions
+
+Make interactive elements easy to tap.
+
+```css
+.action-button {
+  /* Minimum touch target size */
+  min-height: 44px;
+  min-width: 44px;
+  padding: 12px 24px;
+
+  /* Clear visual feedback */
+  &:active {
+    transform: scale(0.98);
+  }
+}
+```
+
+## Accessibility
+
+### Screen Reader Support
+
+Ensure experiences are accessible to all users.
+
+```tsx
+function QueuePosition({ position }) {
+  return (
+    <div role="status" aria-live="polite" aria-atomic="true">
+      <span className="visually-hidden">Your current position in the queue is</span>
+      <span className="position-number">{position}</span>
+    </div>
+  );
+}
+```
+
+### Keyboard Navigation
+
+Support keyboard navigation for all interactions.
+
+```tsx
+function ActionButton({ onClick, children }) {
+  return (
+    <button
+      onClick={onClick}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onClick();
+        }
+      }}
+    >
+      {children}
+    </button>
+  );
+}
+```
+
+## Engagement While Waiting
+
+### Product Information
+
+Use wait time to showcase products.
+
+```tsx
+function ProductShowcase({ product }) {
+  return (
+    <div className="product-showcase">
+      <h3>While you wait...</h3>
+      <ImageCarousel images={product.images} />
+      <ProductDetails details={product.details} />
+      <SizeGuide />
+    </div>
+  );
+}
+```
+
+### Brand Content
+
+Build brand connection during the wait.
+
+```tsx
+function BrandContent() {
+  return (
+    <div className="brand-content">
+      <video autoPlay muted loop playsInline src="/brand-video.mp4" />
+      <div className="brand-story">
+        <h3>About the Collection</h3>
+        <p>Learn about the inspiration behind this release...</p>
+      </div>
+    </div>
+  );
+}
+```
+
+## Next Steps
+
+- [Performance Guide](/resources/best-practices/performance) - Optimize load times
+- [Fairness Guide](/resources/best-practices/fairness) - Ensure equitable experiences
+- [SDK Reference](/sdk/overview) - Implementation details

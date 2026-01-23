@@ -1,0 +1,194 @@
+---
+title: Changelog
+description: Recent updates, new features, and improvements to the Fanfare platform.
+---
+
+# Changelog
+
+Stay up to date with the latest changes to the Fanfare platform. Subscribe to our [RSS feed](https://fanfare.io/changelog.xml) or [email updates](https://fanfare.io/subscribe) for notifications.
+
+## Versioning
+
+- **Platform**: Continuous deployment, changes documented here
+- **SDK**: Semantic versioning (major.minor.patch)
+- **API**: Versioned endpoints, backwards compatible
+
+---
+
+## January 2026
+
+### January 20, 2026
+
+<Note>**SDK v2.5.0 Released**</Note>
+
+#### New Features
+
+- **Experience Journey Hook**: New `useExperienceJourney` hook for React and SolidJS SDKs that manages the complete consumer journey through an experience
+- **Session Resume**: SDK now automatically resumes active sessions after page refresh
+- **Fingerprint Bypass**: Support for bypass tokens in scenarios where fingerprinting isn't possible
+
+#### Improvements
+
+- Reduced SDK bundle size by 15%
+- Improved connection stability on mobile networks
+- Better error messages for common issues
+- Enhanced TypeScript type definitions
+
+#### Bug Fixes
+
+- Fixed race condition when entering experience during authentication
+- Fixed position not updating in Safari when tab is backgrounded
+- Fixed memory leak in event subscriptions
+
+#### Breaking Changes
+
+None - this is a backwards-compatible release.
+
+---
+
+### January 15, 2026
+
+#### Platform Updates
+
+- **Enhanced Bot Protection**: Improved detection accuracy for automated access attempts
+- **Rate Limiting**: More granular rate limits per endpoint type
+- **Audit Logging**: Expanded audit log coverage for all administrative actions
+
+#### Dashboard
+
+- New real-time analytics during active experiences
+- Improved webhook delivery monitoring
+- Export functionality for consumer data (GDPR compliance)
+
+---
+
+## December 2025
+
+### December 18, 2025
+
+<Note>**SDK v2.4.0 Released**</Note>
+
+#### New Features
+
+- **Timed Release Support**: Full SDK support for timed release distribution type
+- **Custom Events**: Emit custom events through the SDK for analytics integration
+- **Connection State Events**: New events for monitoring connection health
+
+#### Improvements
+
+- Faster reconnection after network interruptions
+- Improved error recovery in draw modules
+- Better handling of concurrent tab sessions
+
+---
+
+### December 5, 2025
+
+#### Platform Updates
+
+- **Product Variants**: Support for product variants with separate inventory tracking
+- **Sequence Access Rules**: More flexible rules for controlling sequence access
+- **Webhook Retry**: Improved retry logic with exponential backoff
+
+#### API Updates
+
+- New `/sequences/{id}/distributions` endpoint for distribution context
+- Added `variants` support to product endpoints
+- New webhook event types for variant-level actions
+
+---
+
+## November 2025
+
+### November 22, 2025
+
+<Note>**SDK v2.3.0 Released**</Note>
+
+#### New Features
+
+- **Waitlist Module**: Join and manage waitlist positions
+- **Handoff Improvements**: Better handoff token handling with automatic validation
+- **Debug Mode Enhancements**: More detailed logging in debug mode
+
+---
+
+### November 10, 2025
+
+#### Platform Updates
+
+- **Draw Distribution**: New draw distribution type for random selection
+- **Enhanced Audiences**: More targeting options for audience rules
+- **Performance**: 30% improvement in queue position update latency
+
+---
+
+## October 2025
+
+### October 28, 2025
+
+<Note>**SDK v2.2.0 Released**</Note>
+
+#### New Features
+
+- **Auction Support**: Bid placement and real-time auction updates
+- **SolidJS SDK**: New `@fanfare/sdk-solid` package for SolidJS applications
+- **Server-Side Rendering**: Improved SSR support for Next.js and similar frameworks
+
+---
+
+### October 15, 2025
+
+#### Platform Updates
+
+- **Multi-Region**: EU data processing option for Enterprise customers
+- **API Rate Limits**: Published rate limit headers on all responses
+- **Webhook Signatures**: Enhanced signature verification with timestamp validation
+
+---
+
+## SDK Version History
+
+| Version | Release Date | Highlights                              |
+| ------- | ------------ | --------------------------------------- |
+| 2.5.0   | Jan 20, 2026 | Experience journey hook, session resume |
+| 2.4.0   | Dec 18, 2025 | Timed release support, custom events    |
+| 2.3.0   | Nov 22, 2025 | Waitlist module, handoff improvements   |
+| 2.2.0   | Oct 28, 2025 | Auction support, SolidJS SDK            |
+| 2.1.0   | Sep 15, 2025 | Performance improvements, bug fixes     |
+| 2.0.0   | Aug 1, 2025  | Major rewrite, breaking changes         |
+
+## API Version History
+
+| Version | Status     | Sunset Date |
+| ------- | ---------- | ----------- |
+| 2025-01 | Current    | -           |
+| 2024-06 | Supported  | Dec 2025    |
+| 2024-01 | Deprecated | Jun 2025    |
+
+## Deprecation Notices
+
+### Upcoming Deprecations
+
+<Warning>**API Version 2024-06**: Will be sunset on December 31, 2025. Please migrate to version 2025-01.</Warning>
+
+### Migration Guides
+
+- [Migrating from SDK v1 to v2](/docs/migration/sdk-v2)
+- [API Version Migration](/docs/migration/api-versions)
+
+## Subscribe to Updates
+
+Stay informed about platform changes:
+
+- **Email**: [Subscribe to changelog emails](https://fanfare.io/subscribe)
+- **RSS**: [Changelog RSS feed](https://fanfare.io/changelog.xml)
+- **Twitter**: [@FanfareHQ](https://twitter.com/FanfareHQ)
+- **Status**: [status.fanfare.io](https://status.fanfare.io)
+
+## Feedback
+
+Have feedback on recent changes or suggestions for new features?
+
+- **Feature requests**: Submit via [dashboard](https://dashboard.fanfare.io/feedback)
+- **Bug reports**: [Contact support](/resources/support/contact)
+- **Community discussion**: [Developer forum](https://community.fanfare.io)

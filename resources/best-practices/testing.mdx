@@ -1,0 +1,426 @@
+---
+title: Testing Strategies
+description: Testing approaches for validating your Fanfare integration before launch.
+---
+
+# Testing Strategies
+
+Thorough testing is essential before high-stakes product launches. This guide covers testing approaches from development through production readiness.
+
+## Testing Environments
+
+### Development Mode
+
+Use test API keys during development.
+
+```typescript
+const client = new FanfareClient({
+  publishableKey: "pk_test_...", // Test key
+  debug: true, // Enable debug logging
+});
+```
+
+Test mode provides:
+
+- Isolated data from production
+- Faster rate limits for testing
+- Debug logging enabled
+- No real transactions
+
+### Staging Environment
+
+Test with production-like data and configuration.
+
+```typescript
+const client = new FanfareClient({
+  publishableKey: process.env.FANFARE_PUBLISHABLE_KEY,
+  apiUrl: process.env.FANFARE_API_URL, // Optional: staging endpoint
+  debug: process.env.NODE_ENV !== "production",
+});
+```
+
+## Unit Testing
+
+### Testing SDK Integration
+
+Mock the Fanfare SDK for isolated component tests.
+
+```typescript
+// __mocks__/@fanfare/sdk.ts
+export class MockFanfareClient {
+  experiences = {
+    enter: jest.fn().mockResolvedValue({
+      experienceId: "exp_123",
+      enteredAt: new Date().toISOString(),
+    }),
+    leave: jest.fn().mockResolvedValue(undefined),
+    getActiveSession: jest.fn().mockReturnValue(null),
+  };
+
+  queues = {
+    enter: jest.fn().mockResolvedValue({
+      queueId: "queue_123",
+      position: 50,
+    }),
+    getPosition: jest.fn().mockReturnValue(50),
+    isInQueue: jest.fn().mockReturnValue(true),
+  };
+
+  on = jest.fn();
+  off = jest.fn();
+}
+
+export const FanfareClient = MockFanfareClient;
+```
+
+### Component Test Example
+
+```typescript
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { QueueWidget } from "./queue-widget";
+
+jest.mock("@fanfare/sdk");
+
+describe("QueueWidget", () => {
+  it("shows position after entering queue", async () => {
+    render(<QueueWidget experienceId="exp_123" />);
+
+    fireEvent.click(screen.getByText("Join Queue"));
+
+    await waitFor(() => {
+      expect(screen.getByText(/Position: 50/)).toBeInTheDocument();
+    });
+  });
+
+  it("handles queue full error gracefully", async () => {
+    const { FanfareClient } = require("@fanfare/sdk");
+    FanfareClient.prototype.queues.enter.mockRejectedValue(
+      new Error("QUEUE_FULL")
+    );
+
+    render(<QueueWidget experienceId="exp_123" />);
+
+    fireEvent.click(screen.getByText("Join Queue"));
+
+    await waitFor(() => {
+      expect(screen.getByText(/Queue is full/)).toBeInTheDocument();
+    });
+  });
+});
+```
+
+### Testing Event Handlers
+
+```typescript
+describe("Queue event handling", () => {
+  it("updates UI on position change", () => {
+    const { FanfareClient } = require("@fanfare/sdk");
+    let positionHandler: (data: { position: number }) => void;
+
+    FanfareClient.prototype.on.mockImplementation((event, handler) => {
+      if (event === "queue:position-updated") {
+        positionHandler = handler;
+      }
+    });
+
+    const { rerender } = render(<QueueWidget experienceId="exp_123" />);
+
+    // Simulate position update event
+    positionHandler({ position: 25 });
+    rerender(<QueueWidget experienceId="exp_123" />);
+
+    expect(screen.getByText(/Position: 25/)).toBeInTheDocument();
+  });
+});
+```
+
+## Integration Testing
+
+### End-to-End Flow Tests
+
+Test complete user journeys using test mode.
+
+```typescript
+import { test, expect } from "@playwright/test";
+
+test.describe("Queue Experience", () => {
+  test("complete queue journey", async ({ page }) => {
+    // Navigate to experience page
+    await page.goto("/experience/test-queue");
+
+    // Enter the queue
+    await page.click('[data-testid="enter-queue"]');
+
+    // Wait for position to display
+    await expect(page.locator('[data-testid="queue-position"]')).toBeVisible();
+
+    // Verify position is a number
+    const position = await page.locator('[data-testid="queue-position"]').textContent();
+    expect(parseInt(position || "0")).toBeGreaterThan(0);
+
+    // Wait for access (in test mode, this can be accelerated)
+    await expect(page.locator('[data-testid="access-granted"]')).toBeVisible({ timeout: 60000 });
+
+    // Verify checkout redirect
+    await expect(page).toHaveURL(/\/checkout/);
+  });
+});
+```
+
+### API Integration Tests
+
+Test direct API interactions.
+
+```typescript
+import { FanfareClient, FanfareError } from "@fanfare/sdk";
+
+describe("API Integration", () => {
+  let client: FanfareClient;
+
+  beforeEach(() => {
+    client = new FanfareClient({
+      publishableKey: process.env.FANFARE_TEST_KEY!,
+    });
+  });
+
+  afterEach(async () => {
+    // Clean up any active sessions
+    try {
+      const session = client.experiences.getActiveSession();
+      if (session) {
+        await client.experiences.leave(session.experienceId);
+      }
+    } catch {
+      // Ignore cleanup errors
+    }
+  });
+
+  test("enter and leave experience", async () => {
+    const session = await client.experiences.enter("exp_test_123");
+
+    expect(session.experienceId).toBe("exp_test_123");
+    expect(session.enteredAt).toBeDefined();
+
+    await client.experiences.leave("exp_test_123");
+
+    expect(client.experiences.getActiveSession()).toBeNull();
+  });
+
+  test("handles invalid experience gracefully", async () => {
+    await expect(client.experiences.enter("exp_invalid")).rejects.toThrow(FanfareError);
+  });
+});
+```
+
+## Load Testing
+
+### Pre-Launch Load Tests
+
+Validate your integration handles expected traffic.
+
+```typescript
+// k6 load test script
+import http from "k6/http";
+import { check, sleep } from "k6";
+import { Rate } from "k6/metrics";
+
+const errorRate = new Rate("errors");
+
+export const options = {
+  stages: [
+    { duration: "2m", target: 100 }, // Ramp up
+    { duration: "5m", target: 500 }, // Normal load
+    { duration: "2m", target: 2000 }, // Peak load (launch moment)
+    { duration: "5m", target: 500 }, // Sustained
+    { duration: "2m", target: 0 }, // Ramp down
+  ],
+  thresholds: {
+    http_req_duration: ["p(95)<1000"], // 95% under 1s
+    errors: ["rate<0.01"], // Error rate under 1%
+  },
+};
+
+export default function () {
+  // Simulate page load
+  const pageRes = http.get("https://your-site.com/experience-page");
+  check(pageRes, {
+    "page loads": (r) => r.status === 200,
+  });
+
+  // Simulate SDK initialization
+  const initRes = http.post("https://consumer.fanfare.io/experiences/exp_123/enter", null, {
+    headers: {
+      "X-Publishable-Key": "pk_test_...",
+      "Content-Type": "application/json",
+    },
+  });
+
+  const success = check(initRes, {
+    "experience entered": (r) => r.status === 200 || r.status === 429,
+  });
+
+  errorRate.add(!success);
+
+  sleep(Math.random() * 3 + 1); // Random 1-4s between requests
+}
+```
+
+### Metrics to Monitor
+
+| Metric              | Acceptable | Warning   | Critical |
+| ------------------- | ---------- | --------- | -------- |
+| Response time (p95) | < 500ms    | < 1000ms  | > 2000ms |
+| Error rate          | < 0.1%     | < 1%      | > 5%     |
+| Throughput          | Stable     | Declining | Crashing |
+
+## Functional Testing Checklist
+
+### Experience Entry
+
+<AccordionGroup>
+  <Accordion title="Basic entry flow">
+    - User can enter an active experience
+    - Entry is rejected for inactive experiences
+    - Entry is rejected when at capacity
+    - Re-entry returns existing session
+  </Accordion>
+
+<Accordion title="Authentication flows">
+  - Guest users can enter (if allowed) - Authenticated users can enter - Session persists across page refreshes -
+  Session survives temporary network issues
+</Accordion>
+
+  <Accordion title="Sequence routing">
+    - VIP users routed to priority sequence
+    - Access codes grant correct sequence access
+    - Users without access see appropriate messaging
+  </Accordion>
+</AccordionGroup>
+
+### Queue Behavior
+
+<AccordionGroup>
+  <Accordion title="Position tracking">
+    - Initial position is displayed
+    - Position updates in real-time
+    - Position never goes backward unexpectedly
+    - Estimated wait time updates
+  </Accordion>
+
+<Accordion title="Access grants">
+  - Access notification is immediate - Handoff token is valid - Checkout redirect works - Access expires after timeout
+</Accordion>
+
+  <Accordion title="Edge cases">
+    - User leaving and rejoining
+    - Browser refresh during wait
+    - Multiple tabs handling
+    - Network disconnection and reconnection
+  </Accordion>
+</AccordionGroup>
+
+### Draw Behavior
+
+<AccordionGroup>
+  <Accordion title="Registration">
+    - Registration confirmation is shown
+    - Entry number is assigned
+    - Duplicate registration is prevented
+    - Registration closes at scheduled time
+  </Accordion>
+
+  <Accordion title="Results">
+    - Winners are notified promptly
+    - Non-winners receive appropriate message
+    - Winner checkout flow works
+    - Waitlist option is available
+  </Accordion>
+</AccordionGroup>
+
+## Error Scenario Testing
+
+Test how your integration handles errors.
+
+```typescript
+describe("Error handling", () => {
+  const errorScenarios = [
+    {
+      code: "NETWORK_ERROR",
+      userMessage: /connection issue/i,
+      shouldRetry: true,
+    },
+    {
+      code: "RATE_LIMITED",
+      userMessage: /too many requests/i,
+      shouldRetry: true,
+    },
+    {
+      code: "QUEUE_FULL",
+      userMessage: /queue is full/i,
+      shouldRetry: false,
+    },
+    {
+      code: "SESSION_EXPIRED",
+      userMessage: /session expired/i,
+      shouldRetry: false,
+    },
+  ];
+
+  errorScenarios.forEach(({ code, userMessage, shouldRetry }) => {
+    test(`handles ${code} error`, async () => {
+      // Mock the error
+      mockClient.experiences.enter.mockRejectedValue(
+        new FanfareError("Error", code)
+      );
+
+      render(<ExperienceWidget />);
+      fireEvent.click(screen.getByText("Join"));
+
+      // Check user-friendly message
+      await waitFor(() => {
+        expect(screen.getByText(userMessage)).toBeInTheDocument();
+      });
+
+      // Check retry button presence
+      const retryButton = screen.queryByText(/retry/i);
+      expect(!!retryButton).toBe(shouldRetry);
+    });
+  });
+});
+```
+
+## Pre-Launch Checklist
+
+Before going live with a high-stakes launch:
+
+<Steps>
+  <Step title="Environment verification">
+    - Production API keys configured
+    - Debug mode disabled
+    - Error tracking enabled
+    - Analytics configured
+  </Step>
+
+<Step title="Functional validation">
+  - All user flows tested - Error scenarios handled - Mobile experience verified - Accessibility checked
+</Step>
+
+<Step title="Performance validation">
+  - Load tested at expected scale - Response times acceptable - No memory leaks - CDN caching configured
+</Step>
+
+<Step title="Monitoring setup">- Dashboards created - Alerts configured - On-call team ready - Runbooks prepared</Step>
+
+  <Step title="Rollback plan">
+    - Rollback procedure documented
+    - Previous version accessible
+    - Database state reversible
+    - Communication plan ready
+  </Step>
+</Steps>
+
+## Next Steps
+
+- [Scalability Guide](/resources/best-practices/scalability) - Handle high traffic
+- [Performance Guide](/resources/best-practices/performance) - Optimize your integration
+- [Common Issues](/resources/troubleshooting/common-issues) - Troubleshoot problems

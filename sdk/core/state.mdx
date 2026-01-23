@@ -1,0 +1,381 @@
+---
+title: State Management
+description: Understanding SDK state management internals
+---
+
+# State Management
+
+The Fanfare SDK uses a reactive state system built on [nanostores](https://github.com/nanostores/nanostores) to manage participation state, sessions, and experience journeys. This page explains how state is managed internally and how you can interact with it.
+
+## State Architecture
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                      State Store                             │
+│  ┌─────────────────────────────────────────────────────────┐ │
+│  │ session: Session | null                                  │ │
+│  │ refreshToken: string | null                              │ │
+│  ├─────────────────────────────────────────────────────────┤ │
+│  │ activeQueues: Record<string, QueueParticipation>         │ │
+│  │ activeDraws: Record<string, DrawParticipation>           │ │
+│  │ activeAuctions: Record<string, AuctionParticipation>     │ │
+│  │ activeWaitlists: Record<string, WaitlistParticipation>   │ │
+│  │ activeTimedReleases: Record<string, TimedReleasePart...> │ │
+│  ├─────────────────────────────────────────────────────────┤ │
+│  │ activeJourneys: Record<string, JourneySnapshot>          │ │
+│  └─────────────────────────────────────────────────────────┘ │
+├─────────────────────────────────────────────────────────────┤
+│                   Persistence Layer                          │
+│  localStorage / sessionStorage                               │
+├─────────────────────────────────────────────────────────────┤
+│                   Tab Sync Layer                             │
+│  BroadcastChannel                                            │
+└─────────────────────────────────────────────────────────────┘
+```
+
+## Participation State
+
+Each experience type tracks participation state:
+
+### Queue Participation
+
+```typescript
+interface QueueParticipation {
+  queueId: string;
+  enteredAt: string;
+  status: "QUEUED" | "ADMITTED" | "COMPLETED" | "LEFT" | "DENIED" | "NOT_QUEUED" | "EXPIRED";
+  position?: number;
+  estimatedWaitTime?: number;
+  metadata?: Record<string, unknown>;
+  admissionToken?: string;
+  admittedAt?: string;
+  expiresAt?: string;
+}
+```
+
+### Draw Participation
+
+```typescript
+interface DrawParticipation {
+  drawId: string;
+  enteredAt: string;
+  status: "entered" | "drawn" | "won" | "lost" | "expired";
+  entryNumber?: string;
+  metadata?: Record<string, unknown>;
+  result?: DrawResult;
+  checkedAt?: string;
+  fingerprint?: string;
+}
+```
+
+### Auction Participation
+
+```typescript
+interface AuctionParticipation {
+  auctionId: string;
+  enteredAt: string;
+  status: "watching" | "bidding" | "winning" | "outbid" | "won" | "lost";
+  currentBid?: string;
+  highestBid?: string;
+  bidCount?: number;
+  lastBidAt?: string;
+  metadata?: Record<string, unknown>;
+  fingerprint?: string;
+}
+```
+
+### Waitlist Participation
+
+```typescript
+interface WaitlistParticipation {
+  id: string;
+  waitlistId: string;
+  sequenceId: string;
+  isEntered: boolean;
+  enteredAt?: string;
+}
+```
+
+### Timed Release Participation
+
+```typescript
+interface TimedReleaseParticipation {
+  timedReleaseId: string;
+  enteredAt: string;
+  status: "entered" | "completed" | "left";
+  selectedVariantId?: string;
+  metadata?: Record<string, unknown>;
+}
+```
+
+## Accessing State
+
+### Active Participation Queries
+
+Each module provides methods to query active participations:
+
+```typescript
+// Get all active queues
+const queues = fanfare.queues.getActiveQueues();
+for (const [queueId, participation] of Object.entries(queues)) {
+  console.log(queueId, participation.status, participation.position);
+}
+
+// Get all active draws
+const draws = fanfare.draws.getActiveDraws();
+
+// Get all active auctions
+const auctions = fanfare.auctions.getActiveAuctions();
+
+// Get all entered waitlists
+const waitlists = fanfare.waitlists.getEnteredWaitlists();
+
+// Get all active timed releases
+const timedReleases = fanfare.timedReleases.getActiveTimedReleases();
+```
+
+### Specific State Queries
+
+```typescript
+// Check if in a specific queue
+const isInQueue = fanfare.queues.getActiveQueues()["queue_123"] !== undefined;
+
+// Check if entered a specific draw
+const isEntered = fanfare.draws.isEntered("draw_123");
+
+// Check if participating in auction
+const isParticipating = fanfare.auctions.isParticipating("auction_123");
+
+// Check if on waitlist
+const isOnWaitlist = fanfare.waitlists.isOnWaitlist("waitlist_123");
+
+// Check if in timed release
+const inTimedRelease = fanfare.timedReleases.isEntered("tr_123");
+```
+
+## State Persistence
+
+State is automatically persisted to browser storage.
+
+### Configuration
+
+```typescript
+const fanfare = await Fanfare.init({
+  organizationId: "org_xxx",
+  publishableKey: "pk_live_xxx",
+  auth: {
+    persistSession: true, // Persist session to localStorage
+  },
+});
+```
+
+### Storage Keys
+
+The SDK uses the following localStorage keys (prefixed with organization ID):
+
+| Key                             | Contents            |
+| ------------------------------- | ------------------- |
+| `fanfare:{orgId}:session`       | Current session     |
+| `fanfare:{orgId}:refresh_token` | Refresh token       |
+| `fanfare:{orgId}:state`         | Participation state |
+| `fanfare:{orgId}:journeys`      | Journey snapshots   |
+
+## Tab Synchronization
+
+State is synchronized across browser tabs using `BroadcastChannel`.
+
+### How It Works
+
+1. When state changes in one tab, it broadcasts the change
+2. Other tabs receive the broadcast and update their local state
+3. This ensures consumers don't lose their place when switching tabs
+
+### Configuration
+
+```typescript
+const fanfare = await Fanfare.init({
+  organizationId: "org_xxx",
+  publishableKey: "pk_live_xxx",
+  sync: {
+    enabled: true, // Enable tab sync (default)
+    syncKeys: ["session", "activeQueues", "activeDraws"], // Keys to sync
+    channelName: "fanfare-sync", // Custom channel name
+  },
+});
+```
+
+### Disabling Sync
+
+```typescript
+const fanfare = await Fanfare.init({
+  organizationId: "org_xxx",
+  publishableKey: "pk_live_xxx",
+  sync: false, // Disable completely
+});
+```
+
+## Journey State
+
+Experience journeys maintain their own reactive state:
+
+```typescript
+const journey = fanfare.experiences.createJourney("exp_123");
+
+// Get current snapshot
+const snapshot = journey.state.get();
+console.log(snapshot.journeyStage);
+console.log(snapshot.sequenceStage);
+
+// Subscribe to changes
+journey.state.listen((snapshot) => {
+  console.log("Journey updated:", snapshot.revision);
+});
+
+// Use computed stores for specific values
+journey.journeyStage$.listen((stage) => {
+  console.log("Journey stage:", stage);
+});
+
+journey.requirements$.listen((requirements) => {
+  console.log("Requirements:", requirements);
+});
+```
+
+## State Restoration
+
+State is restored on SDK initialization:
+
+```typescript
+const fanfare = await Fanfare.init({
+  organizationId: "org_xxx",
+  publishableKey: "pk_live_xxx",
+});
+
+// Restore saved state
+const { session, experiences } = await fanfare.restore();
+
+if (session) {
+  console.log("Restored session:", session.consumerId);
+}
+
+// Check restored participations
+if (Object.keys(experiences.queues).length > 0) {
+  console.log("Has active queue participation");
+}
+
+// Resume operations (starts polling, etc.)
+await fanfare.resume();
+```
+
+## State Cleanup
+
+### Clearing State
+
+The SDK provides cleanup methods for expired/ended experiences:
+
+```typescript
+// Clear expired draws
+fanfare.draws.clearExpiredDraws();
+
+// Clear ended auctions
+fanfare.auctions.clearEndedAuctions();
+```
+
+### Manual State Management
+
+For advanced use cases, you can interact with state directly:
+
+```typescript
+// The SDK doesn't expose raw state stores, but modules
+// provide methods to manage state
+
+// Leave all waitlists
+await fanfare.waitlists.leaveAll();
+
+// Stop all auction watching
+fanfare.auctions.stopAllWatching();
+```
+
+## State and Server Synchronization
+
+The SDK automatically syncs with the server:
+
+```typescript
+// Fetch latest status from server
+const status = await fanfare.queues.status("queue_123");
+
+// This also updates local state
+const participation = fanfare.queues.getActiveQueues()["queue_123"];
+console.log(participation.status === status.status); // true
+```
+
+### Refreshing State
+
+```typescript
+// Refresh a journey's distribution state
+const journey = fanfare.experiences.createJourney("exp_123");
+await journey.refreshDistribution();
+
+// The journey snapshot is automatically updated
+const snapshot = journey.state.get();
+```
+
+## Best Practices
+
+### 1. Always Restore on Load
+
+```typescript
+async function initApp() {
+  const fanfare = await Fanfare.init(config);
+  const { session } = await fanfare.restore();
+
+  if (session) {
+    await fanfare.resume();
+  }
+
+  return fanfare;
+}
+```
+
+### 2. Subscribe to Events, Not State
+
+Prefer subscribing to events over polling state:
+
+```typescript
+// Good: React to events
+fanfare.on("queue:admitted", ({ token }) => {
+  handleAdmission(token);
+});
+
+// Avoid: Polling state
+setInterval(() => {
+  const queues = fanfare.queues.getActiveQueues();
+  // Check for changes...
+}, 1000);
+```
+
+### 3. Clean Up on Unmount
+
+```typescript
+useEffect(() => {
+  const unsubscribes = [fanfare.on("queue:admitted", handleAdmitted), journey.state.listen(handleJourneyChange)];
+
+  return () => {
+    unsubscribes.forEach((unsub) => unsub());
+  };
+}, []);
+```
+
+### 4. Handle Tab Visibility
+
+The SDK handles tab visibility automatically, but you can optimize:
+
+```typescript
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden) {
+    // Tab hidden - SDK reduces polling
+  } else {
+    // Tab visible - SDK resumes normal polling
+  }
+});
+```

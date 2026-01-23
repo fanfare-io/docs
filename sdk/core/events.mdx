@@ -1,0 +1,424 @@
+---
+title: Event System
+description: SDK events and subscriptions
+---
+
+# Event System
+
+The Fanfare SDK emits events for all significant state changes. This allows your application to react to changes in real-time without polling.
+
+## Subscribing to Events
+
+Use the `on()` method to subscribe to events. It returns an unsubscribe function.
+
+```typescript
+// Subscribe
+const unsubscribe = fanfare.on("queue:admitted", (data) => {
+  console.log("Admitted to queue:", data.queueId);
+  console.log("Token:", data.token);
+});
+
+// Later: unsubscribe
+unsubscribe();
+```
+
+## Event Types
+
+### SDKEvents Interface
+
+```typescript
+interface SDKEvents {
+  // Authentication events
+  "auth:authenticated": { session: Session };
+  "auth:logout": void;
+
+  // Queue events
+  "queue:entered": { queueId: string; position: number };
+  "queue:left": { queueId: string };
+  "queue:position-changed": { queueId: string; position: number; estimatedWait: number };
+  "queue:admitted": { queueId: string; token: string; expiresAt?: string };
+  "queue:expired": { queueId: string };
+  "queue:denied": { queueId: string; reason: string };
+  "queue:error": { queueId: string; error: Error };
+
+  // Draw events
+  "draw:entered": { drawId: string };
+  "draw:left": { drawId: string };
+  "draw:won": { drawId: string; result: DrawResult };
+  "draw:lost": { drawId: string; result: DrawResult };
+  "draw:expired": { drawId: string };
+  "draw:status-updated": { drawId: string };
+  "draw:error": { drawId: string; error: Error };
+
+  // Auction events
+  "auction:entered": { auctionId: string };
+  "auction:left": { auctionId: string };
+  "auction:bid-placed": { auctionId: string; amount: string; status: string };
+  "auction:outbid": { auctionId: string; highestBid: string };
+  "auction:winning": { auctionId: string; amount: string; highestBid: string };
+  "auction:won": { auctionId: string };
+  "auction:lost": { auctionId: string; highestBid: string };
+  "auction:status-updated": { auctionId: string; status: AuctionStatus };
+  "auction:bid-updated": { auctionId: string; highestBid: string; bidCount: number };
+  "auction:auto-rebid-enabled": { auctionId: string };
+  "auction:auto-rebid-disabled": { auctionId: string };
+  "auction:error": { auctionId: string; error: Error };
+
+  // Waitlist events
+  "waitlist:entered": { waitlistId: string; enteredAt: string };
+  "waitlist:left": { waitlistId: string };
+  "waitlist:error": { waitlistId: string; error: string };
+
+  // Timed release events
+  "timed_release:entered": { timedReleaseId: string; enteredAt: string };
+  "timed_release:left": { timedReleaseId: string };
+  "timed_release:completed": { timedReleaseId: string; completedAt: string };
+  "timed_release:status-updated": { timedReleaseId: string };
+  "timed_release:error": { timedReleaseId: string; error: Error };
+}
+```
+
+## Authentication Events
+
+### auth:authenticated
+
+Fired when a session is created or upgraded.
+
+```typescript
+fanfare.on("auth:authenticated", ({ session }) => {
+  console.log("Session created:", session.consumerId);
+  console.log("Type:", session.type);
+
+  if (session.type === "authenticated") {
+    console.log("Email:", session.email);
+  }
+});
+```
+
+### auth:logout
+
+Fired when the session is ended.
+
+```typescript
+fanfare.on("auth:logout", () => {
+  console.log("Session ended");
+  redirectToLogin();
+});
+```
+
+## Queue Events
+
+### queue:entered
+
+Fired when successfully entering a queue.
+
+```typescript
+fanfare.on("queue:entered", ({ queueId, position }) => {
+  console.log(`Entered queue ${queueId} at position ${position}`);
+});
+```
+
+### queue:left
+
+Fired when leaving a queue.
+
+```typescript
+fanfare.on("queue:left", ({ queueId }) => {
+  console.log(`Left queue ${queueId}`);
+});
+```
+
+### queue:position-changed
+
+Fired when queue position changes (from polling).
+
+```typescript
+fanfare.on("queue:position-changed", ({ queueId, position, estimatedWait }) => {
+  console.log(`Position: ${position}, Wait: ${estimatedWait}s`);
+  updatePositionDisplay(position, estimatedWait);
+});
+```
+
+### queue:admitted
+
+Fired when admitted from the queue.
+
+```typescript
+fanfare.on("queue:admitted", ({ queueId, token, expiresAt }) => {
+  console.log("Admitted! Token:", token);
+  if (expiresAt) {
+    console.log("Token expires:", expiresAt);
+  }
+  redirectToCheckout(token);
+});
+```
+
+### queue:expired
+
+Fired when the admission token expires.
+
+```typescript
+fanfare.on("queue:expired", ({ queueId }) => {
+  console.log("Admission expired");
+  showExpiredMessage();
+});
+```
+
+### queue:denied
+
+Fired when denied entry to a queue.
+
+```typescript
+fanfare.on("queue:denied", ({ queueId, reason }) => {
+  console.log("Denied:", reason);
+  showDeniedMessage(reason);
+});
+```
+
+## Draw Events
+
+### draw:entered
+
+Fired when entering a draw.
+
+```typescript
+fanfare.on("draw:entered", ({ drawId }) => {
+  console.log("Entered draw:", drawId);
+  showEnteredState();
+});
+```
+
+### draw:won
+
+Fired when winning a draw.
+
+```typescript
+fanfare.on("draw:won", ({ drawId, result }) => {
+  console.log("Won draw:", drawId);
+  console.log("Admission token:", result.admissionToken);
+  showWinnerConfetti();
+  redirectToCheckout(result.admissionToken);
+});
+```
+
+### draw:lost
+
+Fired when not selected in a draw.
+
+```typescript
+fanfare.on("draw:lost", ({ drawId, result }) => {
+  console.log("Did not win:", drawId);
+  showBetterLuckMessage();
+});
+```
+
+### draw:status-updated
+
+Fired when draw status is refreshed.
+
+```typescript
+fanfare.on("draw:status-updated", ({ drawId }) => {
+  // Refresh UI with latest status
+  refreshDrawDisplay(drawId);
+});
+```
+
+## Auction Events
+
+### auction:entered
+
+Fired when entering an auction.
+
+```typescript
+fanfare.on("auction:entered", ({ auctionId }) => {
+  console.log("Entered auction:", auctionId);
+});
+```
+
+### auction:bid-placed
+
+Fired when a bid is placed.
+
+```typescript
+fanfare.on("auction:bid-placed", ({ auctionId, amount, status }) => {
+  console.log(`Bid placed: ${amount}`);
+  console.log(`Status: ${status}`); // "winning" | "outbid" | "accepted"
+});
+```
+
+### auction:outbid
+
+Fired when your bid is surpassed.
+
+```typescript
+fanfare.on("auction:outbid", ({ auctionId, highestBid }) => {
+  console.log(`Outbid! Current highest: ${highestBid}`);
+  showOutbidNotification(highestBid);
+});
+```
+
+### auction:winning
+
+Fired when you become the highest bidder.
+
+```typescript
+fanfare.on("auction:winning", ({ auctionId, amount, highestBid }) => {
+  console.log("You are winning!");
+  showWinningBadge();
+});
+```
+
+### auction:won
+
+Fired when the auction ends and you won.
+
+```typescript
+fanfare.on("auction:won", ({ auctionId }) => {
+  console.log("Auction won!");
+  showWinnerCelebration();
+});
+```
+
+### auction:lost
+
+Fired when the auction ends and you lost.
+
+```typescript
+fanfare.on("auction:lost", ({ auctionId, highestBid }) => {
+  console.log(`Auction lost. Winning bid: ${highestBid}`);
+  showLostMessage();
+});
+```
+
+### auction:bid-updated
+
+Fired when the highest bid changes.
+
+```typescript
+fanfare.on("auction:bid-updated", ({ auctionId, highestBid, bidCount }) => {
+  updateBidDisplay(highestBid, bidCount);
+});
+```
+
+## Waitlist Events
+
+### waitlist:entered
+
+Fired when joining a waitlist.
+
+```typescript
+fanfare.on("waitlist:entered", ({ waitlistId, enteredAt }) => {
+  console.log("Joined waitlist at:", enteredAt);
+  showWaitlistConfirmation();
+});
+```
+
+### waitlist:left
+
+Fired when leaving a waitlist.
+
+```typescript
+fanfare.on("waitlist:left", ({ waitlistId }) => {
+  console.log("Left waitlist");
+});
+```
+
+## Timed Release Events
+
+### timed_release:entered
+
+Fired when entering a timed release.
+
+```typescript
+fanfare.on("timed_release:entered", ({ timedReleaseId, enteredAt }) => {
+  console.log("Entered timed release at:", enteredAt);
+  redirectToShop();
+});
+```
+
+### timed_release:completed
+
+Fired when completing a timed release (after purchase).
+
+```typescript
+fanfare.on("timed_release:completed", ({ timedReleaseId, completedAt }) => {
+  console.log("Timed release completed!");
+  showThankYouMessage();
+});
+```
+
+## Error Events
+
+All modules emit error events for failures:
+
+```typescript
+fanfare.on("queue:error", ({ queueId, error }) => {
+  console.error(`Queue error (${queueId}):`, error.message);
+  showErrorToast(error.message);
+});
+
+fanfare.on("draw:error", ({ drawId, error }) => {
+  console.error(`Draw error (${drawId}):`, error.message);
+});
+
+fanfare.on("auction:error", ({ auctionId, error }) => {
+  console.error(`Auction error (${auctionId}):`, error.message);
+});
+
+fanfare.on("timed_release:error", ({ timedReleaseId, error }) => {
+  console.error(`Timed release error (${timedReleaseId}):`, error.message);
+});
+```
+
+## Multiple Subscriptions
+
+You can subscribe to the same event multiple times:
+
+```typescript
+// Analytics tracking
+fanfare.on("queue:admitted", ({ queueId, token }) => {
+  analytics.track("queue_admitted", { queueId });
+});
+
+// UI updates
+fanfare.on("queue:admitted", ({ token }) => {
+  redirectToCheckout(token);
+});
+```
+
+## Cleanup Pattern
+
+Always unsubscribe when components unmount:
+
+```typescript
+// React example
+useEffect(() => {
+  const unsubscribes = [
+    fanfare.on("queue:position-changed", handlePositionChange),
+    fanfare.on("queue:admitted", handleAdmitted),
+    fanfare.on("queue:error", handleError),
+  ];
+
+  return () => {
+    unsubscribes.forEach((unsub) => unsub());
+  };
+}, [fanfare]);
+```
+
+## TypeScript Support
+
+Events are fully typed. The handler receives the correct data type:
+
+```typescript
+// TypeScript infers data type from event name
+fanfare.on("queue:admitted", (data) => {
+  // data is typed as { queueId: string; token: string; expiresAt?: string }
+  console.log(data.token); // string
+  console.log(data.queueId); // string
+});
+
+fanfare.on("auction:bid-placed", (data) => {
+  // data is typed as { auctionId: string; amount: string; status: string }
+  console.log(data.amount); // string
+});
+```

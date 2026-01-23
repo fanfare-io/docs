@@ -1,0 +1,264 @@
+---
+title: Team Members
+description: Manage team members and their access to your organization
+---
+
+# Team Members
+
+Team management allows you to invite colleagues, assign roles, and control access to your organization's Fanfare dashboard.
+
+## Accessing Team Management
+
+Team management is handled through your authentication provider. Access team settings from the organization menu or user settings.
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/settings/organization
+Shows: Team members section or link to team management
+Annotations: Highlight the team members link
+Alt text: "Organization settings with team management option"
+*/}
+
+![Team settings](./images/settings-team.png)
+_Caption: Access team management from organization settings_
+
+## Team Roles
+
+Fanfare uses role-based access control with the following roles:
+
+| Role       | Description                             |
+| ---------- | --------------------------------------- |
+| **Owner**  | Full access, can delete organization    |
+| **Admin**  | Full access, cannot delete organization |
+| **Editor** | Can create and edit experiences         |
+| **Viewer** | Read-only access                        |
+
+### Role Permissions
+
+| Permission          | Owner | Admin | Editor | Viewer |
+| ------------------- | ----- | ----- | ------ | ------ |
+| View dashboard      | Yes   | Yes   | Yes    | Yes    |
+| View experiences    | Yes   | Yes   | Yes    | Yes    |
+| Create experiences  | Yes   | Yes   | Yes    | No     |
+| Edit experiences    | Yes   | Yes   | Yes    | No     |
+| Delete experiences  | Yes   | Yes   | No     | No     |
+| View consumers      | Yes   | Yes   | Yes    | Yes    |
+| Edit consumers      | Yes   | Yes   | Yes    | No     |
+| View settings       | Yes   | Yes   | Yes    | No     |
+| Edit settings       | Yes   | Yes   | No     | No     |
+| Manage team         | Yes   | Yes   | No     | No     |
+| Manage billing      | Yes   | Yes   | No     | No     |
+| Delete organization | Yes   | No    | No     | No     |
+
+## Inviting Team Members
+
+### Sending Invitations
+
+1. Navigate to team settings
+2. Click **Invite Member**
+3. Enter the email address
+4. Select a role
+5. Click **Send Invitation**
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: Team management interface
+Shows: Invite member dialog with email and role fields
+Annotations: Label the email field and role selector
+Alt text: "Invite team member dialog with email and role selection"
+*/}
+
+![Invite member](./images/settings-invite-member.png)
+_Caption: Invite new team members by email_
+
+### Invitation Fields
+
+| Field       | Required | Description               |
+| ----------- | -------- | ------------------------- |
+| **Email**   | Yes      | Invitee's email address   |
+| **Role**    | Yes      | Role to assign            |
+| **Message** | No       | Optional personal message |
+
+### Invitation Process
+
+1. Invitation email sent to recipient
+2. Recipient clicks the invite link
+3. Creates account or signs in
+4. Joins the organization
+5. Appears in team list
+
+## Managing Existing Members
+
+### Viewing Team Members
+
+The team list shows all current members:
+
+| Column          | Description                   |
+| --------------- | ----------------------------- |
+| **Name**        | Member's display name         |
+| **Email**       | Member's email address        |
+| **Role**        | Assigned role                 |
+| **Status**      | Active, Pending, or Suspended |
+| **Joined**      | When they joined              |
+| **Last Active** | Most recent activity          |
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: Team management interface
+Shows: Team members list with multiple users
+Annotations: Highlight role badges and action menus
+Alt text: "Team members list showing names, emails, roles, and status"
+*/}
+
+![Team list](./images/settings-team-list.png)
+_Caption: View and manage all team members_
+
+### Changing Roles
+
+To change a member's role:
+
+1. Find the member in the list
+2. Click the actions menu
+3. Select **Change Role**
+4. Choose the new role
+5. Confirm the change
+
+<Warning>
+Demoting an Admin to a lower role removes their access to settings and team management. Ensure this is intentional.
+</Warning>
+
+### Removing Members
+
+To remove a team member:
+
+1. Find the member in the list
+2. Click the actions menu
+3. Select **Remove**
+4. Confirm the removal
+
+### Member Status
+
+| Status        | Description                          |
+| ------------- | ------------------------------------ |
+| **Active**    | Member has full access               |
+| **Pending**   | Invitation sent, awaiting acceptance |
+| **Suspended** | Access temporarily disabled          |
+
+## Pending Invitations
+
+### Managing Invitations
+
+View pending invitations that haven't been accepted:
+
+| Action     | Description                   |
+| ---------- | ----------------------------- |
+| **Resend** | Send another invitation email |
+| **Cancel** | Revoke the pending invitation |
+
+### Invitation Expiration
+
+- Invitations expire after 7 days
+- Expired invitations must be resent
+- Members can request a new invitation
+
+## Access Restrictions
+
+### Subscription-Based Limits
+
+| Plan           | Team Members          |
+| -------------- | --------------------- |
+| **Free**       | 1 member (owner only) |
+| **Basic**      | Up to 3 members       |
+| **Pro**        | Up to 10 members      |
+| **Enterprise** | Unlimited members     |
+
+### Upgrading for More Members
+
+If you've reached your member limit:
+
+1. Go to Billing
+2. Upgrade your plan
+3. Additional member slots become available
+4. Invite new members
+
+## Security Considerations
+
+### Password Requirements
+
+All team members must use passwords that meet:
+
+- Minimum 8 characters
+- Mix of letters and numbers
+- Recommendation: Use a password manager
+
+### Two-Factor Authentication
+
+Encourage team members to enable 2FA:
+
+- Provides additional security
+- Required for admin roles (recommended)
+- Supported via authenticator apps
+
+### Session Management
+
+| Feature             | Description                   |
+| ------------------- | ----------------------------- |
+| **Session Timeout** | Auto-logout after inactivity  |
+| **Active Sessions** | View logged-in devices        |
+| **Revoke Sessions** | Force logout from all devices |
+
+## Audit Trail
+
+Track team member activities:
+
+| Event               | Logged Information           |
+| ------------------- | ---------------------------- |
+| **Login**           | Time, IP address, device     |
+| **Settings Change** | What changed, who changed it |
+| **Member Added**    | Who was added, by whom       |
+| **Member Removed**  | Who was removed, by whom     |
+
+## Best Practices
+
+### Role Assignment
+
+1. **Principle of least privilege** - Assign minimum required access
+2. **Multiple admins** - Have at least 2 admins for redundancy
+3. **Review regularly** - Audit roles quarterly
+4. **Remove promptly** - Remove access when no longer needed
+
+### Team Organization
+
+1. **Clear ownership** - Define who owns what
+2. **Document access** - Track who has access to what
+3. **Onboarding process** - Standard process for new members
+4. **Offboarding checklist** - Remove access when leaving
+
+## Troubleshooting
+
+### Invitation Not Received
+
+1. Check spam/junk folder
+2. Verify email address is correct
+3. Resend the invitation
+4. Check organization email settings
+
+### Cannot Change Role
+
+1. Verify you have admin/owner permissions
+2. Cannot change your own role
+3. Cannot demote the only owner
+4. Check organization status
+
+### Access Denied
+
+1. Verify role has required permissions
+2. Check if subscription is active
+3. Ensure account is not suspended
+4. Contact organization admin
+
+## Related Guides
+
+- [Settings Overview](/dashboard/settings/overview) - All settings
+- [Organization Settings](/dashboard/settings/organization) - Company info
+- [Billing](/dashboard/billing/overview) - Plan and limits

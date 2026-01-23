@@ -1,0 +1,216 @@
+---
+title: "Integrations Overview"
+description: "Connect Fanfare with your favorite tools and platforms"
+---
+
+## Overview
+
+Fanfare provides integrations with popular e-commerce platforms, marketing tools, messaging services, and payment processors to enhance your experience management workflows. These integrations allow you to sync customer data, automate communications, process payments, and track analytics across your business systems.
+
+## Integration Categories
+
+### E-commerce Platforms
+
+Connect Fanfare with your online store to sync products, inventory, and customer data.
+
+| Integration                                         | Status    | Description                      |
+| --------------------------------------------------- | --------- | -------------------------------- |
+| [Shopify](/integrations/e-commerce/shopify)         | Available | Full integration via Shopify App |
+| [WooCommerce](/integrations/e-commerce/woocommerce) | Planned   | WordPress e-commerce integration |
+| [Custom API](/integrations/e-commerce/custom-api)   | Available | REST API for custom platforms    |
+
+### Marketing Tools
+
+Sync customer lists and automate marketing campaigns based on experience participation.
+
+| Integration                                    | Status  | Description                       |
+| ---------------------------------------------- | ------- | --------------------------------- |
+| [Klaviyo](/integrations/marketing/klaviyo)     | Active  | Email marketing and audience sync |
+| [Mailchimp](/integrations/marketing/mailchimp) | Planned | Email marketing campaigns         |
+| [HubSpot](/integrations/marketing/hubspot)     | Planned | CRM and marketing automation      |
+
+### Messaging Services
+
+Send transactional emails and SMS notifications to consumers.
+
+| Integration                                  | Status  | Description                  |
+| -------------------------------------------- | ------- | ---------------------------- |
+| [Twilio](/integrations/messaging/twilio)     | Active  | SMS notifications and OTP    |
+| [Resend](/integrations/messaging/resend)     | Active  | Transactional email delivery |
+| [SendGrid](/integrations/messaging/sendgrid) | Planned | Email delivery service       |
+
+### Payment Processors
+
+Accept payments for auctions, pre-orders, and premium experiences.
+
+| Integration                                     | Status  | Description                            |
+| ----------------------------------------------- | ------- | -------------------------------------- |
+| [Stripe Connect](/integrations/payments/stripe) | Active  | Payment processing with split payments |
+| [PayPal](/integrations/payments/paypal)         | Planned | Alternative payment method             |
+
+### Social Media
+
+Connect social accounts for enhanced customer engagement and content publishing.
+
+| Integration                                 | Status  | Description                           |
+| ------------------------------------------- | ------- | ------------------------------------- |
+| [Instagram](/integrations/social/instagram) | Active  | Business account posting and insights |
+| [Facebook](/integrations/social/facebook)   | Planned | Page management and ads               |
+
+### Analytics
+
+Track performance metrics and user behavior across experiences.
+
+| Integration                                                  | Status  | Description            |
+| ------------------------------------------------------------ | ------- | ---------------------- |
+| [Google Analytics](/integrations/analytics/google-analytics) | Planned | Web analytics tracking |
+| [Segment](/integrations/analytics/segment)                   | Planned | Customer data platform |
+| [Mixpanel](/integrations/analytics/mixpanel)                 | Planned | Product analytics      |
+
+### Webhooks
+
+Receive real-time notifications when events occur in Fanfare.
+
+| Integration                                               | Status    | Description               |
+| --------------------------------------------------------- | --------- | ------------------------- |
+| [Custom Webhooks](/integrations/webhooks/custom-webhooks) | Available | HTTP callbacks for events |
+| [Zapier](/integrations/webhooks/zapier)                   | Planned   | No-code automation        |
+| [Make](/integrations/webhooks/make)                       | Planned   | Workflow automation       |
+
+## Integration Architecture
+
+Fanfare integrations follow a consistent architecture pattern:
+
+```
+┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
+│   Fanfare       │     │   Integration   │     │   Third-Party   │
+│   Platform      │────▶│   Layer         │────▶│   Service       │
+└─────────────────┘     └─────────────────┘     └─────────────────┘
+        │                       │                       │
+        │                       │                       │
+        ▼                       ▼                       ▼
+   Events/Data            Sync Sources            External APIs
+```
+
+### Sync Sources
+
+Most integrations use Fanfare's sync source system to maintain bidirectional data synchronization. Sync sources track:
+
+- **External IDs**: Mapping between Fanfare and third-party identifiers
+- **Sync Status**: Current state of the synchronization (pending, syncing, success, failed)
+- **Last Synced**: Timestamp of the most recent successful sync
+
+### Authentication Methods
+
+Integrations support different authentication methods:
+
+| Method    | Description                  | Used By                   |
+| --------- | ---------------------------- | ------------------------- |
+| API Key   | Simple token-based auth      | Klaviyo                   |
+| OAuth 2.0 | Secure delegated access      | Instagram, Stripe Connect |
+| Webhooks  | Signature-verified callbacks | Stripe, Twilio, Resend    |
+
+## Configuring Integrations
+
+### From the Admin Dashboard
+
+1. Navigate to **Settings** > **Integrations**
+2. Find the integration you want to configure
+3. Click on the integration card
+4. Follow the setup wizard for that integration
+
+### Via API
+
+Integrations can also be configured programmatically through the Admin API:
+
+```bash
+# Example: Configure Klaviyo
+curl -X PUT https://api.fanfare.io/settings \
+  -H "Authorization: Bearer YOUR_API_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "klaviyo": {
+      "apiKey": "pk_your_klaviyo_api_key"
+    }
+  }'
+```
+
+## Data Flow
+
+### Inbound Data (External → Fanfare)
+
+Integrations can import data into Fanfare:
+
+- **Audiences**: Sync customer lists from Klaviyo, Mailchimp
+- **Products**: Import product catalogs from Shopify
+- **Orders**: Receive order data for fulfillment tracking
+
+### Outbound Data (Fanfare → External)
+
+Fanfare exports data to integrations:
+
+- **Consumer Events**: Participation, wins, purchases
+- **Experience Updates**: Status changes, availability
+- **Transactional Messages**: Emails and SMS via messaging providers
+
+## Security
+
+### API Key Storage
+
+All API keys and credentials are:
+
+- Encrypted at rest using AES-256
+- Never exposed in full in the UI (masked with last 4 characters)
+- Rotatable without service interruption
+
+### Webhook Verification
+
+Incoming webhooks are verified using provider-specific signatures:
+
+- **Stripe**: Uses HMAC-SHA256 signatures
+- **Twilio**: Uses HMAC-SHA1 signatures
+- **Resend**: Uses Svix webhook verification
+
+### OAuth Token Management
+
+OAuth tokens are:
+
+- Automatically refreshed before expiration
+- Stored securely in the database
+- Revocable by disconnecting the integration
+
+## Troubleshooting
+
+### Common Issues
+
+**Integration shows "Error" status**
+
+- Check that API keys or credentials are correct
+- Verify the third-party service is operational
+- Review webhook delivery logs for failed requests
+
+**Data not syncing**
+
+- Check sync source status in the database
+- Verify rate limits haven't been exceeded
+- Review event processor logs for errors
+
+**OAuth connection failed**
+
+- Ensure callback URLs are properly configured
+- Check that required scopes are approved
+- Verify app credentials match the environment
+
+### Getting Help
+
+If you encounter issues with integrations:
+
+1. Check the integration-specific documentation
+2. Review the [API documentation](/api-reference/integrations)
+3. Contact support at support@fanfare.io
+
+## Next Steps
+
+- [Set up Klaviyo for audience sync](/integrations/marketing/klaviyo)
+- [Configure Stripe payments](/integrations/payments/stripe)
+- [Enable SMS notifications with Twilio](/integrations/messaging/twilio)

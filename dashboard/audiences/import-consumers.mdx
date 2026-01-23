@@ -1,0 +1,344 @@
+---
+title: Import Consumers
+description: Bulk import consumers from CSV files or external integrations
+---
+
+# Import Consumers
+
+Import consumers in bulk using CSV files or integrations like Klaviyo. This guide covers all import methods and best practices for successful data imports.
+
+## Import Methods
+
+| Method             | Description             | Best For                     |
+| ------------------ | ----------------------- | ---------------------------- |
+| **CSV Upload**     | Upload a CSV file       | One-time imports, migrations |
+| **Klaviyo Import** | Sync from Klaviyo lists | Ongoing marketing sync       |
+
+## CSV Import
+
+### Starting a CSV Import
+
+1. Navigate to **Audiences** in the sidebar
+2. Click **Create** > **Import Audience**
+3. Follow the import wizard
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/audiences/import
+Shows: Import wizard starting screen
+Annotations: Highlight file upload area
+Alt text: "Audience import wizard with file upload"
+*/}
+
+![Import start](./images/import-start.png)
+_Caption: Start the import wizard by uploading a CSV file_
+
+### File Requirements
+
+| Requirement    | Specification                |
+| -------------- | ---------------------------- |
+| **Format**     | CSV (comma-separated values) |
+| **Encoding**   | UTF-8                        |
+| **Max Size**   | 10 MB                        |
+| **Max Rows**   | 100,000 rows                 |
+| **Header Row** | Required                     |
+
+### Required Fields
+
+At minimum, your CSV must include one identifier:
+
+| Field          | Description                 | Example          |
+| -------------- | --------------------------- | ---------------- |
+| **email**      | Email address (recommended) | user@example.com |
+| **phone**      | Phone number                | +1234567890      |
+| **externalId** | Your system's ID            | CUST-12345       |
+
+### Optional Fields
+
+Include additional data to enrich consumer profiles:
+
+| Field             | Description          | Example               |
+| ----------------- | -------------------- | --------------------- |
+| **firstName**     | First name           | John                  |
+| **lastName**      | Last name            | Smith                 |
+| **fullName**      | Full name            | John Smith            |
+| **tags**          | Comma-separated tags | VIP,Newsletter,Beta   |
+| **loyaltyPoints** | Current points       | 1500                  |
+| **loyaltyTier**   | Tier name            | Gold                  |
+| **metadata**      | JSON custom data     | `{"source":"import"}` |
+
+### Example CSV
+
+```csv
+email,firstName,lastName,tags,loyaltyPoints
+john@example.com,John,Smith,"VIP,Newsletter",1500
+jane@example.com,Jane,Doe,Newsletter,500
+bob@example.com,Bob,Johnson,"VIP,Beta",3000
+```
+
+## Import Wizard Steps
+
+### Step 1: Upload File
+
+1. Drag and drop your CSV file
+2. Or click to browse and select
+3. File is validated for format
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/audiences/import
+Shows: File upload step with drag-drop zone
+Annotations: Show the drop zone and browse button
+Alt text: "CSV file upload with drag and drop"
+*/}
+
+![Upload file](./images/import-upload.png)
+_Caption: Drag and drop or browse to select your CSV file_
+
+### Step 2: Map Fields
+
+Map your CSV columns to Fanfare consumer fields:
+
+1. Review detected columns
+2. Select matching Fanfare field for each
+3. Skip columns you don't want to import
+4. Validate mappings
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/audiences/import
+Shows: Field mapping interface
+Annotations: Show column mapping dropdowns
+Alt text: "Field mapping interface showing CSV columns and target fields"
+*/}
+
+![Map fields](./images/import-mapping.png)
+_Caption: Map your CSV columns to consumer fields_
+
+### Step 3: Configure Audience
+
+Set up how imported consumers will be organized:
+
+| Option                  | Description                                   |
+| ----------------------- | --------------------------------------------- |
+| **Create New Audience** | Create a new audience with imported consumers |
+| **Add to Existing**     | Add consumers to an existing audience         |
+| **Update Only**         | Update existing consumers, don't create new   |
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/audiences/import
+Shows: Audience configuration options
+Annotations: Label each option
+Alt text: "Import configuration showing audience options"
+*/}
+
+![Configure audience](./images/import-configure.png)
+_Caption: Choose how to organize imported consumers_
+
+### Step 4: Review & Import
+
+1. Review the import summary
+2. Check for validation warnings
+3. Click **Start Import**
+4. Wait for processing
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/audiences/import
+Shows: Import review summary
+Annotations: Highlight row count and validation status
+Alt text: "Import review showing row count and validation summary"
+*/}
+
+![Review import](./images/import-review.png)
+_Caption: Review your import before processing_
+
+### Step 5: Monitor Progress
+
+Track import progress:
+
+- Progress bar shows completion
+- Errors are logged for review
+- Success count updates in real-time
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/audiences/import
+Shows: Import progress view
+Annotations: Show progress bar and counts
+Alt text: "Import progress showing completion percentage"
+*/}
+
+![Import progress](./images/import-progress.png)
+_Caption: Monitor your import as it processes_
+
+## Handling Duplicates
+
+### Duplicate Detection
+
+Duplicates are detected by:
+
+1. **Email** (primary)
+2. **Phone** (secondary)
+3. **External ID** (if provided)
+
+### Duplicate Handling Options
+
+| Option         | Description                              |
+| -------------- | ---------------------------------------- |
+| **Skip**       | Don't import duplicates                  |
+| **Update**     | Update existing with new data            |
+| **Create New** | Create separate record (not recommended) |
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/audiences/import
+Shows: Duplicate handling options
+Annotations: Label each option
+Alt text: "Duplicate handling configuration options"
+*/}
+
+![Duplicate handling](./images/import-duplicates.png)
+_Caption: Choose how to handle duplicate consumers_
+
+## Klaviyo Import
+
+If Klaviyo is configured, import directly from Klaviyo lists.
+
+### Prerequisites
+
+1. Klaviyo integration configured in Settings
+2. API key with list access
+3. Lists exist in Klaviyo
+
+### Starting Klaviyo Import
+
+1. Navigate to **Audiences** > **Create** > **Import from Klaviyo**
+2. Select the Klaviyo list to import
+3. Configure sync settings
+4. Start import
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/audiences/import/klaviyo
+Shows: Klaviyo list selection
+Annotations: Show list dropdown and sync options
+Alt text: "Klaviyo import showing list selection"
+*/}
+
+![Klaviyo import](./images/import-klaviyo.png)
+_Caption: Select a Klaviyo list to import_
+
+### Sync Options
+
+| Option              | Description                   |
+| ------------------- | ----------------------------- |
+| **One-time Import** | Import once, no ongoing sync  |
+| **Continuous Sync** | Keep synced with Klaviyo list |
+
+### Synced Audiences
+
+When continuous sync is enabled:
+
+- New Klaviyo subscribers are added automatically
+- Removed subscribers are removed from audience
+- Audience displays sync status and last sync time
+
+## Import Errors
+
+### Common Errors
+
+| Error                  | Cause                   | Solution                       |
+| ---------------------- | ----------------------- | ------------------------------ |
+| Invalid email          | Malformed email address | Fix email format in CSV        |
+| Missing required field | No identifier provided  | Ensure email/phone/externalId  |
+| Invalid phone          | Phone format incorrect  | Use E.164 format (+1234567890) |
+| Row too long           | Data exceeds limits     | Check for extra commas         |
+| Encoding error         | Wrong file encoding     | Save as UTF-8                  |
+
+### Error Report
+
+After import, download the error report:
+
+1. Click **Download Error Report**
+2. Review failed rows and reasons
+3. Fix issues in original CSV
+4. Re-import failed rows only
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/audiences/import
+Shows: Import results with error download option
+Annotations: Highlight the download errors button
+Alt text: "Import results showing error report download option"
+*/}
+
+![Error report](./images/import-errors.png)
+_Caption: Download the error report to review failed imports_
+
+## Best Practices
+
+### Before Import
+
+1. **Clean your data** - Remove duplicates, fix formatting
+2. **Validate emails** - Ensure valid email formats
+3. **Use UTF-8** - Save CSV with proper encoding
+4. **Test with small batch** - Import 100 rows first
+
+### During Import
+
+1. **Don't close the browser** - Let import complete
+2. **Monitor progress** - Watch for unexpected errors
+3. **Note the import ID** - For troubleshooting
+
+### After Import
+
+1. **Review the summary** - Check success/error counts
+2. **Verify a sample** - Check random consumers imported correctly
+3. **Download error report** - Review any failures
+4. **Clean up** - Delete source files with sensitive data
+
+## Data Privacy
+
+### Handling Sensitive Data
+
+- Don't import unnecessary personal data
+- Consider data minimization
+- Comply with GDPR/CCPA requirements
+- Document data sources
+
+### Data Retention
+
+- Imported consumer data is subject to your retention policies
+- Sync sources are documented for compliance
+- Audit trail available for imports
+
+## Troubleshooting
+
+### Import Stuck at 0%
+
+1. Check file size isn't too large
+2. Verify file format is correct CSV
+3. Try refreshing the page
+4. Re-upload the file
+
+### Import Completed but No Consumers
+
+1. Check duplicate handling settings
+2. Verify field mapping was correct
+3. Review error report
+4. Ensure file had data rows
+
+### Consumers Missing Data
+
+1. Check field mapping
+2. Verify column names in CSV
+3. Look for encoding issues
+4. Check for extra whitespace
+
+## Related Guides
+
+- [Audiences Overview](/dashboard/audiences/overview) - Managing audiences
+- [Create Audience](/dashboard/audiences/create-audience) - Manual creation
+- [Settings > Integrations](/dashboard/settings/integrations) - Configure Klaviyo

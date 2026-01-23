@@ -1,0 +1,241 @@
+---
+title: "Getting Started with Landing Pages"
+description: "Create and publish your first experience landing page"
+---
+
+{/* TODO: MISSING_FUNCTIONALITY
+Feature: Landing page creation wizard in admin dashboard
+Expected behavior: Step-by-step flow to create landing page from experience detail view
+Current state: Database and models ready; UI not yet implemented
+Blocking: true - Cannot create landing pages through UI yet
+*/}
+
+<Note>
+**Coming Soon**
+
+The landing page builder is currently under development. This guide describes the intended workflow that will be available when the feature launches. Check the [changelog](/resources/support/changelog) for updates.
+
+</Note>
+
+## Overview
+
+Creating a landing page in Fanfare follows this workflow:
+
+1. Create an experience (queue, draw, auction, or timed release)
+2. Open the Design Studio for that experience
+3. Choose a template or start from scratch
+4. Customize content and branding
+5. Configure SEO settings
+6. Preview and publish
+
+**Estimated time**: 5-10 minutes
+
+## Prerequisites
+
+Before creating a landing page, you need:
+
+- An active Fanfare organization
+- At least one experience created
+- (Optional) Brand theme configured in organization settings
+
+<Info>Don't have an experience yet? See [Creating Experiences](/dashboard/experiences/creating) first.</Info>
+
+## Step 1: Navigate to Design Studio
+
+From the experience detail page:
+
+1. Click on the **Design Studio** card in the experience sections grid
+2. The Design Studio opens with options for theming and landing pages
+
+{/* TODO: MISSING_FUNCTIONALITY
+Feature: Design Studio landing page tab
+Expected behavior: Tab or section within Design Studio to manage landing pages
+Current state: Design Studio exists but only handles theme customization
+Blocking: true
+*/}
+
+```
+Experience Detail
+├── Overview
+├── Design Studio ← Click here
+│   ├── Theme Settings (available)
+│   └── Landing Page (coming soon)
+├── Marketing Hub
+└── Settings
+```
+
+## Step 2: Choose a Starting Point
+
+You have three options when creating a landing page:
+
+### Option A: Start from a Template
+
+Templates provide pre-designed layouts optimized for specific use cases:
+
+| Template     | Best For                           |
+| ------------ | ---------------------------------- |
+| Product Drop | Queue-based product releases       |
+| Raffle       | Draw-based giveaways and lotteries |
+| Auction      | Competitive bidding experiences    |
+| Waitlist     | Pre-launch signup collection       |
+
+### Option B: Start from Scratch
+
+Begin with a blank canvas and add sections as needed. Available section types:
+
+- **Hero** - Bold opening with headline and media
+- **Features** - Highlight benefits in a grid layout
+- **Countdown** - Display time until experience starts
+- **Testimonials** - Social proof quotes
+- **CTA** - Strong call-to-action blocks
+- **FAQ** - Frequently asked questions
+
+### Option C: Import from Reference
+
+{/* TODO: MISSING_FUNCTIONALITY
+Feature: Reference-based page generation
+Expected behavior: Analyze a URL and generate a landing page with similar styling
+Current state: landing-page-analyzer CLI tool exists but not integrated into UI
+Blocking: true
+*/}
+
+Advanced users can generate landing pages by analyzing reference designs. This feature uses AI to extract design patterns from existing pages and apply them to your content.
+
+## Step 3: Customize Your Page
+
+### Content Editing
+
+Each section supports content customization:
+
+```
+Hero Section
+├── Headline (text)
+├── Subheadline (text)
+├── Media (image or video)
+├── CTA Button (text + link)
+└── Background (color, gradient, or image)
+```
+
+### Theme Customization
+
+Landing pages inherit your organization's brand theme, but you can override:
+
+- **Colors** - Primary, secondary, accent, background
+- **Typography** - Font family, sizes, weights
+- **Spacing** - Section padding and margins
+
+See [Branding](/landing-pages/customization/branding) for detailed customization options.
+
+## Step 4: Configure SEO Settings
+
+Optimize your page for search engines and social sharing:
+
+| Setting          | Purpose                        | Example                                  |
+| ---------------- | ------------------------------ | ---------------------------------------- |
+| Page Title       | Browser tab and search results | "Limited Edition Sneaker Drop"           |
+| Meta Description | Search result snippet          | "Join the queue for exclusive access..." |
+| Share Image      | Social media preview           | 1200x630px product image                 |
+
+<Tip>Keep titles under 60 characters and descriptions under 160 characters for optimal display in search results.</Tip>
+
+## Step 5: Preview Your Page
+
+Before publishing, preview your landing page:
+
+- **Desktop view** - Full-width layout
+- **Tablet view** - Medium breakpoint
+- **Mobile view** - Narrow layout
+
+The preview shows exactly what visitors will see, including the experience widget.
+
+## Step 6: Set Your URL Slug
+
+Each landing page needs a unique URL slug:
+
+```
+https://your-domain.fanfare.io/[experience-slug]/[page-slug]
+```
+
+For example:
+
+- Experience slug: `summer-sneaker-drop`
+- Page slug: `register`
+- Full URL: `https://acme.fanfare.io/summer-sneaker-drop/register`
+
+<Warning>Slugs cannot be changed after publishing without creating redirects. Choose carefully.</Warning>
+
+## Step 7: Publish
+
+When ready, click **Publish** to make your landing page live.
+
+Publishing:
+
+- Makes the page accessible at its URL
+- Records the publish timestamp
+- Creates a snapshot of the current design
+
+### Draft vs Published
+
+| Status    | Visibility      | Editable                         |
+| --------- | --------------- | -------------------------------- |
+| Draft     | Only in preview | Yes                              |
+| Published | Public          | Yes (changes require re-publish) |
+
+## Current Workarounds
+
+Until the landing page builder launches, you can achieve similar results using:
+
+### SDK Integration
+
+Embed the Fanfare widget on your own website:
+
+```tsx
+import { FanfareProvider, ExperienceWidget } from "@waitify-io/fanfare-sdk-react";
+
+export function ExperiencePage() {
+  return (
+    <FanfareProvider
+      config={{
+        organizationId: "org_...",
+        publishableKey: "pk_...",
+      }}
+    >
+      <div className="mx-auto max-w-2xl py-16">
+        <h1>Join the Queue</h1>
+        <p>Limited edition release - first come, first served.</p>
+
+        <ExperienceWidget experienceId="exp_..." variant="standalone" />
+      </div>
+    </FanfareProvider>
+  );
+}
+```
+
+See [SDK Quick Start](/getting-started/quickstart-sdk) for setup instructions.
+
+### Shopify Theme Blocks
+
+Shopify merchants can use theme blocks to add Fanfare widgets to any page:
+
+1. Open the Shopify theme editor
+2. Add a Fanfare block to your desired page
+3. Configure the experience ID
+
+See [Shopify Integration](/integrations/e-commerce/shopify) for details.
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Branding" icon="paintbrush" href="/landing-pages/customization/branding">
+    Customize colors, fonts, and styling
+  </Card>
+  <Card title="Content Blocks" icon="cube" href="/landing-pages/customization/content-blocks">
+    Learn about available section types
+  </Card>
+  <Card title="Custom Domains" icon="globe" href="/landing-pages/publishing/domains">
+    Use your own domain for landing pages
+  </Card>
+  <Card title="Template Gallery" icon="grid-2" href="/landing-pages/templates/gallery">
+    Browse pre-built templates
+  </Card>
+</CardGroup>

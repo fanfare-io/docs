@@ -1,0 +1,115 @@
+---
+title: "Shopify Integration"
+description: "Connect Fanfare with your Shopify store via the Fanfare Shopify App"
+---
+
+## Overview
+
+The Shopify integration enables seamless connection between Fanfare and your Shopify store through a dedicated Shopify App. This allows you to:
+
+- Sync products from your Shopify catalog
+- Manage inventory across experiences
+- Process orders through Shopify
+- Leverage Shopify's checkout for payments
+
+## Getting Started
+
+The Fanfare Shopify App is available in the Shopify App Store.
+
+### Installation
+
+1. Visit the [Fanfare App](https://apps.shopify.com/fanfare) in the Shopify App Store
+2. Click **Add app**
+3. Authorize the app in your Shopify admin
+4. Complete the setup wizard
+
+### App Features
+
+The Shopify App provides:
+
+| Feature             | Description                             |
+| ------------------- | --------------------------------------- |
+| Product Sync        | Import Shopify products into Fanfare    |
+| Inventory Sync      | Real-time inventory updates             |
+| Order Management    | View and manage orders from Fanfare     |
+| Embedded Experience | Manage experiences within Shopify admin |
+
+## Product Sync
+
+### Importing Products
+
+Products can be imported from Shopify to Fanfare:
+
+1. Go to **Products** in the Fanfare Shopify App
+2. Select products to import
+3. Products appear in your Fanfare experiences
+
+### Product Variants
+
+Fanfare supports Shopify product variants:
+
+- Size, color, and other variant options
+- Variant-specific inventory tracking
+- Variant pricing synchronization
+
+## Order Flow
+
+```
+┌─────────────┐     ┌─────────────┐     ┌─────────────┐
+│   Fanfare   │────▶│   Shopify   │────▶│   Payment   │
+│  Experience │     │  Checkout   │     │  Processor  │
+└─────────────┘     └─────────────┘     └─────────────┘
+        │                                       │
+        │                                       │
+        ▼                                       ▼
+┌─────────────┐                         ┌─────────────┐
+│   Winner    │                         │    Order    │
+│  Selection  │                         │   Created   │
+└─────────────┘                         └─────────────┘
+```
+
+## Checkout Handoff
+
+When a consumer wins an experience:
+
+1. Fanfare generates a checkout link
+2. Consumer is redirected to Shopify checkout
+3. Order is created in Shopify
+4. Order synced back to Fanfare
+
+## Configuration
+
+### App Settings
+
+Configure the integration in your Shopify admin:
+
+- **API Permissions**: Products, Orders, Inventory
+- **Webhook Subscriptions**: Order creation, updates
+- **Inventory Locations**: Select which locations to sync
+
+### Fanfare Settings
+
+In the Fanfare dashboard:
+
+- **Product Source**: Set to Shopify
+- **Checkout Provider**: Shopify
+- **Inventory Mode**: Real-time sync
+
+## Requirements
+
+- Shopify plan: Basic or higher
+- Fanfare subscription: Any paid plan
+- Permissions: Products, Orders, Inventory
+
+## Support
+
+For Shopify-specific questions:
+
+- [Shopify App Documentation](/shopify-app)
+- support@fanfare.io
+
+## Related Resources
+
+- [Product Management](/features/products)
+- [Order Management](/features/orders)
+- [Shopify Help Center](https://help.shopify.com)

@@ -1,0 +1,409 @@
+---
+title: useQueue Hook
+description: React hook for queue operations
+---
+
+# useQueue
+
+The `useQueue` hook provides reactive state and methods for interacting with a Fanfare queue.
+
+## Signature
+
+```typescript
+function useQueue(queueId: string): UseQueueReturn;
+```
+
+## Return Type
+
+```typescript
+interface UseQueueReturn {
+  // State
+  queue: Queue | null;
+  status: QueueConsumerState | null;
+  position: number | null;
+  isLoading: boolean;
+  error: Error | null;
+
+  // Actions
+  enter: () => Promise<QueueEnterResult>;
+  leave: () => Promise<void>;
+}
+```
+
+## State Properties
+
+### queue
+
+The queue details fetched from the API.
+
+```typescript
+interface Queue {
+  id: string;
+  experienceId: string;
+  name: string;
+  status: "pending" | "open" | "closed" | "paused";
+  capacity?: number;
+  currentSize: number;
+  estimatedWaitTime?: number;
+  openAt?: string;
+  closeAt?: string;
+}
+```
+
+### status
+
+The consumer's current state in the queue.
+
+```typescript
+type QueueConsumerState =
+  | QueuedConsumerState
+  | AdmittedConsumerState
+  | CompletedConsumerState
+  | LeftConsumerState
+  | DeniedConsumerState
+  | NotQueuedConsumerState
+  | ExpiredConsumerState;
+```
+
+### position
+
+The consumer's current position in the queue (1-indexed). `null` if not in queue.
+
+### isLoading
+
+`true` during API operations.
+
+### error
+
+Any error that occurred during the last operation.
+
+## Actions
+
+### enter()
+
+Enter the queue. Automatically starts polling for position updates.
+
+```typescript
+enter(): Promise<QueueEnterResult>
+
+interface QueueEnterResult {
+  position: number;
+  estimatedWaitTimeInSeconds: number;
+  status: "QUEUED";
+}
+```
+
+### leave()
+
+Leave the queue. Automatically stops polling.
+
+```typescript
+leave(): Promise<void>
+```
+
+## Basic Usage
+
+```tsx
+import { useQueue, useFanfareAuth } from "@waitify-io/fanfare-sdk-react";
+
+function QueuePage() {
+  const { isAuthenticated, guest } = useFanfareAuth();
+  const { queue, status, position, isLoading, error, enter, leave } = useQueue("queue_123");
+
+  const handleEnter = async () => {
+    // Ensure authenticated before entering
+    if (!isAuthenticated) {
+      await guest();
+    }
+    try {
+      const result = await enter();
+      console.log("Entered at position:", result.position);
+    } catch (err) {
+      console.error("Failed to enter:", err);
+    }
+  };
+
+  if (error) {
+    return <div className="error">Error: {error.message}</div>;
+  }
+
+  if (isLoading && !queue) {
+    return <div className="loading">Loading queue...</div>;
+  }
+
+  return (
+    <div className="queue-page">
+      <h1>{queue?.name}</h1>
+      <p>Current size: {queue?.currentSize}</p>
+
+      {!status && <button onClick={handleEnter}>Enter Queue</button>}
+
+      {status?.status === "QUEUED" && (
+        <div className="queued">
+          <p>Your position: {position}</p>
+          <p>Estimated wait: {status.estimatedWaitTimeInSeconds}s</p>
+          <button onClick={leave}>Leave Queue</button>
+        </div>
+      )}
+
+      {status?.status === "ADMITTED" && (
+        <div className="admitted">
+          <p>You are admitted!</p>
+          <a href={`/checkout?token=${status.admissionToken}`}>Proceed to Checkout</a>
+        </div>
+      )}
+
+      {status?.status === "DENIED" && (
+        <div className="denied">
+          <p>Access denied: {status.reason}</p>
+        </div>
+      )}
+    </div>
+  );
+}
+```
+
+## Status-Based Rendering
+
+```tsx
+function QueueStatus({ queueId }: { queueId: string }) {
+  const { status, position } = useQueue(queueId);
+
+  switch (status?.status) {
+    case "QUEUED":
+      return (
+        <div>
+          <p>Position: {position}</p>
+          <p>Wait time: ~{Math.ceil((status.estimatedWaitTimeInSeconds || 0) / 60)} minutes</p>
+        </div>
+      );
+
+    case "ADMITTED":
+      return (
+        <div>
+          <p>You have been admitted!</p>
+          <p>Token expires: {status.expiresAt}</p>
+        </div>
+      );
+
+    case "COMPLETED":
+      return <p>Thank you for your purchase!</p>;
+
+    case "LEFT":
+      return <p>You left the queue.</p>;
+
+    case "DENIED":
+      return <p>Denied: {status.reason}</p>;
+
+    case "EXPIRED":
+      return <p>Your admission has expired.</p>;
+
+    default:
+      return <p>Not in queue.</p>;
+  }
+}
+```
+
+## Real-Time Position Updates
+
+The hook automatically subscribes to `queue:position-changed` events:
+
+```tsx
+function LivePosition({ queueId }: { queueId: string }) {
+  const { position } = useQueue(queueId);
+
+  // position updates automatically as the queue moves
+  return (
+    <div className="position-display">
+      <span className="label">Your position:</span>
+      <span className="value">{position ?? "-"}</span>
+    </div>
+  );
+}
+```
+
+## Handling Admission
+
+```tsx
+function QueueWithAdmission({ queueId }: { queueId: string }) {
+  const { status } = useQueue(queueId);
+
+  useEffect(() => {
+    if (status?.status === "ADMITTED") {
+      // Navigate to checkout with token
+      window.location.href = `/checkout?token=${status.admissionToken}`;
+    }
+  }, [status]);
+
+  return <QueueDisplay queueId={queueId} />;
+}
+```
+
+## Error Handling
+
+```tsx
+function QueueWithErrorHandling({ queueId }: { queueId: string }) {
+  const { error, enter } = useQueue(queueId);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const handleEnter = async () => {
+    try {
+      setErrorMessage(null);
+      await enter();
+    } catch (err) {
+      if (err instanceof FanfareError) {
+        switch (err.code) {
+          case ErrorCodes.QUEUE_CLOSED:
+            setErrorMessage("This queue is currently closed.");
+            break;
+          case ErrorCodes.QUEUE_FULL:
+            setErrorMessage("This queue is full. Try again later.");
+            break;
+          case ErrorCodes.ALREADY_IN_QUEUE:
+            setErrorMessage("You are already in this queue.");
+            break;
+          default:
+            setErrorMessage(err.message);
+        }
+      }
+    }
+  };
+
+  return (
+    <div>
+      {errorMessage && <div className="error">{errorMessage}</div>}
+      <button onClick={handleEnter}>Enter Queue</button>
+    </div>
+  );
+}
+```
+
+## With Countdown Display
+
+```tsx
+function QueueWithCountdown({ queueId }: { queueId: string }) {
+  const { status } = useQueue(queueId);
+  const [timeRemaining, setTimeRemaining] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (status?.status !== "QUEUED") {
+      setTimeRemaining(null);
+      return;
+    }
+
+    setTimeRemaining(status.estimatedWaitTimeInSeconds);
+
+    const interval = setInterval(() => {
+      setTimeRemaining((prev) => {
+        if (prev === null || prev <= 0) return 0;
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [status]);
+
+  if (status?.status !== "QUEUED" || timeRemaining === null) {
+    return null;
+  }
+
+  const minutes = Math.floor(timeRemaining / 60);
+  const seconds = timeRemaining % 60;
+
+  return (
+    <div className="countdown">
+      <span>Estimated wait: </span>
+      <span className="time">
+        {minutes}:{seconds.toString().padStart(2, "0")}
+      </span>
+    </div>
+  );
+}
+```
+
+## Multiple Queues
+
+```tsx
+function MultiQueuePage() {
+  const queue1 = useQueue("queue_general");
+  const queue2 = useQueue("queue_vip");
+
+  return (
+    <div className="queue-options">
+      <div className="queue-option">
+        <h2>{queue1.queue?.name}</h2>
+        <p>Current size: {queue1.queue?.currentSize}</p>
+        {!queue1.status && <button onClick={queue1.enter}>Enter General</button>}
+      </div>
+
+      <div className="queue-option">
+        <h2>{queue2.queue?.name}</h2>
+        <p>Current size: {queue2.queue?.currentSize}</p>
+        {!queue2.status && <button onClick={queue2.enter}>Enter VIP</button>}
+      </div>
+    </div>
+  );
+}
+```
+
+## Event Flow
+
+```
+Component mounts
+      │
+      ├──► Fetch queue details (GET /queues/:id)
+      │
+      └──► Check initial status (GET /queues/:id/status)
+
+User clicks "Enter"
+      │
+      ├──► enter() called
+      │         │
+      │         ├──► POST /queues/:id/enter
+      │         │
+      │         └──► Start polling (queue.startPolling)
+      │
+      ├──► Subscribe to queue:position-changed
+      │
+      └──► Subscribe to queue:admitted
+
+Position changed (from polling)
+      │
+      └──► queue:position-changed event
+                  │
+                  └──► State updates (position, status)
+
+User admitted (from polling)
+      │
+      └──► queue:admitted event
+                  │
+                  └──► State updates (status = ADMITTED, token)
+
+Component unmounts
+      │
+      ├──► Stop polling
+      │
+      └──► Clean up event subscriptions
+```
+
+## TypeScript
+
+```typescript
+import { useQueue } from "@waitify-io/fanfare-sdk-react";
+import type { Queue, QueueConsumerState, QueueEnterResult } from "@waitify-io/fanfare-sdk-core";
+
+function TypedQueue({ queueId }: { queueId: string }) {
+  const { queue, status, position, enter } = useQueue(queueId);
+
+  // queue is Queue | null
+  // status is QueueConsumerState | null
+  // position is number | null
+
+  const handleEnter = async () => {
+    const result: QueueEnterResult = await enter();
+    console.log(result.position);
+  };
+
+  return null;
+}
+```

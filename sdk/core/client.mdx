@@ -1,0 +1,453 @@
+---
+title: FanfareSDK Client API
+description: Complete reference for the FanfareSDK instance
+---
+
+# FanfareSDK Client API
+
+The `FanfareSDK` interface is the main entry point for all SDK operations. It is returned by the `init()` function.
+
+## Interface Definition
+
+```typescript
+interface FanfareSDK {
+  readonly auth: AuthModule;
+  readonly queues: QueueModule;
+  readonly draws: DrawModule;
+  readonly auctions: AuctionModule;
+  readonly experiences: ExperienceModule;
+  readonly waitlists: WaitlistModule;
+  readonly timedReleases: TimedReleaseModule;
+  readonly beacon: BeaconModule;
+
+  restore(): Promise<RestoreResult>;
+  resume(): Promise<void>;
+  getActiveExperiences(): Promise<ActiveExperiences>;
+  on<K extends keyof SDKEvents>(event: K, handler: (data: SDKEvents[K]) => void): () => void;
+  destroy(): Promise<void>;
+}
+```
+
+## Core Methods
+
+### restore()
+
+Restores saved session and participation state from storage.
+
+```typescript
+restore(): Promise<RestoreResult>
+```
+
+**Returns:** `RestoreResult` containing session and active experiences
+
+```typescript
+interface RestoreResult {
+  session: Session | null;
+  experiences: {
+    queues: Record<string, QueueParticipation>;
+    draws: Record<string, DrawParticipation>;
+    auctions: Record<string, AuctionParticipation>;
+    appointments: Record<string, unknown>;
+    waitlists: Record<string, WaitlistParticipation>;
+    timedReleases: Record<string, TimedReleaseParticipation>;
+    experiences: Record<string, ExperienceSession>;
+  };
+}
+```
+
+**Example:**
+
+```typescript
+const { session, experiences } = await fanfare.restore();
+
+if (session) {
+  console.log("Welcome back:", session.consumerId);
+
+  // Check if user was in a queue
+  for (const [queueId, participation] of Object.entries(experiences.queues)) {
+    if (participation.status === "QUEUED") {
+      console.log(`Resuming queue ${queueId} at position ${participation.position}`);
+    }
+  }
+}
+```
+
+### resume()
+
+Resumes active operations (polling, watching) after restore.
+
+```typescript
+resume(): Promise<void>
+```
+
+**Example:**
+
+```typescript
+const { session } = await fanfare.restore();
+
+if (session) {
+  // This will restart polling for any active queues/auctions
+  await fanfare.resume();
+}
+```
+
+### getActiveExperiences()
+
+Returns lists of IDs for all active participations.
+
+```typescript
+getActiveExperiences(): Promise<ActiveExperiences>
+```
+
+**Returns:**
+
+```typescript
+interface ActiveExperiences {
+  queues: string[];
+  draws: string[];
+  auctions: string[];
+  appointments: string[];
+  waitlists: string[];
+  timedReleases: string[];
+  experiences: string[];
+}
+```
+
+**Example:**
+
+```typescript
+const active = await fanfare.getActiveExperiences();
+
+console.log("Active queues:", active.queues);
+console.log("Active draws:", active.draws);
+console.log("Active auctions:", active.auctions);
+```
+
+### on()
+
+Subscribes to SDK events. Returns an unsubscribe function.
+
+```typescript
+on<K extends keyof SDKEvents>(
+  event: K,
+  handler: (data: SDKEvents[K]) => void
+): () => void
+```
+
+**Example:**
+
+```typescript
+// Subscribe to queue admission
+const unsubscribe = fanfare.on("queue:admitted", (data) => {
+  console.log("Admitted!", data.queueId, data.token);
+});
+
+// Later: clean up
+unsubscribe();
+```
+
+See [Events](/sdk/core/events) for a complete list of events.
+
+### destroy()
+
+Cleans up the SDK instance. Should be called when the SDK is no longer needed.
+
+```typescript
+destroy(): Promise<void>
+```
+
+**Actions performed:**
+
+- Stops all queue polling
+- Stops all auction watching
+- Flushes pending beacon events
+- Closes tab sync channels
+- Removes all event listeners
+
+**Example:**
+
+```typescript
+// Clean shutdown
+await fanfare.destroy();
+```
+
+## Modules
+
+### auth
+
+Authentication and session management.
+
+```typescript
+interface AuthModule {
+  check(): AuthStatus;
+  guest(): Promise<GuestSession>;
+  requestOtp(options: OtpRequest | string): Promise<void>;
+  verifyOtp(options: OtpVerify): Promise<AuthenticatedSession>;
+  exchangeExternal(options: ExternalExchange | string): Promise<AuthenticatedSession>;
+  login(options: LoginOptions): Promise<void>;
+  logout(): Promise<void>;
+  getSession(): Session | null;
+  refresh(): Promise<void>;
+}
+```
+
+See [Consumer Management](/sdk/core/consumers) for details.
+
+### queues
+
+Virtual waiting room operations.
+
+```typescript
+interface QueueModule {
+  get(queueId: string): Promise<Queue>;
+  enter(queueId: string, metadata?: Record<string, unknown>): Promise<QueueEnterResult>;
+  leave(queueId: string): Promise<void>;
+  status(queueId: string, options?: QueueStatusOptions): Promise<QueueConsumerState>;
+  startPolling(queueId: string, intervalMs?: number): void;
+  stopPolling(queueId: string): void;
+  isPolling(queueId: string): boolean;
+  getActiveQueues(): Record<string, QueueParticipation>;
+}
+```
+
+**Queue Methods:**
+
+| Method                             | Description                         |
+| ---------------------------------- | ----------------------------------- |
+| `get(queueId)`                     | Fetch queue details                 |
+| `enter(queueId, metadata?)`        | Enter the queue                     |
+| `leave(queueId)`                   | Leave the queue                     |
+| `status(queueId)`                  | Get current status in queue         |
+| `startPolling(queueId, interval?)` | Start polling for position updates  |
+| `stopPolling(queueId)`             | Stop polling                        |
+| `isPolling(queueId)`               | Check if polling is active          |
+| `getActiveQueues()`                | Get all active queue participations |
+
+**Example:**
+
+```typescript
+// Enter a queue
+const result = await fanfare.queues.enter("queue_123");
+console.log("Position:", result.position);
+
+// Start polling (default: 5 seconds)
+fanfare.queues.startPolling("queue_123");
+
+// Listen for admission
+fanfare.on("queue:admitted", ({ queueId, token }) => {
+  fanfare.queues.stopPolling(queueId);
+  // Use token for checkout
+});
+```
+
+### draws
+
+Lottery-style draw operations.
+
+```typescript
+interface DrawModule {
+  get(drawId: string): Promise<Draw>;
+  enter(drawId: string, metadata?: Record<string, unknown>): Promise<DrawConsumerState>;
+  leave(drawId: string): Promise<void>;
+  status(drawId: string): Promise<DrawConsumerState>;
+  checkResult(drawId: string): Promise<DrawResult | null>;
+  hasResult(drawId: string): boolean;
+  isWinner(drawId: string): boolean;
+  getAdmissionToken(drawId: string): string | undefined;
+  clearExpiredDraws(): void;
+  getActiveDraws(): Record<string, DrawParticipation>;
+  isEntered(drawId: string): boolean;
+  scheduleResultCheck(drawId: string, drawTime: string, buffer?: number): void;
+  cancelScheduledCheck(drawId: string): void;
+  clearAllScheduledChecks(): void;
+  getScheduledChecks(): string[];
+  hasScheduledCheck(drawId: string): boolean;
+}
+```
+
+**Example:**
+
+```typescript
+// Enter the draw
+await fanfare.draws.enter("draw_123");
+
+// Schedule result check for draw time + 30 second buffer
+const draw = await fanfare.draws.get("draw_123");
+fanfare.draws.scheduleResultCheck("draw_123", draw.drawAt, 30000);
+
+// Listen for results
+fanfare.on("draw:won", ({ drawId, result }) => {
+  console.log("You won!", result.admissionToken);
+});
+
+fanfare.on("draw:lost", ({ drawId }) => {
+  console.log("Better luck next time!");
+});
+```
+
+### auctions
+
+Real-time auction operations.
+
+```typescript
+interface AuctionModule {
+  get(auctionId: string): Promise<AuctionDetails>;
+  placeBid(auctionId: string, amount: string): Promise<BidResult>;
+  enter(auctionId: string, metadata?: Record<string, unknown>): Promise<void>;
+  leave(auctionId: string): Promise<void>;
+  status(auctionId: string): Promise<AuctionStatus>;
+  startWatching(auctionId: string, intervalMs?: number): void;
+  stopWatching(auctionId: string): void;
+  stopAllWatching(): void;
+  isWatching(auctionId: string): boolean;
+  getWatchedAuctions(): string[];
+  getActiveAuctions(): Record<string, AuctionParticipation>;
+  isParticipating(auctionId: string): boolean;
+  isWinning(auctionId: string): boolean;
+  isOutbid(auctionId: string): boolean;
+  getCurrentBid(auctionId: string): string | undefined;
+  getHighestBid(auctionId: string): string | undefined;
+  getBidHistory(auctionId: string): Promise<Bid[]>;
+  enableAutoRebid(auctionId: string, maxBid: string, increment: string): void;
+  disableAutoRebid(auctionId: string): void;
+  getAutoRebidConfig(auctionId: string): AutoRebidConfig | undefined;
+  clearEndedAuctions(): void;
+  destroy(): void;
+}
+```
+
+**Example:**
+
+```typescript
+// Enter and start watching
+await fanfare.auctions.enter("auction_123");
+fanfare.auctions.startWatching("auction_123");
+
+// Place a bid
+const result = await fanfare.auctions.placeBid("auction_123", "150.00");
+console.log("Bid status:", result.status); // "winning" | "outbid" | "accepted"
+
+// Enable auto-rebid
+fanfare.auctions.enableAutoRebid("auction_123", "500.00", "10.00");
+
+// Listen for events
+fanfare.on("auction:outbid", ({ auctionId, highestBid }) => {
+  console.log(`Outbid! Current highest: ${highestBid}`);
+});
+```
+
+### waitlists
+
+Notification signup operations.
+
+```typescript
+interface WaitlistModule {
+  enter(waitlistId: string, sequenceId: string): Promise<WaitlistEntry>;
+  leave(waitlistId: string): Promise<void>;
+  leaveAll(): Promise<void>;
+  getStatus(waitlistId: string): Promise<WaitlistStatus>;
+  getEnteredWaitlists(): WaitlistParticipation[];
+  isOnWaitlist(waitlistId: string): boolean;
+  destroy(): void;
+}
+```
+
+**Example:**
+
+```typescript
+// Join a waitlist
+const entry = await fanfare.waitlists.enter("waitlist_123", "sequence_456");
+console.log("Entered at:", entry.enteredAt);
+
+// Check all entered waitlists
+const all = fanfare.waitlists.getEnteredWaitlists();
+console.log("On waitlists:", all.length);
+```
+
+### timedReleases
+
+Time-window based access operations.
+
+```typescript
+interface TimedReleaseModule {
+  get(timedReleaseId: string): Promise<TimedRelease>;
+  enter(timedReleaseId: string, variantId?: string): Promise<TimedReleaseConsumerState>;
+  leave(timedReleaseId: string): Promise<void>;
+  complete(timedReleaseId: string): Promise<void>;
+  status(timedReleaseId: string): Promise<TimedReleaseConsumerState>;
+  getActiveTimedReleases(): Record<string, TimedReleaseParticipation>;
+  isEntered(timedReleaseId: string): boolean;
+}
+```
+
+**Example:**
+
+```typescript
+// Enter when the release opens
+await fanfare.timedReleases.enter("tr_123");
+
+// After successful purchase
+await fanfare.timedReleases.complete("tr_123");
+```
+
+### experiences
+
+Journey orchestration operations.
+
+```typescript
+interface ExperienceModule {
+  get(experienceId: string): Promise<ExperienceDetails>;
+  enter(experienceId: string): Promise<ExperienceSession>;
+  leave(experienceId: string): Promise<void>;
+  findSequence(experienceId: string, accessCode?: string): Promise<SequenceRoutingResult>;
+  validateSequenceAccess(sequenceId: string, accessCode?: string): Promise<SequenceAccessResult>;
+  selectSequence(sequenceId: string): Promise<void>;
+  recheckEligibility(): Promise<SequenceEligibility[]>;
+  getCurrentDistributions(sequenceId: string): Promise<DistributionContext>;
+  enterDistribution(distribution: DistributionContext["active"]): Promise<void>;
+  getActiveSession(): ExperienceSession | null;
+  isInExperience(experienceId: string): boolean;
+  getSelectedSequence(): Sequence | null;
+  getMe(): Promise<ConsumerMe>;
+  createJourney(experienceId: string): ExperienceJourney;
+  resumeJourneysFromMe(me?: ConsumerMe): Promise<string[]>;
+  destroy(): void;
+}
+```
+
+See [Experiences](/sdk/core/experiences) for details.
+
+### beacon
+
+Client-side analytics tracking.
+
+```typescript
+interface BeaconModule {
+  track(event: BeaconEvent): void;
+  trackBatch(events: BeaconEvent[]): void;
+  flush(): Promise<void>;
+}
+```
+
+**Example:**
+
+```typescript
+// Track a custom event
+fanfare.beacon.track({
+  event: "product_view",
+  properties: {
+    productId: "prod_123",
+    source: "search",
+  },
+});
+
+// Force flush pending events
+await fanfare.beacon.flush();
+```
+
+## Type Definitions
+
+For complete type definitions, see:
+
+- [Types Reference](/sdk/core/types) - All exported types
+- [Errors](/sdk/core/errors) - Error types and codes

@@ -1,0 +1,79 @@
+---
+title: "Zapier Integration"
+description: "Connect Fanfare to 5,000+ apps with Zapier"
+---
+
+## Overview
+
+{/* TODO: MISSING_FUNCTIONALITY
+Feature: Zapier integration
+Expected behavior: Native Zapier app with triggers and actions
+Current state: Not yet implemented - planned for future release
+*/}
+
+<Callout type="warning">**Coming Soon**: The Zapier integration is under development.</Callout>
+
+The Zapier integration will enable you to connect Fanfare to 5,000+ apps without code.
+
+## Planned Features
+
+### Triggers
+
+Events that start a Zap:
+
+| Trigger           | Description                       |
+| ----------------- | --------------------------------- |
+| New Consumer      | When someone signs up             |
+| Experience Joined | When someone enters an experience |
+| Winner Selected   | When someone wins                 |
+| Order Created     | When an order is placed           |
+
+### Actions
+
+Things Fanfare can do in a Zap:
+
+| Action          | Description                 |
+| --------------- | --------------------------- |
+| Create Consumer | Add a consumer to Fanfare   |
+| Add to Audience | Add consumer to an audience |
+| Update Consumer | Modify consumer data        |
+
+## Example Zaps
+
+### Google Sheets Tracking
+
+**Trigger**: Winner Selected
+**Action**: Add row to Google Sheet
+
+Track all winners in a spreadsheet automatically.
+
+### Slack Notifications
+
+**Trigger**: Order Created
+**Action**: Send Slack message
+
+Get notified when orders come in.
+
+### Email Follow-up
+
+**Trigger**: Experience Joined
+**Action**: Send email via Gmail
+
+Automatically thank participants.
+
+## Workaround: Webhooks + Zapier
+
+Until the native Zapier app is available:
+
+1. Use [Custom Webhooks](/integrations/webhooks/custom-webhooks) (coming soon)
+2. Connect to Zapier via Webhooks by Zapier
+3. Parse the webhook data in Zapier
+
+## Requesting Early Access
+
+Contact support@fanfare.io to be notified when the Zapier integration is available.
+
+## Related Resources
+
+- [Custom Webhooks](/integrations/webhooks/custom-webhooks)
+- [Make Integration](/integrations/webhooks/make)

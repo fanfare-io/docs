@@ -1,0 +1,381 @@
+---
+title: "Twilio Integration"
+description: "Send SMS notifications and OTP codes via Twilio"
+---
+
+## Overview
+
+The Twilio integration enables Fanfare to send SMS messages to consumers for transactional notifications and authentication. This includes:
+
+- One-time password (OTP) codes for login
+- Appointment confirmations and reminders
+- Draw and auction outcome notifications
+- Queue admission alerts
+- Waitlist updates
+
+## Prerequisites
+
+Before using the Twilio integration, Fanfare must be configured with:
+
+- A Twilio account with an active phone number
+- Twilio Account SID and Auth Token
+- A messaging service or phone number for sending
+
+<Callout type="info">
+  **Note**: The Twilio integration is pre-configured for the Fanfare platform. Individual organizations do not need to
+  set up their own Twilio accounts - all SMS messages are sent from Fanfare's shared messaging infrastructure.
+</Callout>
+
+## Supported Message Types
+
+### Authentication Messages
+
+| Template               | Description                              |
+| ---------------------- | ---------------------------------------- |
+| `OTP_LOGIN`            | One-time password for passwordless login |
+| `PERSONAL_ACCESS_CODE` | Unique access codes for experiences      |
+
+### Appointment Messages
+
+| Template                   | Description                     |
+| -------------------------- | ------------------------------- |
+| `APPOINTMENT_CONFIRMATION` | Confirms booking details        |
+| `APPOINTMENT_REMINDER`     | Reminds of upcoming appointment |
+| `APPOINTMENT_CANCELLED`    | Notifies of cancellation        |
+| `APPOINTMENT_RESCHEDULED`  | Notifies of date/time change    |
+
+### Experience Outcome Messages
+
+| Template            | Description                |
+| ------------------- | -------------------------- |
+| `AUCTION_WON`       | Notifies winner of auction |
+| `AUCTION_LOST`      | Notifies non-winners       |
+| `DRAW_WON`          | Notifies draw winner       |
+| `DRAW_ENTERED`      | Confirms draw entry        |
+| `DRAW_NOT_SELECTED` | Notifies non-selection     |
+| `QUEUE_ADMITTED`    | Notifies queue admission   |
+
+### Waitlist Messages
+
+| Template                | Description              |
+| ----------------------- | ------------------------ |
+| `WAITLIST_CONFIRMATION` | Confirms waitlist signup |
+| `WAITLIST_NOTIFIED`     | Notifies of availability |
+
+## Message Delivery
+
+### How Messages Are Sent
+
+```
+┌─────────────┐     ┌─────────────┐     ┌─────────────┐     ┌─────────────┐
+│   Fanfare   │────▶│    SNS      │────▶│    SQS      │────▶│   Lambda    │
+│   Event     │     │   Topic     │     │   Queue     │     │  Processor  │
+└─────────────┘     └─────────────┘     └─────────────┘     └─────────────┘
+                                                                    │
+                                                                    │
+                                                                    ▼
+                                                            ┌─────────────┐
+                                                            │   Twilio    │
+                                                            │    API      │
+                                                            └─────────────┘
+```
+
+1. An event triggers an SMS (e.g., consumer wins auction)
+2. Message is queued via SNS/SQS
+3. Lambda processor sends via Twilio API
+4. Delivery status tracked via webhooks
+
+### Delivery Status
+
+Messages can have the following statuses:
+
+| Status      | Description                       |
+| ----------- | --------------------------------- |
+| `SENT`      | Message accepted by Twilio        |
+| `DELIVERED` | Message delivered to device       |
+| `FAILED`    | Delivery failed                   |
+| `READ`      | Message was read (when supported) |
+
+## Webhook Events
+
+Fanfare receives delivery status updates from Twilio via webhooks:
+
+### Webhook Payload
+
+Twilio sends status callbacks with the following fields:
+
+| Field                         | Description               |
+| ----------------------------- | ------------------------- |
+| `MessageSid`                  | Unique message identifier |
+| `MessageStatus` / `SmsStatus` | Current delivery status   |
+| `To`                          | Recipient phone number    |
+| `From`                        | Sender phone number       |
+
+### Webhook Security
+
+Twilio webhooks are verified using HMAC-SHA1 signatures:
+
+```typescript
+// Signature computation
+const signature = computeTwilioSignature(authToken, fullUrl, params);
+const isValid = timingSafeEqual(signature, headerSignature);
+```
+
+The signature is computed over:
+
+1. The full webhook URL (including query parameters)
+2. All form parameters in alphabetical order
+
+### Engagement Tracking
+
+When a message is marked as `READ`:
+
+- Consumer's `engagedCount` is incremented
+- `lastEngagedAt` timestamp is updated
+- Used for engagement scoring and analytics
+
+## API Reference
+
+### Queue SMS Message
+
+Send an SMS message to a consumer.
+
+```bash
+POST /api/messaging/send-sample
+Content-Type: application/json
+
+{
+  "channel": "SMS",
+  "template": "OTP_LOGIN",
+  "toPhone": "+15551234567",
+  "templateData": {
+    "template": "OTP_LOGIN",
+    "otpCode": "123456"
+  }
+}
+```
+
+**Response:**
+
+```json
+{
+  "status": "queued",
+  "id": "msg_abc123"
+}
+```
+
+### Template Data Schemas
+
+Each template requires specific data:
+
+**OTP_LOGIN:**
+
+```json
+{
+  "template": "OTP_LOGIN",
+  "otpCode": "123456"
+}
+```
+
+**APPOINTMENT_CONFIRMATION:**
+
+```json
+{
+  "template": "APPOINTMENT_CONFIRMATION",
+  "appointmentDate": "2024-06-25T14:00:00Z",
+  "timeZone": "America/Los_Angeles",
+  "locationName": "Downtown Store",
+  "productName": "Limited Edition Sneakers"
+}
+```
+
+**AUCTION_WON:**
+
+```json
+{
+  "template": "AUCTION_WON",
+  "productName": "Exclusive Watch",
+  "winningBid": "$1,250.00"
+}
+```
+
+**QUEUE_ADMITTED:**
+
+```json
+{
+  "template": "QUEUE_ADMITTED",
+  "productName": "New Release"
+}
+```
+
+## Rate Limiting
+
+### API Rate Limits
+
+The messaging endpoint is rate-limited to prevent abuse:
+
+| Limit       | Window     | Scope                     |
+| ----------- | ---------- | ------------------------- |
+| 10 requests | 60 seconds | Per user per organization |
+
+### Twilio Rate Limits
+
+Twilio has carrier-level rate limits:
+
+- US/Canada: ~1 message/second per phone number
+- Use messaging services for higher throughput
+
+## Phone Number Validation
+
+Phone numbers must be in E.164 format:
+
+- Start with `+` followed by country code
+- No spaces, dashes, or parentheses
+- Examples: `+15551234567`, `+442071234567`
+
+Invalid phone numbers will result in an error:
+
+```json
+{
+  "error": "Invalid phone number format"
+}
+```
+
+## Testing
+
+### Sending Test Messages
+
+Use the messaging endpoint to send test messages:
+
+```bash
+POST /api/messaging/send-sample
+Content-Type: application/json
+
+{
+  "channel": "SMS",
+  "template": "OTP_LOGIN",
+  "toPhone": "+15551234567"
+}
+```
+
+If `templateData` is omitted, sample data is generated automatically.
+
+### Test Metadata
+
+Test messages include metadata:
+
+- `isTest: true`
+- `requestedBy: <userId>`
+- `ts: <timestamp>`
+
+## Troubleshooting
+
+### Common Issues
+
+**Message not delivered**
+
+- Verify phone number is in E.164 format
+- Check if the number is valid and can receive SMS
+- Review Twilio logs for carrier errors
+
+**Webhook not received**
+
+- Verify webhook URL is publicly accessible
+- Check Twilio signature validation
+- Review webhook configuration in Twilio console
+
+**Rate limit exceeded**
+
+- Wait for the rate limit window to reset
+- Reduce message frequency
+- Contact support for higher limits
+
+**Invalid template data**
+
+- Verify all required fields are provided
+- Check field types match the schema
+- Use the correct template name
+
+### Checking Message Status
+
+Query the transactional messages table:
+
+```sql
+SELECT
+  id,
+  status,
+  provider_message_id,
+  created_at,
+  sent_at
+FROM transactional_messages
+WHERE organization_id = 'org_123'
+  AND channel_type = 'SMS'
+ORDER BY created_at DESC;
+```
+
+### Delivery Event Logs
+
+Check delivery events for detailed status:
+
+```sql
+SELECT
+  event_type,
+  event_time,
+  raw_webhook_data
+FROM message_delivery_events
+WHERE transactional_message_id = 'msg_123'
+ORDER BY event_time;
+```
+
+## Security
+
+### Message Content
+
+- Messages are sent from Fanfare's verified sender
+- No sensitive data beyond the template variables
+- OTP codes expire after a short window
+
+### Phone Number Privacy
+
+- Phone numbers are stored encrypted
+- Only displayed in masked format in the UI
+- Not included in logs
+
+### Webhook Authentication
+
+- All callbacks verified via Twilio signature
+- Invalid signatures are rejected with 401
+- Timing-safe comparison prevents timing attacks
+
+## Limitations
+
+| Limitation            | Description                                  |
+| --------------------- | -------------------------------------------- |
+| E.164 format required | Phone numbers must include country code      |
+| No MMS support        | Only plain text SMS supported                |
+| Carrier filtering     | Some carriers may filter automated messages  |
+| International rates   | International SMS has varying delivery rates |
+
+## Delivery Considerations
+
+### Carrier Filtering
+
+Some messages may be filtered by carriers:
+
+- Use clear, non-promotional language
+- Include opt-out instructions where required
+- Monitor delivery rates for issues
+
+### Time Zones
+
+Appointment messages respect time zones:
+
+- Store appointments in UTC
+- Pass `timeZone` parameter for display formatting
+- Messages show localized date/time
+
+## Related Resources
+
+- [Consumer Authentication](/features/authentication)
+- [Appointment Management](/features/experiences/appointments)
+- [Transactional Messaging](/api-reference/messaging)

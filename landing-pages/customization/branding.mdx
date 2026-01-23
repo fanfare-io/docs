@@ -1,0 +1,271 @@
+---
+title: "Brand Customization"
+description: "Apply your brand identity to landing pages"
+---
+
+{/* TODO: MISSING_FUNCTIONALITY
+Feature: Landing page brand customization UI
+Expected behavior: Per-page theme overrides in landing page editor
+Current state: Theme inheritance model exists; UI for per-page overrides not implemented
+Blocking: partial - Organization themes work; page-level overrides pending
+*/}
+
+<Note>
+**Partial Availability**
+
+Organization brand themes are fully functional and will apply to landing pages. Per-page theme overrides are coming with the landing page editor.
+
+</Note>
+
+## Theme Inheritance
+
+Landing pages inherit branding from multiple levels:
+
+```
+Organization Brand Theme (base)
+         ↓
+Experience Theme Overrides (optional)
+         ↓
+Landing Page Theme Overrides (optional)
+         ↓
+Final Rendered Page
+```
+
+Each level can override specific properties while inheriting the rest.
+
+## Brand Theme Properties
+
+### Colors
+
+| Property     | Description                               | Example                  |
+| ------------ | ----------------------------------------- | ------------------------ |
+| `primary`    | Main brand color, used for CTAs and links | `#8c14ff`                |
+| `secondary`  | Accent color for secondary actions        | `#22d3ee`                |
+| `background` | Page background (supports CSS gradients)  | `#0b1020`                |
+| `text`       | Primary text color                        | `#e2e8f0`                |
+| `muted`      | Secondary text and captions               | `rgba(226,232,240,0.72)` |
+
+### Typography
+
+| Property            | Description                  | Example                           |
+| ------------------- | ---------------------------- | --------------------------------- |
+| `fontFamily`        | Primary font stack           | `Inter, ui-sans-serif, system-ui` |
+| `headingFontFamily` | Font for headings (optional) | `Playfair Display, serif`         |
+
+### Visual Style
+
+| Property       | Description       | Options                          |
+| -------------- | ----------------- | -------------------------------- |
+| `borderRadius` | Corner rounding   | `none`, `sm`, `md`, `lg`, `full` |
+| `buttonStyle`  | Button appearance | `solid`, `outline`, `ghost`      |
+
+## Setting Organization Theme
+
+Configure your base brand theme in organization settings:
+
+1. Navigate to **Settings** > **Branding**
+2. Upload your logo
+3. Set primary and secondary colors
+4. Choose typography options
+5. Save changes
+
+All landing pages will inherit these settings by default.
+
+{/* TODO: MISSING_FUNCTIONALITY
+Feature: Organization branding UI with live preview
+Expected behavior: Real-time preview of theme changes across all page types
+Current state: Theme settings exist; preview functionality varies by context
+Blocking: false
+*/}
+
+## Experience-Level Overrides
+
+Override branding for a specific experience:
+
+1. Open the experience detail page
+2. Navigate to **Design Studio**
+3. Adjust theme settings
+4. Save changes
+
+These overrides apply to:
+
+- The experience's landing page
+- Embedded widgets for this experience
+- Consumer-facing emails for this experience
+
+## Page-Level Overrides
+
+{/* TODO: MISSING_FUNCTIONALITY
+Feature: Per-page theme overrides in editor
+Expected behavior: Override specific theme properties within the landing page editor
+Current state: Data model supports overrides; UI not implemented
+Blocking: true
+*/}
+
+<Info>
+  Page-level theme overrides will be available in the landing page editor. Until then, use experience-level overrides.
+</Info>
+
+Within the landing page editor, you will be able to:
+
+- Override specific colors for this page only
+- Use a different font for this page
+- Adjust button styles
+
+Example use case: A special holiday-themed landing page that uses festive colors while maintaining your brand fonts.
+
+## Color Best Practices
+
+### Contrast Requirements
+
+Ensure sufficient contrast for accessibility:
+
+| Element            | Minimum Contrast | Recommended |
+| ------------------ | ---------------- | ----------- |
+| Body text          | 4.5:1            | 7:1         |
+| Large text (18px+) | 3:1              | 4.5:1       |
+| UI components      | 3:1              | 4.5:1       |
+
+<Tip>Use a contrast checker tool to verify your color combinations meet WCAG guidelines.</Tip>
+
+### Dark vs Light Themes
+
+Consider your audience and context:
+
+| Theme | Best For                                             |
+| ----- | ---------------------------------------------------- |
+| Dark  | Tech products, luxury items, evening events          |
+| Light | General audiences, e-commerce, professional services |
+
+### Gradient Backgrounds
+
+Gradients create visual interest. The editor supports:
+
+```css
+/* Linear gradient */
+background: linear-gradient(135deg, #0b1020, #0f172a 55%, #05060f);
+
+/* Radial gradient with overlay */
+background:
+  radial-gradient(1200px 700px at 25% 20%, rgba(140, 20, 255, 0.35), transparent 55%),
+  linear-gradient(135deg, #0b1020, #0f172a);
+```
+
+## Typography Guidelines
+
+### Font Selection
+
+Choose fonts that:
+
+- Load quickly (consider web font performance)
+- Are legible at various sizes
+- Match your brand personality
+
+### Recommended Font Pairings
+
+| Style     | Heading Font     | Body Font       |
+| --------- | ---------------- | --------------- |
+| Modern    | Inter            | Inter           |
+| Classic   | Playfair Display | Source Sans Pro |
+| Bold      | Montserrat       | Open Sans       |
+| Technical | JetBrains Mono   | Inter           |
+
+### Font Size Scale
+
+The editor uses a consistent type scale:
+
+| Element | Size            | Weight         |
+| ------- | --------------- | -------------- |
+| H1      | 48px / 3rem     | Bold (700)     |
+| H2      | 36px / 2.25rem  | Bold (700)     |
+| H3      | 24px / 1.5rem   | Semibold (600) |
+| Body    | 16px / 1rem     | Normal (400)   |
+| Caption | 14px / 0.875rem | Normal (400)   |
+
+## Logo Guidelines
+
+### Supported Formats
+
+| Format | Best For                     |
+| ------ | ---------------------------- |
+| SVG    | Scalable logos, best quality |
+| PNG    | Logos with transparency      |
+| JPG    | Photographic logos           |
+
+### Recommended Sizes
+
+| Placement | Recommended Size           |
+| --------- | -------------------------- |
+| Header    | Max height 48px            |
+| Footer    | Max height 32px            |
+| Favicon   | 32x32px, 180x180px (Apple) |
+
+### Logo Variants
+
+Upload multiple versions for different contexts:
+
+- **Primary** - Full color for light backgrounds
+- **Reversed** - For dark backgrounds
+- **Icon** - Compact version without text
+
+## CSS Variables
+
+The theme system uses CSS custom properties:
+
+```css
+:root {
+  /* Colors */
+  --ff-color-primary: #8c14ff;
+  --ff-color-secondary: #22d3ee;
+  --ff-color-background: #0b1020;
+  --ff-color-text: #e2e8f0;
+  --ff-color-muted: rgba(226, 232, 240, 0.72);
+
+  /* Typography */
+  --ff-font-family: Inter, ui-sans-serif, system-ui;
+  --ff-font-size-base: 16px;
+
+  /* Spacing */
+  --ff-spacing-section: 4rem;
+  --ff-spacing-element: 1.5rem;
+
+  /* Borders */
+  --ff-border-radius: 0.75rem;
+}
+```
+
+<Info>
+  For advanced customization using CSS variables, see [Advanced Customization](/landing-pages/customization/advanced).
+</Info>
+
+## Preview Your Theme
+
+Always preview theme changes across:
+
+- **Desktop** - Full layout
+- **Tablet** - Medium breakpoint
+- **Mobile** - Narrow layout
+
+Check that:
+
+- Text remains readable
+- Buttons are clearly visible
+- Images work with your color scheme
+- Interactive elements have visible focus states
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Content Blocks" icon="cube" href="/landing-pages/customization/content-blocks">
+    Customize section content
+  </Card>
+  <Card title="Media" icon="image" href="/landing-pages/customization/media">
+    Add images and videos
+  </Card>
+  <Card title="Countdown Timer" icon="clock" href="/landing-pages/customization/countdown">
+    Display time until launch
+  </Card>
+  <Card title="SEO Settings" icon="magnifying-glass" href="/landing-pages/publishing/seo">
+    Optimize for search engines
+  </Card>
+</CardGroup>

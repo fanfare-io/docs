@@ -1,0 +1,288 @@
+---
+title: Timed Release Widget
+description: Pre-built flash sale and time-window widget
+---
+
+# Timed Release Widget
+
+The Timed Release Widget provides a complete flash sale or time-window shopping experience with countdown timers and urgency indicators.
+
+## Web Component
+
+```tsx
+<fanfare-timed-release-widget
+  timed-release-id="tr_123"
+  checkout-url="/shop"
+  show-header="true"
+  show-countdown="true"
+  show-actions="true"
+/>
+```
+
+## Attributes
+
+| Attribute          | Type     | Default  | Description                    |
+| ------------------ | -------- | -------- | ------------------------------ |
+| `timed-release-id` | `string` | Required | The timed release identifier   |
+| `checkout-url`     | `string` | -        | URL to open for shopping       |
+| `show-header`      | `string` | `"true"` | Show title and description     |
+| `show-countdown`   | `string` | `"true"` | Show countdown timer           |
+| `show-actions`     | `string` | `"true"` | Show action buttons            |
+| `container-class`  | `string` | -        | Custom CSS class for container |
+
+## Events
+
+| Event                            | Detail                       | Description          |
+| -------------------------------- | ---------------------------- | -------------------- |
+| `fanfare-timed-release-enter`    | `{ timedReleaseId: string }` | User entered release |
+| `fanfare-timed-release-shop`     | `{ timedReleaseId: string }` | User clicked shop    |
+| `fanfare-timed-release-complete` | `{ timedReleaseId: string }` | Purchase completed   |
+| `fanfare-timed-release-exit`     | `{ timedReleaseId: string }` | User exited          |
+| `fanfare-timed-release-expired`  | `{ timedReleaseId: string }` | Time window expired  |
+
+## Event Handling Example
+
+```tsx
+import { useEffect, useRef, useState } from "react";
+
+function FlashSalePage() {
+  const widgetRef = useRef<HTMLElement>(null);
+  const [hasEntered, setHasEntered] = useState(false);
+
+  useEffect(() => {
+    const widget = widgetRef.current;
+    if (!widget) return;
+
+    const handleEnter = (e: CustomEvent) => {
+      console.log("Entered flash sale:", e.detail.timedReleaseId);
+      setHasEntered(true);
+      analytics.track("flash_sale_entered");
+    };
+
+    const handleShop = (e: CustomEvent) => {
+      console.log("User is shopping");
+      analytics.track("flash_sale_shopping");
+    };
+
+    const handleComplete = (e: CustomEvent) => {
+      console.log("Purchase completed!");
+      analytics.track("flash_sale_completed");
+      showSuccessToast("Thank you for your purchase!");
+    };
+
+    const handleExpired = (e: CustomEvent) => {
+      console.log("Time window expired");
+      showWarningToast("Your shopping window has expired");
+    };
+
+    widget.addEventListener("fanfare-timed-release-enter", handleEnter);
+    widget.addEventListener("fanfare-timed-release-shop", handleShop);
+    widget.addEventListener("fanfare-timed-release-complete", handleComplete);
+    widget.addEventListener("fanfare-timed-release-expired", handleExpired);
+
+    return () => {
+      widget.removeEventListener("fanfare-timed-release-enter", handleEnter);
+      widget.removeEventListener("fanfare-timed-release-shop", handleShop);
+      widget.removeEventListener("fanfare-timed-release-complete", handleComplete);
+      widget.removeEventListener("fanfare-timed-release-expired", handleExpired);
+    };
+  }, []);
+
+  return (
+    <div className="flash-sale-page">
+      <div className="hero">
+        <h1>Flash Sale</h1>
+        <p>Limited time only - up to 70% off!</p>
+      </div>
+
+      <fanfare-timed-release-widget ref={widgetRef} timed-release-id="tr_123" checkout-url="/shop" />
+
+      {hasEntered && <div className="urgency-banner">Complete your purchase before time runs out!</div>}
+    </div>
+  );
+}
+```
+
+## Timed Release Status States
+
+The widget handles these states automatically:
+
+| Status      | Description               | UI Display                   |
+| ----------- | ------------------------- | ---------------------------- |
+| `open`      | Release window is open    | Enter button + Countdown     |
+| `entered`   | User has entered          | Shop button + Countdown      |
+| `shopping`  | User is actively shopping | Return button + Urgent timer |
+| `completed` | Purchase completed        | Success message              |
+| `ended`     | Time window has ended     | Ended message                |
+
+## Styling
+
+### CSS Variables
+
+```css
+fanfare-timed-release-widget {
+  --fanfare-primary: #ef4444;
+  --fanfare-primary-hover: #dc2626;
+  --fanfare-success: #22c55e;
+  --fanfare-warning: #f59e0b;
+  --fanfare-background: #ffffff;
+  --fanfare-foreground: #1f2937;
+  --fanfare-radius: 0.5rem;
+}
+```
+
+## Urgency Styling
+
+Create urgency as time runs low:
+
+```css
+/* Normal state */
+fanfare-timed-release-widget {
+  --fanfare-primary: #3b82f6;
+}
+
+/* Urgent state (add via JavaScript when time < 5 minutes) */
+fanfare-timed-release-widget.urgent {
+  --fanfare-primary: #ef4444;
+  animation: pulse 1s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+```
+
+```tsx
+function UrgentFlashSale() {
+  const widgetRef = useRef<HTMLElement>(null);
+  const [isUrgent, setIsUrgent] = useState(false);
+
+  // Listen to time updates and set urgent when < 5 minutes
+  useEffect(() => {
+    const checkTime = () => {
+      // Check remaining time and set urgent state
+    };
+    const interval = setInterval(checkTime, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <fanfare-timed-release-widget
+      ref={widgetRef}
+      timed-release-id="tr_123"
+      checkout-url="/shop"
+      className={isUrgent ? "urgent" : ""}
+    />
+  );
+}
+```
+
+## Using with React Hook (Alternative)
+
+For more control, use the `useTimedRelease` hook:
+
+```tsx
+import { useTimedRelease } from "@waitify-io/fanfare-sdk-react";
+
+function CustomFlashSaleUI() {
+  const { timedRelease, status, endTime, timeRemaining, isEntered, hasCompleted, enter, leave, complete, isLoading } =
+    useTimedRelease("tr_123");
+
+  if (hasCompleted) {
+    return (
+      <div className="completed">
+        <h2>Purchase Complete!</h2>
+        <p>Thank you for shopping with us.</p>
+      </div>
+    );
+  }
+
+  if (status === "ended") {
+    return (
+      <div className="ended">
+        <h2>Flash Sale Ended</h2>
+        <p>This flash sale has ended. Check back for future sales!</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flash-sale-ui">
+      {timeRemaining && (
+        <div className={`countdown ${timeRemaining < 300000 ? "urgent" : ""}`}>
+          <p>{isEntered ? "Complete purchase in:" : "Sale ends in:"}</p>
+          <span className="time">{formatCountdown(timeRemaining)}</span>
+        </div>
+      )}
+
+      {isEntered ? (
+        <div className="shopping-mode">
+          <p>You are in! Shop now before time runs out.</p>
+          <a href="/shop" className="shop-button">
+            Go to Shop
+          </a>
+          <button onClick={leave} className="secondary">
+            Exit Sale
+          </button>
+        </div>
+      ) : (
+        <button onClick={enter} disabled={isLoading} className="enter-button">
+          {isLoading ? "Entering..." : "Start Shopping"}
+        </button>
+      )}
+    </div>
+  );
+}
+```
+
+## Checkout Integration
+
+Track when a user completes a purchase:
+
+```tsx
+function CheckoutPage({ timedReleaseId }: { timedReleaseId: string }) {
+  const { complete } = useTimedRelease(timedReleaseId);
+
+  const handlePaymentSuccess = async () => {
+    // After successful payment processing
+    await complete();
+
+    // Redirect to confirmation
+    window.location.href = "/order-confirmation";
+  };
+
+  return <CheckoutForm onSuccess={handlePaymentSuccess} />;
+}
+```
+
+## TypeScript Declaration
+
+```typescript
+declare namespace JSX {
+  interface IntrinsicElements {
+    "fanfare-timed-release-widget": React.DetailedHTMLProps<
+      React.HTMLAttributes<HTMLElement> & {
+        "timed-release-id": string;
+        "checkout-url"?: string;
+        "show-header"?: string;
+        "show-countdown"?: string;
+        "show-actions"?: string;
+        "container-class"?: string;
+      },
+      HTMLElement
+    >;
+  }
+}
+```
+
+## Related
+
+- [useTimedRelease Hook](/sdk/react/hooks/use-timed-release) - React hook for custom UIs
+- [Widgets Overview](/sdk/react/widgets/overview) - Widget architecture
+- [Theming](/sdk/react/customization/theming) - Theme customization

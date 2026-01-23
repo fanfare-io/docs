@@ -1,0 +1,244 @@
+---
+title: Performance Optimization
+description: Best practices for optimizing Fanfare SDK performance and reducing latency.
+---
+
+# Performance Optimization
+
+Optimize your Fanfare integration for fast load times and responsive user experiences.
+
+## SDK Initialization
+
+### Lazy Loading
+
+Initialize the SDK only when needed to reduce initial page load time.
+
+```typescript
+// Lazy load the SDK when entering an experience
+async function initializeFanfare() {
+  const { FanfareClient } = await import("@fanfare/sdk");
+
+  const client = new FanfareClient({
+    publishableKey: "pk_live_...",
+    debug: false, // Disable in production
+  });
+
+  return client;
+}
+
+// Initialize when user navigates to experience
+button.addEventListener("click", async () => {
+  const client = await initializeFanfare();
+  await client.experiences.enter(experienceId);
+});
+```
+
+### Early Initialization for Critical Paths
+
+For pages where users will definitely enter an experience, initialize early.
+
+```typescript
+// Preconnect to Fanfare services
+<link rel="preconnect" href="https://consumer.fanfare.io" />
+
+// Initialize SDK in page header
+const fanfare = new FanfareClient({
+  publishableKey: "pk_live_...",
+});
+```
+
+## Network Optimization
+
+### Connection Pooling
+
+The SDK maintains persistent connections for real-time updates. Avoid creating multiple client instances.
+
+```typescript
+// Good: Single client instance
+const client = new FanfareClient({ publishableKey: "pk_live_..." });
+
+// Use the same client throughout your application
+export { client };
+```
+
+```typescript
+// Bad: Multiple client instances
+function enterExperience(id: string) {
+  // Creates new connections each time
+  const client = new FanfareClient({ publishableKey: "pk_live_..." });
+  return client.experiences.enter(id);
+}
+```
+
+### Handling Rate Limits
+
+The API returns rate limit headers to help you optimize request patterns.
+
+```typescript
+// Rate limit headers returned by the API
+// X-RateLimit-Limit: Maximum requests per window
+// X-RateLimit-Remaining: Remaining requests in window
+// Retry-After: Seconds to wait if rate limited
+
+// SDK handles rate limits automatically with exponential backoff
+// For custom implementations, respect the Retry-After header
+```
+
+## Caching Strategies
+
+### Experience Details
+
+Cache experience details to avoid redundant API calls.
+
+```typescript
+const experienceCache = new Map<string, { data: ExperienceDetails; timestamp: number }>();
+const CACHE_TTL = 60000; // 1 minute
+
+async function getExperience(id: string): Promise<ExperienceDetails> {
+  const cached = experienceCache.get(id);
+
+  if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
+    return cached.data;
+  }
+
+  const data = await client.experiences.get(id);
+  experienceCache.set(id, { data, timestamp: Date.now() });
+
+  return data;
+}
+```
+
+### Session State
+
+The SDK maintains session state internally. Access it without additional API calls.
+
+```typescript
+// Get current session state without API call
+const session = client.experiences.getActiveSession();
+const isInQueue = client.queues.isInQueue(queueId);
+const position = client.queues.getPosition(queueId);
+```
+
+## Real-Time Updates
+
+### Efficient Event Handling
+
+Subscribe only to events you need.
+
+```typescript
+// Good: Subscribe to specific events
+client.on("queue:position-updated", handlePositionUpdate);
+client.on("queue:access-granted", handleAccessGranted);
+
+// Clean up when component unmounts
+return () => {
+  client.off("queue:position-updated", handlePositionUpdate);
+  client.off("queue:access-granted", handleAccessGranted);
+};
+```
+
+### Debounce UI Updates
+
+For rapidly changing data like queue position, debounce UI updates.
+
+```typescript
+import { debounce } from "lodash";
+
+const updatePosition = debounce((position: number) => {
+  setQueuePosition(position);
+}, 100); // Update UI at most every 100ms
+
+client.on("queue:position-updated", ({ position }) => {
+  updatePosition(position);
+});
+```
+
+## Bundle Size
+
+### Tree Shaking
+
+Import only the modules you need.
+
+```typescript
+// Good: Import specific hooks
+import { useExperienceJourney } from "@fanfare/sdk-react";
+
+// Avoid: Importing entire package if using only specific features
+import * as Fanfare from "@fanfare/sdk-react";
+```
+
+### Code Splitting
+
+Split Fanfare-related code into separate chunks.
+
+```typescript
+// Next.js dynamic import
+const ExperienceWidget = dynamic(
+  () => import("./components/ExperienceWidget"),
+  {
+    ssr: false,
+    loading: () => <LoadingSpinner />
+  }
+);
+```
+
+## Monitoring Performance
+
+### SDK Metrics
+
+The SDK provides performance metrics for monitoring.
+
+```typescript
+// Access SDK metrics (when debug mode is enabled)
+const client = new FanfareClient({
+  publishableKey: "pk_live_...",
+  debug: process.env.NODE_ENV === "development",
+});
+
+// SDK logs timing information for key operations
+// [Fanfare] 2024-01-15T10:00:00.000Z [DEBUG] Experience entered in 45ms
+```
+
+### Recommended Metrics
+
+Track these metrics in your application:
+
+| Metric                  | Target  | Description                 |
+| ----------------------- | ------- | --------------------------- |
+| SDK initialization time | < 100ms | Time from import to ready   |
+| Experience entry time   | < 500ms | Time to enter an experience |
+| Position update latency | < 200ms | Real-time update delivery   |
+| Error rate              | < 0.1%  | API and SDK errors          |
+
+## Production Checklist
+
+<AccordionGroup>
+  <Accordion title="Disable debug mode">
+    ```typescript
+    const client = new FanfareClient({
+      publishableKey: "pk_live_...",
+      debug: false, // Ensure this is false in production
+    });
+    ```
+  </Accordion>
+
+<Accordion title="Use production API keys">
+  Use live keys (`pk_live_`, `sk_live_`) in production, not test keys.
+</Accordion>
+
+<Accordion title="Implement error boundaries">
+  Wrap Fanfare components in error boundaries to prevent crashes from affecting your entire application.
+</Accordion>
+
+<Accordion title="Monitor performance">Set up monitoring for SDK performance metrics and error rates.</Accordion>
+
+  <Accordion title="Test under load">
+    Run load tests to verify performance under expected traffic conditions.
+  </Accordion>
+</AccordionGroup>
+
+## Next Steps
+
+- [Scalability Guide](/resources/best-practices/scalability) - Handle high-demand events
+- [Testing Strategies](/resources/best-practices/testing) - Validate your integration
+- [SDK Errors](/resources/troubleshooting/sdk-errors) - Handle errors gracefully

@@ -1,0 +1,369 @@
+---
+title: Configure Appointment
+description: Set up scheduled time slot experiences for services, events, and reservations
+---
+
+# Configure Appointment Experience
+
+Appointment experiences enable consumers to book specific time slots for services, events, or experiences. This is ideal for scenarios where you need to manage capacity and scheduling, such as private shopping, consultations, or event reservations.
+
+## When to Use Appointments
+
+Appointments are best for:
+
+- **Private shopping** - One-on-one shopping experiences
+- **Consultations** - Service appointments with staff
+- **Event reservations** - Scheduled event access
+- **Product pickups** - Organized collection times
+- **VIP experiences** - Exclusive scheduled access
+
+## Creating an Appointment Experience
+
+1. Navigate to **Experiences > Create Experience**
+2. Select **Appointment** from the experience type options
+3. Complete the appointment configuration form
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/experiences/create?type=APPOINTMENT
+Shows: Appointment creation form with all fields visible
+Annotations: Number the main sections of the form
+Alt text: "Appointment experience creation form showing all configuration options"
+*/}
+
+![Appointment creation](./images/appointment-create.png)
+_Caption: The appointment creation form with all configuration options_
+
+## Appointment-Specific Settings
+
+### Schedule Configuration
+
+Define when appointments are available:
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/experiences/create?type=APPOINTMENT
+Shows: Schedule configuration section
+Annotations: Label date range, time slots, and recurring options
+Alt text: "Schedule configuration showing date range and time slot settings"
+*/}
+
+![Schedule configuration](./images/appointment-schedule.png)
+_Caption: Configure available dates and times_
+
+| Field               | Required | Description                       |
+| ------------------- | -------- | --------------------------------- |
+| **Available From**  | Yes      | First date appointments available |
+| **Available Until** | Yes      | Last date appointments available  |
+| **Time Zone**       | Yes      | Time zone for all slots           |
+| **Booking Opens**   | No       | When consumers can start booking  |
+| **Booking Closes**  | No       | Deadline for booking              |
+
+### Time Slot Configuration
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/experiences/create?type=APPOINTMENT
+Shows: Time slot settings
+Annotations: Label slot duration, start times, and buffer settings
+Alt text: "Time slot configuration showing duration and scheduling options"
+*/}
+
+![Time slot settings](./images/appointment-slots.png)
+_Caption: Define your time slot structure_
+
+| Field              | Required | Description                                   |
+| ------------------ | -------- | --------------------------------------------- |
+| **Slot Duration**  | Yes      | Length of each appointment (e.g., 30 minutes) |
+| **Start Times**    | Yes      | When slots begin (e.g., every hour)           |
+| **Buffer Time**    | No       | Gap between appointments                      |
+| **Slots Per Time** | No       | Concurrent appointments allowed               |
+
+### Availability Patterns
+
+Choose how to define availability:
+
+| Pattern             | Description            | Best For               |
+| ------------------- | ---------------------- | ---------------------- |
+| **Daily Schedule**  | Same times every day   | Regular business hours |
+| **Weekly Schedule** | Different times by day | Varying schedules      |
+| **Custom Dates**    | Specific dates only    | Events, limited runs   |
+| **Recurring**       | Repeat weekly/monthly  | Ongoing programs       |
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/experiences/create?type=APPOINTMENT
+Shows: Weekly schedule grid
+Annotations: Show different days with different availability
+Alt text: "Weekly schedule showing different availability by day"
+*/}
+
+![Weekly schedule](./images/appointment-weekly.png)
+_Caption: Set different availability for each day of the week_
+
+### Capacity Settings
+
+| Field                | Required | Description                     |
+| -------------------- | -------- | ------------------------------- |
+| **Slots Per Time**   | Yes      | How many can book the same slot |
+| **Max Per Day**      | No       | Total appointments per day      |
+| **Max Per Consumer** | No       | Limit bookings per consumer     |
+
+## Location Configuration
+
+If appointments happen at physical locations:
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/experiences/create?type=APPOINTMENT
+Shows: Location selection or configuration
+Annotations: None needed
+Alt text: "Location configuration for in-person appointments"
+*/}
+
+![Location settings](./images/appointment-location.png)
+_Caption: Configure appointment location_
+
+| Field                    | Description                           |
+| ------------------------ | ------------------------------------- |
+| **Location**             | Select from your configured locations |
+| **Address Display**      | What consumers see for the address    |
+| **Arrival Instructions** | Directions, parking, check-in info    |
+
+## Booking Rules
+
+### Lead Time
+
+Control how far in advance bookings can be made:
+
+| Setting             | Description                                     |
+| ------------------- | ----------------------------------------------- |
+| **Minimum Notice**  | How far ahead bookings must be (e.g., 24 hours) |
+| **Maximum Advance** | How far ahead bookings can be (e.g., 30 days)   |
+
+### Cancellation Policy
+
+| Setting                 | Description                        |
+| ----------------------- | ---------------------------------- |
+| **Allow Cancellation**  | Whether consumers can cancel       |
+| **Cancellation Window** | How far ahead they must cancel     |
+| **Allow Rescheduling**  | Whether consumers can change times |
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/experiences/create?type=APPOINTMENT
+Shows: Cancellation and rescheduling settings
+Annotations: Label cancellation window and rescheduling toggle
+Alt text: "Booking policy settings for cancellations and changes"
+*/}
+
+![Booking policies](./images/appointment-policies.png)
+_Caption: Set cancellation and rescheduling policies_
+
+## Notifications
+
+### Consumer Notifications
+
+| Event                      | Notification                         |
+| -------------------------- | ------------------------------------ |
+| **Booking Confirmed**      | Appointment details and confirmation |
+| **Reminder**               | Upcoming appointment reminder        |
+| **24-Hour Reminder**       | Day-before reminder                  |
+| **Same-Day Reminder**      | Morning-of reminder                  |
+| **Cancellation Confirmed** | Booking cancelled confirmation       |
+| **Rescheduled**            | New time confirmation                |
+
+### Staff Notifications
+
+| Event                | Notification                  |
+| -------------------- | ----------------------------- |
+| **New Booking**      | Someone booked an appointment |
+| **Cancellation**     | Appointment was cancelled     |
+| **Today's Schedule** | Daily appointment summary     |
+
+### Reminder Schedule
+
+Configure automatic reminders:
+
+| Timing          | Recommended For       |
+| --------------- | --------------------- |
+| 1 week before   | Long-lead bookings    |
+| 24 hours before | Standard reminder     |
+| 2 hours before  | Same-day confirmation |
+
+## Appointment States
+
+```
+Draft → Published → Booking Open → In Progress → Completed
+                         ↓              ↓
+                    Fully Booked    Cancelled
+```
+
+| State            | Description                      |
+| ---------------- | -------------------------------- |
+| **Draft**        | Not published                    |
+| **Published**    | Live, waiting for booking window |
+| **Booking Open** | Accepting reservations           |
+| **Fully Booked** | All slots filled                 |
+| **In Progress**  | Appointments happening           |
+| **Completed**    | All appointments finished        |
+
+## Example: Private Shopping Experience
+
+### Scenario
+
+- Service: VIP private shopping
+- Duration: 1 hour per session
+- Capacity: 2 shoppers at a time
+- Dates: Weekdays for one month
+
+### Configuration
+
+```yaml
+Name: "VIP Private Shopping Experience"
+Product: Exclusive Collection Preview
+Audience: VIP Members
+
+Schedule:
+  Available From: March 1
+  Available Until: March 31
+  Booking Opens: February 20
+
+Time Slots:
+  Duration: 60 minutes
+  Buffer: 15 minutes
+  Start Times: 10 AM, 12 PM, 2 PM, 4 PM
+
+Weekly Availability:
+  Monday-Friday: 10 AM - 6 PM
+  Saturday: Closed
+  Sunday: Closed
+
+Capacity:
+  Slots Per Time: 2
+  Max Per Consumer: 1
+
+Location:
+  Name: "Flagship Store"
+  Address: "123 Main St, Suite 100"
+  Instructions: "Enter through VIP entrance on Oak Street"
+
+Booking Rules:
+  Minimum Notice: 48 hours
+  Maximum Advance: 14 days
+  Allow Cancellation: Yes
+  Cancellation Window: 24 hours
+
+Notifications:
+  - Booking confirmation
+  - 24-hour reminder
+  - 2-hour reminder
+```
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/experiences/{experienceId}
+Shows: Example appointment experience detail page
+Annotations: None needed
+Alt text: "Configured appointment experience for private shopping"
+*/}
+
+![Example appointment](./images/appointment-example.png)
+_Caption: A fully configured private shopping appointment experience_
+
+## Managing Appointments
+
+### Calendar View
+
+View all bookings in calendar format:
+
+{/* IMAGE_PLACEHOLDER
+Type: screenshot
+Page: /app/experiences/{experienceId}
+Shows: Calendar view of appointments
+Annotations: Show booked and available slots
+Alt text: "Appointment calendar showing booked and available time slots"
+*/}
+
+![Appointment calendar](./images/appointment-calendar.png)
+_Caption: View and manage appointments in calendar view_
+
+### Manual Booking
+
+Administrators can book appointments on behalf of consumers:
+
+1. Click on an available slot
+2. Search for the consumer
+3. Confirm the booking
+4. Consumer receives confirmation
+
+### Blocking Time
+
+Block times for breaks, staff meetings, or maintenance:
+
+1. Select time slots to block
+2. Add a reason (optional)
+3. Blocked slots won't appear to consumers
+
+## Best Practices
+
+### Slot Design
+
+1. **Include buffer time** - Allow transition between appointments
+2. **Realistic durations** - Don't underestimate time needed
+3. **Consider lunch/breaks** - Block out non-available times
+4. **Test the flow** - Walk through the consumer experience
+
+### Booking Window
+
+1. **Open early enough** - Give consumers planning time
+2. **Close appropriately** - Enough time to prepare
+3. **Consider time zones** - If serving multiple regions
+
+### Capacity Management
+
+1. **Start conservative** - Easier to add capacity than remove
+2. **Monitor no-shows** - Adjust overbooking if needed
+3. **Waitlist option** - Capture demand for full slots
+
+### Communication
+
+1. **Clear instructions** - Location, parking, what to bring
+2. **Multiple reminders** - Reduce no-shows
+3. **Easy rescheduling** - Make changes simple
+4. **Follow-up** - Post-appointment feedback
+
+## Handling Issues
+
+### High No-Show Rate
+
+If many consumers don't show:
+
+- Send more reminders
+- Require confirmation 24 hours before
+- Consider requiring deposits
+- Implement no-show penalties
+
+### Overbooking
+
+If you accidentally overbooked:
+
+1. Contact affected consumers immediately
+2. Offer alternative times
+3. Provide compensation if appropriate
+4. Review booking system settings
+
+### Last-Minute Cancellations
+
+If cancellations create empty slots:
+
+- Enable waitlist notifications
+- Reduce cancellation window
+- Consider cancellation fees
+- Offer to reschedule instead
+
+## Related Guides
+
+- [Location Management](/dashboard/settings/locations) - Set up appointment locations
+- [Experience Lifecycle](/dashboard/experiences/experience-lifecycle) - Managing active appointments
+- [Experience Analytics](/dashboard/experiences/experience-analytics) - Appointment metrics

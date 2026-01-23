@@ -1,0 +1,218 @@
+---
+title: Draw Widget
+description: Pre-built lottery/raffle entry widget
+---
+
+# Draw Widget
+
+The Draw Widget provides a complete lottery/raffle experience with entry status, countdown to draw time, and result display.
+
+## Web Component
+
+```tsx
+<fanfare-draw-widget draw-id="draw_123" show-header="true" show-countdown="true" show-actions="true" />
+```
+
+## Attributes
+
+| Attribute         | Type     | Default  | Description                    |
+| ----------------- | -------- | -------- | ------------------------------ |
+| `draw-id`         | `string` | Required | The draw identifier            |
+| `show-header`     | `string` | `"true"` | Show title and description     |
+| `show-countdown`  | `string` | `"true"` | Show countdown to draw         |
+| `show-actions`    | `string` | `"true"` | Show enter/withdraw buttons    |
+| `container-class` | `string` | -        | Custom CSS class for container |
+
+## Events
+
+| Event                   | Detail                      | Description                 |
+| ----------------------- | --------------------------- | --------------------------- |
+| `fanfare-draw-enter`    | `{ drawId: string }`        | User entered draw           |
+| `fanfare-draw-withdraw` | `{ drawId: string }`        | User withdrew entry         |
+| `fanfare-draw-result`   | `{ drawId, won: boolean }`  | Draw result received        |
+| `fanfare-draw-proceed`  | `{ drawId, token: string }` | User proceeding to checkout |
+
+## Event Handling Example
+
+```tsx
+import { useEffect, useRef } from "react";
+
+function DrawPage() {
+  const widgetRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const widget = widgetRef.current;
+    if (!widget) return;
+
+    const handleEnter = (e: CustomEvent) => {
+      console.log("Entered draw:", e.detail.drawId);
+      analytics.track("draw_entered");
+    };
+
+    const handleResult = (e: CustomEvent<{ drawId: string; won: boolean }>) => {
+      if (e.detail.won) {
+        console.log("Congratulations! You won!");
+        showConfetti();
+      } else {
+        console.log("Better luck next time");
+      }
+    };
+
+    const handleProceed = (e: CustomEvent<{ token: string }>) => {
+      window.location.href = `/checkout?token=${e.detail.token}`;
+    };
+
+    widget.addEventListener("fanfare-draw-enter", handleEnter);
+    widget.addEventListener("fanfare-draw-result", handleResult);
+    widget.addEventListener("fanfare-draw-proceed", handleProceed);
+
+    return () => {
+      widget.removeEventListener("fanfare-draw-enter", handleEnter);
+      widget.removeEventListener("fanfare-draw-result", handleResult);
+      widget.removeEventListener("fanfare-draw-proceed", handleProceed);
+    };
+  }, []);
+
+  return (
+    <div className="draw-container">
+      <h1>Limited Edition Raffle</h1>
+      <fanfare-draw-widget ref={widgetRef} draw-id="draw_123" />
+    </div>
+  );
+}
+```
+
+## Draw Status States
+
+The widget handles these draw states automatically:
+
+| Status    | Description              | UI Display                   |
+| --------- | ------------------------ | ---------------------------- |
+| `open`    | Draw is open for entries | Entry button + Countdown     |
+| `entered` | User has entered         | Entered status + Countdown   |
+| `drawing` | Draw is in progress      | Drawing animation            |
+| `won`     | User won the draw        | Winner message + Proceed CTA |
+| `lost`    | User did not win         | Better luck message          |
+| `ended`   | Draw has ended           | Ended message                |
+
+## Styling
+
+### CSS Variables
+
+```css
+fanfare-draw-widget {
+  --fanfare-primary: #8b5cf6;
+  --fanfare-primary-hover: #7c3aed;
+  --fanfare-success: #22c55e;
+  --fanfare-background: #ffffff;
+  --fanfare-foreground: #1f2937;
+  --fanfare-radius: 0.75rem;
+}
+```
+
+## Winner Notification
+
+```tsx
+function DrawWithNotifications() {
+  const widgetRef = useRef<HTMLElement>(null);
+  const [showWinnerModal, setShowWinnerModal] = useState(false);
+
+  useEffect(() => {
+    const widget = widgetRef.current;
+    if (!widget) return;
+
+    const handleResult = (e: CustomEvent<{ won: boolean }>) => {
+      if (e.detail.won) {
+        setShowWinnerModal(true);
+        // Play celebration sound
+        new Audio("/sounds/win.mp3").play();
+      }
+    };
+
+    widget.addEventListener("fanfare-draw-result", handleResult);
+    return () => widget.removeEventListener("fanfare-draw-result", handleResult);
+  }, []);
+
+  return (
+    <>
+      <fanfare-draw-widget ref={widgetRef} draw-id="draw_123" />
+
+      {showWinnerModal && <WinnerModal onClose={() => setShowWinnerModal(false)} />}
+    </>
+  );
+}
+```
+
+## Using with React Hook (Alternative)
+
+For more control, use the `useDraw` hook instead:
+
+```tsx
+import { useDraw } from "@waitify-io/fanfare-sdk-react";
+
+function CustomDrawUI() {
+  const { draw, status, result, timeUntilDraw, enter, withdraw, isLoading } = useDraw("draw_123");
+
+  if (result?.won) {
+    return (
+      <div className="winner">
+        <h2>Congratulations! You Won!</h2>
+        <a href="/checkout">Claim Your Prize</a>
+      </div>
+    );
+  }
+
+  if (result?.won === false) {
+    return (
+      <div className="not-selected">
+        <h2>Not Selected This Time</h2>
+        <p>Better luck next time!</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="draw-ui">
+      {status === "entered" ? (
+        <>
+          <p>You are entered!</p>
+          {timeUntilDraw && <p>Draw in: {formatTime(timeUntilDraw)}</p>}
+          <button onClick={withdraw}>Withdraw Entry</button>
+        </>
+      ) : (
+        <>
+          {timeUntilDraw && <p>Draw closes in: {formatTime(timeUntilDraw)}</p>}
+          <button onClick={enter} disabled={isLoading}>
+            {isLoading ? "Entering..." : "Enter Draw"}
+          </button>
+        </>
+      )}
+    </div>
+  );
+}
+```
+
+## TypeScript Declaration
+
+```typescript
+declare namespace JSX {
+  interface IntrinsicElements {
+    "fanfare-draw-widget": React.DetailedHTMLProps<
+      React.HTMLAttributes<HTMLElement> & {
+        "draw-id": string;
+        "show-header"?: string;
+        "show-countdown"?: string;
+        "show-actions"?: string;
+        "container-class"?: string;
+      },
+      HTMLElement
+    >;
+  }
+}
+```
+
+## Related
+
+- [useDraw Hook](/sdk/react/hooks/use-draw) - React hook for custom draw UIs
+- [Widgets Overview](/sdk/react/widgets/overview) - Widget architecture
+- [Theming](/sdk/react/customization/theming) - Theme customization

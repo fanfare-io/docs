@@ -1,0 +1,534 @@
+---
+title: Consumers
+description: Consumer identity, authentication states, and profile management in Fanfare
+---
+
+# Consumers
+
+A **Consumer** is an end-user who participates in experiences. Consumers can range from completely anonymous visitors to fully authenticated users with rich profile data.
+
+## Consumer Model
+
+```typescript
+interface Consumer {
+  // Identity
+  id: string; // UUID
+  organizationId: string; // Parent organization
+
+  // Contact
+  email?: string; // Email address (unique per org)
+  phone?: string; // Phone number
+  fullName?: string; // Display name
+
+  // Verification
+  emailVerified: boolean; // Email has been verified
+  phoneVerified: boolean; // Phone has been verified
+
+  // Authentication
+  passwordHash?: string; // Hashed password (if password auth used)
+  passkeys?: Passkey[]; // WebAuthn passkeys
+
+  // Status
+  status: "ACTIVE" | "INACTIVE";
+  lastLoginAt?: string; // Last authentication timestamp
+  lastEngagedAt?: string; // Last activity timestamp
+
+  // Scoring
+  loyaltyScore: number; // 0-200+ loyalty score
+  botScore: number; // 0-100 bot likelihood score
+
+  // Lifetime Metrics
+  ltv: string; // Lifetime value (decimal string)
+  totalOrders: number; // Total order count
+  aov: string; // Average order value
+  totalReturns: number; // Total return count
+  lastOrderAt?: string; // Most recent order timestamp
+  lastReturnAt?: string; // Most recent return timestamp
+
+  // Engagement Scores (decayed)
+  activityScore: number; // Recent engagement score
+  purchaseFrequencyScore: number; // Purchase frequency score
+  monetaryScore: number; // Monetary value score
+
+  // Score Ranks (quintiles 0-5)
+  activityRank: number; // 0=no signal, 1-5=quintiles
+  purchaseFrequencyRank: number;
+  monetaryRank: number;
+
+  // Messaging
+  totalMessages: number; // Messages sent to consumer
+  engagedCount: number; // Messages engaged with
+  smsOptOut: boolean; // SMS opt-out flag
+
+  // Geolocation (inferred)
+  lastGeoCountry?: string; // ISO country code
+  lastGeoRegion?: string; // State/province
+  lastGeoCity?: string; // City name
+  lastGeoPostalCode?: string; // Postal/ZIP code
+  lastGeoCoordinates?: Coordinates; // Lat/lng
+  lastGeoTimezone?: string; // Timezone identifier
+  lastGeoAt?: string; // When geo was last updated
+  lastGeoSource?: string; // How geo was determined
+
+  // Custom Data
+  metadata?: Record<string, JsonValue>;
+
+  // Sync Source (if imported)
+  primarySyncSourceId?: string;
+  primarySyncSourceType?: string;
+  primarySyncSourceExternalId?: string;
+
+  // Audit
+  createdAt: string;
+  updatedAt: string;
+  archived: boolean;
+}
+```
+
+## Identity States
+
+Consumers progress through identity states as they engage:
+
+```
+┌────────────────────────────────────────────────────────────────────┐
+│                        IDENTITY PROGRESSION                        │
+├────────────────────────────────────────────────────────────────────┤
+│                                                                    │
+│  ┌──────────┐    ┌────────────┐    ┌──────────────┐    ┌───────┐ │
+│  │ ANONYMOUS│───►│ IDENTIFIED │───►│ AUTHENTICATED│───►│VERIFIED│ │
+│  └──────────┘    └────────────┘    └──────────────┘    └───────┘ │
+│       │                │                  │                  │     │
+│  Fingerprint      Email/phone       Password/OTP        Email/    │
+│  only             provided          verified             phone    │
+│                                                          confirmed│
+└────────────────────────────────────────────────────────────────────┘
+```
+
+### Anonymous Consumers
+
+- Identified by browser fingerprint only
+- Limited participation in some distributions
+- Can upgrade to identified by providing contact info
+
+```typescript
+// Anonymous consumer (minimal data)
+{
+  id: "consumer-uuid",
+  status: "ACTIVE",
+  loyaltyScore: 0,
+  botScore: 15
+}
+```
+
+### Identified Consumers
+
+- Have provided email or phone (or both)
+- Can receive messages and notifications
+- Full participation in most distributions
+
+```typescript
+// Identified consumer
+{
+  id: "consumer-uuid",
+  email: "user@example.com",
+  emailVerified: false,
+  status: "ACTIVE",
+  loyaltyScore: 25
+}
+```
+
+### Authenticated Consumers
+
+- Have verified their identity via OTP, password, or passkey
+- Can access account history and resume sessions
+- Higher trust for valuable distributions
+
+```typescript
+// Authenticated consumer
+{
+  id: "consumer-uuid",
+  email: "user@example.com",
+  emailVerified: true,
+  phone: "+1234567890",
+  phoneVerified: true,
+  lastLoginAt: "2024-01-15T10:30:00Z"
+}
+```
+
+## Consumer Identities
+
+Consumers can have multiple identity providers linked:
+
+```typescript
+interface ConsumerIdentity {
+  id: string;
+  consumerId: string;
+  provider: string; // "email", "phone", "google", "apple"
+  issuer: string; // Identity issuer URL
+  subject: string; // Unique identifier from provider
+  claims?: Record<string, unknown>; // Provider-specific claims
+  lastAuthenticatedAt?: string;
+}
+```
+
+### Supported Providers
+
+| Provider   | Description       | Use Case                    |
+| ---------- | ----------------- | --------------------------- |
+| `email`    | Email OTP         | Standard email verification |
+| `phone`    | SMS OTP           | Phone verification          |
+| `password` | Username/password | Traditional auth            |
+| `passkey`  | WebAuthn/FIDO2    | Passwordless auth           |
+| `google`   | Google OAuth      | Social login                |
+| `apple`    | Apple ID          | iOS/Safari users            |
+| `shopify`  | Shopify Customer  | E-commerce integration      |
+
+## Scoring System
+
+### Loyalty Score
+
+A composite score (0-200+) based on purchase history and engagement:
+
+```
+loyaltyScore = weightedSum(
+  totalOrders * orderWeight,
+  ltv * ltvWeight,
+  engagementScore * engagementWeight
+)
+```
+
+**Typical ranges:**
+
+- 0-25: New or occasional customer
+- 25-50: Returning customer
+- 50-100: Regular customer
+- 100-150: Loyal customer
+- 150+: VIP customer
+
+### Bot Score
+
+Likelihood (0-100) that the consumer is automated:
+
+```
+botScore = signalAnalysis(
+  browserFingerprint,
+  behaviorPatterns,
+  requestTiming,
+  historicalData
+)
+```
+
+**Usage:**
+
+- 0-20: Likely human
+- 20-50: Suspicious, additional verification recommended
+- 50-80: Likely bot, restricted access
+- 80-100: Almost certainly bot, blocked
+
+### Decayed Scores
+
+Activity scores decay over time to reflect recency:
+
+```typescript
+// Score decay formula
+decayedScore = rawScore * Math.pow(decayRate, daysSinceLastActivity)
+
+// Activity Score: Engagement recency
+activityScore: number;
+activityScoreUpdatedAt?: string;
+
+// Purchase Frequency Score
+purchaseFrequencyScore: number;
+purchaseFrequencyScoreUpdatedAt?: string;
+
+// Monetary Score
+monetaryScore: number;
+monetaryScoreUpdatedAt?: string;
+```
+
+### Rank Quintiles
+
+Scores are converted to ranks (0-5) for easier segmentation:
+
+| Rank | Meaning                  |
+| ---- | ------------------------ |
+| 0    | No signal (new consumer) |
+| 1    | Bottom 20%               |
+| 2    | 20-40%                   |
+| 3    | 40-60%                   |
+| 4    | 60-80%                   |
+| 5    | Top 20%                  |
+
+## Consumer Attributes
+
+Attributes used for audience rules and distribution logic:
+
+### Core Attributes
+
+| Attribute  | Type   | Source     |
+| ---------- | ------ | ---------- |
+| `email`    | string | User input |
+| `phone`    | string | User input |
+| `fullName` | string | User input |
+| `status`   | enum   | System     |
+
+### Calculated Attributes
+
+| Attribute                | Type   | Updated              |
+| ------------------------ | ------ | -------------------- |
+| `loyaltyScore`           | number | On order events      |
+| `ltv`                    | money  | On order events      |
+| `totalOrders`            | number | On order events      |
+| `aov`                    | money  | On order events      |
+| `activityScore`          | number | Daily decay + events |
+| `purchaseFrequencyScore` | number | Daily decay + events |
+| `monetaryScore`          | number | Daily decay + events |
+
+### Inferred Attributes
+
+| Attribute         | Type   | Source         |
+| ----------------- | ------ | -------------- |
+| `lastGeoCountry`  | string | IP geolocation |
+| `lastGeoRegion`   | string | IP geolocation |
+| `lastGeoCity`     | string | IP geolocation |
+| `lastGeoTimezone` | string | IP/browser     |
+
+### Custom Metadata
+
+Arbitrary key-value data:
+
+```typescript
+{
+  metadata: {
+    preferredSize: "M",
+    referralCode: "FRIEND2024",
+    vipTier: "gold",
+    interests: ["sneakers", "streetwear"]
+  }
+}
+```
+
+## Consumer Timeline
+
+Track consumer activities across distributions:
+
+```typescript
+type ConsumerActivity =
+  | QueueActivity // Queue participation
+  | DrawActivity // Draw/lottery entries
+  | AuctionActivity // Auction bidding
+  | WaitlistActivity // Waitlist signup
+  | AppointmentActivity; // Appointment booking
+
+interface ConsumerTimeline {
+  consumerId: string;
+  activities: ConsumerActivity[];
+  totalCount: number;
+}
+```
+
+### Queue Activity
+
+```typescript
+interface QueueActivity {
+  type: "QUEUE";
+  id: string;
+  status: "QUEUED" | "ADMITTED" | "COMPLETED" | "LEFT" | "DENIED";
+  experienceId: string;
+  experienceName: string;
+  sequenceId: string;
+  productId?: string;
+  productName?: string;
+  enqueuedAt?: string;
+  dequeuedAt?: string;
+  completedAt?: string;
+  reason?: string; // If denied
+}
+```
+
+### Draw Activity
+
+```typescript
+interface DrawActivity {
+  type: "DRAW";
+  id: string;
+  status: "ENTERED" | "WON" | "COMPLETED" | "DENIED";
+  experienceId: string;
+  experienceName: string;
+  enteredAt?: string;
+  selectedAt?: string; // If won
+  completedAt?: string;
+}
+```
+
+## API Operations
+
+### Get Consumer
+
+```bash
+GET /v1/consumers/:id
+Authorization: Bearer sk_live_...
+
+# Response
+{
+  "id": "consumer-uuid",
+  "email": "user@example.com",
+  "emailVerified": true,
+  "status": "ACTIVE",
+  "loyaltyScore": 75,
+  "ltv": "1250.00",
+  "totalOrders": 8
+}
+```
+
+### Search Consumers
+
+```bash
+GET /v1/consumers?email=user@example.com
+Authorization: Bearer sk_live_...
+```
+
+### Update Consumer
+
+```bash
+PATCH /v1/consumers/:id
+Authorization: Bearer sk_live_...
+Content-Type: application/json
+
+{
+  "fullName": "Jane Doe",
+  "metadata": {
+    "preferredSize": "L"
+  }
+}
+```
+
+### Get Consumer Timeline
+
+```bash
+GET /v1/consumers/:id/timeline
+Authorization: Bearer sk_live_...
+
+# Response
+{
+  "consumerId": "consumer-uuid",
+  "activities": [
+    {
+      "type": "QUEUE",
+      "status": "COMPLETED",
+      "experienceName": "Summer Sale",
+      "completedAt": "2024-01-15T14:30:00Z"
+    }
+  ],
+  "totalCount": 15
+}
+```
+
+### Consumer SDK Authentication
+
+```bash
+# Request OTP
+POST /consumers/v1/auth/request-otp
+Content-Type: application/json
+
+{
+  "email": "user@example.com"
+}
+
+# Verify OTP
+POST /consumers/v1/auth/verify-otp
+Content-Type: application/json
+
+{
+  "email": "user@example.com",
+  "code": "123456"
+}
+
+# Response includes auth token
+{
+  "token": "eyJ...",
+  "consumer": {
+    "id": "consumer-uuid",
+    "email": "user@example.com"
+  }
+}
+```
+
+## Guest vs Authenticated Access
+
+Distributions can require authentication:
+
+```typescript
+// Queue that allows guests
+{
+  name: "General Queue",
+  supportsGuest: true  // Anonymous consumers can join
+}
+
+// Queue that requires authentication
+{
+  name: "VIP Queue",
+  supportsGuest: false  // Must be authenticated
+}
+```
+
+### Behavior by Distribution Type
+
+| Distribution | Guest Default | Auth Benefits                           |
+| ------------ | ------------- | --------------------------------------- |
+| Queue        | Allowed       | Session persistence, position recovery  |
+| Draw         | Allowed       | Entry verification, winner notification |
+| Auction      | Required      | Bid tracking, payment processing        |
+| Waitlist     | Allowed       | Notification delivery                   |
+| Appointment  | Required      | Booking management                      |
+
+## Best Practices
+
+### 1. Progressive Profiling
+
+Collect information gradually to reduce friction:
+
+```
+Initial: Browser fingerprint only (anonymous)
+    ↓
+Distribution entry: Request email
+    ↓
+Win/admit: Request phone for SMS updates
+    ↓
+Purchase: Full profile with address
+```
+
+### 2. Score-Based Access
+
+Use scores to create fair, merit-based access:
+
+```typescript
+// Priority sequence for loyal customers
+{
+  name: "Loyalty Early Access",
+  audienceId: "high-loyalty-audience"  // loyaltyScore > 100
+}
+```
+
+### 3. Bot Protection
+
+Configure bot thresholds appropriately:
+
+```typescript
+// Reject high bot scores
+if (consumer.botScore > 60) {
+  // Require additional verification
+}
+```
+
+### 4. Data Hygiene
+
+- Merge duplicate consumers by email/phone
+- Archive inactive consumers periodically
+- Respect opt-out preferences
+
+## Related Concepts
+
+- [Audiences](/docs/concepts/audiences) - Grouping consumers by attributes
+- [Experiences](/docs/concepts/experiences) - Consumer journeys
+- [Distributions](/docs/concepts/distributions/overview) - Consumer participation states

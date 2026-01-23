@@ -1,0 +1,607 @@
+---
+title: SDK Error Reference
+description: Complete reference of Fanfare SDK error codes and their resolutions.
+---
+
+# SDK Error Reference
+
+This reference documents all error codes returned by the Fanfare SDK, their meanings, and recommended resolutions.
+
+## Error Structure
+
+All SDK errors follow a consistent structure:
+
+```typescript
+interface FanfareError {
+  message: string; // Human-readable error message
+  code: string; // Machine-readable error code
+  status?: number; // HTTP status code (if applicable)
+  details?: unknown; // Additional error details
+  requestId?: string; // Request ID for support
+  correlationId?: string; // Correlation ID for tracking
+  retryable: boolean; // Whether the operation can be retried
+  retryAfter?: number; // Suggested retry delay in seconds
+}
+```
+
+## Handling Errors
+
+```typescript
+import { FanfareError, ErrorCodes } from "@fanfare/sdk";
+
+try {
+  await client.experiences.enter(experienceId);
+} catch (error) {
+  if (error instanceof FanfareError) {
+    switch (error.code) {
+      case ErrorCodes.NETWORK_ERROR:
+        // Handle network issues
+        break;
+      case ErrorCodes.RATE_LIMITED:
+        // Wait and retry
+        await delay(error.retryAfter || 5000);
+        break;
+      default:
+      // Handle other errors
+    }
+  }
+}
+```
+
+## Network Errors
+
+### NETWORK_ERROR
+
+**Description**: Request failed due to network connectivity issues.
+
+**Common Causes**:
+
+- No internet connection
+- DNS resolution failure
+- Network timeout
+- Server unreachable
+
+**Resolution**:
+
+```typescript
+if (error.code === ErrorCodes.NETWORK_ERROR) {
+  // Show offline indicator
+  showOfflineMessage();
+
+  // Retry when connection is restored
+  window.addEventListener("online", () => {
+    retryOperation();
+  });
+}
+```
+
+**Retryable**: Yes
+
+---
+
+### TIMEOUT
+
+**Description**: Request timed out waiting for a response.
+
+**Common Causes**:
+
+- Slow network connection
+- Server under heavy load
+- Request too large
+
+**Resolution**:
+
+```typescript
+if (error.code === ErrorCodes.TIMEOUT) {
+  // Retry with exponential backoff
+  const delay = Math.min(1000 * Math.pow(2, attempt), 30000);
+  await sleep(delay);
+  return retry();
+}
+```
+
+**Retryable**: Yes
+
+---
+
+### ABORTED
+
+**Description**: Request was cancelled before completion.
+
+**Common Causes**:
+
+- User navigated away from page
+- Component unmounted
+- Explicit cancellation
+
+**Resolution**: This is usually intentional and doesn't require action.
+
+**Retryable**: No
+
+## Authentication Errors
+
+### UNAUTHORIZED
+
+**Description**: Request requires authentication.
+
+**HTTP Status**: 401
+
+**Common Causes**:
+
+- No session active
+- Session was cleared
+- Invalid credentials
+
+**Resolution**:
+
+```typescript
+if (error.code === ErrorCodes.UNAUTHORIZED) {
+  // Clear any stale auth state
+  client.auth.logout();
+
+  // Redirect to login or start guest session
+  if (requiresAuth) {
+    redirectToLogin();
+  } else {
+    await client.auth.guest();
+  }
+}
+```
+
+**Retryable**: No (requires re-authentication)
+
+---
+
+### SESSION_EXPIRED
+
+**Description**: Authentication session has expired.
+
+**HTTP Status**: 401
+
+**Common Causes**:
+
+- Session timeout
+- Server-side session invalidation
+- Token expiration
+
+**Resolution**:
+
+```typescript
+if (error.code === ErrorCodes.SESSION_EXPIRED) {
+  // Attempt to refresh the session
+  try {
+    await client.auth.refresh();
+    // Retry the original operation
+    return retry();
+  } catch {
+    // Refresh failed, re-authenticate
+    await client.auth.guest();
+  }
+}
+```
+
+**Retryable**: Yes (after refresh)
+
+---
+
+### INVALID_CREDENTIALS
+
+**Description**: Provided credentials are incorrect.
+
+**HTTP Status**: 401
+
+**Common Causes**:
+
+- Wrong email/password combination
+- Account doesn't exist
+- Account locked
+
+**Resolution**: Prompt user to verify their credentials.
+
+**Retryable**: No
+
+---
+
+### INVALID_OTP
+
+**Description**: One-time password verification failed.
+
+**HTTP Status**: 401
+
+**Common Causes**:
+
+- Incorrect code entered
+- Code has expired
+- Code already used
+
+**Resolution**:
+
+```typescript
+if (error.code === ErrorCodes.INVALID_OTP) {
+  // Clear the input and show error
+  clearOtpInput();
+  showError("Invalid code. Please try again or request a new code.");
+}
+```
+
+**Retryable**: No (user must enter correct code)
+
+## Queue Errors
+
+### QUEUE_NOT_FOUND
+
+**Description**: The specified queue does not exist.
+
+**Common Causes**:
+
+- Invalid queue ID
+- Queue has been deleted
+- Queue not yet created
+
+**Resolution**: Verify the queue ID and ensure the experience is active.
+
+**Retryable**: No
+
+---
+
+### QUEUE_EXPIRED
+
+**Description**: The queue has ended and is no longer accepting entries.
+
+**Common Causes**:
+
+- Queue end time has passed
+- Queue was manually closed
+- All inventory distributed
+
+**Resolution**:
+
+```typescript
+if (error.code === ErrorCodes.QUEUE_EXPIRED) {
+  showMessage("This queue has ended. Join the waitlist for future access.");
+  offerWaitlistSignup();
+}
+```
+
+**Retryable**: No
+
+---
+
+### QUEUE_FULL
+
+**Description**: The queue has reached maximum capacity.
+
+**Common Causes**:
+
+- Queue participant limit reached
+- High demand exceeded capacity
+
+**Resolution**:
+
+```typescript
+if (error.code === ErrorCodes.QUEUE_FULL) {
+  showMessage("This queue is currently full.");
+
+  if (waitlistAvailable) {
+    offerWaitlistSignup();
+  }
+}
+```
+
+**Retryable**: No
+
+---
+
+### ALREADY_IN_QUEUE
+
+**Description**: User is already in this queue.
+
+**Common Causes**:
+
+- Duplicate entry attempt
+- Re-entry after page refresh
+
+**Resolution**: This is informational. Retrieve the existing queue status.
+
+```typescript
+if (error.code === ErrorCodes.ALREADY_IN_QUEUE) {
+  // Get existing position
+  const status = client.queues.getStatus(queueId);
+  updateUI(status);
+}
+```
+
+**Retryable**: No (not an error condition)
+
+---
+
+### NOT_IN_QUEUE
+
+**Description**: User is not in the specified queue.
+
+**Common Causes**:
+
+- Never entered the queue
+- Left the queue previously
+- Session mismatch
+
+**Resolution**: Re-enter the queue if appropriate.
+
+**Retryable**: No
+
+## Validation Errors
+
+### VALIDATION_ERROR
+
+**Description**: Request data failed validation.
+
+**HTTP Status**: 400 or 422
+
+**Common Causes**:
+
+- Missing required fields
+- Invalid field values
+- Data format issues
+
+**Resolution**:
+
+```typescript
+if (error.code === ErrorCodes.VALIDATION_ERROR) {
+  // Display validation errors to user
+  const issues = error.details as ValidationIssue[];
+  issues.forEach((issue) => {
+    showFieldError(issue.path, issue.message);
+  });
+}
+```
+
+**Retryable**: No (requires valid data)
+
+---
+
+### INVALID_PARAMETERS
+
+**Description**: Request parameters are invalid.
+
+**HTTP Status**: 400
+
+**Common Causes**:
+
+- Invalid ID format
+- Out-of-range values
+- Unsupported parameters
+
+**Resolution**: Verify the parameters being sent.
+
+**Retryable**: No
+
+## Rate Limiting
+
+### RATE_LIMITED
+
+**Description**: Too many requests in a short period.
+
+**HTTP Status**: 429
+
+**Headers**:
+
+- `X-RateLimit-Limit`: Maximum requests allowed
+- `X-RateLimit-Remaining`: Requests remaining
+- `Retry-After`: Seconds to wait before retrying
+
+**Resolution**:
+
+```typescript
+if (error.code === ErrorCodes.RATE_LIMITED) {
+  const waitTime = error.retryAfter || 5;
+  showMessage(`Please wait ${waitTime} seconds before trying again.`);
+
+  setTimeout(() => {
+    enableRetry();
+  }, waitTime * 1000);
+}
+```
+
+**Retryable**: Yes (after delay)
+
+## Server Errors
+
+### INTERNAL_ERROR
+
+**Description**: An unexpected server error occurred.
+
+**HTTP Status**: 500
+
+**Resolution**:
+
+```typescript
+if (error.code === ErrorCodes.INTERNAL_ERROR) {
+  // Log for debugging
+  console.error("Server error:", error.requestId);
+
+  showMessage("Something went wrong. Please try again.");
+  // Automatic retry with backoff
+}
+```
+
+**Retryable**: Yes (with backoff)
+
+---
+
+### SERVICE_UNAVAILABLE
+
+**Description**: The service is temporarily unavailable.
+
+**HTTP Status**: 503
+
+**Common Causes**:
+
+- Maintenance window
+- Capacity issues
+- Deployment in progress
+
+**Resolution**:
+
+```typescript
+if (error.code === ErrorCodes.SERVICE_UNAVAILABLE) {
+  showMessage("Service temporarily unavailable. Retrying...");
+
+  // SDK automatically retries
+  // Show progress indicator
+}
+```
+
+**Retryable**: Yes (with backoff)
+
+## SDK Configuration Errors
+
+### NOT_INITIALIZED
+
+**Description**: SDK operation called before initialization.
+
+**Common Causes**:
+
+- Calling methods before creating client
+- Client creation failed
+- Async initialization not awaited
+
+**Resolution**:
+
+```typescript
+// Ensure client is initialized before use
+const client = new FanfareClient({
+  publishableKey: "pk_live_...",
+});
+
+// Then call methods
+await client.experiences.enter(experienceId);
+```
+
+**Retryable**: No
+
+---
+
+### ALREADY_INITIALIZED
+
+**Description**: Attempted to initialize SDK when already initialized.
+
+**Resolution**: Use a single client instance throughout your application.
+
+**Retryable**: No
+
+---
+
+### INVALID_CONFIG
+
+**Description**: SDK configuration is invalid.
+
+**Common Causes**:
+
+- Missing required configuration
+- Invalid configuration values
+- Incompatible options
+
+**Resolution**: Review your SDK configuration.
+
+**Retryable**: No
+
+## Fingerprint Errors
+
+### FP001 - FINGERPRINT_REQUIRED
+
+**Description**: Device fingerprint is required but not provided.
+
+**HTTP Status**: 400
+
+**Resolution**: Ensure the SDK is properly initialized with fingerprinting enabled.
+
+```typescript
+const client = new FanfareClient({
+  publishableKey: "pk_live_...",
+  // Fingerprinting is enabled by default
+});
+```
+
+**User Message**: "Device verification is required for this action. Please ensure your browser is up to date and try again."
+
+---
+
+### FP002 - DEVICE_MISMATCH
+
+**Description**: Current device fingerprint doesn't match the original device.
+
+**HTTP Status**: 403
+
+**Common Causes**:
+
+- Accessing from different device
+- Browser profile changed
+- Significant browser configuration changes
+
+**Resolution**: This is a security feature. User must complete the action from the original device.
+
+**User Message**: "This action must be completed from the same device that was originally used."
+
+---
+
+### FP003 - FINGERPRINT_INVALID
+
+**Description**: Fingerprint format is invalid.
+
+**HTTP Status**: 400
+
+**Common Causes**:
+
+- SDK version mismatch
+- Browser fingerprinting blocked
+- Corrupted fingerprint data
+
+**Resolution**: Clear browser cache and refresh the page.
+
+**User Message**: "Device verification failed. Please refresh the page and try again."
+
+## Best Practices
+
+### Error Logging
+
+Log errors with context for debugging.
+
+```typescript
+client.on("error", (error: FanfareError) => {
+  console.error("Fanfare error:", {
+    code: error.code,
+    message: error.message,
+    requestId: error.requestId,
+    retryable: error.retryable,
+  });
+
+  // Send to error tracking service
+  errorTracker.capture(error, {
+    tags: { service: "fanfare", code: error.code },
+  });
+});
+```
+
+### User-Friendly Messages
+
+Map technical errors to user-friendly messages.
+
+```typescript
+const USER_MESSAGES: Record<string, string> = {
+  NETWORK_ERROR: "Connection issue. Please check your internet.",
+  RATE_LIMITED: "Too many requests. Please wait a moment.",
+  SESSION_EXPIRED: "Your session expired. Please refresh.",
+  QUEUE_FULL: "This queue is currently full.",
+  // ... more mappings
+};
+
+function getUserMessage(error: FanfareError): string {
+  return USER_MESSAGES[error.code] || "Something went wrong. Please try again.";
+}
+```
+
+## Related Resources
+
+- [API Errors](/resources/troubleshooting/api-errors) - HTTP API error reference
+- [Common Issues](/resources/troubleshooting/common-issues) - Troubleshooting guide
+- [Contact Support](/resources/support/contact) - Get help

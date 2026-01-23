@@ -1,0 +1,730 @@
+---
+title: Shopify Integration Guide
+description: Integrate Fanfare experiences with your Shopify store.
+---
+
+# Shopify Integration Guide
+
+Learn how to integrate Fanfare experiences with your Shopify store, from installation to checkout completion.
+
+## Overview
+
+Fanfare provides a native Shopify app that integrates virtual queues, draws, and auctions directly with your Shopify storefront. This guide covers both app installation and custom theme integration.
+
+**What you'll learn:**
+
+- Installing and configuring the Fanfare Shopify app
+- Embedding experiences in your theme
+- Connecting experiences to products
+- Handling checkout with Shopify's native cart
+- Processing order webhooks
+
+**Complexity:** Intermediate
+**Time to complete:** 45 minutes
+
+## Prerequisites
+
+- Shopify store (Basic plan or higher)
+- Fanfare account with active organization
+- Access to Shopify theme editor
+
+## Installation Options
+
+### Option 1: Fanfare Shopify App (Recommended)
+
+Install the official Fanfare app from the Shopify App Store:
+
+1. Visit the [Fanfare app listing](https://apps.shopify.com/fanfare) in the Shopify App Store
+2. Click "Add app" and authorize the permissions
+3. Connect your Fanfare organization in the app settings
+4. Configure your first experience
+
+The app handles:
+
+- OAuth authentication with Shopify
+- Automatic webhook registration
+- Theme app extension for embedding
+- Order completion notifications
+
+### Option 2: Custom Integration
+
+For stores requiring custom implementations:
+
+```liquid
+<!-- In your theme's product.liquid or collection.liquid -->
+<script src="https://cdn.fanfare.io/sdk/v1/fanfare-sdk.min.js"></script>
+
+<div id="fanfare-experience" data-experience-id="{{ product.metafields.fanfare.experience_id }}"></div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const container = document.getElementById("fanfare-experience");
+    const experienceId = container.dataset.experienceId;
+
+    if (experienceId) {
+      Fanfare.init({
+        organizationId: "{{ shop.metafields.fanfare.organization_id }}",
+        environment: "production",
+      });
+
+      Fanfare.renderExperience(container, {
+        experienceId: experienceId,
+        onAdmitted: function (admission) {
+          // Redirect to checkout with admission token
+          window.location.href = "/cart?fanfare_token=" + admission.token;
+        },
+      });
+    }
+  });
+</script>
+```
+
+## Step 1: Configure Experience in Admin
+
+Create your experience in the Fanfare admin panel:
+
+1. Navigate to **Experiences** > **Create New**
+2. Select experience type (Queue, Draw, or Auction)
+3. Configure timing and capacity
+4. Note the **Experience ID** for later use
+
+### Linking to Shopify Products
+
+Connect experiences to specific products or collections:
+
+```typescript
+// Using the Fanfare Admin API
+const experience = await fanfareAdmin.experiences.create({
+  name: "Limited Sneaker Drop",
+  type: "queue",
+  config: {
+    capacity: 500,
+    admissionWindow: 600, // 10 minutes
+  },
+  metadata: {
+    shopifyProductId: "gid://shopify/Product/1234567890",
+    shopifyVariantIds: [
+      "gid://shopify/ProductVariant/111",
+      "gid://shopify/ProductVariant/222",
+    ],
+  },
+});
+```
+
+## Step 2: Theme App Extension
+
+The Fanfare Shopify app includes a theme app extension for easy embedding.
+
+### Adding to Product Pages
+
+1. Open **Online Store** > **Themes** > **Customize**
+2. Navigate to your product template
+3. Add the **Fanfare Experience** block
+4. Configure the block settings:
+
+| Setting           | Description                    |
+| ----------------- | ------------------------------ |
+| Experience Source | Product metafield or manual ID |
+| Display Mode      | Inline, modal, or full-page    |
+| Auto-redirect     | Redirect to cart on admission  |
+| Show countdown    | Display time remaining         |
+
+### Block Configuration (Liquid)
+
+```liquid
+{% comment %} sections/fanfare-experience.liquid {% endcomment %}
+{% schema %}
+{
+  "name": "Fanfare Experience",
+  "settings": [
+    {
+      "type": "text",
+      "id": "experience_id",
+      "label": "Experience ID",
+      "info": "Leave blank to use product metafield"
+    },
+    {
+      "type": "select",
+      "id": "display_mode",
+      "label": "Display Mode",
+      "options": [
+        { "value": "inline", "label": "Inline" },
+        { "value": "modal", "label": "Modal" },
+        { "value": "fullpage", "label": "Full Page" }
+      ],
+      "default": "inline"
+    },
+    {
+      "type": "checkbox",
+      "id": "auto_redirect",
+      "label": "Auto-redirect to cart on admission",
+      "default": true
+    }
+  ]
+}
+{% endschema %}
+
+<div
+  id="fanfare-experience-{{ section.id }}"
+  class="fanfare-experience"
+  data-experience-id="{{ section.settings.experience_id | default: product.metafields.fanfare.experience_id }}"
+  data-display-mode="{{ section.settings.display_mode }}"
+  data-auto-redirect="{{ section.settings.auto_redirect }}"
+  data-product-id="{{ product.id }}"
+  data-variant-id="{{ product.selected_or_first_available_variant.id }}"
+></div>
+```
+
+## Step 3: JavaScript Integration
+
+### Initialize the SDK
+
+```javascript
+// assets/fanfare-integration.js
+(function () {
+  // Wait for SDK to load
+  function initFanfare() {
+    if (typeof Fanfare === "undefined") {
+      setTimeout(initFanfare, 100);
+      return;
+    }
+
+    // Get organization ID from theme settings
+    const orgId = window.FanfareConfig?.organizationId;
+    if (!orgId) {
+      console.error("Fanfare: Missing organization ID");
+      return;
+    }
+
+    Fanfare.init({
+      organizationId: orgId,
+      environment: "production",
+    });
+
+    // Initialize all experience containers on page
+    document.querySelectorAll(".fanfare-experience").forEach(initExperience);
+  }
+
+  function initExperience(container) {
+    const experienceId = container.dataset.experienceId;
+    if (!experienceId) return;
+
+    const config = {
+      experienceId: experienceId,
+      displayMode: container.dataset.displayMode || "inline",
+      productId: container.dataset.productId,
+      variantId: container.dataset.variantId,
+    };
+
+    Fanfare.renderExperience(container, {
+      ...config,
+      onStateChange: function (state) {
+        handleStateChange(container, state);
+      },
+      onAdmitted: function (admission) {
+        handleAdmission(container, admission);
+      },
+      onError: function (error) {
+        handleError(container, error);
+      },
+    });
+  }
+
+  function handleStateChange(container, state) {
+    // Update UI based on state
+    const statusEl = container.querySelector(".fanfare-status");
+    if (statusEl) {
+      statusEl.textContent = getStatusText(state);
+    }
+  }
+
+  function handleAdmission(container, admission) {
+    const autoRedirect = container.dataset.autoRedirect === "true";
+    const variantId = container.dataset.variantId;
+
+    if (autoRedirect && variantId) {
+      // Add to cart and redirect to checkout
+      addToCartAndCheckout(variantId, admission.token);
+    } else {
+      // Show checkout button
+      showCheckoutButton(container, admission);
+    }
+  }
+
+  function addToCartAndCheckout(variantId, admissionToken) {
+    // Add item to Shopify cart
+    fetch("/cart/add.js", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        items: [
+          {
+            id: variantId,
+            quantity: 1,
+            properties: {
+              _fanfare_token: admissionToken,
+              _fanfare_admitted_at: new Date().toISOString(),
+            },
+          },
+        ],
+      }),
+    })
+      .then(function (response) {
+        if (response.ok) {
+          // Redirect to checkout
+          window.location.href = "/checkout";
+        } else {
+          throw new Error("Failed to add to cart");
+        }
+      })
+      .catch(function (error) {
+        console.error("Cart error:", error);
+        alert("Failed to add item to cart. Please try again.");
+      });
+  }
+
+  function showCheckoutButton(container, admission) {
+    const button = document.createElement("button");
+    button.className = "fanfare-checkout-btn";
+    button.textContent = "Complete Purchase";
+    button.onclick = function () {
+      addToCartAndCheckout(container.dataset.variantId, admission.token);
+    };
+    container.appendChild(button);
+  }
+
+  function handleError(container, error) {
+    console.error("Fanfare error:", error);
+    const errorEl = document.createElement("div");
+    errorEl.className = "fanfare-error";
+    errorEl.textContent = "Unable to load experience. Please refresh the page.";
+    container.appendChild(errorEl);
+  }
+
+  function getStatusText(state) {
+    const statusMap = {
+      not_started: "Experience not started",
+      entering: "Joining...",
+      routing: "Finding your place...",
+      waiting: "You're in the queue",
+      admitted: "You're in! Complete your purchase",
+      completed: "Purchase complete",
+      expired: "Session expired",
+    };
+    return statusMap[state.stage] || state.stage;
+  }
+
+  // Start initialization
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initFanfare);
+  } else {
+    initFanfare();
+  }
+})();
+```
+
+### Include in Theme
+
+```liquid
+{% comment %} layout/theme.liquid {% endcomment %}
+<script>
+  window.FanfareConfig = {
+    organizationId: "{{ shop.metafields.fanfare.organization_id }}",
+  };
+</script>
+<script src="https://cdn.fanfare.io/sdk/v1/fanfare-sdk.min.js" async></script>
+{{ "fanfare-integration.js" | asset_url | script_tag }}
+```
+
+## Step 4: Cart Line Properties
+
+Store Fanfare data in cart line properties for order processing:
+
+```javascript
+// When adding to cart with admission token
+const cartData = {
+  items: [
+    {
+      id: variantId,
+      quantity: 1,
+      properties: {
+        _fanfare_token: admission.token,
+        _fanfare_experience_id: experienceId,
+        _fanfare_consumer_id: admission.consumerId,
+        _fanfare_distribution_type: admission.distributionType,
+        _fanfare_admitted_at: new Date().toISOString(),
+      },
+    },
+  ],
+};
+
+fetch("/cart/add.js", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify(cartData),
+});
+```
+
+### Protecting Against Tampering
+
+Validate tokens server-side in your checkout flow:
+
+```liquid
+{% comment %} In checkout.liquid or via Shopify Functions {% endcomment %}
+{% for item in checkout.line_items %}
+  {% if item.properties._fanfare_token %}
+    {% comment %} Token will be validated via webhook {% endcomment %}
+    <input type="hidden" name="fanfare_token" value="{{ item.properties._fanfare_token }}">
+  {% endif %}
+{% endfor %}
+```
+
+## Step 5: Webhook Integration
+
+### Configure Webhooks in Shopify App
+
+The Fanfare app automatically registers these webhooks:
+
+| Webhook Topic      | Purpose                         |
+| ------------------ | ------------------------------- |
+| `orders/create`    | Validate admission and complete |
+| `orders/paid`      | Confirm successful transaction  |
+| `orders/cancelled` | Handle cancellations            |
+| `refunds/create`   | Track refund events             |
+
+### Manual Webhook Setup
+
+If using custom integration, register webhooks via Shopify Admin API:
+
+```typescript
+// Register order webhook
+const webhook = await shopifyAdmin.webhook.create({
+  topic: "orders/create",
+  address: "https://api.fanfare.io/webhooks/shopify/orders",
+  format: "json",
+});
+```
+
+### Webhook Handler
+
+```typescript
+// Your webhook endpoint (or Fanfare's built-in handler)
+app.post("/webhooks/shopify/orders", async (req, res) => {
+  const hmac = req.headers["x-shopify-hmac-sha256"];
+
+  // Verify webhook signature
+  if (!verifyShopifyWebhook(req.body, hmac)) {
+    return res.status(401).send("Invalid signature");
+  }
+
+  const order = req.body;
+
+  // Extract Fanfare data from line items
+  for (const item of order.line_items) {
+    const fanfareToken = item.properties?.find(
+      (p: { name: string }) => p.name === "_fanfare_token",
+    )?.value;
+
+    if (fanfareToken) {
+      const experienceId = item.properties?.find(
+        (p: { name: string }) => p.name === "_fanfare_experience_id",
+      )?.value;
+      const consumerId = item.properties?.find(
+        (p: { name: string }) => p.name === "_fanfare_consumer_id",
+      )?.value;
+      const distributionType = item.properties?.find(
+        (p: { name: string }) => p.name === "_fanfare_distribution_type",
+      )?.value;
+
+      // Complete the admission in Fanfare
+      await fanfareApi.completeAdmission({
+        experienceId,
+        consumerId,
+        distributionType,
+        orderId: order.id.toString(),
+        orderAmount: parseFloat(order.total_price),
+        metadata: {
+          platform: "shopify",
+          shopDomain: order.shop_domain,
+          orderNumber: order.order_number,
+        },
+      });
+    }
+  }
+
+  res.status(200).send("OK");
+});
+```
+
+## Step 6: Product Metafields
+
+Store Fanfare configuration in Shopify metafields:
+
+### Using Shopify Admin
+
+1. Go to **Settings** > **Custom data** > **Products**
+2. Add metafield definition:
+   - Namespace: `fanfare`
+   - Key: `experience_id`
+   - Type: Single line text
+
+### Using Admin API
+
+```typescript
+// Set experience ID on a product
+await shopifyAdmin.metafield.create({
+  namespace: "fanfare",
+  key: "experience_id",
+  value: "exp_abc123xyz",
+  type: "single_line_text_field",
+  owner_resource: "product",
+  owner_id: productId,
+});
+
+// Set organization-level config on shop
+await shopifyAdmin.metafield.create({
+  namespace: "fanfare",
+  key: "organization_id",
+  value: "org_xyz789abc",
+  type: "single_line_text_field",
+  owner_resource: "shop",
+});
+```
+
+## Step 7: Checkout UI Extension (Shopify Plus)
+
+For Shopify Plus stores, create a checkout UI extension:
+
+```tsx
+// extensions/fanfare-checkout/src/Checkout.tsx
+import {
+  reactExtension,
+  Banner,
+  useCartLines,
+  useApplyCartLinesChange,
+} from "@shopify/ui-extensions-react/checkout";
+
+export default reactExtension("purchase.checkout.block.render", () => (
+  <FanfareCheckoutValidation />
+));
+
+function FanfareCheckoutValidation() {
+  const cartLines = useCartLines();
+  const applyCartLinesChange = useApplyCartLinesChange();
+
+  // Check for Fanfare tokens in cart
+  const fanfareItems = cartLines.filter((line) =>
+    line.attributes?.some((attr) => attr.key === "_fanfare_token"),
+  );
+
+  if (fanfareItems.length === 0) {
+    return null;
+  }
+
+  // Validate tokens are still valid
+  const [validationStatus, setValidationStatus] = useState<
+    "pending" | "valid" | "invalid"
+  >("pending");
+
+  useEffect(() => {
+    validateFanfareTokens(fanfareItems).then((isValid) => {
+      setValidationStatus(isValid ? "valid" : "invalid");
+    });
+  }, [fanfareItems]);
+
+  if (validationStatus === "invalid") {
+    return (
+      <Banner status="critical" title="Access Expired">
+        Your access to purchase these items has expired. Please return to the
+        product page to rejoin the experience.
+      </Banner>
+    );
+  }
+
+  if (validationStatus === "valid") {
+    return (
+      <Banner status="success" title="Access Verified">
+        Your exclusive access has been verified. Complete your purchase before
+        the timer expires.
+      </Banner>
+    );
+  }
+
+  return null;
+}
+
+async function validateFanfareTokens(items: CartLine[]): Promise<boolean> {
+  for (const item of items) {
+    const token = item.attributes?.find(
+      (a) => a.key === "_fanfare_token",
+    )?.value;
+    if (!token) continue;
+
+    const response = await fetch(
+      "https://api.fanfare.io/v1/admission/validate",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token }),
+      },
+    );
+
+    if (!response.ok) {
+      return false;
+    }
+  }
+  return true;
+}
+```
+
+## Styling the Experience
+
+### CSS Customization
+
+```css
+/* assets/fanfare-custom.css */
+.fanfare-experience {
+  padding: 20px;
+  border-radius: 8px;
+  background: var(--color-background);
+}
+
+.fanfare-queue-position {
+  font-size: 2rem;
+  font-weight: bold;
+  text-align: center;
+}
+
+.fanfare-timer {
+  font-size: 1.5rem;
+  color: var(--color-primary);
+}
+
+.fanfare-checkout-btn {
+  width: 100%;
+  padding: 16px 24px;
+  background: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.fanfare-checkout-btn:hover {
+  background: var(--color-primary-dark);
+}
+
+.fanfare-error {
+  padding: 12px;
+  background: #fee;
+  color: #c00;
+  border-radius: 4px;
+}
+```
+
+## Best Practices
+
+### 1. Pre-load Experience Data
+
+```javascript
+// Prefetch experience status on page load
+Fanfare.prefetch(experienceId).then(function (status) {
+  if (status.state === "not_started") {
+    showCountdown(status.startsAt);
+  }
+});
+```
+
+### 2. Handle Browser Back Button
+
+```javascript
+// Prevent users from losing their place
+window.addEventListener("popstate", function (event) {
+  if (Fanfare.hasActiveSession()) {
+    if (
+      !confirm("Leaving may forfeit your place in the experience. Continue?")
+    ) {
+      history.pushState(null, "", location.href);
+    }
+  }
+});
+```
+
+### 3. Mobile Optimization
+
+```liquid
+{% comment %} Responsive container {% endcomment %}
+<style>
+  @media (max-width: 768px) {
+    .fanfare-experience {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      border-radius: 16px 16px 0 0;
+      box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+    }
+  }
+</style>
+```
+
+## Troubleshooting
+
+### Experience Not Loading
+
+1. Check that organization ID metafield is set on shop
+2. Verify experience ID is correct in product metafield
+3. Check browser console for SDK errors
+4. Ensure SDK script is loading (check network tab)
+
+### Cart Properties Not Appearing
+
+Shopify may strip properties starting with `_` in some contexts:
+
+```javascript
+// Use non-underscore prefixed properties if needed
+properties: {
+  fanfare_token: admission.token,
+  fanfare_experience_id: experienceId,
+}
+```
+
+### Webhook Not Firing
+
+1. Verify webhook is registered in Shopify admin
+2. Check webhook delivery logs
+3. Ensure endpoint URL is publicly accessible
+4. Verify HMAC signature validation
+
+### Token Validation Failing
+
+```javascript
+// Debug token validation
+async function debugTokenValidation(token) {
+  const response = await fetch("https://api.fanfare.io/v1/admission/validate", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ token }),
+  });
+
+  const data = await response.json();
+  console.log("Validation response:", data);
+
+  if (!response.ok) {
+    console.error("Validation failed:", data.error);
+    console.error("Token may be expired or already used");
+  }
+
+  return response.ok;
+}
+```
+
+## What's Next
+
+- [WooCommerce Integration](/guides/platform-integrations/woocommerce) - WordPress/WooCommerce setup
+- [Custom Platform](/guides/platform-integrations/custom-platform) - Build for any platform
+- [Webhooks Guide](/guides/advanced/webhooks-guide) - Advanced webhook handling
+- [Order Completion](/guides/checkout-integration/order-completion) - Complete order processing
