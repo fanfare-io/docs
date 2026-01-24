@@ -1,8 +1,3 @@
----
-title: Cart Reservation Guide
-description: Hold inventory during checkout to prevent overselling when consumers are admitted.
----
-
 # Cart Reservation Guide
 
 Learn how to hold inventory during the checkout window to prevent overselling when consumers are admitted from Fanfare experiences.
@@ -62,11 +57,7 @@ Reserve inventory on admission, release if not purchased:
 
 ```typescript
 // When consumer is admitted
-async function onConsumerAdmitted(
-  consumerId: string,
-  productId: string,
-  quantity: number,
-) {
+async function onConsumerAdmitted(consumerId: string, productId: string, quantity: number) {
   const reservation = await createReservation({
     consumerId,
     productId,
@@ -97,11 +88,7 @@ async function releaseReservation(reservationId: string) {
 Deduct from inventory on admission, refund if not purchased:
 
 ```typescript
-async function onConsumerAdmitted(
-  consumerId: string,
-  productId: string,
-  quantity: number,
-) {
+async function onConsumerAdmitted(consumerId: string, productId: string, quantity: number) {
   // Deduct from available inventory
   const result = await decrementInventory(productId, quantity);
 
@@ -134,11 +121,7 @@ Allocate based on queue position:
 
 ```typescript
 // Pre-allocate inventory based on queue size
-async function setupQueueInventory(
-  queueId: string,
-  productId: string,
-  totalInventory: number,
-) {
+async function setupQueueInventory(queueId: string, productId: string, totalInventory: number) {
   await setQueueInventoryPool({
     queueId,
     productId,
@@ -148,11 +131,7 @@ async function setupQueueInventory(
 }
 
 // Allocate on admission
-async function onAdmitted(
-  queueId: string,
-  consumerId: string,
-  productId: string,
-) {
+async function onAdmitted(queueId: string, consumerId: string, productId: string) {
   const pool = await getQueueInventoryPool(queueId, productId);
 
   if (pool.available <= 0) {
@@ -212,15 +191,7 @@ interface CreateReservationParams {
 }
 
 export async function createReservation(params: CreateReservationParams) {
-  const {
-    consumerId,
-    experienceId,
-    admissionToken,
-    productId,
-    variantId,
-    quantity,
-    expiresInMinutes = 10,
-  } = params;
+  const { consumerId, experienceId, admissionToken, productId, variantId, quantity, expiresInMinutes = 10 } = params;
 
   const expiresAt = new Date(Date.now() + expiresInMinutes * 60 * 1000);
 
@@ -257,16 +228,9 @@ export async function createReservation(params: CreateReservationParams) {
   });
 }
 
-export async function convertReservation(
-  reservationId: string,
-  orderId: string,
-) {
+export async function convertReservation(reservationId: string, orderId: string) {
   return await db.transaction(async (tx) => {
-    const [reservation] = await tx
-      .select()
-      .from(reservations)
-      .where(eq(reservations.id, reservationId))
-      .for("update");
+    const [reservation] = await tx.select().from(reservations).where(eq(reservations.id, reservationId)).for("update");
 
     if (!reservation || reservation.status !== "active") {
       throw new Error("Invalid reservation");
@@ -297,21 +261,14 @@ export async function convertReservation(
 
 export async function releaseReservation(reservationId: string) {
   return await db.transaction(async (tx) => {
-    const [reservation] = await tx
-      .select()
-      .from(reservations)
-      .where(eq(reservations.id, reservationId))
-      .for("update");
+    const [reservation] = await tx.select().from(reservations).where(eq(reservations.id, reservationId)).for("update");
 
     if (!reservation || reservation.status !== "active") {
       return; // Already released or converted
     }
 
     // Release the reservation
-    await tx
-      .update(reservations)
-      .set({ status: "released" })
-      .where(eq(reservations.id, reservationId));
+    await tx.update(reservations).set({ status: "released" }).where(eq(reservations.id, reservationId));
 
     // Return inventory
     await tx
@@ -333,12 +290,7 @@ export async function cleanupExpiredReservations() {
   const expired = await db
     .select()
     .from(reservations)
-    .where(
-      and(
-        eq(reservations.status, "active"),
-        lt(reservations.expiresAt, new Date()),
-      ),
-    )
+    .where(and(eq(reservations.status, "active"), lt(reservations.expiresAt, new Date())))
     .limit(100);
 
   // Release each one
@@ -395,9 +347,7 @@ app.post("/api/checkout", async (req, res) => {
   const reservations = await getActiveReservations(consumerId);
 
   for (const item of cart) {
-    const reservation = reservations.find(
-      (r) => r.productId === item.productId && r.variantId === item.variantId,
-    );
+    const reservation = reservations.find((r) => r.productId === item.productId && r.variantId === item.variantId);
 
     if (!reservation) {
       return res.status(400).json({
@@ -430,10 +380,7 @@ app.post("/api/checkout", async (req, res) => {
 
 ```typescript
 // When admission expires or consumer leaves
-async function handleAdmissionExpired(
-  consumerId: string,
-  experienceId: string,
-) {
+async function handleAdmissionExpired(consumerId: string, experienceId: string) {
   const reservations = await db
     .select()
     .from(reservations)
@@ -441,8 +388,8 @@ async function handleAdmissionExpired(
       and(
         eq(reservations.consumerId, consumerId),
         eq(reservations.experienceId, experienceId),
-        eq(reservations.status, "active"),
-      ),
+        eq(reservations.status, "active")
+      )
     );
 
   for (const reservation of reservations) {
@@ -472,8 +419,7 @@ function ReservationStatus({ productId }: { productId: string }) {
       <span className="icon">✓</span>
       <span>Reserved for you</span>
       <span className="timer">
-        {Math.floor(timeRemaining / 60)}:
-        {(timeRemaining % 60).toString().padStart(2, "0")}
+        {Math.floor(timeRemaining / 60)}:{(timeRemaining % 60).toString().padStart(2, "0")}
       </span>
     </div>
   );
@@ -495,11 +441,7 @@ const reservationExpiresIn = admissionExpiresIn + 60 * 1000; // +1 minute buffer
 ```typescript
 // Use database transactions and row locking
 await db.transaction(async (tx) => {
-  const [product] = await tx
-    .select()
-    .from(inventory)
-    .where(eq(inventory.productId, productId))
-    .for("update"); // Lock the row
+  const [product] = await tx.select().from(inventory).where(eq(inventory.productId, productId)).for("update"); // Lock the row
 
   if (product.available < quantity) {
     throw new Error("Insufficient inventory");
@@ -518,11 +460,7 @@ function CheckoutButton({ hasReservation, reservationExpired }: Props) {
   }
 
   if (reservationExpired) {
-    return (
-      <button onClick={retryReservation}>
-        Reservation expired - Try again
-      </button>
-    );
+    return <button onClick={retryReservation}>Reservation expired - Try again</button>;
   }
 
   return <button onClick={checkout}>Complete Purchase</button>;
@@ -533,10 +471,7 @@ function CheckoutButton({ hasReservation, reservationExpired }: Props) {
 
 ```typescript
 // Track reservation outcomes
-async function recordReservationOutcome(
-  reservationId: string,
-  outcome: "converted" | "released" | "expired",
-) {
+async function recordReservationOutcome(reservationId: string, outcome: "converted" | "released" | "expired") {
   await analytics.track("reservation_outcome", {
     reservationId,
     outcome,
@@ -557,19 +492,11 @@ async function reconcileInventory(productId: string) {
   const activeReservations = await db
     .select({ total: sum(reservations.quantity) })
     .from(reservations)
-    .where(
-      and(
-        eq(reservations.productId, productId),
-        eq(reservations.status, "active"),
-      ),
-    );
+    .where(and(eq(reservations.productId, productId), eq(reservations.status, "active")));
 
   const expectedReserved = activeReservations[0]?.total || 0;
 
-  await db
-    .update(inventory)
-    .set({ reserved: expectedReserved })
-    .where(eq(inventory.productId, productId));
+  await db.update(inventory).set({ reserved: expectedReserved }).where(eq(inventory.productId, productId));
 }
 ```
 
@@ -577,15 +504,10 @@ async function reconcileInventory(productId: string) {
 
 ```typescript
 // Always check reservation before checkout
-async function validateCheckoutReservations(
-  consumerId: string,
-  cart: CartItem[],
-) {
+async function validateCheckoutReservations(consumerId: string, cart: CartItem[]) {
   const reservations = await getActiveReservations(consumerId);
 
-  const missing = cart.filter(
-    (item) => !reservations.find((r) => r.productId === item.productId),
-  );
+  const missing = cart.filter((item) => !reservations.find((r) => r.productId === item.productId));
 
   if (missing.length > 0) {
     throw new ReservationError("Missing reservations", { missing });

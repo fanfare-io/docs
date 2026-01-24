@@ -1,580 +1,261 @@
 ---
 title: Queue Distribution
-description: FIFO waiting lines with position tracking and controlled admission
+description: First-come, first-served virtual waiting lines for high-demand launches
 ---
 
 # Queue Distribution
 
-A **Queue** is a first-in-first-out (FIFO) distribution mechanism that manages high demand by admitting consumers in the order they joined. Queues are ideal for product launches where fairness means "first come, first served."
-
-## Queue Model
-
-```typescript
-interface Queue {
-  // Base Distribution Fields
-  id: string;
-  organizationId: string;
-  sequenceId: string;
-  name: string;
-  openAt?: string;
-  closeAt?: string;
-  timeZone: string;
-  supportsGuest: boolean;
-  encryptionSeed: string;
-
-  // Queue-Specific Fields
-  capacity?: number; // Max consumers allowed in queue
-  admitRate: number; // Admissions per minute
-  maxAdmissions?: number; // Total admissions limit
-  admissionExpirationSeconds?: number; // How long admission tokens last
-
-  // Audit
-  createdAt: string;
-  updatedAt: string;
-  archived: boolean;
-}
-```
+A **Queue** is a first-come, first-served waiting line that manages high demand by giving access to consumers in the order they joined. Queues are ideal for product launches where fairness means "first in line gets access first."
 
 ## How Queues Work
 
-```mermaid
-flowchart LR
-    subgraph Entry["Entry Phase"]
-        C[Consumer] -->|joins| Q[Queue]
-        Q -->|assigns| P[Position]
-    end
-
-    subgraph Waiting["Waiting Phase"]
-        P -->|waits in line| W[Wait for Turn]
-        W -->|position updates| W
-    end
-
-    subgraph Admission["Admission Phase"]
-        W -->|reaches front| A[Admitted]
-        A -->|receives| T[Admission Token]
-    end
-
-    subgraph Checkout["Checkout Phase"]
-        T -->|proceeds to| CH[Checkout]
-        CH -->|completes| CO[Completed]
-        T -->|expires| EX[Expired]
-    end
-
-    style Entry fill:#e1f5fe
-    style Waiting fill:#fff3e0
-    style Admission fill:#e8f5e9
-    style Checkout fill:#f3e5f5
-```
+When consumers join a queue, they're assigned a position and wait for their turn:
 
 ```
 ┌────────────────────────────────────────────────────────────────────┐
-│                         QUEUE FLOW                                  │
+│                         THE QUEUE FLOW                              │
 ├────────────────────────────────────────────────────────────────────┤
 │                                                                    │
-│    Consumers join queue                                            │
+│    Consumers join and wait in line                                 │
 │           │                                                        │
 │           ▼                                                        │
 │    ┌──────────────────────────────────────────┐                   │
 │    │ ○ ○ ○ ○ ○ ○ ○ ○ ○ ○ ○ ○ ○ │ ● │           │                   │
-│    │ Back of queue          │ │ Front │      →  Admitted           │
+│    │ Back of queue              │Front│  →  Checkout access        │
 │    └──────────────────────────────────────────┘                   │
 │           │                        │                               │
 │           │                        │                               │
-│           │                   admitRate                            │
-│           │              consumers/minute                          │
-│           │                        │                               │
-│           ▼                        ▼                               │
-│    New entries              Admission tokens                       │
+│      New consumers            Consumers get                        │
+│      join here               access at your                        │
+│                              configured rate                       │
 │                                    │                               │
 │                                    ▼                               │
-│                              Checkout flow                         │
+│                              Complete purchase                     │
+│                              (time-limited window)                 │
 │                                                                    │
 └────────────────────────────────────────────────────────────────────┘
 ```
 
-### Entry Flow
+## The Consumer Experience
 
-1. Consumer enters the experience and is routed to a sequence
-2. Consumer requests to join the queue
-3. System validates:
-   - Queue is open (within `openAt`/`closeAt`)
-   - Queue has capacity (if `capacity` is set)
-   - Consumer is eligible (audience, access code)
-   - Consumer hasn't exceeded order limits
-4. Consumer is assigned a position
-5. Consumer receives real-time position updates
+1. **Join** — Consumer enters the queue and receives a position number
+2. **Wait** — Position updates in real time as the line moves forward
+3. **Get access** — When they reach the front, they're notified they can checkout
+4. **Complete purchase** — Limited time window to finish their purchase
 
-### Admission Flow
-
-1. System admits consumers at the configured `admitRate`
-2. Consumer at front of queue receives admission token
-3. Token includes expiration time (`admissionExpirationSeconds`)
-4. Consumer has limited time to complete checkout
-5. If token expires, consumer loses their spot
-
-## Consumer States
-
-```typescript
-const QueueConsumerStatus = {
-  NOT_QUEUED: "NOT_QUEUED", // Not in queue
-  QUEUED: "QUEUED", // Waiting in line
-  ADMITTED: "ADMITTED", // Has active admission
-  COMPLETED: "COMPLETED", // Finished checkout
-  DENIED: "DENIED", // Entry was denied
-  LEFT: "LEFT", // Voluntarily left
-} as const;
-```
-
-### State Machine
+## Consumer Journey
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                    QUEUE CONSUMER STATES                        │
+│                    QUEUE CONSUMER JOURNEY                       │
 ├─────────────────────────────────────────────────────────────────┤
 │                                                                 │
-│  ┌────────────┐                                                │
-│  │ NOT_QUEUED │──── entry denied ────►┌────────┐              │
-│  └─────┬──────┘                       │ DENIED │              │
-│        │                              └────────┘              │
-│        │ join()                                               │
-│        ▼                                                      │
-│  ┌──────────┐                                                 │
-│  │  QUEUED  │◄───────────────────────────────┐               │
-│  └────┬─────┘                                │               │
-│       │                                      │               │
-│  ┌────┴────┐                                 │               │
-│  │         │                            leave()              │
-│  │    ┌────┴────┐                            │               │
-│  │    ▼         ▼                            │               │
-│  │ admit()   leave()                         │               │
-│  │    │         │                            │               │
-│  │    ▼         ▼                            │               │
-│  │ ┌────────┐  ┌──────┐                     │               │
-│  │ │ADMITTED│  │ LEFT │                     │               │
-│  │ └───┬────┘  └──────┘                     │               │
-│  │     │                                     │               │
-│  │     │ complete()                          │               │
-│  │     │                or                   │               │
-│  │     │ expire ──────────────────►┌──────────┐             │
-│  │     │                           │ EXPIRED* │             │
-│  │     ▼                           └──────────┘             │
-│  │ ┌──────────┐                                             │
-│  │ │COMPLETED │                                             │
-│  │ └──────────┘                                             │
-│  │                                                          │
-│  └──────────────────────────────────────────────────────────┘
+│  ┌─────────────┐                                               │
+│  │ Not in Line │                                               │
+│  └──────┬──────┘                                               │
+│         │ Join queue                                           │
+│         ▼                                                      │
+│  ┌─────────────┐                                               │
+│  │  In Queue   │  (watching position)                          │
+│  └──────┬──────┘                                               │
+│         │ Reach the front                                      │
+│         ▼                                                      │
+│  ┌─────────────┐                                               │
+│  │   Access    │  (checkout available)                         │
+│  │   Granted   │                                               │
+│  └──────┬──────┘                                               │
+│         │ Complete purchase                                    │
+│         ▼                                                      │
+│  ┌─────────────┐                                               │
+│  │  Complete   │                                               │
+│  └─────────────┘                                               │
 │                                                                 │
-│  * EXPIRED typically maps to re-queueable or denied             │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-## Queue Consumer Model
+## When to Use Queues
 
-```typescript
-interface QueueConsumer {
-  id: string;
-  consumerId: string;
-  queueId: string;
-  sequenceId: string;
-
-  // Status
-  status: QueueConsumerStatus;
-  reason?: string; // Reason if denied
-
-  // Timestamps
-  enqueuedAt?: string; // When joined queue
-  dequeuedAt?: string; // When left front of queue
-  completedAt?: string; // When completed checkout
-  updatedAt?: string;
-}
-```
+| Scenario          | Why Queue Works                                |
+| ----------------- | ---------------------------------------------- |
+| Product launches  | First in line gets access first                |
+| Event ticketing   | Orderly flow prevents site overload            |
+| Flash sales       | Manages traffic while rewarding early arrivers |
+| Limited inventory | Ensures fair, ordered access to scarce items   |
+| High-demand drops | Prevents site crashes by throttling access     |
 
 ## Configuration Options
 
-### Capacity
+### Admission Rate
 
-Maximum number of consumers allowed in the queue at once:
+How many consumers per minute receive access to checkout.
 
-```typescript
-{
-  capacity: 10000; // Max 10,000 in queue
-}
+| Rate       | Result                                  |
+| ---------- | --------------------------------------- |
+| 50/minute  | About 1 consumer per second gets access |
+| 100/minute | About 1.7 consumers per second          |
+| 200/minute | About 3.3 consumers per second          |
 
-// null = unlimited capacity
-{
-  capacity: null;
-}
+**Tips for setting admission rate:**
+
+- Match your checkout system's capacity
+- Too high = checkout overwhelmed
+- Too low = unnecessary waiting
+
+### Queue Capacity
+
+Maximum consumers allowed in the queue at once.
+
+- **Set a limit** when you want to manage server load or set expectations
+- **Leave unlimited** when you want to accept everyone and let them wait
+
+### Total Admissions
+
+Maximum total consumers who can receive access.
+
+- **Set a limit** when inventory is fixed (e.g., 500 items available)
+- **Leave unlimited** when you want continuous access until closing time
+
+### Access Window Duration
+
+How long consumers have to complete checkout after receiving access.
+
+| Duration      | Best for                                 |
+| ------------- | ---------------------------------------- |
+| 5-10 minutes  | Simple purchases, saved payment methods  |
+| 15-20 minutes | Multiple items, entering payment details |
+| 30 minutes    | Complex purchases, high-value items      |
+
+## What Consumers See
+
+### While Waiting
+
+- Their current position in line
+- Estimated wait time
+- Real-time updates as the line moves
+
+### When It's Their Turn
+
+- Notification that they can proceed
+- Time remaining to complete purchase
+- Clear call-to-action to checkout
+
+### If They Take Too Long
+
+- Warning as time runs low
+- Notification when access expires
+- Option to rejoin (if the queue is still open)
+
+## Configuration Examples
+
+### Product Launch
+
+High-demand sneaker drop with limited inventory:
+
+```
+Queue Settings:
+├── Admission rate: 100/minute
+├── Total admissions: 500 (matches inventory)
+├── Access window: 10 minutes
+└── Allow guests: Yes
 ```
 
-### Admit Rate
+### Event Ticketing
 
-How many consumers per minute receive admission:
+Concert tickets going on sale:
 
-```typescript
-{
-  admitRate: 100; // 100 consumers per minute admitted
-}
-
-// This translates to:
-// - ~1.67 consumers per second
-// - One admission every 600ms
+```
+Queue Settings:
+├── Admission rate: 200/minute (handle high volume)
+├── Queue capacity: 50,000 (manage expectations)
+├── Access window: 15 minutes (time to select seats)
+└── Allow guests: No (need account for tickets)
 ```
 
-**Tuning admit rate:**
+### Flash Sale
 
-- Too high: Checkout system overwhelmed
-- Too low: Unnecessary waiting, consumer frustration
-- Optimal: Match your checkout capacity
+Time-limited sale with steady access:
 
-### Max Admissions
-
-Total number of admissions before queue stops admitting:
-
-```typescript
-{
-  maxAdmissions: 500; // Stop after 500 admitted
-}
-
-// null = no limit (runs until closeAt)
-{
-  maxAdmissions: null;
-}
+```
+Queue Settings:
+├── Open time: 9:00 AM
+├── Close time: 12:00 PM
+├── Admission rate: 50/minute
+├── Total admissions: Unlimited
+└── Access window: 5 minutes
 ```
 
-**Use cases:**
+## Why Consumers Might Not Get In
 
-- Limited inventory (only 500 items)
-- Capacity events (500 seats)
-- Flash sales (first 500 get discount)
-
-### Admission Expiration
-
-How long admitted consumers have to complete checkout:
-
-```typescript
-{
-  admissionExpirationSeconds: 600; // 10 minute window
-}
-
-// null = no expiration (not recommended)
-{
-  admissionExpirationSeconds: null;
-}
-```
-
-**Best practices:**
-
-- 5-10 minutes for simple checkouts
-- 15-30 minutes for complex purchases
-- Always set expiration to prevent token hoarding
-
-## Position and Wait Time
-
-### Position Calculation
-
-Position is calculated from entry order:
-
-```typescript
-// Position 1 = next to be admitted
-// Position N = N-1 consumers ahead
-
-interface QueuedConsumerState {
-  status: "QUEUED";
-  position: number; // Current position
-  estimatedWaitTimeInSeconds: number;
-}
-```
-
-### Wait Time Estimation
-
-Estimated wait time is calculated from position and admit rate:
-
-```typescript
-// Simple estimation
-estimatedWaitSeconds = (position / admitRate) * 60;
-
-// Example: Position 150, admitRate 100/min
-// Wait = (150 / 100) * 60 = 90 seconds
-```
-
-**Note:** Actual wait times vary based on:
-
-- Consumers who leave
-- Admission token expirations (spot recycling)
-- Rate adjustments
-
-## Deny Reasons
-
-Entry can be denied for several reasons:
-
-```typescript
-const QueueDenyReason = {
-  ORDER_LIMIT_EXCEEDED: "ORDER_LIMIT_EXCEEDED",
-  CAPACITY_EXCEEDED: "CAPACITY_EXCEEDED",
-  VALIDATION_FAILED: "VALIDATION_FAILED",
-  AUDIENCE_MISMATCH: "AUDIENCE_MISMATCH",
-  QUEUE_CLOSED: "QUEUE_CLOSED",
-  ADMISSION_EXPIRED: "ADMISSION_EXPIRED",
-} as const;
-```
-
-| Reason                 | Description                   | Consumer Action         |
-| ---------------------- | ----------------------------- | ----------------------- |
-| `ORDER_LIMIT_EXCEEDED` | Already purchased max allowed | None (fair enforcement) |
-| `CAPACITY_EXCEEDED`    | Queue is full                 | Try again later         |
-| `VALIDATION_FAILED`    | Invalid request               | Fix and retry           |
-| `AUDIENCE_MISMATCH`    | Not in required audience      | Contact support         |
-| `QUEUE_CLOSED`         | Outside open hours            | Wait for reopening      |
-| `ADMISSION_EXPIRED`    | Took too long                 | Re-queue if allowed     |
-
-## SDK Usage
-
-### Entering a Queue
-
-```typescript
-import { useFanfare } from "@waitify-io/fanfare-sdk-react";
-
-function QueueComponent({ queueId }: { queueId: string }) {
-  const { queue } = useFanfare();
-
-  const handleJoin = async () => {
-    try {
-      const result = await queue.enter(queueId);
-      console.log("Position:", result.position);
-      console.log("Est. wait:", result.estimatedWaitTimeInSeconds);
-    } catch (error) {
-      if (error.code === "ORDER_LIMIT_EXCEEDED") {
-        // Handle limit
-      }
-    }
-  };
-
-  return <button onClick={handleJoin}>Join Queue</button>;
-}
-```
-
-### Monitoring Position
-
-```typescript
-function QueueStatus({ queueId }: { queueId: string }) {
-  const { queue } = useFanfare();
-  const [status, setStatus] = useState<QueueConsumerState | null>(null);
-
-  useEffect(() => {
-    // Start polling for updates
-    queue.startPolling(queueId, 5000); // Every 5 seconds
-
-    // Subscribe to status changes
-    const unsubscribe = queue.onStatusChange(queueId, setStatus);
-
-    return () => {
-      queue.stopPolling(queueId);
-      unsubscribe();
-    };
-  }, [queueId]);
-
-  if (!status) return <div>Loading...</div>;
-
-  if (status.status === "QUEUED") {
-    return (
-      <div>
-        <p>Position: {status.position}</p>
-        <p>Est. wait: {Math.round(status.estimatedWaitTimeInSeconds / 60)} min</p>
-      </div>
-    );
-  }
-
-  if (status.status === "ADMITTED") {
-    return (
-      <div>
-        <p>You're in! Complete checkout before your time expires.</p>
-        <a href={`/checkout?token=${status.admissionToken}`}>
-          Complete Purchase
-        </a>
-      </div>
-    );
-  }
-
-  return null;
-}
-```
-
-## API Operations
-
-### Create Queue
-
-```bash
-POST /v1/sequences/:sequenceId/queues
-Authorization: Bearer sk_live_...
-Content-Type: application/json
-
-{
-  "name": "Main Queue",
-  "openAt": "2024-03-01T09:00:00Z",
-  "closeAt": "2024-03-01T17:00:00Z",
-  "timeZone": "America/New_York",
-  "admitRate": 100,
-  "maxAdmissions": 500,
-  "admissionExpirationSeconds": 600,
-  "supportsGuest": true
-}
-```
-
-### Get Queue Status
-
-```bash
-GET /v1/queues/:id
-Authorization: Bearer sk_live_...
-
-# Response
-{
-  "id": "queue-uuid",
-  "name": "Main Queue",
-  "status": "open",
-  "currentSize": 1250,
-  "totalAdmitted": 350,
-  "maxAdmissions": 500,
-  "estimatedWaitTime": 750
-}
-```
-
-### Consumer Join Queue
-
-```bash
-POST /consumers/v1/queues/:queueId/enter
-Authorization: Bearer consumer-token
-Content-Type: application/json
-
-{
-  "metadata": {
-    "selectedVariant": "variant-uuid"
-  }
-}
-
-# Response
-{
-  "position": 1251,
-  "estimatedWaitTimeInSeconds": 751,
-  "status": "QUEUED"
-}
-```
-
-### Consumer Get Status
-
-```bash
-GET /consumers/v1/queues/:queueId/status
-Authorization: Bearer consumer-token
-
-# Response (queued)
-{
-  "status": "QUEUED",
-  "position": 845,
-  "estimatedWaitTimeInSeconds": 507
-}
-
-# Response (admitted)
-{
-  "status": "ADMITTED",
-  "admissionToken": "eyJ...",
-  "expiresAt": "2024-03-01T10:15:00Z"
-}
-```
+| Reason            | What Happened             | Consumer Message                                |
+| ----------------- | ------------------------- | ----------------------------------------------- |
+| Queue full        | Queue reached capacity    | "Queue is at capacity. Try again later."        |
+| Queue closed      | Outside open hours        | "This queue is currently closed."               |
+| Already purchased | Hit their order limit     | "You've already purchased the maximum allowed." |
+| Access expired    | Took too long at checkout | "Your checkout window has expired."             |
 
 ## Best Practices
 
-### 1. Set Realistic Admit Rates
+### 1. Set the Right Admission Rate
 
-Match your checkout capacity:
+Match your checkout capacity. If your checkout can handle 2 purchases per second, an admission rate of 100/minute leaves headroom for abandoned carts.
 
-```typescript
-// If checkout handles 2 purchases/second
-// Set admitRate to account for:
-// - Not everyone will complete
-// - Allow buffer for peaks
-admitRate: 100; // ~1.67/sec leaves headroom
-```
+### 2. Configure Appropriate Time Windows
 
-### 2. Configure Appropriate Expiration
+Balance urgency with fairness:
 
-Balance urgency with completion time:
+- Too short = frustrated consumers who can't complete in time
+- Too long = people holding spots they won't use
 
-```typescript
-// Simple checkout (single item, saved payment)
-admissionExpirationSeconds: 300; // 5 minutes
-
-// Complex checkout (multiple items, new payment)
-admissionExpirationSeconds: 900; // 15 minutes
-```
-
-### 3. Monitor and Adjust
-
-Track these metrics:
-
-- **Queue length over time**: Spot capacity issues
-- **Completion rate**: Are tokens expiring too often?
-- **Average wait time**: Consumer experience quality
-
-### 4. Communicate Clearly
+### 3. Communicate Clearly
 
 Show consumers:
 
-- Their position in line
-- Estimated wait time
-- What happens when admitted
-- Time remaining to complete (when admitted)
+- Their position and estimated wait
+- What happens when it's their turn
+- How long they'll have to complete
 
-### 5. Handle Capacity Thoughtfully
+### 4. Handle Capacity Gracefully
 
-When queue is full:
+When the queue fills up:
 
-- Show clear message about capacity
-- Offer waitlist alternative
-- Provide estimated reopening time
+- Show a clear message about capacity
+- Offer a waitlist as an alternative
+- Give expected reopening times
 
 ## Common Patterns
 
 ### Rolling Queue
 
-Queue that continuously accepts and admits:
+Continuously accepts and admits consumers over a longer period:
 
-```typescript
-{
-  openAt: "2024-03-01T00:00:00Z",
-  closeAt: "2024-03-31T23:59:59Z",  // Month-long
-  admitRate: 50,
-  maxAdmissions: null,  // No limit
-  capacity: 5000  // But limit active queue size
-}
-```
+- Open for an extended time (days or weeks)
+- Steady admission rate
+- No total admission limit
+- Limited queue capacity to manage expectations
 
 ### Burst Queue
 
-Handle launch spikes:
+Handles launch-day spikes:
 
-```typescript
-{
-  openAt: "2024-03-01T09:00:00Z",
-  closeAt: "2024-03-01T09:30:00Z",  // 30-minute window
-  admitRate: 200,  // High rate
-  maxAdmissions: 1000,
-  capacity: null  // Accept everyone
-}
-```
+- Short open window (30 minutes to a few hours)
+- Higher admission rate
+- Set total admissions to match inventory
+- Unlimited queue capacity to accept everyone
 
-### Recycling Queue
+### Recycling Expired Spots
 
-Re-queue expired admissions:
+When consumers don't complete checkout:
 
-```typescript
-// Enable in configuration
-{
-  admissionExpirationSeconds: 600,
-  recycleExpiredSpots: true  // Expired = back in queue at original position
-}
-```
+- Their spot can be recycled
+- Next person in line gets access sooner
+- Helps ensure all inventory sells
 
 ## Related Concepts
 
-- [Distributions Overview](/docs/concepts/distributions/overview) - Common distribution concepts
-- [Draw Distribution](/docs/concepts/distributions/lottery) - Alternative fair allocation
-- [Real-Time Updates](/docs/concepts/real-time) - Position update implementation
+- [Distributions Overview](/concepts/distributions/overview) — Common distribution concepts
+- [Draw Distribution](/concepts/distributions/lottery) — Random selection alternative
+- [Auction Distribution](/concepts/distributions/auction) — Competitive bidding
+- [Appointment Distribution](/concepts/distributions/appointment) — Time-slot booking
+- [Timed Release Distribution](/concepts/distributions/instant) — Instant access at scheduled time
+- [Waitlist Distribution](/concepts/distributions/exclusive) — Interest capture and notifications
+- [Audiences](/concepts/audiences) — Tiered access for different consumer groups

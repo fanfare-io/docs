@@ -1,8 +1,3 @@
----
-title: Shopify Integration Guide
-description: Integrate Fanfare experiences with your Shopify store.
----
-
 # Shopify Integration Guide
 
 Learn how to integrate Fanfare experiences with your Shopify store, from installation to checkout completion.
@@ -103,10 +98,7 @@ const experience = await fanfareAdmin.experiences.create({
   },
   metadata: {
     shopifyProductId: "gid://shopify/Product/1234567890",
-    shopifyVariantIds: [
-      "gid://shopify/ProductVariant/111",
-      "gid://shopify/ProductVariant/222",
-    ],
+    shopifyVariantIds: ["gid://shopify/ProductVariant/111", "gid://shopify/ProductVariant/222"],
   },
 });
 ```
@@ -421,19 +413,13 @@ app.post("/webhooks/shopify/orders", async (req, res) => {
 
   // Extract Fanfare data from line items
   for (const item of order.line_items) {
-    const fanfareToken = item.properties?.find(
-      (p: { name: string }) => p.name === "_fanfare_token",
-    )?.value;
+    const fanfareToken = item.properties?.find((p: { name: string }) => p.name === "_fanfare_token")?.value;
 
     if (fanfareToken) {
-      const experienceId = item.properties?.find(
-        (p: { name: string }) => p.name === "_fanfare_experience_id",
-      )?.value;
-      const consumerId = item.properties?.find(
-        (p: { name: string }) => p.name === "_fanfare_consumer_id",
-      )?.value;
+      const experienceId = item.properties?.find((p: { name: string }) => p.name === "_fanfare_experience_id")?.value;
+      const consumerId = item.properties?.find((p: { name: string }) => p.name === "_fanfare_consumer_id")?.value;
       const distributionType = item.properties?.find(
-        (p: { name: string }) => p.name === "_fanfare_distribution_type",
+        (p: { name: string }) => p.name === "_fanfare_distribution_type"
       )?.value;
 
       // Complete the admission in Fanfare
@@ -497,34 +483,23 @@ For Shopify Plus stores, create a checkout UI extension:
 
 ```tsx
 // extensions/fanfare-checkout/src/Checkout.tsx
-import {
-  reactExtension,
-  Banner,
-  useCartLines,
-  useApplyCartLinesChange,
-} from "@shopify/ui-extensions-react/checkout";
+import { reactExtension, Banner, useCartLines, useApplyCartLinesChange } from "@shopify/ui-extensions-react/checkout";
 
-export default reactExtension("purchase.checkout.block.render", () => (
-  <FanfareCheckoutValidation />
-));
+export default reactExtension("purchase.checkout.block.render", () => <FanfareCheckoutValidation />);
 
 function FanfareCheckoutValidation() {
   const cartLines = useCartLines();
   const applyCartLinesChange = useApplyCartLinesChange();
 
   // Check for Fanfare tokens in cart
-  const fanfareItems = cartLines.filter((line) =>
-    line.attributes?.some((attr) => attr.key === "_fanfare_token"),
-  );
+  const fanfareItems = cartLines.filter((line) => line.attributes?.some((attr) => attr.key === "_fanfare_token"));
 
   if (fanfareItems.length === 0) {
     return null;
   }
 
   // Validate tokens are still valid
-  const [validationStatus, setValidationStatus] = useState<
-    "pending" | "valid" | "invalid"
-  >("pending");
+  const [validationStatus, setValidationStatus] = useState<"pending" | "valid" | "invalid">("pending");
 
   useEffect(() => {
     validateFanfareTokens(fanfareItems).then((isValid) => {
@@ -535,8 +510,7 @@ function FanfareCheckoutValidation() {
   if (validationStatus === "invalid") {
     return (
       <Banner status="critical" title="Access Expired">
-        Your access to purchase these items has expired. Please return to the
-        product page to rejoin the experience.
+        Your access to purchase these items has expired. Please return to the product page to rejoin the experience.
       </Banner>
     );
   }
@@ -544,8 +518,7 @@ function FanfareCheckoutValidation() {
   if (validationStatus === "valid") {
     return (
       <Banner status="success" title="Access Verified">
-        Your exclusive access has been verified. Complete your purchase before
-        the timer expires.
+        Your exclusive access has been verified. Complete your purchase before the timer expires.
       </Banner>
     );
   }
@@ -555,19 +528,14 @@ function FanfareCheckoutValidation() {
 
 async function validateFanfareTokens(items: CartLine[]): Promise<boolean> {
   for (const item of items) {
-    const token = item.attributes?.find(
-      (a) => a.key === "_fanfare_token",
-    )?.value;
+    const token = item.attributes?.find((a) => a.key === "_fanfare_token")?.value;
     if (!token) continue;
 
-    const response = await fetch(
-      "https://api.fanfare.io/v1/admission/validate",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token }),
-      },
-    );
+    const response = await fetch("https://api.fanfare.io/v1/admission/validate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ token }),
+    });
 
     if (!response.ok) {
       return false;
@@ -643,9 +611,7 @@ Fanfare.prefetch(experienceId).then(function (status) {
 // Prevent users from losing their place
 window.addEventListener("popstate", function (event) {
   if (Fanfare.hasActiveSession()) {
-    if (
-      !confirm("Leaving may forfeit your place in the experience. Continue?")
-    ) {
+    if (!confirm("Leaving may forfeit your place in the experience. Continue?")) {
       history.pushState(null, "", location.href);
     }
   }

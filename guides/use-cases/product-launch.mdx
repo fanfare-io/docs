@@ -1,8 +1,3 @@
----
-title: Product Launch Use Case
-description: Manage high-demand product launches with virtual queues and controlled access.
----
-
 # Product Launch Use Case
 
 Learn how to use Fanfare to manage high-demand product launches with virtual queues and controlled access.
@@ -72,8 +67,7 @@ function calculateQueueSettings(config: {
   avgCheckoutTime: number;
   admissionWindow: number;
 }) {
-  const { totalInventory, expectedDemand, avgCheckoutTime, admissionWindow } =
-    config;
+  const { totalInventory, expectedDemand, avgCheckoutTime, admissionWindow } = config;
 
   // How many users can complete checkout in the admission window
   const checkoutsPerWindow = admissionWindow / avgCheckoutTime;
@@ -82,8 +76,7 @@ function calculateQueueSettings(config: {
   const concurrentAdmissions = Math.ceil(totalInventory / checkoutsPerWindow);
 
   // Rate to process the expected demand
-  const totalLaunchDuration =
-    (expectedDemand / concurrentAdmissions) * avgCheckoutTime;
+  const totalLaunchDuration = (expectedDemand / concurrentAdmissions) * avgCheckoutTime;
   const admissionRate = Math.ceil(expectedDemand / totalLaunchDuration);
 
   return {
@@ -170,8 +163,7 @@ async function enablePreQueue(queueId: string) {
     config: {
       preQueueEnabled: true,
       preQueueStartTime: new Date("2024-06-15T09:30:00Z"),
-      preQueueMessage:
-        "The launch begins at 10:00 AM ET. Stay on this page to secure your spot.",
+      preQueueMessage: "The launch begins at 10:00 AM ET. Stay on this page to secure your spot.",
     },
   });
 }
@@ -194,16 +186,9 @@ interface LaunchPageProps {
   launchTime: string;
 }
 
-export default function LaunchPage({
-  queueId,
-  product,
-  launchTime,
-}: LaunchPageProps) {
+export default function LaunchPage({ queueId, product, launchTime }: LaunchPageProps) {
   return (
-    <FanfareProvider
-      organizationId={process.env.NEXT_PUBLIC_FANFARE_ORG_ID!}
-      options={{ environment: "production" }}
-    >
+    <FanfareProvider organizationId={process.env.NEXT_PUBLIC_FANFARE_ORG_ID!} options={{ environment: "production" }}>
       <div className="launch-page">
         <header className="launch-header">
           <h1>{product.name}</h1>
@@ -224,11 +209,7 @@ export default function LaunchPage({
   );
 }
 
-export async function getServerSideProps({
-  params,
-}: {
-  params: { slug: string };
-}) {
+export async function getServerSideProps({ params }: { params: { slug: string } }) {
   const launch = await getLaunchBySlug(params.slug);
 
   return {
@@ -245,10 +226,7 @@ export async function getServerSideProps({
 
 ```tsx
 // components/ProductLaunchExperience.tsx
-import {
-  useExperienceJourney,
-  useFanfare,
-} from "@waitify-io/fanfare-sdk-react";
+import { useExperienceJourney, useFanfare } from "@waitify-io/fanfare-sdk-react";
 import { useState, useEffect } from "react";
 
 interface ProductLaunchExperienceProps {
@@ -256,13 +234,8 @@ interface ProductLaunchExperienceProps {
   product: Product;
 }
 
-export function ProductLaunchExperience({
-  queueId,
-  product,
-}: ProductLaunchExperienceProps) {
-  const { journey, state, start } = useExperienceJourney(queueId, {
-    autoStart: true,
-  });
+export function ProductLaunchExperience({ queueId, product }: ProductLaunchExperienceProps) {
+  const { journey, state, start } = useExperienceJourney(queueId, { autoStart: true });
 
   const snapshot = state?.snapshot;
   const stage = snapshot?.sequenceStage;
@@ -284,13 +257,9 @@ export function ProductLaunchExperience({
 
       {stage === "entering" && <EnteringState />}
 
-      {stage === "waiting" && (
-        <QueueState snapshot={snapshot} product={product} />
-      )}
+      {stage === "waiting" && <QueueState snapshot={snapshot} product={product} />}
 
-      {stage === "admitted" && (
-        <AdmittedState snapshot={snapshot} product={product} />
-      )}
+      {stage === "admitted" && <AdmittedState snapshot={snapshot} product={product} />}
 
       {stage === "completed" && <CompletedState />}
 
@@ -310,9 +279,7 @@ function PreLaunchState({ snapshot }: { snapshot: JourneySnapshot }) {
         <CountdownTimer targetTime={startsAt} />
       </div>
 
-      {preQueueMessage && (
-        <p className="pre-queue-message">{preQueueMessage}</p>
-      )}
+      {preQueueMessage && <p className="pre-queue-message">{preQueueMessage}</p>}
 
       <div className="launch-tips">
         <h3>Tips for Launch Day</h3>
@@ -327,13 +294,7 @@ function PreLaunchState({ snapshot }: { snapshot: JourneySnapshot }) {
   );
 }
 
-function QueueState({
-  snapshot,
-  product,
-}: {
-  snapshot: JourneySnapshot;
-  product: Product;
-}) {
+function QueueState({ snapshot, product }: { snapshot: JourneySnapshot; product: Product }) {
   const position = snapshot?.context?.position;
   const estimatedWait = snapshot?.context?.estimatedWaitSeconds;
 
@@ -347,9 +308,7 @@ function QueueState({
       <div className="queue-stats">
         <div className="stat position">
           <span className="label">Your Position</span>
-          <span className="value">
-            {position?.toLocaleString() || "Calculating..."}
-          </span>
+          <span className="value">{position?.toLocaleString() || "Calculating..."}</span>
         </div>
 
         <div className="stat wait-time">
@@ -380,13 +339,7 @@ function QueueState({
   );
 }
 
-function AdmittedState({
-  snapshot,
-  product,
-}: {
-  snapshot: JourneySnapshot;
-  product: Product;
-}) {
+function AdmittedState({ snapshot, product }: { snapshot: JourneySnapshot; product: Product }) {
   const expiresAt = snapshot?.context?.admittanceExpiresAt;
   const [timeRemaining, setTimeRemaining] = useState(0);
 
@@ -444,9 +397,7 @@ function AdmittedState({
         Complete Purchase
       </button>
 
-      <p className="checkout-warning">
-        Do not close this page until checkout is complete
-      </p>
+      <p className="checkout-warning">Do not close this page until checkout is complete</p>
     </div>
   );
 }
@@ -665,10 +616,7 @@ async function generateLaunchReport(queueId: string): Promise<LaunchReport> {
     },
     timeline: analytics.hourlyBreakdown,
     dropoffAnalysis: {
-      leftBeforeAdmission:
-        analytics.totalEntered -
-        analytics.totalAdmitted -
-        analytics.currentlyWaiting,
+      leftBeforeAdmission: analytics.totalEntered - analytics.totalAdmitted - analytics.currentlyWaiting,
       expiredAdmissions: analytics.totalAdmitted - analytics.totalCompleted,
       abandonedCart: analytics.checkoutStarted - analytics.totalCompleted,
     },
@@ -686,11 +634,9 @@ const stageMessages = {
   preQueue:
     "You're early! The launch begins at {time}. Stay on this page to automatically enter the queue when it opens.",
   entering: "Connecting you to the queue. This should only take a moment.",
-  waiting:
-    "You're in line! Your position: {position}. Estimated wait: {time}. Do not close this page.",
+  waiting: "You're in line! Your position: {position}. Estimated wait: {time}. Do not close this page.",
   admitted: "It's your turn! You have {time} to complete your purchase.",
-  completed:
-    "Thank you for your purchase! Order confirmation has been sent to your email.",
+  completed: "Thank you for your purchase! Order confirmation has been sent to your email.",
   expired:
     "Your checkout window has expired. The product may still be available - return to the product page to try again.",
 };
@@ -741,8 +687,7 @@ useEffect(() => {
   };
 
   document.addEventListener("visibilitychange", handleVisibilityChange);
-  return () =>
-    document.removeEventListener("visibilitychange", handleVisibilityChange);
+  return () => document.removeEventListener("visibilitychange", handleVisibilityChange);
 }, [journey, stage]);
 
 // Handle network reconnection

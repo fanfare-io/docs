@@ -46,12 +46,10 @@
             "group": "Core Concepts",
             "pages": [
               "concepts/overview",
-              "concepts/organizations",
               "concepts/experiences",
               "concepts/audiences",
               "concepts/consumers",
               "concepts/products",
-              "concepts/state-machine",
               "concepts/real-time"
             ]
           },
@@ -155,7 +153,9 @@
         "groups": [
           {
             "group": "Overview",
-            "pages": ["guides/overview"]
+            "pages": [
+              "guides/overview"
+            ]
           },
           {
             "group": "Integration Patterns",
@@ -265,7 +265,10 @@
         "groups": [
           {
             "group": "Getting Started",
-            "pages": ["dashboard/overview", "dashboard/getting-started"]
+            "pages": [
+              "dashboard/overview",
+              "dashboard/getting-started"
+            ]
           },
           {
             "group": "Experiences",
@@ -317,7 +320,9 @@
           },
           {
             "group": "Billing",
-            "pages": ["dashboard/billing/overview"]
+            "pages": [
+              "dashboard/billing/overview"
+            ]
           }
         ]
       },
@@ -326,7 +331,9 @@
         "groups": [
           {
             "group": "Overview",
-            "pages": ["integrations/overview"]
+            "pages": [
+              "integrations/overview"
+            ]
           },
           {
             "group": "E-commerce",
@@ -389,7 +396,10 @@
         "groups": [
           {
             "group": "Overview",
-            "pages": ["landing-pages/overview", "landing-pages/getting-started"]
+            "pages": [
+              "landing-pages/overview",
+              "landing-pages/getting-started"
+            ]
           },
           {
             "group": "Customization",
@@ -425,7 +435,9 @@
         "groups": [
           {
             "group": "Overview",
-            "pages": ["resources/overview"]
+            "pages": [
+              "resources/overview"
+            ]
           },
           {
             "group": "Best Practices",
@@ -500,7 +512,13 @@
     }
   },
   "contextual": {
-    "options": ["copy", "view", "chatgpt", "claude", "cursor"]
+    "options": [
+      "copy",
+      "view",
+      "chatgpt",
+      "claude",
+      "cursor"
+    ]
   },
   "footer": {
     "socials": {

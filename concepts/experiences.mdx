@@ -1,410 +1,245 @@
 ---
 title: Experiences
-description: What experiences are, their lifecycle, and configuration
+description: Creating and managing product launches, sales, and access-controlled events
 ---
 
 # Experiences
 
-An **Experience** is the central container for a product launch, sale event, or access-controlled offering in Fanfare. It groups together products, sequences, distributions, and timing to orchestrate how consumers access your offerings.
+An **Experience** is the central container for a product launch, sale event, or access-controlled offering in Fanfare. It brings together your products, timing, and access methods to orchestrate how consumers reach checkout.
 
-## Experience Model
+## What is an Experience?
 
-```typescript
-interface Experience {
-  // Identity
-  id: string; // UUID
-  organizationId: string; // Parent organization
-  name: string; // Display name
+Think of an experience as a campaign for a specific launch or event. When you create an experience, you define:
 
-  // Timing
-  openAt?: string; // ISO timestamp when experience opens
-  closeAt?: string; // ISO timestamp when experience closes
-  timeZone: string; // Timezone for display (e.g., "America/New_York")
-
-  // Access Control
-  accessCode?: string; // Optional code required to enter
-
-  // Products
-  products?: ExperienceProduct[]; // Associated products
-  product?: Product; // Primary product (convenience field)
-
-  // Customization
-  theme?: ExperienceTheme; // Visual customization
-  i18n?: Record<string, Record<string, string>>; // Localization overrides
-
-  // Relations
-  sequences?: Sequence[]; // Access paths within this experience
-
-  // Audit
-  createdAt: string;
-  updatedAt: string;
-  archived: boolean;
-}
-```
+- **What** — Which products are available
+- **When** — Opening and closing times
+- **How** — The method consumers use to get access (queue, draw, auction, etc.)
+- **Who** — Which consumer groups can participate (optional)
 
 ## Experience Lifecycle
 
-Experiences exist in different states based on their timing configuration:
-
-```mermaid
-stateDiagram-v2
-    [*] --> Scheduled : openAt in future
-    [*] --> Open : no openAt set
-    Scheduled --> Open : now >= openAt
-    Open --> Closed : now > closeAt
-    Closed --> [*]
-
-    note right of Scheduled : Consumer sees countdown<br/>Cannot enter
-    note right of Open : Consumer can participate<br/>Active journey
-    note right of Closed : Consumer sees ended state<br/>Cannot enter
-```
+Experiences go through three phases based on timing:
 
 ```
-            ┌─────────────────────────────────────────────────────────┐
-Timeline    │  Before openAt  │  openAt → closeAt  │  After closeAt  │
-            └─────────────────────────────────────────────────────────┘
-                    ▼                   ▼                   ▼
-State          SCHEDULED             OPEN               CLOSED
-                    │                   │                   │
-Consumer       Cannot enter      Can participate     Cannot enter
-Access         (sees countdown)  (active journey)    (sees ended state)
+┌─────────────────────────────────────────────────────────────────────┐
+│                       EXPERIENCE TIMELINE                            │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│  ╔═══════════════╗    ╔════════════════╗    ╔═══════════════╗      │
+│  ║   SCHEDULED   ║    ║     OPEN       ║    ║    CLOSED     ║      │
+│  ╟───────────────╢    ╟────────────────╢    ╟───────────────╢      │
+│  ║  Consumers    ║    ║  Consumers     ║    ║  Experience   ║      │
+│  ║  see a        ║    ║  can join and  ║    ║  has ended    ║      │
+│  ║  countdown    ║    ║  participate   ║    ║               ║      │
+│  ╚═══════════════╝    ╚════════════════╝    ╚═══════════════╝      │
+│         │                    │                    │                 │
+│         │                    │                    │                 │
+│  ───────┼────────────────────┼────────────────────┼──────────►      │
+│      Opens at            Active period        Closes at             │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘
 ```
 
-### State Determination
+### Scheduled
 
-The experience state is determined dynamically based on current time:
+Before the open time, consumers see a countdown. They cannot participate yet but can see what's coming.
 
-```typescript
-function getExperienceState(experience: Experience): "scheduled" | "open" | "closed" {
-  const now = new Date();
-  const openAt = experience.openAt ? new Date(experience.openAt) : null;
-  const closeAt = experience.closeAt ? new Date(experience.closeAt) : null;
+### Open
 
-  if (openAt && now < openAt) return "scheduled";
-  if (closeAt && now > closeAt) return "closed";
-  return "open";
-}
-```
+Once the experience opens, consumers can participate according to the distribution method you've configured (join a queue, enter a draw, place a bid, etc.).
 
-### Timing Configurations
+### Closed
 
-| openAt | closeAt | Behavior                                      |
-| ------ | ------- | --------------------------------------------- |
-| Set    | Set     | Opens at `openAt`, closes at `closeAt`        |
-| Set    | null    | Opens at `openAt`, never closes automatically |
-| null   | Set     | Open immediately, closes at `closeAt`         |
-| null   | null    | Always open (manual control only)             |
+After the close time, no new entries are allowed. Consumers who already have access can still complete their purchases within their time window.
 
-## Sequences
+## Timing Options
 
-Sequences define the different paths consumers can take within an experience. They enable tiered access and targeted distribution strategies.
+You can configure timing in several ways:
 
-### Sequence Model
+| Open Time | Close Time | Result                                                              |
+| --------- | ---------- | ------------------------------------------------------------------- |
+| Set       | Set        | Opens at the scheduled time, closes at the end time                 |
+| Set       | Not set    | Opens at the scheduled time, stays open until you manually close it |
+| Not set   | Set        | Open immediately, closes at the end time                            |
+| Not set   | Not set    | Always open (until you manually close it)                           |
 
-```typescript
-interface Sequence {
-  id: string;
-  organizationId: string;
-  experienceId: string;
-  name: string; // Display name (e.g., "VIP Access")
-  priority: number; // Evaluation order (higher = checked first)
-  color: string; // UI identifier color
-  audienceId?: string; // Required audience membership
-  accessCode?: string; // Required access code
-  productSelectionMode?: "USER_SELECTED" | "SYSTEM_ASSIGNED";
-}
-```
+## Access Paths (Sequences)
 
-### Sequence Routing
-
-When a consumer enters an experience, they are routed to a sequence:
+Within an experience, you can create multiple **access paths** (called sequences) to give different consumer groups different experiences:
 
 ```
-Consumer enters experience
-         │
-         ▼
-┌─────────────────────────────┐
-│ Get sequences ordered by    │
-│ priority (descending)       │
-└─────────────────────────────┘
-         │
-         ▼
-┌─────────────────────────────┐
-│ For each sequence:          │◄──────┐
-│ 1. Check audience membership│       │
-│ 2. Check access code        │       │
-│ 3. Check access rules       │       │
-└─────────────────────────────┘       │
-         │                            │
-    ┌────┴────┐                       │
-    ▼         ▼                       │
- Access    Access                     │
- Granted   Denied ────────────────────┘
-    │
-    ▼
-┌─────────────────────────────┐
-│ Assign consumer to sequence │
-│ Enter active distribution   │
-└─────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────┐
+│                     YOUR EXPERIENCE                              │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  ┌──────────────────┐                                          │
+│  │   VIP ACCESS     │  For your loyalty members                │
+│  │   Priority: High │  → Early access via lottery              │
+│  │   Audience: VIP  │                                          │
+│  └──────────────────┘                                          │
+│           │                                                     │
+│           ▼ (If not VIP, check next)                           │
+│  ┌──────────────────┐                                          │
+│  │  EARLY ACCESS    │  For consumers with an access code       │
+│  │  Priority: Medium│  → First-come queue                      │
+│  │  Code: EARLYBIRD │                                          │
+│  └──────────────────┘                                          │
+│           │                                                     │
+│           ▼ (If no code, use general)                          │
+│  ┌──────────────────┐                                          │
+│  │  GENERAL ACCESS  │  For everyone else                       │
+│  │  Priority: Low   │  → Standard queue                        │
+│  │  Open to all     │                                          │
+│  └──────────────────┘                                          │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
 ```
 
-### Sequence Priority
+### How Routing Works
 
-Sequences are evaluated in priority order (highest first):
+When a consumer enters your experience:
 
-```typescript
-// Example: Three sequences with different priorities
-[
-  { name: "VIP", priority: 100, audienceId: "vip-audience" },
-  { name: "Early Access", priority: 50, accessCode: "EARLYBIRD" },
-  { name: "General", priority: 0, audienceId: null, accessCode: null },
-];
+1. The system checks sequences in priority order (highest first)
+2. For each sequence, it checks if the consumer qualifies:
+   - Are they in the required audience? (if set)
+   - Do they have the access code? (if required)
+3. The consumer is assigned to the first sequence they qualify for
 
-// Routing behavior:
-// 1. Check if consumer is in VIP audience → assign to VIP
-// 2. Else check if consumer has EARLYBIRD code → assign to Early Access
-// 3. Else assign to General
-```
+### Common Patterns
 
-### Product Selection Mode
-
-Sequences can control how products are assigned:
-
-| Mode              | Behavior                                               |
-| ----------------- | ------------------------------------------------------ |
-| `USER_SELECTED`   | Consumer chooses their product (default)               |
-| `SYSTEM_ASSIGNED` | System randomly assigns based on weights (mystery box) |
-
-## Experience Products
-
-Products are associated with experiences through a junction table that supports ordering and primary selection:
-
-```typescript
-interface ExperienceProduct {
-  id: string;
-  experienceId: string;
-  productId: string;
-  productVariantId?: string; // Optional specific variant
-  isPrimary: boolean; // Is this the primary product?
-  position: number; // Display order
-  product?: Product; // Populated product details
-}
-```
-
-### Single vs. Multi-Product Experiences
-
-**Single Product**: Most experiences have one primary product
-
-```typescript
-{
-  name: "iPhone 16 Launch",
-  products: [
-    { productId: "iphone-16", isPrimary: true, position: 0 }
-  ]
-}
-```
-
-**Multi-Product**: Experiences can offer multiple products
-
-```typescript
-{
-  name: "Summer Collection Drop",
-  products: [
-    { productId: "sneaker-a", isPrimary: true, position: 0 },
-    { productId: "sneaker-b", isPrimary: false, position: 1 },
-    { productId: "sneaker-c", isPrimary: false, position: 2 }
-  ]
-}
-```
-
-## Theming
-
-Experiences support visual customization through the theme object:
-
-```typescript
-interface ExperienceTheme {
-  // Colors
-  primaryColor?: string; // Primary brand color
-  backgroundColor?: string; // Background color
-  textColor?: string; // Primary text color
-  accentColor?: string; // Accent/highlight color
-
-  // Branding
-  logoUrl?: string; // Logo image URL
-  backgroundImageUrl?: string; // Background image
-  faviconUrl?: string; // Favicon
-
-  // Typography
-  fontFamily?: string; // Custom font family
-
-  // Layout
-  containerStyle?: "card" | "full"; // Widget container style
-  borderRadius?: number; // Corner rounding
-}
-```
-
-### Theme Inheritance
-
-Themes cascade from organization to experience:
+**VIP Early Access**
 
 ```
-Organization Theme (defaults)
-         │
-         ▼
-Experience Theme (overrides)
-         │
-         ▼
-Widget Rendering
+VIP Sequence (Priority: High)
+  ↳ Requires: VIP audience membership
+  ↳ Distribution: Draw (lottery for fairness)
+
+General Sequence (Priority: Low)
+  ↳ Requires: Nothing (open to all)
+  ↳ Distribution: Queue (first-come)
 ```
 
-## Localization (i18n)
+**Access Code Launch**
 
-Experiences support per-language string overrides:
+```
+Presale Sequence (Priority: High)
+  ↳ Requires: Access code "PRESALE2024"
+  ↳ Distribution: Queue
 
-```typescript
-{
-  i18n: {
-    "en": {
-      "queue.title": "You're in line!",
-      "queue.position": "Position: {{position}}"
-    },
-    "es": {
-      "queue.title": "¡Estás en la fila!",
-      "queue.position": "Posición: {{position}}"
-    }
-  }
-}
+General Sale Sequence (Priority: Low)
+  ↳ Requires: Nothing
+  ↳ Distribution: Queue
 ```
 
-## Creating Experiences
+**Waitlist Overflow**
 
-### Basic Experience
+```
+Main Queue Sequence (Priority: High)
+  ↳ Distribution: Queue (limited capacity)
 
-```typescript
-const experience = await api.experiences.create({
-  name: "Product Launch",
-  timeZone: "America/New_York",
-  openAt: "2024-03-01T09:00:00-05:00",
-  closeAt: "2024-03-01T21:00:00-05:00",
-  products: [{ productId: "product-uuid", isPrimary: true }],
-});
+Waitlist Sequence (Priority: Low)
+  ↳ Distribution: Waitlist (notified when space opens)
 ```
 
-### Experience with Sequence
+## Products in Experiences
 
-```typescript
-const experience = await api.experiences.create({
-  name: "VIP Product Launch",
-  timeZone: "America/New_York",
-  openAt: "2024-03-01T09:00:00-05:00",
-  products: [{ productId: "product-uuid", isPrimary: true }],
-  sequence: {
-    name: "General Access",
-    queues: [
-      {
-        name: "Main Queue",
-        admitRate: 100, // consumers per minute
-        admissionExpirationSeconds: 600, // 10 minute window
-      },
-    ],
-  },
-});
-```
+You can associate one or more products with an experience:
 
-## Consumer Journey
+### Single Product
 
-When a consumer participates in an experience, they progress through stages:
+Most experiences have one product — a product launch, limited edition, or exclusive item.
 
-```typescript
-type JourneyStage =
-  | "not_started" // Consumer has not entered
-  | "entering" // Entry in progress
-  | "needs_auth" // Authentication required
-  | "needs_access_code" // Access code required
-  | "routing" // Finding appropriate sequence
-  | "routed"; // Assigned to sequence
+### Multiple Products
 
-type SequenceStage =
-  | "none" // No active participation
-  | "upcoming" // Distribution not yet open
-  | "waitlist_entered" // On waitlist for upcoming
-  | "active_enterable" // Can enter active distribution
-  | "participating" // In queue/draw/auction
-  | "admitted" // Has admission token
-  | "admission_expired" // Admission expired
-  | "ended"; // Distribution ended
-```
+You can offer several products in one experience — useful for collection drops or bundle sales. Consumers can choose which product they want.
 
-[Learn more about the Consumer Journey](/docs/sdk/consumer-journey)
+### Product Selection
+
+You can control how products are selected:
+
+- **Consumer chooses** — Consumers pick their preferred product
+- **Random assignment** — System assigns a product (great for mystery boxes)
+
+## Theming and Customization
+
+Each experience can have its own look and feel:
+
+- **Colors** — Match your brand
+- **Logo** — Your company logo
+- **Background** — Custom images or colors
+- **Language** — Customize text and messages
+
+Themes can be set at the account level and overridden for specific experiences.
+
+## Consumer Journey Phases
+
+When consumers participate in an experience, they move through phases:
+
+### 1. Arriving
+
+Consumer lands on the experience page. They see:
+
+- Product information
+- When the experience opens (if scheduled)
+- What access method is being used
+
+### 2. Joining
+
+Consumer enters the experience:
+
+- May need to provide contact information
+- May need an access code
+- Gets assigned to the appropriate access path
+
+### 3. Participating
+
+Consumer participates according to the distribution type:
+
+- Waiting in a queue
+- Entered in a draw
+- Placing bids in an auction
+- Booking an appointment
+
+### 4. Getting Access
+
+When it's their turn, the consumer receives access to checkout. This typically includes:
+
+- A time-limited window to complete their purchase
+- Real-time status updates
+- Clear next steps
+
+### 5. Completing
+
+Consumer completes their purchase within the access window.
 
 ## Best Practices
 
-### 1. Plan Your Timing
+### Plan Your Timing
 
-- Set `openAt` to when you want consumers to start participating
-- Set `closeAt` based on your operational capacity
-- Use the experience timezone to ensure correct display
+- Set opening times that work for your target audience's timezone
+- Give yourself buffer time before high-profile launches
+- Consider closing times based on your operational capacity
 
-### 2. Design Sequences Thoughtfully
+### Design Access Paths Thoughtfully
 
-- Use priority to control routing order
-- Higher priority sequences should have stricter requirements
-- Always have a fallback sequence for general access
+- Higher priority paths should have stricter requirements
+- Always have a general access path as a fallback
+- Test your routing logic before launch
 
-### 3. Configure Products Early
+### Prepare Products Early
 
 - Associate products before the experience opens
-- Test product display in preview mode
-- Ensure inventory is synced if tracked externally
+- Ensure inventory is accurate
+- Test the checkout flow
 
-### 4. Test the Consumer Journey
+### Test the Consumer Flow
 
-- Use test mode to simulate consumer flows
-- Verify sequence routing logic
-- Test admission token redemption
-
-## API Reference
-
-### Create Experience
-
-```bash
-POST /v1/experiences
-Authorization: Bearer sk_live_...
-Content-Type: application/json
-
-{
-  "name": "Summer Sale",
-  "timeZone": "America/New_York",
-  "openAt": "2024-06-01T00:00:00-04:00",
-  "closeAt": "2024-06-30T23:59:59-04:00"
-}
-```
-
-### Get Experience
-
-```bash
-GET /v1/experiences/:id
-Authorization: Bearer sk_live_...
-
-# With related data
-GET /v1/experiences/:id?include=sequences,distributions
-```
-
-### Update Experience
-
-```bash
-PATCH /v1/experiences/:id
-Authorization: Bearer sk_live_...
-Content-Type: application/json
-
-{
-  "name": "Updated Name",
-  "closeAt": "2024-06-15T23:59:59-04:00"
-}
-```
+- Use preview mode to see what consumers will experience
+- Test all access paths with different scenarios
+- Verify timing displays correctly in different timezones
 
 ## Next Steps
 
-- [Distributions](/docs/concepts/distributions/overview) - How consumers gain access
-- [Audiences](/docs/concepts/audiences) - Targeting specific consumer groups
-- [Products](/docs/concepts/products) - Product catalog management
+- [Distribution Types](/concepts/distributions/overview) — Learn about queues, draws, auctions, and more
+- [Audiences](/concepts/audiences) — Create targeted consumer groups
+- [Products](/concepts/products) — Set up your product catalog

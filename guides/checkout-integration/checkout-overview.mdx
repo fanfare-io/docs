@@ -1,8 +1,3 @@
----
-title: Checkout Integration Overview
-description: Connect Fanfare experiences to your checkout flow, from admission to order completion.
----
-
 # Checkout Integration Overview
 
 Learn how to connect Fanfare experiences to your checkout flow, from admission to order completion.
@@ -87,9 +82,7 @@ import { useExperienceJourney } from "@waitify-io/fanfare-sdk-react";
 import { useEffect } from "react";
 
 function ExperienceWithCheckout({ experienceId }: { experienceId: string }) {
-  const { state, journey } = useExperienceJourney(experienceId, {
-    autoStart: true,
-  });
+  const { state, journey } = useExperienceJourney(experienceId, { autoStart: true });
 
   useEffect(() => {
     const snapshot = state?.snapshot;
@@ -118,23 +111,12 @@ function ExperienceWithCheckout({ experienceId }: { experienceId: string }) {
 Display a clear checkout action when admitted:
 
 ```tsx
-function AdmittedState({
-  admissionToken,
-  expiresAt,
-}: {
-  admissionToken: string;
-  expiresAt: number;
-}) {
-  const [timeRemaining, setTimeRemaining] = useState(
-    Math.max(0, Math.floor((expiresAt - Date.now()) / 1000)),
-  );
+function AdmittedState({ admissionToken, expiresAt }: { admissionToken: string; expiresAt: number }) {
+  const [timeRemaining, setTimeRemaining] = useState(Math.max(0, Math.floor((expiresAt - Date.now()) / 1000)));
 
   useEffect(() => {
     const interval = setInterval(() => {
-      const remaining = Math.max(
-        0,
-        Math.floor((expiresAt - Date.now()) / 1000),
-      );
+      const remaining = Math.max(0, Math.floor((expiresAt - Date.now()) / 1000));
       setTimeRemaining(remaining);
 
       if (remaining <= 0) {
@@ -180,9 +162,7 @@ function AdmittedState({
         Continue to Checkout
       </button>
 
-      <p className="warning">
-        Don't close this page until you complete your purchase.
-      </p>
+      <p className="warning">Don't close this page until you complete your purchase.</p>
     </div>
   );
 }
@@ -224,7 +204,7 @@ function navigateToCheckout(token: string, context: AdmissionContext) {
       token,
       context,
       storedAt: Date.now(),
-    }),
+    })
   );
   window.location.href = "/checkout";
 }
@@ -266,7 +246,7 @@ async function createCheckoutHandoff(
   consumerId: string,
   organizationId: string,
   experienceId: string,
-  experienceType: "queue" | "draw" | "auction",
+  experienceType: "queue" | "draw" | "auction"
 ) {
   const token = await handoff.createHandoffToken({
     admissionToken,
@@ -294,8 +274,7 @@ Before allowing checkout, validate the token with Fanfare:
 ```typescript
 // Your checkout API endpoint
 app.post("/api/checkout", async (req, res) => {
-  const { admissionToken, consumerId, distributionId, distributionType, cart } =
-    req.body;
+  const { admissionToken, consumerId, distributionId, distributionType, cart } = req.body;
 
   // 1. Validate admission with Fanfare
   const isValid = await validateAdmissionToken({
@@ -331,7 +310,7 @@ After a successful order, mark the admission as complete:
 async function completeAdmission(
   distributionId: string,
   distributionType: "queue" | "draw" | "auction",
-  consumerId: string,
+  consumerId: string
 ) {
   const endpoints = {
     queue: `/queues/${distributionId}/complete`,
@@ -416,13 +395,7 @@ function EmbeddedCheckout({ admissionToken, onComplete }: Props) {
     return () => window.removeEventListener("message", handleMessage);
   }, [onComplete]);
 
-  return (
-    <iframe
-      ref={iframeRef}
-      src={`/checkout/embedded?token=${admissionToken}`}
-      className="checkout-iframe"
-    />
-  );
+  return <iframe ref={iframeRef} src={`/checkout/embedded?token=${admissionToken}`} className="checkout-iframe" />;
 }
 ```
 
@@ -569,8 +542,7 @@ useEffect(() => {
   const handleBeforeUnload = (e: BeforeUnloadEvent) => {
     if (hasAdmissionToken && !orderComplete) {
       e.preventDefault();
-      e.returnValue =
-        "You have an active checkout session. Are you sure you want to leave?";
+      e.returnValue = "You have an active checkout session. Are you sure you want to leave?";
     }
   };
 

@@ -1,8 +1,3 @@
----
-title: Limited Edition Drop Use Case
-description: Distribute limited edition products fairly with draws and auctions.
----
-
 # Limited Edition Drop Use Case
 
 Learn how to use Fanfare draws and auctions to distribute limited edition products fairly and create excitement.
@@ -118,27 +113,13 @@ interface DropPageProps {
   drawTime: string;
 }
 
-export default function DropPage({
-  drawId,
-  product,
-  entryStart,
-  entryEnd,
-  drawTime,
-}: DropPageProps) {
+export default function DropPage({ drawId, product, entryStart, entryEnd, drawTime }: DropPageProps) {
   return (
-    <FanfareProvider
-      organizationId={process.env.NEXT_PUBLIC_FANFARE_ORG_ID!}
-      options={{ environment: "production" }}
-    >
+    <FanfareProvider organizationId={process.env.NEXT_PUBLIC_FANFARE_ORG_ID!} options={{ environment: "production" }}>
       <div className="drop-page">
         <ProductShowcase product={product} />
 
-        <DrawExperience
-          drawId={drawId}
-          entryStart={entryStart}
-          entryEnd={entryEnd}
-          drawTime={drawTime}
-        />
+        <DrawExperience drawId={drawId} entryStart={entryStart} entryEnd={entryEnd} drawTime={drawTime} />
 
         <DropDetails product={product} totalWinners={500} drawTime={drawTime} />
       </div>
@@ -161,17 +142,11 @@ function DropDetails({
       <ol className="steps">
         <li>
           <strong>Enter the Draw</strong>
-          <p>
-            Sign up with your email during the entry period. One entry per
-            person.
-          </p>
+          <p>Sign up with your email during the entry period. One entry per person.</p>
         </li>
         <li>
           <strong>Wait for the Draw</strong>
-          <p>
-            Winners will be selected randomly on{" "}
-            {new Date(drawTime).toLocaleDateString()}.
-          </p>
+          <p>Winners will be selected randomly on {new Date(drawTime).toLocaleDateString()}.</p>
         </li>
         <li>
           <strong>Get Notified</strong>
@@ -179,9 +154,7 @@ function DropDetails({
         </li>
         <li>
           <strong>Complete Purchase</strong>
-          <p>
-            You have 48 hours to complete your purchase at ${product.price}.
-          </p>
+          <p>You have 48 hours to complete your purchase at ${product.price}.</p>
         </li>
       </ol>
 
@@ -214,15 +187,8 @@ interface DrawExperienceProps {
   drawTime: string;
 }
 
-export function DrawExperience({
-  drawId,
-  entryStart,
-  entryEnd,
-  drawTime,
-}: DrawExperienceProps) {
-  const { journey, state, start } = useExperienceJourney(drawId, {
-    autoStart: true,
-  });
+export function DrawExperience({ drawId, entryStart, entryEnd, drawTime }: DrawExperienceProps) {
+  const { journey, state, start } = useExperienceJourney(drawId, { autoStart: true });
 
   const snapshot = state?.snapshot;
   const stage = snapshot?.sequenceStage;
@@ -247,17 +213,10 @@ export function DrawExperience({
       {phase === "pre_entry" && <PreEntryState entryStart={entryStart} />}
 
       {phase === "entry_open" && (
-        <EntryOpenState
-          snapshot={snapshot}
-          stage={stage}
-          onEnter={start}
-          entryEnd={entryEnd}
-        />
+        <EntryOpenState snapshot={snapshot} stage={stage} onEnter={start} entryEnd={entryEnd} />
       )}
 
-      {phase === "entry_closed" && (
-        <EntryClosedState snapshot={snapshot} drawTime={drawTime} />
-      )}
+      {phase === "entry_closed" && <EntryClosedState snapshot={snapshot} drawTime={drawTime} />}
 
       {phase === "drawn" && <DrawnState snapshot={snapshot} />}
     </div>
@@ -322,9 +281,7 @@ function EntryOpenState({
       <h2>Enter the Draw</h2>
 
       <div className="entry-stats">
-        <span className="entries">
-          {entryCount.toLocaleString()} entries so far
-        </span>
+        <span className="entries">{entryCount.toLocaleString()} entries so far</span>
       </div>
 
       <div className="entry-closing">
@@ -334,9 +291,7 @@ function EntryOpenState({
 
       <EntryForm onSubmit={onEnter} />
 
-      <p className="terms">
-        By entering, you agree to the draw rules and terms.
-      </p>
+      <p className="terms">By entering, you agree to the draw rules and terms.</p>
     </div>
   );
 }
@@ -386,13 +341,8 @@ function EntryForm({ onSubmit }: { onSubmit: () => void }) {
 
       <div className="form-group checkbox">
         <label>
-          <input
-            type="checkbox"
-            checked={agreed}
-            onChange={(e) => setAgreed(e.target.checked)}
-            required
-          />
-          I agree to the draw rules and terms of service
+          <input type="checkbox" checked={agreed} onChange={(e) => setAgreed(e.target.checked)} required />I agree to
+          the draw rules and terms of service
         </label>
       </div>
 
@@ -403,13 +353,7 @@ function EntryForm({ onSubmit }: { onSubmit: () => void }) {
   );
 }
 
-function EntryClosedState({
-  snapshot,
-  drawTime,
-}: {
-  snapshot: JourneySnapshot;
-  drawTime: string;
-}) {
+function EntryClosedState({ snapshot, drawTime }: { snapshot: JourneySnapshot; drawTime: string }) {
   const isEntered = snapshot?.context?.isEntered;
   const totalEntries = snapshot?.context?.totalEntries || 0;
 
@@ -423,9 +367,7 @@ function EntryClosedState({
           <p>Entry Number: #{snapshot?.context?.entryNumber}</p>
         </div>
       ) : (
-        <p className="missed">
-          Entry is now closed. Follow us for future drops.
-        </p>
+        <p className="missed">Entry is now closed. Follow us for future drops.</p>
       )}
 
       <div className="draw-info">
@@ -453,18 +395,12 @@ function DrawnState({ snapshot }: { snapshot: JourneySnapshot }) {
           <p>Complete your purchase before:</p>
           <p className="deadline">{new Date(claimDeadline).toLocaleString()}</p>
 
-          <button
-            onClick={() =>
-              (window.location.href = `/checkout/claim/${snapshot?.context?.claimToken}`)
-            }
-          >
+          <button onClick={() => (window.location.href = `/checkout/claim/${snapshot?.context?.claimToken}`)}>
             Claim Your Prize
           </button>
         </div>
 
-        <p className="warning">
-          Don't miss out - unclaimed prizes go to the waitlist.
-        </p>
+        <p className="warning">Don't miss out - unclaimed prizes go to the waitlist.</p>
       </div>
     );
   }
@@ -476,19 +412,14 @@ function DrawnState({ snapshot }: { snapshot: JourneySnapshot }) {
 
       {snapshot?.context?.waitlistPosition && (
         <div className="waitlist-info">
-          <p>
-            You're on the waitlist at position #
-            {snapshot.context.waitlistPosition}
-          </p>
+          <p>You're on the waitlist at position #{snapshot.context.waitlistPosition}</p>
           <p>You'll be notified if a spot opens up.</p>
         </div>
       )}
 
       <div className="follow-up">
         <p>Stay tuned for future drops!</p>
-        <button onClick={() => (window.location.href = "/subscribe")}>
-          Get Notified of Future Drops
-        </button>
+        <button onClick={() => (window.location.href = "/subscribe")}>Get Notified of Future Drops</button>
       </div>
     </div>
   );
@@ -570,9 +501,7 @@ interface AuctionExperienceProps {
 }
 
 export function AuctionExperience({ auctionId, item }: AuctionExperienceProps) {
-  const { journey, state, start } = useExperienceJourney(auctionId, {
-    autoStart: true,
-  });
+  const { journey, state, start } = useExperienceJourney(auctionId, { autoStart: true });
 
   const snapshot = state?.snapshot;
   const context = snapshot?.context;
@@ -592,9 +521,7 @@ export function AuctionExperience({ auctionId, item }: AuctionExperienceProps) {
         <div className="current-bid-section">
           <span className="label">Current Bid</span>
           <span className="amount">${currentBid?.toLocaleString()}</span>
-          {context?.totalBids && (
-            <span className="bid-count">{context.totalBids} bids</span>
-          )}
+          {context?.totalBids && <span className="bid-count">{context.totalBids} bids</span>}
         </div>
 
         {isHighBidder && (
@@ -620,13 +547,7 @@ export function AuctionExperience({ auctionId, item }: AuctionExperienceProps) {
   );
 }
 
-function AuctionHeader({
-  item,
-  endTime,
-}: {
-  item: AuctionItem;
-  endTime?: number;
-}) {
+function AuctionHeader({ item, endTime }: { item: AuctionItem; endTime?: number }) {
   const [timeLeft, setTimeLeft] = useState(0);
   const [isEnding, setIsEnding] = useState(false);
 
@@ -647,9 +568,7 @@ function AuctionHeader({
       <h1>{item.name}</h1>
 
       <div className={`auction-timer ${isEnding ? "ending-soon" : ""}`}>
-        <span className="label">
-          {isEnding ? "Ending Soon!" : "Time Remaining"}
-        </span>
+        <span className="label">{isEnding ? "Ending Soon!" : "Time Remaining"}</span>
         <span className="time">{formatAuctionTime(timeLeft)}</span>
       </div>
     </header>
@@ -694,22 +613,13 @@ function BidForm({
     }
   };
 
-  const quickBidAmounts = [
-    minBid,
-    minBid + bidIncrement,
-    minBid + bidIncrement * 2,
-    minBid + bidIncrement * 5,
-  ];
+  const quickBidAmounts = [minBid, minBid + bidIncrement, minBid + bidIncrement * 2, minBid + bidIncrement * 5];
 
   return (
     <div className="bid-form">
       <div className="quick-bids">
         {quickBidAmounts.map((amount) => (
-          <button
-            key={amount}
-            onClick={() => setBidAmount(amount)}
-            className={bidAmount === amount ? "selected" : ""}
-          >
+          <button key={amount} onClick={() => setBidAmount(amount)} className={bidAmount === amount ? "selected" : ""}>
             ${amount.toLocaleString()}
           </button>
         ))}
@@ -723,9 +633,7 @@ function BidForm({
             id="bid-amount"
             type="number"
             value={bidAmount}
-            onChange={(e) =>
-              setBidAmount(Math.max(minBid, Number(e.target.value)))
-            }
+            onChange={(e) => setBidAmount(Math.max(minBid, Number(e.target.value)))}
             min={minBid}
             step={bidIncrement}
           />
@@ -733,16 +641,8 @@ function BidForm({
         <span className="min-bid">Minimum: ${minBid.toLocaleString()}</span>
       </div>
 
-      <button
-        onClick={handleBid}
-        disabled={isSubmitting || bidAmount < minBid}
-        className="place-bid-btn"
-      >
-        {isSubmitting
-          ? "Placing Bid..."
-          : isHighBidder
-            ? "Increase Bid"
-            : "Place Bid"}
+      <button onClick={handleBid} disabled={isSubmitting || bidAmount < minBid} className="place-bid-btn">
+        {isSubmitting ? "Placing Bid..." : isHighBidder ? "Increase Bid" : "Place Bid"}
       </button>
 
       {buyNowPrice && (
@@ -772,9 +672,7 @@ function BidHistory({ bids, myId }: { bids: Bid[]; myId: string }) {
       <ul>
         {bids.map((bid, index) => (
           <li key={bid.id} className={bid.bidderId === myId ? "my-bid" : ""}>
-            <span className="bidder">
-              {bid.bidderId === myId ? "You" : `Bidder ${bid.bidderNumber}`}
-            </span>
+            <span className="bidder">{bid.bidderId === myId ? "You" : `Bidder ${bid.bidderNumber}`}</span>
             <span className="amount">${bid.amount.toLocaleString()}</span>
             <span className="time">{formatTimeAgo(bid.timestamp)}</span>
             {index === 0 && <span className="leader-badge">Leading</span>}
@@ -990,32 +888,12 @@ const auctionFraudPrevention = {
 // Communication timeline for draws
 const drawCommunicationSchedule = [
   { trigger: "entry_open", template: "draw-entry-open", channels: ["email"] },
-  {
-    trigger: "24h_before_close",
-    template: "draw-reminder",
-    channels: ["email", "push"],
-  },
+  { trigger: "24h_before_close", template: "draw-reminder", channels: ["email", "push"] },
   { trigger: "entry_closed", template: "draw-closed", channels: ["email"] },
-  {
-    trigger: "draw_complete_winner",
-    template: "draw-winner",
-    channels: ["email", "sms", "push"],
-  },
-  {
-    trigger: "draw_complete_non_winner",
-    template: "draw-non-winner",
-    channels: ["email"],
-  },
-  {
-    trigger: "24h_before_claim_deadline",
-    template: "claim-reminder",
-    channels: ["email", "sms"],
-  },
-  {
-    trigger: "claim_expired",
-    template: "claim-expired-waitlist",
-    channels: ["email", "sms"],
-  },
+  { trigger: "draw_complete_winner", template: "draw-winner", channels: ["email", "sms", "push"] },
+  { trigger: "draw_complete_non_winner", template: "draw-non-winner", channels: ["email"] },
+  { trigger: "24h_before_claim_deadline", template: "claim-reminder", channels: ["email", "sms"] },
+  { trigger: "claim_expired", template: "claim-expired-waitlist", channels: ["email", "sms"] },
 ];
 ```
 
@@ -1033,17 +911,14 @@ function DrawRules({ draw }: { draw: Draw }) {
 
         <dt>Entry Period</dt>
         <dd>
-          {new Date(draw.entryStart).toLocaleString()} -{" "}
-          {new Date(draw.entryEnd).toLocaleString()}
+          {new Date(draw.entryStart).toLocaleString()} - {new Date(draw.entryEnd).toLocaleString()}
         </dd>
 
         <dt>Entry Limit</dt>
         <dd>One entry per person</dd>
 
         <dt>Selection</dt>
-        <dd>
-          Winners selected randomly using certified random number generator
-        </dd>
+        <dd>Winners selected randomly using certified random number generator</dd>
 
         <dt>Notification</dt>
         <dd>Winners notified via email and SMS within 1 hour of draw</dd>

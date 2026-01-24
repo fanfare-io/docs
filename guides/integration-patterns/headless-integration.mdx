@@ -1,8 +1,3 @@
----
-title: Headless Integration Guide
-description: Integrate Fanfare using the core SDK without UI components for full control.
----
-
 # Headless Integration Guide
 
 Learn how to integrate Fanfare using the core SDK without UI components, giving you full control over the experience interface.
@@ -137,10 +132,7 @@ async function authenticateExternal(exchangeCode: string) {
 The journey state machine manages the complete experience flow:
 
 ```typescript
-import {
-  type ExperienceJourney,
-  type JourneySnapshot,
-} from "@waitify-io/fanfare-sdk-core";
+import { type ExperienceJourney, type JourneySnapshot } from "@waitify-io/fanfare-sdk-core";
 
 let journey: ExperienceJourney;
 
@@ -176,13 +168,7 @@ Process each stage of the journey:
 
 ```typescript
 function updateUI(snapshot: JourneySnapshot) {
-  const {
-    journeyStage,
-    sequenceStage,
-    requirements,
-    availableActions,
-    context,
-  } = snapshot;
+  const { journeyStage, sequenceStage, requirements, availableActions, context } = snapshot;
 
   switch (journeyStage) {
     case "not_started":
@@ -198,9 +184,7 @@ function updateUI(snapshot: JourneySnapshot) {
       break;
 
     case "needs_access_code":
-      const isRequired = requirements.find(
-        (r) => r.type === "access_code",
-      )?.required;
+      const isRequired = requirements.find((r) => r.type === "access_code")?.required;
       showAccessCodeForm(isRequired);
       break;
 
@@ -220,7 +204,7 @@ function updateUI(snapshot: JourneySnapshot) {
 function handleRoutedState(
   sequenceStage: string,
   context: JourneyContext,
-  availableActions: { journey: string[]; sequence: string[] },
+  availableActions: { journey: string[]; sequence: string[] }
 ) {
   switch (sequenceStage) {
     case "upcoming":
@@ -228,10 +212,7 @@ function handleRoutedState(
       break;
 
     case "active_enterable":
-      showEnterableState(
-        context.distribution?.active,
-        availableActions.sequence,
-      );
+      showEnterableState(context.distribution?.active, availableActions.sequence);
       break;
 
     case "participating":
@@ -295,8 +276,7 @@ Always check what actions are available before showing UI:
 
 ```typescript
 function getAvailableActions(snapshot: JourneySnapshot) {
-  const { journey: journeyActions, sequence: sequenceActions } =
-    snapshot.availableActions;
+  const { journey: journeyActions, sequence: sequenceActions } = snapshot.availableActions;
 
   return {
     canStart: journeyActions.includes("start"),
@@ -460,11 +440,7 @@ async function cleanup() {
 Here's a complete vanilla JavaScript implementation:
 
 ```typescript
-import Fanfare, {
-  type FanfareSDK,
-  type ExperienceJourney,
-  type JourneySnapshot,
-} from "@waitify-io/fanfare-sdk-core";
+import Fanfare, { type FanfareSDK, type ExperienceJourney, type JourneySnapshot } from "@waitify-io/fanfare-sdk-core";
 
 class FanfareExperience {
   private sdk: FanfareSDK | null = null;
@@ -545,10 +521,7 @@ await experience.startExperience("exp_xxx");
 ```typescript
 // composables/useFanfare.ts
 import { ref, onMounted, onUnmounted } from "vue";
-import Fanfare, {
-  type FanfareSDK,
-  type JourneySnapshot,
-} from "@waitify-io/fanfare-sdk-core";
+import Fanfare, { type FanfareSDK, type JourneySnapshot } from "@waitify-io/fanfare-sdk-core";
 
 export function useFanfare(orgId: string, publishableKey: string) {
   const sdk = ref<FanfareSDK | null>(null);
@@ -576,10 +549,7 @@ export function useFanfare(orgId: string, publishableKey: string) {
 ```typescript
 // stores/fanfare.ts
 import { writable } from "svelte/store";
-import Fanfare, {
-  type FanfareSDK,
-  type JourneySnapshot,
-} from "@waitify-io/fanfare-sdk-core";
+import Fanfare, { type FanfareSDK, type JourneySnapshot } from "@waitify-io/fanfare-sdk-core";
 
 export const fanfareStore = writable<{
   sdk: FanfareSDK | null;

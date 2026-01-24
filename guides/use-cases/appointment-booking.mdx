@@ -1,8 +1,3 @@
----
-title: Appointment Booking Use Case
-description: Manage appointment scheduling with fair access to limited time slots.
----
-
 # Appointment Booking Use Case
 
 Learn how to use Fanfare to manage appointment scheduling with fair access to limited time slots.
@@ -117,10 +112,7 @@ const adminClient = new FanfareAdminClient({
   organizationId: process.env.FANFARE_ORGANIZATION_ID!,
 });
 
-async function createAppointmentQueue(
-  config: AppointmentConfig,
-  releaseDate: Date,
-) {
+async function createAppointmentQueue(config: AppointmentConfig, releaseDate: Date) {
   const queue = await adminClient.queues.create({
     name: `${config.serviceName} - Booking Queue`,
     slug: `booking-${config.serviceId}-${releaseDate.toISOString().split("T")[0]}`,
@@ -204,23 +196,12 @@ interface BookingPageProps {
   availableSlots: TimeSlot[];
 }
 
-export default function BookingPage({
-  experienceId,
-  service,
-  availableSlots,
-}: BookingPageProps) {
+export default function BookingPage({ experienceId, service, availableSlots }: BookingPageProps) {
   return (
-    <FanfareProvider
-      organizationId={process.env.NEXT_PUBLIC_FANFARE_ORG_ID!}
-      options={{ environment: "production" }}
-    >
+    <FanfareProvider organizationId={process.env.NEXT_PUBLIC_FANFARE_ORG_ID!} options={{ environment: "production" }}>
       <div className="booking-page">
         <ServiceInfo service={service} />
-        <AppointmentBookingExperience
-          experienceId={experienceId}
-          service={service}
-          availableSlots={availableSlots}
-        />
+        <AppointmentBookingExperience experienceId={experienceId} service={service} availableSlots={availableSlots} />
       </div>
     </FanfareProvider>
   );
@@ -245,9 +226,7 @@ export function AppointmentBookingExperience({
   service,
   availableSlots,
 }: AppointmentBookingExperienceProps) {
-  const { journey, state, start } = useExperienceJourney(experienceId, {
-    autoStart: true,
-  });
+  const { journey, state, start } = useExperienceJourney(experienceId, { autoStart: true });
 
   const snapshot = state?.snapshot;
   const stage = snapshot?.sequenceStage;
@@ -264,13 +243,7 @@ export function AppointmentBookingExperience({
       return <WaitingState snapshot={snapshot} />;
 
     case "admitted":
-      return (
-        <SlotSelectionState
-          snapshot={snapshot}
-          service={service}
-          availableSlots={availableSlots}
-        />
-      );
+      return <SlotSelectionState snapshot={snapshot} service={service} availableSlots={availableSlots} />;
 
     case "completed":
       return <BookingConfirmedState snapshot={snapshot} service={service} />;
@@ -280,13 +253,7 @@ export function AppointmentBookingExperience({
   }
 }
 
-function BookingNotOpenState({
-  snapshot,
-  service,
-}: {
-  snapshot: JourneySnapshot;
-  service: ServiceConfig;
-}) {
+function BookingNotOpenState({ snapshot, service }: { snapshot: JourneySnapshot; service: ServiceConfig }) {
   const opensAt = snapshot?.context?.startsAt;
 
   return (
@@ -305,11 +272,7 @@ function BookingNotOpenState({
         <p>
           {service.duration} minutes - ${service.price}
         </p>
-        <p>
-          {service.location === "virtual"
-            ? "Video consultation"
-            : "In-person appointment"}
-        </p>
+        <p>{service.location === "virtual" ? "Video consultation" : "In-person appointment"}</p>
       </div>
 
       <div className="preparation-tips">
@@ -344,10 +307,7 @@ function WaitingState({ snapshot }: { snapshot: JourneySnapshot }) {
         </div>
       </div>
 
-      <p className="instructions">
-        Please keep this page open. We'll notify you when it's your turn to
-        book.
-      </p>
+      <p className="instructions">Please keep this page open. We'll notify you when it's your turn to book.</p>
     </div>
   );
 }
@@ -452,14 +412,8 @@ function SlotSelectionState({
             )}
           </dl>
 
-          <button
-            onClick={handleBookSlot}
-            disabled={isSubmitting}
-            className="book-btn"
-          >
-            {isSubmitting
-              ? "Reserving..."
-              : `Book & Pay $${service.depositAmount || service.price}`}
+          <button onClick={handleBookSlot} disabled={isSubmitting} className="book-btn">
+            {isSubmitting ? "Reserving..." : `Book & Pay $${service.depositAmount || service.price}`}
           </button>
         </div>
       )}
@@ -467,13 +421,7 @@ function SlotSelectionState({
   );
 }
 
-function BookingConfirmedState({
-  snapshot,
-  service,
-}: {
-  snapshot: JourneySnapshot;
-  service: ServiceConfig;
-}) {
+function BookingConfirmedState({ snapshot, service }: { snapshot: JourneySnapshot; service: ServiceConfig }) {
   const booking = snapshot?.context?.booking;
 
   return (
@@ -494,16 +442,11 @@ function BookingConfirmedState({
 
           <dt>Date & Time</dt>
           <dd>
-            {new Date(booking?.dateTime).toLocaleDateString()} at{" "}
-            {booking?.time}
+            {new Date(booking?.dateTime).toLocaleDateString()} at {booking?.time}
           </dd>
 
           <dt>Location</dt>
-          <dd>
-            {service.location === "virtual"
-              ? "Video Call (link will be emailed)"
-              : booking?.address}
-          </dd>
+          <dd>{service.location === "virtual" ? "Video Call (link will be emailed)" : booking?.address}</dd>
         </dl>
       </div>
 
@@ -518,9 +461,7 @@ function BookingConfirmedState({
 
       <div className="actions">
         <button onClick={() => addToCalendar(booking)}>Add to Calendar</button>
-        <button onClick={() => (window.location.href = "/appointments")}>
-          View My Appointments
-        </button>
+        <button onClick={() => (window.location.href = "/appointments")}>View My Appointments</button>
       </div>
     </div>
   );
@@ -538,15 +479,8 @@ interface TimeSlotPickerProps {
   onSelect: (slot: TimeSlot) => void;
 }
 
-export function TimeSlotPicker({
-  date,
-  slots,
-  selectedSlot,
-  onSelect,
-}: TimeSlotPickerProps) {
-  const [availability, setAvailability] = useState<Map<string, boolean>>(
-    new Map(),
-  );
+export function TimeSlotPicker({ date, slots, selectedSlot, onSelect }: TimeSlotPickerProps) {
+  const [availability, setAvailability] = useState<Map<string, boolean>>(new Map());
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -652,8 +586,8 @@ export async function reserveAppointmentSlot(params: ReserveSlotParams) {
         and(
           eq(appointmentSlots.serviceId, serviceId),
           eq(appointmentSlots.date, date),
-          eq(appointmentSlots.startTime, slot.startTime),
-        ),
+          eq(appointmentSlots.startTime, slot.startTime)
+        )
       )
       .for("update");
 
@@ -693,27 +627,19 @@ export async function reserveAppointmentSlot(params: ReserveSlotParams) {
 
 ```typescript
 // services/appointment-cancellation.ts
-export async function cancelAppointment(
-  appointmentId: string,
-  consumerId: string,
-) {
+export async function cancelAppointment(appointmentId: string, consumerId: string) {
   const appointment = await db.query.appointments.findFirst({
-    where: and(
-      eq(appointments.id, appointmentId),
-      eq(appointments.consumerId, consumerId),
-    ),
+    where: and(eq(appointments.id, appointmentId), eq(appointments.consumerId, consumerId)),
   });
 
   if (!appointment) {
     throw new Error("Appointment not found");
   }
 
-  const hoursUntilAppointment =
-    (new Date(appointment.date).getTime() - Date.now()) / (1000 * 60 * 60);
+  const hoursUntilAppointment = (new Date(appointment.date).getTime() - Date.now()) / (1000 * 60 * 60);
 
   const service = await getServiceConfig(appointment.serviceId);
-  const isFreeCancellation =
-    hoursUntilAppointment >= service.freeCancellationHours;
+  const isFreeCancellation = hoursUntilAppointment >= service.freeCancellationHours;
 
   await db.transaction(async (tx) => {
     // Update appointment status
@@ -736,12 +662,7 @@ export async function cancelAppointment(
     const nextInWaitlist = await tx
       .select()
       .from(appointmentWaitlist)
-      .where(
-        and(
-          eq(appointmentWaitlist.slotId, appointment.slotId),
-          eq(appointmentWaitlist.status, "waiting"),
-        ),
-      )
+      .where(and(eq(appointmentWaitlist.slotId, appointment.slotId), eq(appointmentWaitlist.status, "waiting")))
       .orderBy(appointmentWaitlist.createdAt)
       .limit(1);
 
@@ -765,10 +686,7 @@ export async function cancelAppointment(
   if (isFreeCancellation && appointment.depositPaid) {
     await processRefund(appointment.paymentId, appointment.depositAmount);
   } else if (appointment.depositPaid && service.cancellationFee) {
-    await processPartialRefund(
-      appointment.paymentId,
-      appointment.depositAmount - service.cancellationFee,
-    );
+    await processPartialRefund(appointment.paymentId, appointment.depositAmount - service.cancellationFee);
   }
 }
 ```
@@ -780,19 +698,12 @@ export async function cancelAppointment(
 ```typescript
 // services/appointment-notifications.ts
 interface AppointmentNotification {
-  type:
-    | "confirmation"
-    | "reminder_24h"
-    | "reminder_1h"
-    | "cancellation"
-    | "waitlist_available";
+  type: "confirmation" | "reminder_24h" | "reminder_1h" | "cancellation" | "waitlist_available";
   appointment: Appointment;
   consumer: Consumer;
 }
 
-export async function sendAppointmentNotification(
-  notification: AppointmentNotification,
-) {
+export async function sendAppointmentNotification(notification: AppointmentNotification) {
   const { type, appointment, consumer } = notification;
 
   const templates: Record<string, EmailTemplate> = {
@@ -895,22 +806,13 @@ function BookingRules({ service }: { service: ServiceConfig }) {
       <ul>
         <li>Book up to {service.maxAdvanceBookingDays} days in advance</li>
         <li>Minimum {service.minAdvanceBookingHours} hours notice required</li>
-        <li>
-          Maximum {service.maxBookingsPerConsumer} active bookings per customer
-        </li>
+        <li>Maximum {service.maxBookingsPerConsumer} active bookings per customer</li>
 
-        {service.requireDeposit && (
-          <li>Deposit of ${service.depositAmount} required to confirm</li>
-        )}
+        {service.requireDeposit && <li>Deposit of ${service.depositAmount} required to confirm</li>}
 
-        <li>
-          Free cancellation up to {service.freeCancellationHours} hours before
-          appointment
-        </li>
+        <li>Free cancellation up to {service.freeCancellationHours} hours before appointment</li>
 
-        {service.cancellationFee && (
-          <li>Late cancellation fee: ${service.cancellationFee}</li>
-        )}
+        {service.cancellationFee && <li>Late cancellation fee: ${service.cancellationFee}</li>}
       </ul>
     </section>
   );
@@ -927,7 +829,7 @@ async function processNoShows() {
     where: and(
       eq(appointments.status, "confirmed"),
       lt(appointments.startTime, new Date(Date.now() - gracePeriod)),
-      isNull(appointments.checkedInAt),
+      isNull(appointments.checkedInAt)
     ),
   });
 

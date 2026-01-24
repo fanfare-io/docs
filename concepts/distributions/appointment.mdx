@@ -7,87 +7,7 @@ description: Time-slot booking for scheduled in-person or virtual interactions
 
 An **Appointment** is a distribution mechanism for scheduling time-based interactions. Appointments are ideal for in-store pickups, consultations, virtual meetings, or any scenario where consumers need dedicated time slots.
 
-## Appointment Model
-
-```typescript
-interface Appointment {
-  // Base Distribution Fields
-  id: string;
-  organizationId: string;
-  sequenceId: string;
-  name: string;
-  openAt?: string;
-  closeAt?: string;
-  timeZone: string;
-  supportsGuest: boolean;
-  encryptionSeed: string;
-
-  // Appointment-Specific Fields
-  locationId?: string; // Physical location reference
-  slotDurationMinutes?: number; // Length of each slot
-  bufferMinutes?: number; // Gap between slots
-  maxCapacityPerSlot?: number; // How many per slot
-
-  // Audit
-  createdAt: string;
-  updatedAt: string;
-  archived: boolean;
-}
-```
-
 ## How Appointments Work
-
-```mermaid
-flowchart LR
-    subgraph Availability["Availability"]
-        A1[View Slots]
-        A2[Check Capacity]
-        A1 --> A2
-    end
-
-    subgraph Selection["Selection"]
-        S1[Choose Time]
-        S2[Validate Slot]
-        S1 --> S2
-    end
-
-    subgraph Booking["Booking"]
-        B1[Confirm Booking]
-        B2[Confirmation Sent]
-        B1 --> B2
-    end
-
-    subgraph Reminder["Reminder"]
-        R1[24hr Reminder]
-        R2[1hr Reminder]
-        R1 --> R2
-    end
-
-    subgraph CheckIn["Check-in"]
-        CI1[Arrive]
-        CI2[Check In]
-        CI1 --> CI2
-    end
-
-    subgraph Completion["Completion"]
-        CO1[Service Provided]
-        CO2[Marked Complete]
-        CO1 --> CO2
-    end
-
-    Availability --> Selection
-    Selection --> Booking
-    Booking --> Reminder
-    Reminder --> CheckIn
-    CheckIn --> Completion
-
-    style Availability fill:#e3f2fd
-    style Selection fill:#e1f5fe
-    style Booking fill:#e8f5e9
-    style Reminder fill:#fff8e1
-    style CheckIn fill:#f3e5f5
-    style Completion fill:#c8e6c9
-```
 
 ```
 ┌────────────────────────────────────────────────────────────────────┐
@@ -126,525 +46,250 @@ flowchart LR
 
 ### Availability Phase
 
-1. Consumer views available time slots
-2. Slots show remaining capacity
-3. Past slots are hidden
-4. Buffer times create gaps between slots
+1. Consumer views available time slots for their desired date
+2. Each slot shows remaining capacity
+3. Past slots are automatically hidden
+4. Buffer times between slots ensure smooth operations
 
 ### Booking Phase
 
 1. Consumer selects an available slot
-2. System validates capacity
-3. Booking is confirmed
-4. Consumer receives confirmation and reminders
+2. System validates capacity is still available
+3. Booking is confirmed instantly
+4. Consumer receives confirmation with details
 
 ### Fulfillment Phase
 
-1. Consumer arrives and checks in
-2. Appointment is marked completed
-3. Analytics tracked for no-shows
+1. Consumer receives reminders before their appointment
+2. Consumer arrives and checks in
+3. Appointment is marked as completed
+4. No-shows are tracked for analytics
 
-## Consumer States
+## The Consumer Experience
 
-```typescript
-const AppointmentConsumerStatus = {
-  INITIALIZED: "initialized", // Started but not booked
-  ENTERED: "entered", // Booked a slot
-  CHECKED_IN: "checked_in", // Arrived and checked in
-  COMPLETED: "completed", // Appointment completed
-} as const;
-```
+### Browsing Slots
 
-### State Machine
+Consumers see a calendar or time picker showing:
+
+- Available dates
+- Time slots for each date
+- Remaining capacity per slot ("3 spots left")
+- Fully booked slots clearly marked
+
+### After Booking
+
+Consumers receive:
+
+- **Instant confirmation** with appointment details
+- **Location information** (address, directions, parking)
+- **Confirmation code** for check-in
+- **24-hour reminder** before their appointment
+- **2-hour reminder** (optional) for same-day appointments
+
+### At the Appointment
+
+- Consumer arrives and presents confirmation code
+- Staff can check them in via the dashboard
+- Appointment marked as completed
+
+## Consumer Journey
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                 APPOINTMENT CONSUMER STATES                     │
+│                 APPOINTMENT CONSUMER JOURNEY                    │
 ├─────────────────────────────────────────────────────────────────┤
 │                                                                 │
 │  ┌─────────────┐                                               │
-│  │ INITIALIZED │  (viewing slots, not booked)                  │
+│  │   Viewing   │  (browsing available slots)                   │
 │  └──────┬──────┘                                               │
-│         │ book()                                               │
+│         │ Select and book slot                                 │
 │         ▼                                                      │
 │  ┌─────────────┐                                               │
-│  │   ENTERED   │  (slot booked)                                │
+│  │   Booked    │  (waiting for appointment time)               │
 │  └──────┬──────┘                                               │
 │         │                                                      │
 │    ┌────┴────┐                                                 │
 │    │         │                                                 │
 │    ▼         ▼                                                 │
-│ checkIn()  cancel()                                            │
+│ Arrive    Cancel                                               │
 │    │         │                                                 │
 │    ▼         ▼                                                 │
 │ ┌───────────┐  ┌───────────┐                                  │
-│ │CHECKED_IN │  │ CANCELLED │                                  │
+│ │Checked In │  │ Cancelled │                                  │
 │ └─────┬─────┘  └───────────┘                                  │
 │       │                                                        │
-│       │ complete()                                             │
+│       │ Service completed                                      │
 │       ▼                                                        │
 │ ┌───────────┐                                                  │
-│ │ COMPLETED │                                                  │
+│ │ Completed │                                                  │
 │ └───────────┘                                                  │
 │                                                                 │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-## Appointment Consumer Model
+## When to Use Appointments
 
-```typescript
-interface AppointmentConsumer {
-  id: string;
-  consumerId: string;
-  appointmentId: string;
-
-  // Status
-  status: AppointmentConsumerStatus;
-
-  // Timestamps
-  enteredAt?: string; // When booked
-  checkedInAt?: string; // When checked in
-  completedAt?: string; // When completed
-  cancelledAt?: string; // If cancelled
-  cancellationReason?: string; // Why cancelled
-  updatedAt?: string;
-
-  // Slot info
-  scheduledFor?: string; // The booked time slot
-}
-```
+| Scenario          | Why Appointments Work                      |
+| ----------------- | ------------------------------------------ |
+| In-store pickup   | Manage traffic flow, reduce wait times     |
+| Personal shopping | One-on-one attention requires scheduling   |
+| Consultations     | Dedicated time for quality interactions    |
+| VIP events        | Controlled access to exclusive experiences |
+| Service bookings  | Allocate staff time effectively            |
 
 ## Configuration Options
 
-### Location
-
-Associate appointment with a physical location:
-
-```typescript
-{
-  locationId: "location-uuid"; // Reference to Location entity
-}
-```
-
-**Location entity includes:**
-
-- Name and address
-- Operating hours
-- Holiday schedules
-- Capacity limits
-
 ### Slot Duration
 
-Length of each appointment slot:
+How long each appointment lasts:
 
-```typescript
-{
-  slotDurationMinutes: 30; // 30-minute slots
-}
-
-// Common values:
-// 15 minutes - Quick consultations
-// 30 minutes - Standard appointments
-// 60 minutes - Extended sessions
-```
+- **15 minutes**: Quick pickups, brief consultations
+- **30 minutes**: Standard appointments
+- **60 minutes**: Extended sessions, detailed consultations
+- **Custom**: Any duration that fits your needs
 
 ### Buffer Time
 
-Gap between slots for preparation:
+Gap between appointment slots for preparation:
 
-```typescript
-{
-  bufferMinutes: 10; // 10-minute gap after each slot
-}
-
-// Effective schedule with 30min slots + 10min buffer:
-// 9:00-9:30 (slot) → 9:30-9:40 (buffer) → 9:40-10:10 (slot)
-```
+- **Purpose**: Staff preparation, cleaning, transition time
+- **Example**: 30-minute slots with 10-minute buffers = slots at 9:00, 9:40, 10:20
+- **No buffer**: Back-to-back appointments (for quick services)
 
 ### Capacity Per Slot
 
-How many consumers can book the same slot:
+How many consumers can book the same time slot:
 
-```typescript
-{
-  maxCapacityPerSlot: 5; // 5 people per time slot
-}
+- **1 per slot**: One-on-one consultations, personal shopping
+- **5-10 per slot**: Group pickup windows
+- **20+ per slot**: Large venue time blocks, events
 
-// Use cases:
-// 1 - One-on-one consultations
-// 5-10 - Group pickup windows
-// 20+ - Large venue time blocks
-```
+### Location
 
-## Slot Generation
+Associate appointments with a physical location:
 
-Slots are generated from appointment configuration and location hours:
-
-```typescript
-interface TimeSlot {
-  startTime: string; // ISO timestamp
-  endTime: string; // ISO timestamp
-  capacity: number; // Total capacity
-  available: number; // Remaining capacity
-  isAvailable: boolean; // Can be booked
-}
-
-// Example slot generation
-function generateSlots(appointment: Appointment, location: Location, date: Date): TimeSlot[] {
-  const hours = getOperatingHours(location, date);
-  const slots: TimeSlot[] = [];
-
-  let current = hours.open;
-  while (current < hours.close) {
-    const slotEnd = addMinutes(current, appointment.slotDurationMinutes);
-
-    slots.push({
-      startTime: current.toISOString(),
-      endTime: slotEnd.toISOString(),
-      capacity: appointment.maxCapacityPerSlot || 1,
-      available: getAvailableCapacity(appointment.id, current),
-      isAvailable: true,
-    });
-
-    // Add buffer
-    current = addMinutes(slotEnd, appointment.bufferMinutes || 0);
-  }
-
-  return slots;
-}
-```
-
-## SDK Usage
-
-### Viewing Available Slots
-
-```typescript
-import { useFanfare } from "@waitify-io/fanfare-sdk-react";
-
-function SlotPicker({ appointmentId }: { appointmentId: string }) {
-  const { appointment } = useFanfare();
-  const [date, setDate] = useState(new Date());
-  const [slots, setSlots] = useState<TimeSlot[]>([]);
-
-  useEffect(() => {
-    const loadSlots = async () => {
-      const available = await appointment.getAvailableSlots(appointmentId, date);
-      setSlots(available);
-    };
-    loadSlots();
-  }, [appointmentId, date]);
-
-  return (
-    <div>
-      <DatePicker value={date} onChange={setDate} />
-
-      <div className="slots-grid">
-        {slots.map((slot) => (
-          <button
-            key={slot.startTime}
-            disabled={!slot.isAvailable}
-            onClick={() => handleSelectSlot(slot)}
-          >
-            {formatTime(slot.startTime)}
-            {slot.available > 1 && ` (${slot.available} spots)`}
-          </button>
-        ))}
-      </div>
-    </div>
-  );
-}
-```
-
-### Booking an Appointment
-
-```typescript
-function BookingConfirmation({ appointmentId, slot }: Props) {
-  const { appointment } = useFanfare();
-  const [booking, setBooking] = useState<Booking | null>(null);
-
-  const handleBook = async () => {
-    try {
-      const result = await appointment.book(appointmentId, {
-        slotTime: slot.startTime
-      });
-      setBooking(result);
-    } catch (error) {
-      if (error.code === "SLOT_FULL") {
-        // Handle slot no longer available
-      }
-    }
-  };
-
-  if (booking) {
-    return (
-      <div>
-        <h2>Appointment Confirmed!</h2>
-        <p>Time: {formatDateTime(booking.scheduledFor)}</p>
-        <p>Location: {booking.locationName}</p>
-        <p>Confirmation: {booking.confirmationCode}</p>
-      </div>
-    );
-  }
-
-  return (
-    <div>
-      <p>Book for {formatDateTime(slot.startTime)}?</p>
-      <button onClick={handleBook}>Confirm Booking</button>
-    </div>
-  );
-}
-```
-
-### Check-in
-
-```typescript
-function CheckIn({ appointmentId }: { appointmentId: string }) {
-  const { appointment } = useFanfare();
-
-  const handleCheckIn = async () => {
-    await appointment.checkIn(appointmentId);
-  };
-
-  return (
-    <button onClick={handleCheckIn}>
-      Check In
-    </button>
-  );
-}
-```
-
-## API Operations
-
-### Create Appointment
-
-```bash
-POST /v1/sequences/:sequenceId/appointments
-Authorization: Bearer sk_live_...
-Content-Type: application/json
-
-{
-  "name": "In-Store Pickup",
-  "openAt": "2024-03-01T00:00:00Z",
-  "closeAt": "2024-03-31T23:59:59Z",
-  "timeZone": "America/New_York",
-  "locationId": "location-uuid",
-  "slotDurationMinutes": 15,
-  "bufferMinutes": 5,
-  "maxCapacityPerSlot": 10,
-  "supportsGuest": false
-}
-```
-
-### Get Available Slots
-
-```bash
-GET /v1/appointments/:id/slots?date=2024-03-15
-Authorization: Bearer sk_live_...
-
-# Response
-{
-  "appointmentId": "appointment-uuid",
-  "date": "2024-03-15",
-  "slots": [
-    {
-      "startTime": "2024-03-15T09:00:00-05:00",
-      "endTime": "2024-03-15T09:15:00-05:00",
-      "capacity": 10,
-      "available": 8
-    },
-    {
-      "startTime": "2024-03-15T09:20:00-05:00",
-      "endTime": "2024-03-15T09:35:00-05:00",
-      "capacity": 10,
-      "available": 10
-    }
-  ]
-}
-```
-
-### Consumer Book Slot
-
-```bash
-POST /consumers/v1/appointments/:appointmentId/book
-Authorization: Bearer consumer-token
-Content-Type: application/json
-
-{
-  "slotTime": "2024-03-15T09:00:00-05:00"
-}
-
-# Response
-{
-  "status": "entered",
-  "scheduledFor": "2024-03-15T09:00:00-05:00",
-  "confirmationCode": "APT-123456",
-  "location": {
-    "name": "Main Street Store",
-    "address": "123 Main St, New York, NY"
-  }
-}
-```
-
-### Consumer Check In
-
-```bash
-POST /consumers/v1/appointments/:appointmentId/check-in
-Authorization: Bearer consumer-token
-
-# Response
-{
-  "status": "checked_in",
-  "checkedInAt": "2024-03-15T08:55:00-05:00"
-}
-```
-
-### Consumer Cancel
-
-```bash
-POST /consumers/v1/appointments/:appointmentId/cancel
-Authorization: Bearer consumer-token
-Content-Type: application/json
-
-{
-  "reason": "Schedule conflict"
-}
-
-# Response
-{
-  "status": "cancelled",
-  "cancelledAt": "2024-03-14T10:00:00-05:00"
-}
-```
-
-## Notifications
-
-### Confirmation
-
-Sent immediately after booking:
-
-```typescript
-{
-  type: "APPOINTMENT_CONFIRMED",
-  scheduledFor: "2024-03-15T09:00:00-05:00",
-  location: { name, address },
-  confirmationCode: "APT-123456"
-}
-```
-
-### Reminders
-
-Sent before appointment:
-
-```typescript
-// 24 hours before
-{
-  type: "APPOINTMENT_REMINDER",
-  scheduledFor: "2024-03-15T09:00:00-05:00",
-  hoursUntil: 24
-}
-
-// 1 hour before
-{
-  type: "APPOINTMENT_REMINDER",
-  scheduledFor: "2024-03-15T09:00:00-05:00",
-  hoursUntil: 1
-}
-```
+- Store address and directions
+- Operating hours
+- Holiday schedules
+- Per-location capacity settings
 
 ## Best Practices
 
 ### 1. Account for No-Shows
 
-Expect some percentage won't arrive:
+Expect some percentage of consumers won't arrive:
 
-```typescript
-// Overbook slightly for high no-show rates
-{
-  maxCapacityPerSlot: 12; // If 10 is target, book 12
-}
-```
+- Track no-show rates over time
+- Consider slight overbooking for high no-show services
+- Send reminders to reduce no-shows
 
 ### 2. Set Appropriate Buffers
 
 Allow time for:
 
-- Consumer late arrival
+- Consumer late arrivals
 - Staff preparation
 - Cleaning between appointments
+- General transitions
 
-```typescript
-{
-  slotDurationMinutes: 30,
-  bufferMinutes: 10  // 25% buffer
-}
-```
+A good starting point is 20-30% buffer (e.g., 10-minute buffer for 30-minute slots).
 
-### 3. Require Authentication
+### 3. Require Verified Accounts
 
-Appointments need accountability:
+For appointments, verified accounts provide:
 
-```typescript
-{
-  supportsGuest: false; // Must be authenticated
-}
-```
+- Accountability (reduces no-shows)
+- Contact information for reminders
+- History tracking for repeat consumers
 
 ### 4. Send Reminders
 
-Multiple reminders reduce no-shows:
+Multiple reminders reduce no-shows significantly:
 
-- 24 hours before
-- 2 hours before (for same-day)
-- On arrival (check-in prompt)
+- **24 hours before** — Standard reminder for all appointments
+- **2 hours before** — Optional reminder for same-day appointments
+- Include easy reschedule/cancel options in every reminder
 
-### 5. Allow Cancellation
+### 5. Allow Easy Cancellation
 
-Make it easy to cancel:
+Make cancellation simple:
 
 - Clear cancellation policy
-- Reasonable deadline
-- Freed slot becomes available
+- Reasonable deadline (e.g., 24 hours before)
+- Cancelled slots automatically become available again
+- One-click cancellation in reminder emails
 
 ## Common Patterns
 
 ### In-Store Pickup
 
-```typescript
-{
-  name: "Curbside Pickup",
-  slotDurationMinutes: 15,
-  bufferMinutes: 0,  // Back-to-back OK
-  maxCapacityPerSlot: 20,
-  supportsGuest: false
-}
-```
+- **Slot duration**: 15 minutes
+- **Buffer**: None (back-to-back is fine)
+- **Capacity**: 10-20 per slot
+- **Use case**: Order pickups, returns, exchanges
 
 ### One-on-One Consultation
 
-```typescript
-{
-  name: "Personal Shopping",
-  slotDurationMinutes: 60,
-  bufferMinutes: 15,
-  maxCapacityPerSlot: 1,  // Exclusive slot
-  supportsGuest: false
-}
-```
+- **Slot duration**: 30-60 minutes
+- **Buffer**: 15 minutes
+- **Capacity**: 1 per slot
+- **Use case**: Personal shopping, styling, product demos
 
 ### Group Event Time Block
 
-```typescript
-{
-  name: "VIP Preview Hour",
-  slotDurationMinutes: 120,
-  bufferMinutes: 30,
-  maxCapacityPerSlot: 50,
-  supportsGuest: false
-}
-```
+- **Slot duration**: 1-2 hours
+- **Buffer**: 30 minutes
+- **Capacity**: 20-50 per slot
+- **Use case**: VIP shopping events, product launches
+
+### Virtual Appointment
+
+- **Slot duration**: Based on service type
+- **Buffer**: 5-10 minutes
+- **Capacity**: 1 per slot (video call) or unlimited (webinar)
+- **Use case**: Remote consultations, virtual tours
+
+## Notifications
+
+### Confirmation (Sent Immediately)
+
+- Appointment date and time (in consumer's timezone)
+- Location name and address
+- Confirmation code
+- What to bring/expect
+- Cancel/reschedule link
+
+### Reminders
+
+**24 hours before:**
+
+- Friendly reminder with all details
+- You can add custom content like weather tips or parking reminders
+- Easy cancel/reschedule option
+
+**2 hours before (optional):**
+
+- Final reminder
+- Direct link for virtual appointments
+- Parking/arrival instructions
+
+## Handling No-Shows
+
+Track and manage consumers who don't arrive:
+
+- Mark as no-show in the dashboard
+- Track no-show rates by consumer, time slot, day of week
+- Consider no-show policies:
+  - Warning after first no-show
+  - Require deposit for repeat no-shows
+  - Limit future booking ability
 
 ## Related Concepts
 
-- [Distributions Overview](/docs/concepts/distributions/overview) - Common distribution concepts
-- [Queue Distribution](/docs/concepts/distributions/queue) - Alternative flow control
-- [Real-Time Updates](/docs/concepts/real-time) - Slot availability updates
+- [Distributions Overview](/concepts/distributions/overview) — Common distribution concepts
+- [Queue Distribution](/concepts/distributions/queue) — First-come, first-served alternative
+- [Draw Distribution](/concepts/distributions/lottery) — Random selection alternative
+- [Auction Distribution](/concepts/distributions/auction) — Competitive bidding
+- [Timed Release Distribution](/concepts/distributions/instant) — Instant access at scheduled time
+- [Waitlist Distribution](/concepts/distributions/exclusive) — Interest capture and notifications
+- [Real-Time Updates](/concepts/real-time) — Instant slot availability updates

@@ -1,626 +1,224 @@
 ---
 title: Real-Time Updates
-description: How Fanfare synchronizes state across clients and tabs
+description: How consumers see instant updates during their experience
 ---
 
 # Real-Time Updates
 
-Fanfare provides real-time state synchronization to ensure consumers always see accurate, up-to-date information. This is critical for high-demand scenarios where queue positions change rapidly, auctions have competing bids, and availability can shift in seconds.
+Fanfare provides **near real-time updates** so consumers typically see current information within seconds. This is important for high-demand scenarios where queue positions change rapidly, auctions have competing bids, and availability can shift quickly.
 
-## Architecture Overview
+## What Updates in Real Time?
 
-Real-time updates flow through multiple layers:
+### Queue Positions
 
-```mermaid
-flowchart TB
-    subgraph Backend["Backend Layer"]
-        PG[(PostgreSQL<br/>Persistent Source<br/>of Truth)]
-        VK[(Valkey<br/>Real-time State<br/>+ Pub/Sub)]
-        CA[Consumer App<br/>Hono]
-        PG <--> VK
-        VK <--> CA
-    end
+Consumers see their position update as the line moves:
 
-    subgraph Client["Client Layer"]
-        SDK[SDK Client<br/>nanostores]
-        T1[Tab 1]
-        T2[Tab 2]
-        T3[Tab 3]
-    end
+- Current position in line
+- Estimated wait time
+- When they'll reach the front
 
-    CA -->|HTTP/Polling| SDK
-    SDK --> T1
-    SDK --> T2
-    SDK --> T3
-    T1 <-->|BroadcastChannel/<br/>LocalStorage sync| T2
-    T2 <-->|BroadcastChannel/<br/>LocalStorage sync| T3
-```
+### Auction Bids
 
-```
-┌────────────────────────────────────────────────────────────────────┐
-│                    REAL-TIME ARCHITECTURE                           │
-├────────────────────────────────────────────────────────────────────┤
-│                                                                    │
-│  BACKEND LAYER                                                     │
-│  ─────────────                                                     │
-│                                                                    │
-│  ┌──────────────┐      ┌──────────────┐      ┌──────────────┐     │
-│  │  PostgreSQL  │◄────►│    Valkey    │◄────►│ Consumer App │     │
-│  │  (persistent │      │  (real-time  │      │   (Hono)     │     │
-│  │   source of  │      │   state +    │      │              │     │
-│  │   truth)     │      │   pub/sub)   │      │              │     │
-│  └──────────────┘      └──────────────┘      └──────┬───────┘     │
-│                                                      │             │
-│                                                      │ HTTP/       │
-│                                                      │ Polling     │
-│                                                      │             │
-│  CLIENT LAYER                                        ▼             │
-│  ────────────                              ┌──────────────────┐    │
-│                                            │   SDK Client     │    │
-│                                            │   (nanostores)   │    │
-│                                            └────────┬─────────┘    │
-│                                                     │              │
-│                              ┌───────────────┬──────┴──────┐       │
-│                              │               │             │       │
-│                              ▼               ▼             ▼       │
-│                         ┌────────┐      ┌────────┐    ┌────────┐  │
-│                         │ Tab 1  │◄────►│ Tab 2  │◄──►│ Tab 3  │  │
-│                         └────────┘      └────────┘    └────────┘  │
-│                              ▲               ▲             ▲       │
-│                              └───────────────┴─────────────┘       │
-│                                  BroadcastChannel /                │
-│                                  LocalStorage sync                 │
-│                                                                    │
-└────────────────────────────────────────────────────────────────────┘
-```
+Bidders see competition instantly:
 
-## Backend State Management
+- Current high bid
+- Whether they've been outbid
+- Time remaining
+- Bid extensions when activity is high
 
-### Valkey (Redis-Compatible)
+### Draw Entries
 
-Valkey serves as the real-time state store for active distributions:
+Participants see confirmation:
 
-```typescript
-// Key patterns for real-time state
-const keys = {
-  // Queue position tracking
-  queuePosition: "queue:{queueId}:positions", // Sorted set
-  queueConsumer: "queue:{queueId}:consumer:{consumerId}", // Hash
+- Entry confirmation
+- Total entries (if shown)
+- Time until selection
 
-  // Draw entries
-  drawEntries: "draw:{drawId}:entries", // Set
-  drawWinners: "draw:{drawId}:winners", // Set
+### Countdowns
 
-  // Auction state
-  auctionBids: "auction:{auctionId}:bids", // Sorted set
-  auctionHighBid: "auction:{auctionId}:high_bid", // String
+Timing updates automatically:
 
-  // Admission tokens
-  admissionToken: "admission:{token}", // Hash with TTL
+- Time until experience opens
+- Time until draw selection
+- Time remaining to complete checkout
 
-  // Consumer sessions
-  consumerSession: "consumer:{consumerId}:session", // Hash
-};
-```
+## The Consumer Experience
 
-### State Flow
-
-1. **Write Path**: State changes flow from consumer actions through the API to Valkey
-2. **Read Path**: Clients poll or subscribe for state updates
-3. **Persistence**: Critical state is persisted to PostgreSQL for durability
+### Waiting in a Queue
 
 ```
-┌────────────────────────────────────────────────────────────────────┐
-│                         STATE FLOW                                  │
-├────────────────────────────────────────────────────────────────────┤
-│                                                                    │
-│  WRITE PATH (Consumer joins queue)                                 │
-│  ──────────────────────────────────                                │
-│                                                                    │
-│  Consumer ──► API ──► Valkey (immediate) ──► PostgreSQL (async)    │
-│                          │                                         │
-│                          │ Position calculated                     │
-│                          │ TTL set on session                      │
-│                          ▼                                         │
-│                    Response returned                               │
-│                                                                    │
-│  READ PATH (Consumer checks position)                              │
-│  ────────────────────────────────────                              │
-│                                                                    │
-│  Consumer ◄── API ◄── Valkey                                       │
-│                          │                                         │
-│                          │ Real-time position                      │
-│                          │ Estimated wait time                     │
-│                          │ Queue length                            │
-│                                                                    │
-└────────────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────┐
+│                     QUEUE STATUS                                 │
+│                                                                 │
+│     Your position: #47                                          │
+│     Estimated wait: ~3 minutes                                  │
+│                                                                 │
+│     ████████████████░░░░░░░░░░░░░░░░░░░░░░  47/200              │
+│                                                                 │
+│     Position updates automatically                              │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+                              │ (position changes)
+                              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                     QUEUE STATUS                                 │
+│                                                                 │
+│     Your position: #12                                          │
+│     Estimated wait: ~45 seconds                                 │
+│                                                                 │
+│     █████████████████████████████████████░░  12/200             │
+│                                                                 │
+│     Almost there!                                               │
+└─────────────────────────────────────────────────────────────────┘
 ```
 
-## Client-Side State Synchronization
-
-### SDK Store Architecture
-
-The SDK uses nanostores for lightweight, reactive state management:
-
-```typescript
-// Core state synchronized across tabs
-const syncedKeys = [
-  "session", // Consumer session info
-  "activeQueues", // Active queue participations
-  "activeDraws", // Active draw entries
-  "activeAuctions", // Active auction participations
-  "activeJourneys", // Active experience journeys
-  "refreshToken", // Authentication token
-];
-```
-
-### Cross-Tab Synchronization
-
-When a consumer has multiple tabs open, state must stay consistent:
+### Bidding in an Auction
 
 ```
-┌────────────────────────────────────────────────────────────────────┐
-│                    CROSS-TAB SYNC PROTOCOL                          │
-├────────────────────────────────────────────────────────────────────┤
-│                                                                    │
-│  Tab A (Leader)              Tab B                   Tab C         │
-│  ─────────────              ─────                   ─────          │
-│                                                                    │
-│  ┌─────────────┐                                                   │
-│  │ State       │                                                   │
-│  │ versionMap: │                                                   │
-│  │  session: 5 │                                                   │
-│  │  queues: 12 │                                                   │
-│  └──────┬──────┘                                                   │
-│         │                                                          │
-│         │◄─────── state:request ────────────────┐                  │
-│         │                                       │                  │
-│         │ (Leader responds)                     │ (New tab opens)  │
-│         │                                       │                  │
-│         ├─────── state:response ───────────────►├──────────────────┤
-│         │        {session, queues, versions}    │ Apply state     │
-│         │                                       │ if version >    │
-│         │                                       │ local           │
-│         │                                                          │
-│         │ (User joins queue in Tab A)                              │
-│         │                                                          │
-│         ├─────── state:update ─────────────────►├─────────────────►│
-│         │        {key: "queues", version: 13}   │                  │
-│         │                                       │                  │
-│                                                                    │
-│  CONFLICT RESOLUTION                                               │
-│  ────────────────────                                              │
-│                                                                    │
-│  • Higher version number wins                                      │
-│  • Only leader responds to state requests                          │
-│  • Leader broadcasts state on election                             │
-│                                                                    │
-└────────────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────┐
+│                     AUCTION STATUS                               │
+│                                                                 │
+│     Current high bid: $150.00                                   │
+│     Your bid: $150.00 ✓ (You're winning!)                       │
+│     Time remaining: 2:34                                        │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+                              │ (someone outbids)
+                              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                     AUCTION STATUS                               │
+│                                                                 │
+│     Current high bid: $175.00                                   │
+│     Your bid: $150.00 ✗ (You've been outbid!)                   │
+│     Time remaining: 2:15                                        │
+│                                                                 │
+│     [Place new bid]                                             │
+└─────────────────────────────────────────────────────────────────┘
 ```
 
-### Transport Layers
+## Multiple Browser Tabs
 
-The SDK chooses the best available transport:
+When consumers have multiple tabs open, state stays synchronized:
 
-```typescript
-// Priority order for cross-tab communication
-const transports = [
-  "BroadcastChannel", // Modern browsers, most efficient
-  "LocalStorage", // Fallback, uses storage events
-];
-```
+- Join a queue in one tab → other tabs show the same position
+- Receive access in one tab → other tabs update immediately
+- Place a bid in one tab → reflected across all tabs
 
-**BroadcastChannel** (preferred):
+This prevents confusion and duplicate actions.
 
-- Native browser API for same-origin messaging
-- Efficient, no storage overhead
-- Automatically cleaned up on tab close
+## How It Works (Simplified)
 
-**LocalStorage** (fallback):
-
-- Works in older browsers
-- Uses `storage` event for notifications
-- Requires cleanup of stale entries
-
-## Leader Election
-
-To prevent conflicts, one tab is elected as the leader:
+Fanfare uses efficient techniques to keep consumers updated:
 
 ```
-┌────────────────────────────────────────────────────────────────────┐
-│                      LEADER ELECTION                                │
-├────────────────────────────────────────────────────────────────────┤
-│                                                                    │
-│  PURPOSE                                                           │
-│  ───────                                                           │
-│  • Single source of truth for state requests                       │
-│  • Coordinates API calls to prevent duplicates                     │
-│  • Handles recovery when tabs crash                                │
-│                                                                    │
-│  ELECTION PROCESS                                                  │
-│  ─────────────────                                                 │
-│                                                                    │
-│  1. Tab opens, generates unique tabId                              │
-│  2. Tab announces presence via heartbeat                           │
-│  3. Tab with lowest tabId becomes leader                           │
-│  4. Leader responds to state:request messages                      │
-│                                                                    │
-│  FAILURE DETECTION                                                 │
-│  ─────────────────                                                 │
-│                                                                    │
-│  • Tabs send periodic heartbeats                                   │
-│  • Missing heartbeats → tab marked as dead                         │
-│  • Dead leader → new election triggered                            │
-│  • New leader broadcasts current state                             │
-│                                                                    │
-│  ┌───────┐    heartbeat    ┌───────┐    heartbeat    ┌───────┐    │
-│  │ Tab A │ ───────────────►│       │◄─────────────── │ Tab C │    │
-│  │Leader │◄───────────────►│ Tab B │ ───────────────►│       │    │
-│  └───────┘                 └───────┘                 └───────┘    │
-│      │                                                    │        │
-│      │           Tab A closes                            │        │
-│      ▼                                                    ▼        │
-│  ┌───────┐                                           ┌───────┐    │
-│  │ Dead  │    Tab B has lowest ID → becomes leader   │ Tab C │    │
-│  └───────┘                                           │  New  │    │
-│                                                      │Follower    │
-│                 ┌───────┐                            └───────┘    │
-│                 │ Tab B │                                         │
-│                 │  New  │                                         │
-│                 │Leader │                                         │
-│                 └───────┘                                         │
-│                                                                    │
-└────────────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────┐
+│                     UPDATE FLOW                                  │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  Consumer's browser                        Fanfare              │
+│  ┌─────────────────┐                   ┌─────────────────┐     │
+│  │  Shows current  │◄─── updates ──────│  Tracks real    │     │
+│  │  position: #47  │                   │  positions      │     │
+│  └─────────────────┘                   └─────────────────┘     │
+│         │                                      │                │
+│         │                                      │                │
+│         │    (every few seconds)               │                │
+│         │◄───────────────────────────────────►│                │
+│         │       check for updates              │                │
+│         │                                      │                │
+│         │                                      │                │
+│         ▼                                      ▼                │
+│  ┌─────────────────┐                   ┌─────────────────┐     │
+│  │  Updates to     │◄─── new data ─────│  Position       │     │
+│  │  position: #12  │                   │  changed        │     │
+│  └─────────────────┘                   └─────────────────┘     │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
 ```
 
-## Polling and Updates
-
-### Adaptive Polling
-
-The SDK adjusts polling frequency based on context:
-
-```typescript
-const pollingStrategies = {
-  // High-frequency: Active participation
-  activeQueue: {
-    interval: 2000, // 2 seconds
-    backoff: false,
-    conditions: ["status === 'QUEUED'"],
-  },
-
-  // Medium-frequency: Waiting for events
-  upcomingDraw: {
-    interval: 10000, // 10 seconds
-    backoff: true,
-    conditions: ["status === 'ENTERED'", "drawAt > now + 5min"],
-  },
-
-  // Low-frequency: Background monitoring
-  admittedSession: {
-    interval: 60000, // 1 minute
-    backoff: true,
-    conditions: ["status === 'ADMITTED'"],
-  },
-};
-```
-
-### State Versioning
-
-Every state update includes a version for conflict resolution:
-
-```typescript
-interface StateUpdate {
-  key: string;
-  value: unknown;
-  version: number; // Monotonically increasing
-}
-
-// Conflict resolution
-function applyUpdate(local: StateUpdate, remote: StateUpdate) {
-  if (remote.version > local.version) {
-    // Remote is newer, apply it
-    return remote;
-  } else if (remote.version < local.version) {
-    // Local is newer, broadcast it
-    broadcastState(local);
-    return local;
-  }
-  // Versions equal, states should match
-  return local;
-}
-```
-
-## SDK Usage
-
-### Subscribing to Real-Time Updates
-
-```typescript
-import { useFanfare } from "@waitify-io/fanfare-sdk-react";
-
-function QueuePosition({ queueId }: { queueId: string }) {
-  const { queue } = useFanfare();
-  const [position, setPosition] = useState<number | null>(null);
-
-  useEffect(() => {
-    // Subscribe to position updates
-    const unsubscribe = queue.subscribeToPosition(queueId, (data) => {
-      setPosition(data.position);
-    });
-
-    return unsubscribe;
-  }, [queueId]);
-
-  return <div>Your position: {position}</div>;
-}
-```
-
-### Handling State Changes
-
-```typescript
-function AuctionBidding({ auctionId }: { auctionId: string }) {
-  const { auction } = useFanfare();
-  const [highBid, setHighBid] = useState<string | null>(null);
-  const [isOutbid, setIsOutbid] = useState(false);
-
-  useEffect(() => {
-    const unsubscribe = auction.subscribe(auctionId, (state) => {
-      setHighBid(state.currentHighBid);
-
-      // Check if user was outbid
-      if (state.status === "OUTBID") {
-        setIsOutbid(true);
-      }
-    });
-
-    return unsubscribe;
-  }, [auctionId]);
-
-  return (
-    <div>
-      <p>Current High Bid: {highBid}</p>
-      {isOutbid && <p className="warning">You have been outbid!</p>}
-    </div>
-  );
-}
-```
-
-### Managing Multiple Tabs
+### Adaptive Frequency
 
-```typescript
-import { useFanfare } from "@waitify-io/fanfare-sdk-react";
-
-function TabAwareComponent() {
-  const { sync } = useFanfare();
-  const [isLeader, setIsLeader] = useState(false);
-  const [tabCount, setTabCount] = useState(1);
-
-  useEffect(() => {
-    // Monitor sync state
-    const interval = setInterval(() => {
-      setIsLeader(sync.isTabLeader());
-      setTabCount(sync.getActiveTabs().length + 1);
-    }, 5000);
+Update frequency adjusts based on context:
 
-    return () => clearInterval(interval);
-  }, []);
-
-  return (
-    <div>
-      <p>Open tabs: {tabCount}</p>
-      {isLeader && <p>This tab is the leader</p>}
-    </div>
-  );
-}
-```
+| Situation           | Update Frequency | Why                      |
+| ------------------- | ---------------- | ------------------------ |
+| Actively in queue   | Frequently       | Position changes often   |
+| Waiting for draw    | Less frequently  | Fewer changes expected   |
+| Has checkout access | Occasionally     | Just tracking expiration |
+| Tab in background   | Reduced          | Save resources           |
 
-## Recovery and Resilience
-
-### Storage Quota Handling
+## What Consumers Experience
 
-The SDK handles storage limits gracefully:
-
-```typescript
-async function handleStorageQuotaError() {
-  // Log the issue
-  logger.warn("Storage quota exceeded, cleaning up");
-
-  // Clear old cached data
-  await clearStaleCache();
-
-  // Retry the operation
-  await retryWithBackoff(operation);
-}
-```
+### Smooth Updates
 
-### Connection Recovery
+- Position changes smoothly, not abruptly
+- Countdown timers stay accurate
+- No page refresh needed
 
-When connections fail, the SDK automatically recovers:
+### Clear Notifications
 
-```typescript
-const recoveryStrategy = {
-  maxRetries: 3,
-  initialDelay: 1000,
-  maxDelay: 30000,
-  backoffMultiplier: 2,
+- "It's your turn!" when they reach the front
+- "You've been outbid!" when someone bids higher
+- "2 minutes remaining" as checkout time runs low
 
-  onRetry: (attempt, error) => {
-    logger.info(`Retry attempt ${attempt}`, { error });
-  },
-
-  onMaxRetries: () => {
-    logger.error("Max retries reached, falling back to degraded mode");
-  },
-};
-```
+### Reliable State
 
-### Degraded Mode
+- Refresh the page → still see correct position
+- Close and reopen → session continues
+- Multiple devices → stays in sync
 
-If real-time updates fail, the SDK falls back to manual refresh:
+## Handling Edge Cases
 
-```typescript
-function DegradedModeNotice() {
-  const { sync } = useFanfare();
-  const [degraded, setDegraded] = useState(false);
+### Connection Issues
 
-  useEffect(() => {
-    if (!sync.isEnabled()) {
-      setDegraded(true);
-    }
-  }, []);
-
-  if (!degraded) return null;
+If a consumer's connection drops:
 
-  return (
-    <div className="notice">
-      <p>Real-time updates unavailable.</p>
-      <button onClick={() => window.location.reload()}>Refresh</button>
-    </div>
-  );
-}
-```
+1. Updates pause temporarily
+2. Reconnection happens automatically
+3. Latest state is fetched when connection returns
+4. Consumer sees accurate information
 
-## Performance Considerations
+### High Traffic
 
-### Minimizing State Updates
-
-Only sync what's necessary:
+During peak demand:
 
-```typescript
-const syncConfig = {
-  // Sync these keys across tabs
-  syncKeys: ["session", "activeQueues", "activeDraws"],
-
-  // Don't sync UI state
-  excludeKeys: ["uiPreferences", "localDraft"],
-};
-```
-
-### Debouncing Updates
-
-Prevent excessive updates:
-
-```typescript
-// Internal SDK behavior
-const updateQueue = createUpdateQueue({
-  debounceMs: 100, // Batch updates within 100ms
-  maxBatchSize: 10, // Send at most 10 updates per batch
-});
-```
-
-### Memory Management
-
-Clean up subscriptions properly:
-
-```typescript
-function QueueWidget({ queueId }: { queueId: string }) {
-  const { queue } = useFanfare();
-
-  useEffect(() => {
-    // Subscribe returns cleanup function
-    const unsubscribe = queue.subscribe(queueId, handleUpdate);
-
-    // Always clean up on unmount
-    return () => {
-      unsubscribe();
-    };
-  }, [queueId]);
-
-  // ...
-}
-```
-
-## Best Practices
-
-### 1. Handle Stale State
-
-Always assume state might be slightly stale:
-
-```typescript
-// Good: Verify before critical actions
-const currentState = await queue.refresh(queueId);
-if (currentState.status === "ADMITTED") {
-  proceedToCheckout();
-}
-
-// Bad: Trust cached state for critical decisions
-if (cachedState.status === "ADMITTED") {
-  proceedToCheckout(); // State might have expired!
-}
-```
-
-### 2. Show Loading States
-
-Indicate when data is being fetched:
-
-```typescript
-function QueueStatus({ queueId }: { queueId: string }) {
-  const [loading, setLoading] = useState(true);
-  const [position, setPosition] = useState<number | null>(null);
-
-  useEffect(() => {
-    queue.getPosition(queueId).then((pos) => {
-      setPosition(pos);
-      setLoading(false);
-    });
-  }, [queueId]);
-
-  if (loading) return <Skeleton />;
-  return <div>Position: {position}</div>;
-}
-```
-
-### 3. Provide Manual Refresh
-
-Let users refresh when needed:
-
-```typescript
-function RefreshableQueue({ queueId }: { queueId: string }) {
-  const [refreshing, setRefreshing] = useState(false);
-
-  const handleRefresh = async () => {
-    setRefreshing(true);
-    await queue.refresh(queueId);
-    setRefreshing(false);
-  };
-
-  return (
-    <div>
-      <QueuePosition queueId={queueId} />
-      <button onClick={handleRefresh} disabled={refreshing}>
-        {refreshing ? "Refreshing..." : "Refresh"}
-      </button>
-    </div>
-  );
-}
-```
-
-### 4. Handle Tab Visibility
-
-Pause updates when tab is hidden:
-
-```typescript
-useEffect(() => {
-  const handleVisibilityChange = () => {
-    if (document.hidden) {
-      // Reduce polling frequency
-      setPollingInterval(30000);
-    } else {
-      // Restore normal frequency
-      setPollingInterval(2000);
-      // Immediate refresh on return
-      queue.refresh(queueId);
-    }
-  };
-
-  document.addEventListener("visibilitychange", handleVisibilityChange);
-  return () => {
-    document.removeEventListener("visibilitychange", handleVisibilityChange);
-  };
-}, [queueId]);
-```
+- Updates continue to flow
+- The system is designed to handle load spikes
+- Consumers see their current positions
+
+### Tab Visibility
+
+When a browser tab is hidden:
+
+- Updates slow down (saves battery/data)
+- Returns to full speed when tab is visible
+- Immediate refresh when consumer returns
+
+## What to Expect
+
+### Smooth Experience
+
+Fanfare handles updates automatically, so you can expect:
+
+- Positions update without refreshing the page
+- Countdown timers stay accurate
+- Notifications appear when status changes (outbid, your turn, etc.)
+
+### If Something Seems Off
+
+Occasionally, a connection hiccup may delay updates:
+
+- Refresh the page to get the latest status
+- Check your internet connection
+- Updates resume automatically when reconnected
+
+### For Technical Teams
+
+If you're building a custom integration, see [SDK Reference](/sdk/core/overview) for implementation details on handling loading states, stale data, and manual refresh controls.
 
 ## Related Concepts
 
-- [State Machine](/docs/concepts/state-machine) - Consumer journey states
-- [Queue Distribution](/docs/concepts/distributions/queue) - Real-time queue positions
-- [Auction Distribution](/docs/concepts/distributions/auction) - Real-time bidding
+- [Queue Distribution](/concepts/distributions/queue) — Queue positions and wait times
+- [Auction Distribution](/concepts/distributions/auction) — Real-time bidding
+- [Draw Distribution](/concepts/distributions/lottery) — Entry status and selection notifications

@@ -1,544 +1,236 @@
 ---
 title: Products
-description: Product catalog, variants, inventory, and media management in Fanfare
+description: Managing your product catalog for experiences
 ---
 
 # Products
 
-A **Product** is an item available for purchase through experiences. Fanfare's product model supports variants, inventory tracking, media assets, and synchronization with external catalogs.
+**Products** are the items consumers can purchase through your experiences. Fanfare supports products with variants, inventory tracking, and images — everything you need for launches and sales.
 
-## Product Model
+## Product Basics
 
-```typescript
-interface Product {
-  // Identity
-  id: string; // UUID
-  organizationId: string; // Parent organization
+Each product includes:
 
-  // Core Fields
-  name: string; // Display name
-  description?: string; // Rich text description
-  url: string; // Product page URL
-  handle?: string; // URL-friendly slug
-  sku?: string; // Stock keeping unit
-
-  // Pricing
-  basePrice?: string; // Base price (decimal string)
-
-  // Custom Data
-  metadata?: Record<string, unknown>;
-
-  // Sync Source (if imported)
-  primarySyncSourceId?: string;
-  primarySyncSourceType?: string;
-  primarySyncSourceExternalId?: string;
-
-  // Audit
-  createdAt: string;
-  updatedAt: string;
-  archived: boolean;
-}
-```
-
-## Product with Relations
-
-When queried with includes, products contain variants and media:
-
-```typescript
-interface ProductWithRelations extends Product {
-  // Variants
-  variants?: ProductVariant[];
-  defaultVariantId?: string;
-
-  // Media
-  productMediaAssets?: ProductMediaAsset[];
-
-  // Sync
-  primarySyncSource?: SyncSource;
-}
-```
+- **Name** — What consumers see
+- **Description** — Product details
+- **Price** — Base price for the product
+- **URL** — Link to the product page on your store
+- **Images** — Product photos
 
 ## Product Variants
 
-Variants represent different options of a product (size, color, etc.):
-
-```typescript
-interface ProductVariant {
-  // Identity
-  id: string;
-  organizationId: string;
-  productId: string;
-
-  // Identification
-  sku: string; // Unique SKU for this variant
-
-  // Pricing
-  priceOverride?: string; // Override base product price
-
-  // Inventory
-  inventoryQuantity: number; // Current stock count
-  inventoryTracked: boolean; // Whether to track inventory
-
-  // Custom Data
-  metadata?: Record<string, unknown>;
-
-  // Option Values (when included)
-  options?: VariantOptionDetail[];
-
-  // Sync
-  primarySyncSourceId?: string;
-  primarySyncSourceType?: string;
-  primarySyncSourceExternalId?: string;
-
-  // Audit
-  createdAt: string;
-  updatedAt: string;
-  archived: boolean;
-}
-```
-
-### Variant Options
-
-Options define the dimensions of variation (Size, Color, etc.):
-
-```typescript
-interface VariantOptionDetail {
-  optionId: string;                  // Option ID (e.g., "size")
-  optionName: string;                // Display name (e.g., "Size")
-  valueId: string;                   // Value ID
-  value: string;                     // Display value (e.g., "Medium")
-}
-
-// Example variant with options
-{
-  sku: "SNEAKER-RED-10",
-  priceOverride: "149.99",
-  inventoryQuantity: 25,
-  inventoryTracked: true,
-  options: [
-    { optionName: "Color", value: "Red" },
-    { optionName: "Size", value: "10" }
-  ]
-}
-```
-
-### Creating Variants
-
-Variants can be created with option name/value pairs:
-
-```typescript
-interface NewProductVariantWithOptionValues {
-  sku: string;
-  priceOverride?: string;
-  inventoryQuantity: number;
-  inventoryTracked: boolean;
-  optionValues: Array<{
-    optionName: string;              // Creates option if doesn't exist
-    value: string;                   // Creates value if doesn't exist
-  }>;
-  metadata?: Record<string, unknown>;
-}
-
-// Example: Creating a product with variants
-{
-  name: "Classic Sneaker",
-  basePrice: "129.99",
-  url: "https://shop.example.com/sneaker",
-  variants: [
-    {
-      sku: "SNKR-WHT-9",
-      inventoryQuantity: 50,
-      inventoryTracked: true,
-      optionValues: [
-        { optionName: "Color", value: "White" },
-        { optionName: "Size", value: "9" }
-      ]
-    },
-    {
-      sku: "SNKR-WHT-10",
-      inventoryQuantity: 45,
-      inventoryTracked: true,
-      optionValues: [
-        { optionName: "Color", value: "White" },
-        { optionName: "Size", value: "10" }
-      ]
-    },
-    {
-      sku: "SNKR-BLK-9",
-      inventoryQuantity: 30,
-      inventoryTracked: true,
-      optionValues: [
-        { optionName: "Color", value: "Black" },
-        { optionName: "Size", value: "9" }
-      ]
-    }
-  ]
-}
-```
-
-## Media Assets
-
-Products and variants can have associated media:
-
-```typescript
-interface ProductMediaAsset {
-  id: string;
-  organizationId: string;
-  productId: string;
-  mediaAssetId: string;
-  position: number; // Display order
-  alt?: string; // Alt text
-
-  // Populated when included
-  mediaAsset?: MediaAsset;
-}
-
-interface MediaAsset {
-  id: string;
-  organizationId: string;
-  url: string; // CDN URL
-  mimeType: string; // e.g., "image/jpeg"
-  width?: number;
-  height?: number;
-  size?: number; // Bytes
-}
-```
-
-### Media Hierarchy
+Variants represent different options like size and color:
 
 ```
-Product
-├── ProductMediaAssets (ordered)
-│   ├── [0] Primary image
-│   ├── [1] Gallery image 2
-│   └── [2] Gallery image 3
-│
-└── Variants
-    └── Variant
-        └── VariantMediaAssets (ordered)
-            └── [0] Variant-specific image
+Product: "Classic Sneaker"
+├── Variant: White / Size 9  — $129.99
+├── Variant: White / Size 10 — $129.99
+├── Variant: Black / Size 9  — $129.99
+└── Variant: Black / Size 10 — $139.99 (premium color)
 ```
 
-## Pricing
+### Variant Properties
 
-### Price Resolution
+| Property      | Description                         |
+| ------------- | ----------------------------------- |
+| **SKU**       | Unique identifier for inventory     |
+| **Price**     | Can override the base product price |
+| **Inventory** | Stock count (if tracked)            |
+| **Options**   | Size, color, or other attributes    |
 
-Prices are resolved in order of specificity:
+### Variant-Specific Pricing
 
-```typescript
-function getEffectivePrice(product: ProductWithRelations, variantId?: string): string | null {
-  // 1. Check variant override
-  if (variantId && product.variants) {
-    const variant = product.variants.find((v) => v.id === variantId);
-    if (variant?.priceOverride) {
-      return variant.priceOverride;
-    }
-  }
+Variants can have different prices from the base product:
 
-  // 2. Fall back to base price
-  return product.basePrice || null;
-}
-```
+- **Base price:** $129.99
+- **Premium variant:** $139.99 (rare color)
+- **Standard variants:** Use base price
 
-### Price Format
+## Inventory Tracking
 
-Prices are stored as decimal strings to avoid floating-point issues:
+You can choose whether to track inventory for each variant:
 
-```typescript
-// Correct
-basePrice: "129.99";
-priceOverride: "149.99";
+### Tracked Inventory
 
-// Incorrect
-basePrice: 129.99; // Floating point
-```
+When inventory is tracked:
 
-## Inventory Management
+- Stock count decreases with each purchase
+- Consumers see "sold out" when quantity reaches zero
+- Helps prevent overselling
 
-### Tracked vs Untracked
+### Untracked Inventory
 
-```typescript
-// Tracked inventory - quantity matters
-{
-  inventoryTracked: true,
-  inventoryQuantity: 50  // Will decrement on purchase
-}
+When inventory is not tracked:
 
-// Untracked inventory - always available
-{
-  inventoryTracked: false,
-  inventoryQuantity: 0  // Ignored
-}
-```
+- Always shows as available
+- Useful for digital products or made-to-order items
 
-### Availability Check
+## Product Images
 
-```typescript
-function isVariantAvailable(variant: ProductVariant): boolean {
-  // Untracked = always available
-  if (!variant.inventoryTracked) return true;
+Add images to showcase your products:
 
-  // Tracked = check quantity
-  return variant.inventoryQuantity > 0;
-}
-```
+- **Primary image** — Main product photo (shown in listings)
+- **Gallery images** — Additional photos (shown on detail pages)
+- **Variant images** — Specific to each variant (e.g., color photos)
 
-### Inventory Sync
+Images display in the order you set, with the primary image first.
 
-When products are synced from external systems (Shopify, etc.), inventory updates flow automatically:
+## Products in Experiences
+
+Connect products to experiences to make them available:
+
+### Single Product Experiences
+
+Most common — one product per experience:
 
 ```
-External System ──webhook──► Fanfare ──update──► Product Variant
-                             │
-                             └──► Distributions (queue capacity, etc.)
+Experience: "Limited Edition Sneaker Drop"
+└── Product: Air Max Limited
 ```
 
-## Sync Sources
+### Multiple Product Experiences
 
-Products can be imported from external systems:
-
-```typescript
-interface SyncSource {
-  id: string;
-  organizationId: string;
-  sourceType: string; // "SHOPIFY", "CUSTOM", etc.
-  externalId: string; // ID in external system
-  sourceUrl?: string; // URL in external system
-  lastSyncedAt?: string;
-  syncStatus?: string;
-  metadata?: Record<string, unknown>;
-}
-```
-
-### Supported Sync Sources
-
-| Source    | Description        | Sync Direction |
-| --------- | ------------------ | -------------- |
-| `SHOPIFY` | Shopify product    | Bidirectional  |
-| `CUSTOM`  | Custom integration | Bidirectional  |
-| `CSV`     | CSV import         | One-time       |
-
-### Sync Behavior
+Offer several products in one experience:
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                        SYNC FLOW                                 │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                 │
-│  External System                     Fanfare                    │
-│  ┌─────────────┐                    ┌─────────────┐            │
-│  │   Product   │──── Create ───────►│   Product   │            │
-│  │   Updated   │                    │   Created   │            │
-│  └─────────────┘                    └─────────────┘            │
-│        │                                   │                    │
-│        │◄────── Inventory Sync ────────────│                    │
-│        │                                   │                    │
-│  ┌─────────────┐                    ┌─────────────┐            │
-│  │  Inventory  │──── Webhook ──────►│  Inventory  │            │
-│  │   Changed   │                    │   Updated   │            │
-│  └─────────────┘                    └─────────────┘            │
-│                                                                 │
-└─────────────────────────────────────────────────────────────────┘
+Experience: "Summer Collection Launch"
+├── Product: Summer Tee (Primary)
+├── Product: Beach Shorts
+└── Product: Sun Hat
 ```
 
-## Experience Products
+### Variant-Specific Experiences
 
-Products are associated with experiences through a junction:
+Link to a specific variant for exclusive launches:
 
-```typescript
-interface ExperienceProduct {
-  id: string;
-  experienceId: string;
-  productId: string;
-  productVariantId?: string; // Specific variant (optional)
-  isPrimary: boolean; // Primary product for display
-  position: number; // Display order
-}
+```
+Experience: "Exclusive Red Edition"
+└── Product: Classic Sneaker
+    └── Variant: Red / Size 10 only
 ```
 
-### Single vs Multi-Product
+## Product Selection Modes
 
-**Single Product Experience:**
+Control how consumers choose products:
 
-```typescript
-{
-  name: "iPhone 16 Launch",
-  products: [
-    { productId: "iphone-16", isPrimary: true, position: 0 }
-  ]
-}
+| Mode                  | Description                          | Best For      |
+| --------------------- | ------------------------------------ | ------------- |
+| **Consumer chooses**  | Consumers pick their product/variant | Most launches |
+| **Random assignment** | System assigns randomly              | Mystery boxes |
+
+## Syncing Products
+
+Import products from your existing store:
+
+### Supported Platforms
+
+| Platform       | Sync Type    | What Syncs                            |
+| -------------- | ------------ | ------------------------------------- |
+| **Shopify**    | Automatic    | Products, variants, inventory, images |
+| **CSV Import** | Manual       | Product data you provide              |
+| **API**        | Programmatic | Full control via API                  |
+
+### How Sync Works
+
+```
+Your Store                     Fanfare
+┌─────────────┐               ┌─────────────┐
+│   Product   │ ─── sync ───► │   Product   │
+│   updated   │               │   updated   │
+└─────────────┘               └─────────────┘
+       │                             │
+       │                             ▼
+       │                      Experience shows
+       │                      updated info
+       │
+       │        ┌─────────────┐
+       └─────── │  Inventory  │ ◄─── Stays in sync
+                │   webhook   │
+                └─────────────┘
 ```
 
-**Multi-Product Experience:**
+### Keeping Inventory Synced
 
-```typescript
-{
-  name: "Sneaker Drop",
-  products: [
-    { productId: "sneaker-a", isPrimary: true, position: 0 },
-    { productId: "sneaker-b", isPrimary: false, position: 1 },
-    { productId: "sneaker-c", isPrimary: false, position: 2 }
-  ]
-}
-```
+For tracked inventory:
 
-### Variant-Specific Experience
+- **Webhooks** — Real-time updates when stock changes
+- **Periodic sync** — Regular checks for changes
+- **Manual sync** — Trigger a sync when needed
 
-Link an experience to a specific variant:
+## Pricing Best Practices
 
-```typescript
-{
-  name: "Limited Red Edition",
-  products: [
-    {
-      productId: "sneaker-a",
-      productVariantId: "red-variant-id",  // Only this variant
-      isPrimary: true
-    }
-  ]
-}
-```
+### Enter Prices With Cents
 
-## API Operations
+Enter prices as you'd see them in your store:
 
-### Create Product
+- **Example:** 129.99 for $129.99
+- Prices display in your configured currency
 
-```bash
-POST /v1/products
-Authorization: Bearer sk_live_...
-Content-Type: application/json
+### Consider Variant Pricing
 
-{
-  "name": "Classic Sneaker",
-  "description": "Premium leather sneaker",
-  "url": "https://shop.example.com/sneaker",
-  "basePrice": "129.99",
-  "variants": [
-    {
-      "sku": "SNKR-WHT-9",
-      "inventoryQuantity": 50,
-      "inventoryTracked": true,
-      "optionValues": [
-        { "optionName": "Color", "value": "White" },
-        { "optionName": "Size", "value": "9" }
-      ]
-    }
-  ]
-}
-```
+- Set a base price for standard variants
+- Use price overrides for premium variants
+- Keep pricing consistent across your store
 
-### Get Product with Relations
+## Managing Products
 
-```bash
-GET /v1/products/:id?include=variants,mediaAssets
-Authorization: Bearer sk_live_...
+### Create Products Manually
 
-# Response
-{
-  "id": "product-uuid",
-  "name": "Classic Sneaker",
-  "basePrice": "129.99",
-  "variants": [
-    {
-      "id": "variant-uuid",
-      "sku": "SNKR-WHT-9",
-      "inventoryQuantity": 50,
-      "options": [
-        { "optionName": "Color", "value": "White" },
-        { "optionName": "Size", "value": "9" }
-      ]
-    }
-  ],
-  "productMediaAssets": [
-    {
-      "position": 0,
-      "mediaAsset": {
-        "url": "https://cdn.example.com/sneaker.jpg"
-      }
-    }
-  ]
-}
-```
+Add products directly in Fanfare:
 
-### Update Product
+1. Enter product details (name, description, price)
+2. Add variants if needed
+3. Upload images
+4. Link to experiences
 
-```bash
-PATCH /v1/products/:id
-Authorization: Bearer sk_live_...
-Content-Type: application/json
+### Import from Your Store
 
-{
-  "name": "Classic Sneaker - Updated",
-  "basePrice": "139.99"
-}
-```
+Sync products from your e-commerce platform:
 
-### Update Variant Inventory
+1. Connect your store
+2. Select products to import
+3. Products stay synced automatically
 
-```bash
-PATCH /v1/products/:productId/variants/:variantId
-Authorization: Bearer sk_live_...
-Content-Type: application/json
+### Update Products
 
-{
-  "inventoryQuantity": 45
-}
-```
-
-### List Products
-
-```bash
-GET /v1/products?include=variants
-Authorization: Bearer sk_live_...
-
-# Response
-{
-  "data": [...],
-  "pagination": {
-    "cursor": "...",
-    "hasMore": true
-  }
-}
-```
+Changes sync automatically when connected to your store. Manual updates are reflected immediately.
 
 ## Best Practices
 
-### 1. SKU Strategy
+### SKU Strategy
 
 Use consistent, meaningful SKUs:
 
 ```
-PROD-COLOR-SIZE
+PRODUCT-COLOR-SIZE
 SNKR-RED-10
 TSHIRT-BLU-M
 ```
 
-### 2. Inventory Accuracy
+This makes inventory management easier.
 
-- Sync inventory frequently for tracked products
-- Use webhooks for real-time updates
-- Set appropriate safety stock levels
+### Inventory Accuracy
 
-### 3. Media Optimization
+- Sync inventory frequently
+- Set up webhooks for real-time updates
+- Build in safety stock for high-demand launches
 
-- Use CDN-hosted images
-- Provide multiple angles (position order)
-- Include alt text for accessibility
+### Image Quality
 
-### 4. Variant Organization
+- Use high-resolution images
+- Show multiple angles
+- Include variant-specific images for colors
 
-- Limit to 2-3 option types (Color, Size)
-- Use consistent option names across products
-- Pre-create all valid combinations
+### Keep Prices Synced
 
-### 5. Price Management
+Ensure prices in Fanfare match your checkout:
 
-- Always use decimal strings for prices
-- Consider variant-specific pricing for premium options
-- Keep prices synced with source systems
+- Sync regularly
+- Test the full purchase flow
+- Check variant-specific pricing
 
-## Related Concepts
+## Next Steps
 
-- [Experiences](/docs/concepts/experiences) - Associating products with experiences
-- [Distributions](/docs/concepts/distributions/overview) - Product selection in distributions
-- [Consumers](/docs/concepts/consumers) - Order history and LTV calculation
+- [Experiences](/concepts/experiences) — Connect products to experiences
+- [Distribution Types](/concepts/distributions/overview) — How consumers access products
+- [Dashboard: Experiences](/dashboard/experiences/overview) — Manage products within experiences

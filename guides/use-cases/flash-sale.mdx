@@ -1,8 +1,3 @@
----
-title: Flash Sale Use Case
-description: Run time-limited flash sales with controlled access and fair distribution.
----
-
 # Flash Sale Use Case
 
 Learn how to use Fanfare to run time-limited flash sales with controlled access and fair distribution.
@@ -172,10 +167,7 @@ async function createFlashSaleExperience(config: FlashSaleConfig) {
   return experience;
 }
 
-async function setupVIPEarlyAccess(
-  experienceId: string,
-  earlyAccessStart: Date,
-) {
+async function setupVIPEarlyAccess(experienceId: string, earlyAccessStart: Date) {
   // Create VIP audience
   const vipAudience = await adminClient.audiences.create({
     name: "VIP Early Access",
@@ -212,27 +204,14 @@ interface FlashSalePageProps {
   isActive: boolean;
 }
 
-export default function FlashSalePage({
-  experienceId,
-  products,
-  startTime,
-  endTime,
-  isActive,
-}: FlashSalePageProps) {
+export default function FlashSalePage({ experienceId, products, startTime, endTime, isActive }: FlashSalePageProps) {
   return (
-    <FanfareProvider
-      organizationId={process.env.NEXT_PUBLIC_FANFARE_ORG_ID!}
-      options={{ environment: "production" }}
-    >
+    <FanfareProvider organizationId={process.env.NEXT_PUBLIC_FANFARE_ORG_ID!} options={{ environment: "production" }}>
       <div className="flash-sale-page">
         <header className="sale-header">
           <h1>Flash Sale</h1>
           <p className="sale-tagline">Up to 50% off - Limited Time Only</p>
-          <SaleCountdown
-            startTime={startTime}
-            endTime={endTime}
-            isActive={isActive}
-          />
+          <SaleCountdown startTime={startTime} endTime={endTime} isActive={isActive} />
         </header>
 
         <FlashSaleExperience experienceId={experienceId} products={products} />
@@ -258,13 +237,8 @@ interface FlashSaleExperienceProps {
   products: SaleProduct[];
 }
 
-export function FlashSaleExperience({
-  experienceId,
-  products,
-}: FlashSaleExperienceProps) {
-  const { journey, state, start } = useExperienceJourney(experienceId, {
-    autoStart: true,
-  });
+export function FlashSaleExperience({ experienceId, products }: FlashSaleExperienceProps) {
+  const { journey, state, start } = useExperienceJourney(experienceId, { autoStart: true });
 
   const snapshot = state?.snapshot;
   const stage = snapshot?.sequenceStage;
@@ -292,13 +266,7 @@ export function FlashSaleExperience({
   }
 }
 
-function PreSaleState({
-  snapshot,
-  products,
-}: {
-  snapshot: JourneySnapshot;
-  products: SaleProduct[];
-}) {
+function PreSaleState({ snapshot, products }: { snapshot: JourneySnapshot; products: SaleProduct[] }) {
   const startsAt = snapshot?.context?.startsAt;
   const [isVIP, setIsVIP] = useState(false);
 
@@ -348,13 +316,7 @@ function PreSaleState({
   );
 }
 
-function ShoppingState({
-  snapshot,
-  products,
-}: {
-  snapshot: JourneySnapshot;
-  products: SaleProduct[];
-}) {
+function ShoppingState({ snapshot, products }: { snapshot: JourneySnapshot; products: SaleProduct[] }) {
   const expiresAt = snapshot?.context?.admittanceExpiresAt;
   const [timeRemaining, setTimeRemaining] = useState(0);
   const [cart, setCart] = useState<CartItem[]>([]);
@@ -376,20 +338,11 @@ function ShoppingState({
       if (existing) {
         return prev.map((item) =>
           item.productId === product.id
-            ? {
-                ...item,
-                quantity: Math.min(
-                  item.quantity + quantity,
-                  product.maxPerCustomer,
-                ),
-              }
-            : item,
+            ? { ...item, quantity: Math.min(item.quantity + quantity, product.maxPerCustomer) }
+            : item
         );
       }
-      return [
-        ...prev,
-        { productId: product.id, quantity, price: product.salePrice },
-      ];
+      return [...prev, { productId: product.id, quantity, price: product.salePrice }];
     });
   };
 
@@ -402,10 +355,7 @@ function ShoppingState({
       cart,
     };
 
-    sessionStorage.setItem(
-      "flash_sale_checkout",
-      JSON.stringify(admissionData),
-    );
+    sessionStorage.setItem("flash_sale_checkout", JSON.stringify(admissionData));
     window.location.href = "/checkout/flash-sale";
   };
 
@@ -416,9 +366,7 @@ function ShoppingState({
       <div className={`shopping-timer ${isUrgent ? "urgent" : ""}`}>
         <span className="timer-label">Time to shop:</span>
         <span className="timer-value">{formatTime(timeRemaining)}</span>
-        {isUrgent && (
-          <span className="urgent-warning">Hurry! Time almost up</span>
-        )}
+        {isUrgent && <span className="urgent-warning">Hurry! Time almost up</span>}
       </div>
 
       <div className="sale-products-grid">
@@ -427,9 +375,7 @@ function ShoppingState({
             key={product.id}
             product={product}
             onAddToCart={(qty) => addToCart(product, qty)}
-            cartQuantity={
-              cart.find((item) => item.productId === product.id)?.quantity || 0
-            }
+            cartQuantity={cart.find((item) => item.productId === product.id)?.quantity || 0}
           />
         ))}
       </div>
@@ -437,12 +383,8 @@ function ShoppingState({
       {cart.length > 0 && (
         <div className="floating-cart">
           <div className="cart-summary">
-            <span className="item-count">
-              {cart.reduce((sum, item) => sum + item.quantity, 0)} items
-            </span>
-            <span className="cart-total">
-              ${cart.reduce((sum, item) => sum + item.price * item.quantity, 0)}
-            </span>
+            <span className="item-count">{cart.reduce((sum, item) => sum + item.quantity, 0)} items</span>
+            <span className="cart-total">${cart.reduce((sum, item) => sum + item.price * item.quantity, 0)}</span>
           </div>
           <button onClick={handleCheckout} className="checkout-btn">
             Checkout Now
@@ -464,9 +406,7 @@ function SaleProductCard({
 }) {
   const [selectedQuantity, setSelectedQuantity] = useState(1);
   const remainingForCustomer = product.maxPerCustomer - cartQuantity;
-  const discount = Math.round(
-    (1 - product.salePrice / product.originalPrice) * 100,
-  );
+  const discount = Math.round((1 - product.salePrice / product.originalPrice) * 100);
 
   return (
     <div className="sale-product-card">
@@ -497,22 +437,14 @@ function SaleProductCard({
       <div className="add-to-cart">
         {remainingForCustomer > 0 ? (
           <>
-            <select
-              value={selectedQuantity}
-              onChange={(e) => setSelectedQuantity(Number(e.target.value))}
-            >
-              {Array.from(
-                { length: remainingForCustomer },
-                (_, i) => i + 1,
-              ).map((num) => (
+            <select value={selectedQuantity} onChange={(e) => setSelectedQuantity(Number(e.target.value))}>
+              {Array.from({ length: remainingForCustomer }, (_, i) => i + 1).map((num) => (
                 <option key={num} value={num}>
                   {num}
                 </option>
               ))}
             </select>
-            <button onClick={() => onAddToCart(selectedQuantity)}>
-              Add to Cart
-            </button>
+            <button onClick={() => onAddToCart(selectedQuantity)}>Add to Cart</button>
           </>
         ) : (
           <span className="max-reached">Max quantity in cart</span>
@@ -560,11 +492,7 @@ interface StockUpdate {
 }
 
 // Webhook handler for purchases
-export async function handlePurchaseComplete(
-  orderId: string,
-  experienceId: string,
-  items: OrderItem[],
-) {
+export async function handlePurchaseComplete(orderId: string, experienceId: string, items: OrderItem[]) {
   for (const item of items) {
     // Decrement stock in Fanfare
     await adminClient.timedReleases.decrementStock(experienceId, {
@@ -575,9 +503,7 @@ export async function handlePurchaseComplete(
 }
 
 // Get real-time stock levels
-export async function getStockLevels(
-  experienceId: string,
-): Promise<StockUpdate[]> {
+export async function getStockLevels(experienceId: string): Promise<StockUpdate[]> {
   const experience = await adminClient.timedReleases.get(experienceId);
 
   return experience.products.map((p) => ({
@@ -608,9 +534,7 @@ export async function checkSoldOut(experienceId: string) {
 import { useEffect, useState } from "react";
 
 export function useStockUpdates(experienceId: string) {
-  const [stockLevels, setStockLevels] = useState<Map<string, number>>(
-    new Map(),
-  );
+  const [stockLevels, setStockLevels] = useState<Map<string, number>>(new Map());
 
   useEffect(() => {
     // Poll for stock updates
@@ -662,11 +586,7 @@ interface SaleCountdownProps {
   isActive: boolean;
 }
 
-export function SaleCountdown({
-  startTime,
-  endTime,
-  isActive,
-}: SaleCountdownProps) {
+export function SaleCountdown({ startTime, endTime, isActive }: SaleCountdownProps) {
   const [timeLeft, setTimeLeft] = useState(0);
 
   useEffect(() => {
@@ -685,9 +605,7 @@ export function SaleCountdown({
 
   return (
     <div className={`sale-countdown ${isActive ? "ending" : "starting"}`}>
-      <span className="countdown-label">
-        {isActive ? "Sale Ends In" : "Sale Starts In"}
-      </span>
+      <span className="countdown-label">{isActive ? "Sale Ends In" : "Sale Starts In"}</span>
 
       <div className="countdown-units">
         {days > 0 && (
@@ -732,11 +650,7 @@ interface StockIndicatorProps {
   productName: string;
 }
 
-export function StockIndicator({
-  remaining,
-  total,
-  productName,
-}: StockIndicatorProps) {
+export function StockIndicator({ remaining, total, productName }: StockIndicatorProps) {
   const percentage = (remaining / total) * 100;
 
   let urgencyLevel: "normal" | "low" | "critical" = "normal";
@@ -793,11 +707,8 @@ interface FlashSaleReport {
   };
 }
 
-async function generateFlashSaleReport(
-  experienceId: string,
-): Promise<FlashSaleReport> {
-  const analytics =
-    await adminClient.analytics.getTimedReleaseReport(experienceId);
+async function generateFlashSaleReport(experienceId: string): Promise<FlashSaleReport> {
+  const analytics = await adminClient.analytics.getTimedReleaseReport(experienceId);
 
   return {
     overview: {
