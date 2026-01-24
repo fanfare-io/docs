@@ -1,534 +1,244 @@
 ---
 title: Consumers
-description: Consumer identity, authentication states, and profile management in Fanfare
+description: Understanding consumer identity, verification, and tracking in Fanfare
 ---
 
 # Consumers
 
-A **Consumer** is an end-user who participates in experiences. Consumers can range from completely anonymous visitors to fully authenticated users with rich profile data.
+Fanfare tracks your **consumers** as they participate in experiences. Consumers can range from guest shoppers to fully verified account holders.
 
-## Consumer Model
+## Consumer Identity Levels
 
-```typescript
-interface Consumer {
-  // Identity
-  id: string; // UUID
-  organizationId: string; // Parent organization
-
-  // Contact
-  email?: string; // Email address (unique per org)
-  phone?: string; // Phone number
-  fullName?: string; // Display name
-
-  // Verification
-  emailVerified: boolean; // Email has been verified
-  phoneVerified: boolean; // Phone has been verified
-
-  // Authentication
-  passwordHash?: string; // Hashed password (if password auth used)
-  passkeys?: Passkey[]; // WebAuthn passkeys
-
-  // Status
-  status: "ACTIVE" | "INACTIVE";
-  lastLoginAt?: string; // Last authentication timestamp
-  lastEngagedAt?: string; // Last activity timestamp
-
-  // Scoring
-  loyaltyScore: number; // 0-200+ loyalty score
-  botScore: number; // 0-100 bot likelihood score
-
-  // Lifetime Metrics
-  ltv: string; // Lifetime value (decimal string)
-  totalOrders: number; // Total order count
-  aov: string; // Average order value
-  totalReturns: number; // Total return count
-  lastOrderAt?: string; // Most recent order timestamp
-  lastReturnAt?: string; // Most recent return timestamp
-
-  // Engagement Scores (decayed)
-  activityScore: number; // Recent engagement score
-  purchaseFrequencyScore: number; // Purchase frequency score
-  monetaryScore: number; // Monetary value score
-
-  // Score Ranks (quintiles 0-5)
-  activityRank: number; // 0=no signal, 1-5=quintiles
-  purchaseFrequencyRank: number;
-  monetaryRank: number;
-
-  // Messaging
-  totalMessages: number; // Messages sent to consumer
-  engagedCount: number; // Messages engaged with
-  smsOptOut: boolean; // SMS opt-out flag
-
-  // Geolocation (inferred)
-  lastGeoCountry?: string; // ISO country code
-  lastGeoRegion?: string; // State/province
-  lastGeoCity?: string; // City name
-  lastGeoPostalCode?: string; // Postal/ZIP code
-  lastGeoCoordinates?: Coordinates; // Lat/lng
-  lastGeoTimezone?: string; // Timezone identifier
-  lastGeoAt?: string; // When geo was last updated
-  lastGeoSource?: string; // How geo was determined
-
-  // Custom Data
-  metadata?: Record<string, JsonValue>;
-
-  // Sync Source (if imported)
-  primarySyncSourceId?: string;
-  primarySyncSourceType?: string;
-  primarySyncSourceExternalId?: string;
-
-  // Audit
-  createdAt: string;
-  updatedAt: string;
-  archived: boolean;
-}
-```
-
-## Identity States
-
-Consumers progress through identity states as they engage:
+As consumers engage with your experiences, they can progress through different identity levels:
 
 ```
 ┌────────────────────────────────────────────────────────────────────┐
-│                        IDENTITY PROGRESSION                        │
+│                    CONSUMER IDENTITY LEVELS                         │
 ├────────────────────────────────────────────────────────────────────┤
 │                                                                    │
-│  ┌──────────┐    ┌────────────┐    ┌──────────────┐    ┌───────┐ │
-│  │ ANONYMOUS│───►│ IDENTIFIED │───►│ AUTHENTICATED│───►│VERIFIED│ │
-│  └──────────┘    └────────────┘    └──────────────┘    └───────┘ │
-│       │                │                  │                  │     │
-│  Fingerprint      Email/phone       Password/OTP        Email/    │
-│  only             provided          verified             phone    │
-│                                                          confirmed│
+│  ┌──────────────┐    ┌──────────────┐    ┌──────────────┐         │
+│  │    GUEST     │───►│  REGISTERED  │───►│   VERIFIED   │         │
+│  │              │    │              │    │              │         │
+│  │  No account  │    │  Provided    │    │  Confirmed   │         │
+│  │  needed      │    │  email or    │    │  identity    │         │
+│  │              │    │  phone       │    │  via code    │         │
+│  └──────────────┘    └──────────────┘    └──────────────┘         │
+│        │                   │                    │                  │
+│   Quick entry         Can receive         Higher trust,            │
+│   Low friction        notifications       Account features         │
+│                                                                    │
 └────────────────────────────────────────────────────────────────────┘
 ```
 
-### Anonymous Consumers
+### Guest Consumers
 
-- Identified by browser fingerprint only
-- Limited participation in some distributions
-- Can upgrade to identified by providing contact info
+Consumers who participate without creating an account:
 
-```typescript
-// Anonymous consumer (minimal data)
-{
-  id: "consumer-uuid",
-  status: "ACTIVE",
-  loyaltyScore: 0,
-  botScore: 15
-}
+- Quick, frictionless entry
+- Limited to browser session
+- Cannot receive notifications
+- May have restrictions on high-value items
+
+**Best for:** Maximizing participation, low-risk distributions
+
+### Registered Consumers
+
+Consumers who have provided contact information (email or phone):
+
+- Can receive notifications and updates
+- Can be reached for marketing
+- Session can be recovered
+- Enables better fraud detection
+
+**Best for:** Most distributions, building consumer relationships
+
+### Verified Consumers
+
+Consumers who have confirmed their identity (via email code, SMS code, or login):
+
+- Highest trust level
+- Full account features
+- Purchase history available
+- Required for some distributions
+
+**Best for:** High-value items, auctions, appointment booking
+
+## Consumer Information
+
+### Contact Details
+
+| Field     | Purpose                                       |
+| --------- | --------------------------------------------- |
+| **Email** | Notifications, order confirmations, marketing |
+| **Phone** | SMS notifications, verification               |
+| **Name**  | Personalization, order fulfillment            |
+
+### Consumer Scores
+
+Fanfare calculates helpful scores about your consumers:
+
+**Loyalty Score**
+
+A measure of consumer value based on purchase history and engagement:
+
+| Score Range | Meaning                    |
+| ----------- | -------------------------- |
+| 0-25        | New or occasional consumer |
+| 25-50       | Returning consumer         |
+| 50-100      | Regular consumer           |
+| 100-150     | Loyal consumer             |
+| 150+        | VIP consumer               |
+
+Use loyalty scores to create VIP audiences for early access or exclusive experiences.
+
+**Activity Level**
+
+Recent engagement with your experiences:
+
+- Decays over time (recent activity counts more)
+- Helps identify currently active consumers
+- Useful for re-engagement campaigns
+
+### Purchase History
+
+Track consumer value over time:
+
+- **Total orders** — Number of purchases
+- **Lifetime value** — Total amount spent
+- **Average order** — Typical purchase amount
+- **Last order** — Most recent purchase date
+
+### Location (Inferred)
+
+Approximate location based on their visits:
+
+- Country
+- Region/State
+- City
+- Timezone
+
+Useful for timezone-appropriate communications and regional targeting.
+
+## Guest vs. Verified Access
+
+Different distributions may require different identity levels:
+
+| Distribution  | Guest Access    | Typical Requirement            |
+| ------------- | --------------- | ------------------------------ |
+| Queue         | Usually allowed | Low friction preferred         |
+| Draw          | Usually allowed | Maximize entries               |
+| Auction       | Rarely allowed  | Need payment capability        |
+| Appointment   | Rarely allowed  | Need contact for booking       |
+| Timed Release | Usually allowed | Quick access                   |
+| Waitlist      | Usually allowed | Need contact for notifications |
+
+### When to Require Verification
+
+- High-value or limited items (prevent abuse)
+- Auctions (need payment method on file)
+- Appointments (need to contact for changes)
+- VIP experiences (confirm membership)
+
+### When to Allow Guests
+
+- High-volume launches (maximize participation)
+- Lower-value items (fraud risk is lower)
+- Flash sales (speed matters)
+- Lead generation (convert later)
+
+## Progressive Collection
+
+You can collect consumer information gradually:
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                   PROGRESSIVE PROFILING                          │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  1. ENTRY                                                       │
+│     └── Guest access (no information required)                  │
+│                                                                 │
+│  2. JOIN QUEUE/DRAW                                             │
+│     └── Request email (for notifications)                       │
+│                                                                 │
+│  3. WIN OR GET ACCESS                                           │
+│     └── Request phone (for SMS updates)                         │
+│                                                                 │
+│  4. CHECKOUT                                                    │
+│     └── Full profile (shipping, payment)                        │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
 ```
 
-### Identified Consumers
+This approach:
 
-- Have provided email or phone (or both)
-- Can receive messages and notifications
-- Full participation in most distributions
+- Reduces friction at the start
+- Collects information when consumers are motivated
+- Builds profiles over time
 
-```typescript
-// Identified consumer
-{
-  id: "consumer-uuid",
-  email: "user@example.com",
-  emailVerified: false,
-  status: "ACTIVE",
-  loyaltyScore: 25
-}
-```
+## Using Consumer Data
 
-### Authenticated Consumers
+### For Audiences
 
-- Have verified their identity via OTP, password, or passkey
-- Can access account history and resume sessions
-- Higher trust for valuable distributions
+Create targeted groups based on consumer attributes:
 
-```typescript
-// Authenticated consumer
-{
-  id: "consumer-uuid",
-  email: "user@example.com",
-  emailVerified: true,
-  phone: "+1234567890",
-  phoneVerified: true,
-  lastLoginAt: "2024-01-15T10:30:00Z"
-}
-```
+- VIP consumers (loyalty score > 100)
+- Recent buyers (ordered in last 30 days)
+- High spenders (lifetime value > $500)
+- Local consumers (specific regions)
 
-## Consumer Identities
+[Learn more about Audiences →](/concepts/audiences)
 
-Consumers can have multiple identity providers linked:
+### For Personalization
 
-```typescript
-interface ConsumerIdentity {
-  id: string;
-  consumerId: string;
-  provider: string; // "email", "phone", "google", "apple"
-  issuer: string; // Identity issuer URL
-  subject: string; // Unique identifier from provider
-  claims?: Record<string, unknown>; // Provider-specific claims
-  lastAuthenticatedAt?: string;
-}
-```
+Use consumer data to personalize experiences:
 
-### Supported Providers
+- Show relevant products based on history
+- Adjust messaging based on loyalty level
+- Target communications by timezone
 
-| Provider   | Description       | Use Case                    |
-| ---------- | ----------------- | --------------------------- |
-| `email`    | Email OTP         | Standard email verification |
-| `phone`    | SMS OTP           | Phone verification          |
-| `password` | Username/password | Traditional auth            |
-| `passkey`  | WebAuthn/FIDO2    | Passwordless auth           |
-| `google`   | Google OAuth      | Social login                |
-| `apple`    | Apple ID          | iOS/Safari users            |
-| `shopify`  | Shopify Customer  | E-commerce integration      |
+### For Fraud Prevention
 
-## Scoring System
+Consumer data helps identify suspicious activity:
 
-### Loyalty Score
+- Bot detection based on behavior patterns
+- Order limits for new vs. established consumers
+- Velocity checks for unusual activity
 
-A composite score (0-200+) based on purchase history and engagement:
+## Consumer Privacy
 
-```
-loyaltyScore = weightedSum(
-  totalOrders * orderWeight,
-  ltv * ltvWeight,
-  engagementScore * engagementWeight
-)
-```
+Fanfare helps you manage consumer data responsibly:
 
-**Typical ranges:**
-
-- 0-25: New or occasional customer
-- 25-50: Returning customer
-- 50-100: Regular customer
-- 100-150: Loyal customer
-- 150+: VIP customer
-
-### Bot Score
-
-Likelihood (0-100) that the consumer is automated:
-
-```
-botScore = signalAnalysis(
-  browserFingerprint,
-  behaviorPatterns,
-  requestTiming,
-  historicalData
-)
-```
-
-**Usage:**
-
-- 0-20: Likely human
-- 20-50: Suspicious, additional verification recommended
-- 50-80: Likely bot, restricted access
-- 80-100: Almost certainly bot, blocked
-
-### Decayed Scores
-
-Activity scores decay over time to reflect recency:
-
-```typescript
-// Score decay formula
-decayedScore = rawScore * Math.pow(decayRate, daysSinceLastActivity)
-
-// Activity Score: Engagement recency
-activityScore: number;
-activityScoreUpdatedAt?: string;
-
-// Purchase Frequency Score
-purchaseFrequencyScore: number;
-purchaseFrequencyScoreUpdatedAt?: string;
-
-// Monetary Score
-monetaryScore: number;
-monetaryScoreUpdatedAt?: string;
-```
-
-### Rank Quintiles
-
-Scores are converted to ranks (0-5) for easier segmentation:
-
-| Rank | Meaning                  |
-| ---- | ------------------------ |
-| 0    | No signal (new consumer) |
-| 1    | Bottom 20%               |
-| 2    | 20-40%                   |
-| 3    | 40-60%                   |
-| 4    | 60-80%                   |
-| 5    | Top 20%                  |
-
-## Consumer Attributes
-
-Attributes used for audience rules and distribution logic:
-
-### Core Attributes
-
-| Attribute  | Type   | Source     |
-| ---------- | ------ | ---------- |
-| `email`    | string | User input |
-| `phone`    | string | User input |
-| `fullName` | string | User input |
-| `status`   | enum   | System     |
-
-### Calculated Attributes
-
-| Attribute                | Type   | Updated              |
-| ------------------------ | ------ | -------------------- |
-| `loyaltyScore`           | number | On order events      |
-| `ltv`                    | money  | On order events      |
-| `totalOrders`            | number | On order events      |
-| `aov`                    | money  | On order events      |
-| `activityScore`          | number | Daily decay + events |
-| `purchaseFrequencyScore` | number | Daily decay + events |
-| `monetaryScore`          | number | Daily decay + events |
-
-### Inferred Attributes
-
-| Attribute         | Type   | Source         |
-| ----------------- | ------ | -------------- |
-| `lastGeoCountry`  | string | IP geolocation |
-| `lastGeoRegion`   | string | IP geolocation |
-| `lastGeoCity`     | string | IP geolocation |
-| `lastGeoTimezone` | string | IP/browser     |
-
-### Custom Metadata
-
-Arbitrary key-value data:
-
-```typescript
-{
-  metadata: {
-    preferredSize: "M",
-    referralCode: "FRIEND2024",
-    vipTier: "gold",
-    interests: ["sneakers", "streetwear"]
-  }
-}
-```
-
-## Consumer Timeline
-
-Track consumer activities across distributions:
-
-```typescript
-type ConsumerActivity =
-  | QueueActivity // Queue participation
-  | DrawActivity // Draw/lottery entries
-  | AuctionActivity // Auction bidding
-  | WaitlistActivity // Waitlist signup
-  | AppointmentActivity; // Appointment booking
-
-interface ConsumerTimeline {
-  consumerId: string;
-  activities: ConsumerActivity[];
-  totalCount: number;
-}
-```
-
-### Queue Activity
-
-```typescript
-interface QueueActivity {
-  type: "QUEUE";
-  id: string;
-  status: "QUEUED" | "ADMITTED" | "COMPLETED" | "LEFT" | "DENIED";
-  experienceId: string;
-  experienceName: string;
-  sequenceId: string;
-  productId?: string;
-  productName?: string;
-  enqueuedAt?: string;
-  dequeuedAt?: string;
-  completedAt?: string;
-  reason?: string; // If denied
-}
-```
-
-### Draw Activity
-
-```typescript
-interface DrawActivity {
-  type: "DRAW";
-  id: string;
-  status: "ENTERED" | "WON" | "COMPLETED" | "DENIED";
-  experienceId: string;
-  experienceName: string;
-  enteredAt?: string;
-  selectedAt?: string; // If won
-  completedAt?: string;
-}
-```
-
-## API Operations
-
-### Get Consumer
-
-```bash
-GET /v1/consumers/:id
-Authorization: Bearer sk_live_...
-
-# Response
-{
-  "id": "consumer-uuid",
-  "email": "user@example.com",
-  "emailVerified": true,
-  "status": "ACTIVE",
-  "loyaltyScore": 75,
-  "ltv": "1250.00",
-  "totalOrders": 8
-}
-```
-
-### Search Consumers
-
-```bash
-GET /v1/consumers?email=user@example.com
-Authorization: Bearer sk_live_...
-```
-
-### Update Consumer
-
-```bash
-PATCH /v1/consumers/:id
-Authorization: Bearer sk_live_...
-Content-Type: application/json
-
-{
-  "fullName": "Jane Doe",
-  "metadata": {
-    "preferredSize": "L"
-  }
-}
-```
-
-### Get Consumer Timeline
-
-```bash
-GET /v1/consumers/:id/timeline
-Authorization: Bearer sk_live_...
-
-# Response
-{
-  "consumerId": "consumer-uuid",
-  "activities": [
-    {
-      "type": "QUEUE",
-      "status": "COMPLETED",
-      "experienceName": "Summer Sale",
-      "completedAt": "2024-01-15T14:30:00Z"
-    }
-  ],
-  "totalCount": 15
-}
-```
-
-### Consumer SDK Authentication
-
-```bash
-# Request OTP
-POST /consumers/v1/auth/request-otp
-Content-Type: application/json
-
-{
-  "email": "user@example.com"
-}
-
-# Verify OTP
-POST /consumers/v1/auth/verify-otp
-Content-Type: application/json
-
-{
-  "email": "user@example.com",
-  "code": "123456"
-}
-
-# Response includes auth token
-{
-  "token": "eyJ...",
-  "consumer": {
-    "id": "consumer-uuid",
-    "email": "user@example.com"
-  }
-}
-```
-
-## Guest vs Authenticated Access
-
-Distributions can require authentication:
-
-```typescript
-// Queue that allows guests
-{
-  name: "General Queue",
-  supportsGuest: true  // Anonymous consumers can join
-}
-
-// Queue that requires authentication
-{
-  name: "VIP Queue",
-  supportsGuest: false  // Must be authenticated
-}
-```
-
-### Behavior by Distribution Type
-
-| Distribution | Guest Default | Auth Benefits                           |
-| ------------ | ------------- | --------------------------------------- |
-| Queue        | Allowed       | Session persistence, position recovery  |
-| Draw         | Allowed       | Entry verification, winner notification |
-| Auction      | Required      | Bid tracking, payment processing        |
-| Waitlist     | Allowed       | Notification delivery                   |
-| Appointment  | Required      | Booking management                      |
+- **Consent tracking** — Record marketing opt-ins
+- **SMS opt-out** — Respect unsubscribe requests
+- **Data export** — Provide consumer data on request
+- **Archiving** — Remove inactive consumers
 
 ## Best Practices
 
-### 1. Progressive Profiling
+### Match Friction to Value
 
-Collect information gradually to reduce friction:
+- Low-value, high-volume → Allow guests
+- High-value, limited → Require verification
 
-```
-Initial: Browser fingerprint only (anonymous)
-    ↓
-Distribution entry: Request email
-    ↓
-Win/admit: Request phone for SMS updates
-    ↓
-Purchase: Full profile with address
-```
+### Collect Progressively
 
-### 2. Score-Based Access
+Don't ask for everything upfront. Collect information as consumers progress through the experience.
 
-Use scores to create fair, merit-based access:
+### Use Scores Wisely
 
-```typescript
-// Priority sequence for loyal customers
-{
-  name: "Loyalty Early Access",
-  audienceId: "high-loyalty-audience"  // loyaltyScore > 100
-}
-```
+- Loyalty scores help identify your best consumers
+- Don't over-gate experiences—frustrates consumers
+- Test different thresholds
 
-### 3. Bot Protection
+### Respect Preferences
 
-Configure bot thresholds appropriately:
+- Honor opt-out requests promptly
+- Don't over-message
+- Make preferences easy to manage
 
-```typescript
-// Reject high bot scores
-if (consumer.botScore > 60) {
-  // Require additional verification
-}
-```
+## Next Steps
 
-### 4. Data Hygiene
-
-- Merge duplicate consumers by email/phone
-- Archive inactive consumers periodically
-- Respect opt-out preferences
-
-## Related Concepts
-
-- [Audiences](/docs/concepts/audiences) - Grouping consumers by attributes
-- [Experiences](/docs/concepts/experiences) - Consumer journeys
-- [Distributions](/docs/concepts/distributions/overview) - Consumer participation states
+- [Audiences](/concepts/audiences) — Group consumers for targeting
+- [Experiences](/concepts/experiences) — How consumers participate
+- [Distribution Types](/concepts/distributions/overview) — Access methods and requirements

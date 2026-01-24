@@ -1,413 +1,240 @@
 ---
-title: Distributions Overview
-description: Common concepts across all distribution types in Fanfare
+title: Distribution Types Overview
+description: Understanding the different ways consumers can gain access to your products
 ---
 
-# Distributions Overview
+# Distribution Types Overview
 
-A **Distribution** is the mechanism that controls how consumers gain access to purchase products within an experience. Different distribution types suit different business scenarios, from high-demand product launches to exclusive VIP events.
+A **Distribution** is the method that controls how consumers gain access to purchase your products. Different distribution types suit different business scenarios — from high-demand product launches to exclusive VIP events.
 
-## Distribution Types
+## Available Distribution Types
 
 Fanfare supports six distribution types:
 
-| Type                                                    | Description                      | Best For                               |
-| ------------------------------------------------------- | -------------------------------- | -------------------------------------- |
-| [Queue](/docs/concepts/distributions/queue)             | FIFO waiting line                | High-demand launches with steady flow  |
-| [Draw](/docs/concepts/distributions/lottery)            | Random lottery selection         | Fair allocation with limited inventory |
-| [Auction](/docs/concepts/distributions/auction)         | Competitive bidding              | Price discovery for limited items      |
-| [Appointment](/docs/concepts/distributions/appointment) | Time-slot booking                | In-store pickups, consultations        |
-| [Timed Release](/docs/concepts/distributions/instant)   | Instant access at scheduled time | Flash sales, membership perks          |
-| [Waitlist](/docs/concepts/distributions/exclusive)      | Interest capture                 | Pre-launch signup, overflow handling   |
+| Type                                                        | How It Works                                                     | Best For                                    |
+| ----------------------------------------------------------- | ---------------------------------------------------------------- | ------------------------------------------- |
+| [**Queue**](/concepts/distributions/queue)             | Consumers wait in a virtual line, served first-come-first-served | High-demand launches where order matters    |
+| [**Draw**](/concepts/distributions/lottery)            | Consumers enter a lottery and winners are randomly selected      | Fair allocation when demand exceeds supply  |
+| [**Auction**](/concepts/distributions/auction)         | Consumers place competitive bids                                 | Unique items, collectibles, price discovery |
+| [**Appointment**](/concepts/distributions/appointment) | Consumers book specific time slots                               | In-store pickups, consultations, services   |
+| [**Timed Release**](/concepts/distributions/instant)   | Instant access at a scheduled time                               | Flash sales, member perks                   |
+| [**Waitlist**](/concepts/distributions/exclusive)      | Captures interest, notifies when available                       | Pre-launch signup, overflow handling        |
 
-## Common Fields
+## How Distributions Work
 
-All distribution types share these base fields:
+Every distribution follows a similar pattern:
 
-```typescript
-interface BaseDistribution {
-  // Identity
-  id: string; // UUID
-  organizationId: string; // Parent organization
-  sequenceId: string; // Parent sequence
-
-  // Display
-  name: string; // Distribution name
-
-  // Timing
-  openAt?: string; // When distribution opens
-  closeAt?: string; // When distribution closes
-  timeZone: string; // Timezone for display
-
-  // Access Control
-  supportsGuest: boolean; // Allow anonymous consumers
-
-  // Security
-  encryptionSeed: string; // For admission token encryption
-
-  // Audit
-  createdAt: string;
-  updatedAt: string;
-  archived: boolean;
-}
 ```
+┌─────────────────────────────────────────────────────────────────┐
+│                    THE CONSUMER JOURNEY                          │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  ┌───────────┐    ┌─────────────┐    ┌────────────────────┐    │
+│  │   JOIN    │    │ PARTICIPATE │    │    GET ACCESS      │    │
+│  │           │───►│             │───►│                    │    │
+│  │ Consumer  │    │ Consumer    │    │ Consumer receives  │    │
+│  │ enters    │    │ waits for   │    │ access to checkout │    │
+│  │           │    │ their turn  │    │                    │    │
+│  └───────────┘    └─────────────┘    └────────────────────┘    │
+│                                              │                  │
+│                                              ▼                  │
+│                                    ┌────────────────────┐      │
+│                                    │ COMPLETE PURCHASE  │      │
+│                                    │                    │      │
+│                                    │ Time-limited       │      │
+│                                    │ checkout window    │      │
+│                                    └────────────────────┘      │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### 1. Join
+
+Consumers enter the distribution. Depending on the type, this might mean:
+
+- Joining a queue
+- Entering a draw
+- Placing a bid
+- Selecting a time slot
+
+### 2. Participate
+
+Consumers actively participate according to the distribution method:
+
+- **Queue**: Watch their position move forward
+- **Draw**: Wait for the selection
+- **Auction**: Monitor bids and place new ones
+- **Appointment**: Confirm their booking
+
+### 3. Get Access
+
+When it's their turn, consumers receive access to checkout. This includes:
+
+- A limited time window to complete their purchase
+- Clear instructions on next steps
+- Real-time countdown
+
+### 4. Complete Purchase
+
+Consumers complete their purchase within the access window. If they don't complete in time, their access expires.
 
 ## Distribution Lifecycle
 
-Distributions progress through states based on timing:
-
-```mermaid
-stateDiagram-v2
-    direction LR
-
-    [*] --> Scheduled : Distribution created
-    Scheduled --> Open : openAt reached
-    Open --> Closed : closeAt reached
-    Closed --> [*]
-
-    state Scheduled {
-        [*] --> Waiting
-        Waiting : Consumer sees countdown
-        Waiting : No entry allowed yet
-    }
-
-    state Open {
-        [*] --> Active
-        Active : Consumer can enter
-        Active : Participation allowed
-    }
-
-    state Closed {
-        [*] --> Ended
-        Ended : No new entries
-        Ended : Existing sessions may complete
-    }
-```
+Each distribution goes through three phases:
 
 ```
-┌────────────────────────────────────────────────────────────────────┐
-│                    DISTRIBUTION LIFECYCLE                          │
-├────────────────────────────────────────────────────────────────────┤
-│                                                                    │
-│  ┌──────────┐        ┌──────────┐        ┌──────────┐            │
-│  │SCHEDULED │──time──►│  OPEN    │──time──►│ CLOSED   │            │
-│  │          │        │          │        │          │            │
-│  │ Consumer │        │ Consumer │        │ No new   │            │
-│  │ sees     │        │ can      │        │ entries  │            │
-│  │ countdown│        │ enter    │        │          │            │
-│  └──────────┘        └──────────┘        └──────────┘            │
-│                                                                    │
-│       openAt                 closeAt                               │
-│         │                      │                                   │
-│  ───────┼──────────────────────┼──────────────────►  time         │
-│                                                                    │
-└────────────────────────────────────────────────────────────────────┘
+┌────────────────────────────────────────────────────────────────┐
+│                                                                │
+│  ╔═══════════════╗    ╔═══════════════╗    ╔═══════════════╗  │
+│  ║   SCHEDULED   ║───►║     OPEN      ║───►║    CLOSED     ║  │
+│  ║               ║    ║               ║    ║               ║  │
+│  ║  Countdown    ║    ║  Consumers    ║    ║  No new       ║  │
+│  ║  displayed    ║    ║  can join     ║    ║  entries      ║  │
+│  ╚═══════════════╝    ╚═══════════════╝    ╚═══════════════╝  │
+│        │                    │                    │             │
+│     Opens at            Active               Closes at         │
+│                                                                │
+└────────────────────────────────────────────────────────────────┘
 ```
 
-### State Determination
+## Access Windows
 
-```typescript
-function getDistributionState(distribution: BaseDistribution): "scheduled" | "open" | "closed" {
-  const now = new Date();
-  const openAt = distribution.openAt ? new Date(distribution.openAt) : null;
-  const closeAt = distribution.closeAt ? new Date(distribution.closeAt) : null;
+When consumers receive access, they get a time-limited window to complete checkout:
 
-  if (openAt && now < openAt) return "scheduled";
-  if (closeAt && now > closeAt) return "closed";
-  return "open";
-}
-```
+| Setting                 | What It Controls                             |
+| ----------------------- | -------------------------------------------- |
+| **Access duration**     | How long consumers have to complete checkout |
+| **Expiration behavior** | What happens if they don't complete in time  |
 
-## Consumer Participation States
+**Best practices for access windows:**
 
-Each distribution type has its own consumer state model. However, they share common patterns:
+- **5-10 minutes** for simple checkouts (one item, saved payment)
+- **15-30 minutes** for complex purchases (multiple items, new payment info)
+- Always set an expiration to ensure fair access for waiting consumers
 
-### Entry States
+## Guest vs. Verified Access
 
-- **Not Entered**: Consumer has not joined the distribution
-- **Entered/Participating**: Consumer is actively participating
+You can control whether consumers need to verify their identity:
 
-### Outcome States
+| Setting                  | When to Use                                             |
+| ------------------------ | ------------------------------------------------------- |
+| **Allow guests**         | Low-friction entry, maximize participation              |
+| **Require verification** | Higher-value items, prevent abuse, enable notifications |
 
-- **Admitted/Won**: Consumer received access
-- **Denied/Lost**: Consumer did not receive access
-- **Completed**: Consumer finished their session
-- **Expired**: Consumer's access window expired
-- **Left**: Consumer voluntarily left
+**Typical settings by distribution type:**
 
-### State Transition Pattern
+| Distribution  | Guests Usually Allowed? | Why                          |
+| ------------- | ----------------------- | ---------------------------- |
+| Queue         | Yes                     | Low friction for high-volume |
+| Draw          | Yes                     | Maximize entries             |
+| Auction       | No                      | Need payment capability      |
+| Appointment   | No                      | Booking accountability       |
+| Timed Release | Yes                     | Quick access                 |
+| Waitlist      | Yes                     | Lead capture                 |
 
-```
-              ┌─────────────────────────────────────────────┐
-              │                                             │
-              │  ┌─────────┐                                │
-              │  │  NOT    │                                │
-              │  │ ENTERED │                                │
-              │  └────┬────┘                                │
-              │       │ enter()                             │
-              │       ▼                                     │
-              │  ┌─────────────┐                            │
-              │  │PARTICIPATING│◄──────────────┐            │
-              │  └──────┬──────┘               │            │
-              │         │                      │            │
-              │    ┌────┴────┐           leave()           │
-              │    ▼         ▼                 │            │
-              │ ┌──────┐  ┌──────┐         ┌──────┐        │
-              │ │ADMIT │  │DENIED│         │ LEFT │        │
-              │ └──┬───┘  └──────┘         └──────┘        │
-              │    │                                       │
-              │    │ complete()                            │
-              │    ▼                                       │
-              │ ┌──────────┐                               │
-              │ │COMPLETED │                               │
-              │ └──────────┘                               │
-              │                                             │
-              └─────────────────────────────────────────────┘
-```
+## Capacity Controls
 
-## Admission Tokens
+Different distributions have different capacity options:
 
-When a consumer successfully gains access through a distribution, they receive an **admission token**. This token authorizes them to complete their purchase.
+### Queue
 
-### Token Structure
+- **Queue capacity** — Maximum people waiting at once
+- **Admission rate** — How many people access checkout per minute
+- **Total admissions** — Maximum total people who can purchase
 
-```typescript
-interface AdmissionToken {
-  token: string; // Encrypted token value
-  distributionType: string; // "queue", "draw", etc.
-  distributionId: string; // Source distribution
-  consumerId: string; // Token holder
-  experienceId: string; // Parent experience
-  sequenceId: string; // Parent sequence
-  admittedAt: string; // When admission was granted
-  expiresAt?: string; // When token expires
-}
-```
+### Draw
 
-### Token Lifecycle
+- **Entry capacity** — Maximum entries accepted
+- **Winner count** — How many winners to select
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│                    TOKEN LIFECYCLE                          │
-├─────────────────────────────────────────────────────────────┤
-│                                                             │
-│   Consumer gains access                                     │
-│          │                                                  │
-│          ▼                                                  │
-│   ┌─────────────┐                                          │
-│   │TOKEN ISSUED │  Token created with expiration           │
-│   └──────┬──────┘                                          │
-│          │                                                  │
-│    ┌─────┴─────┐                                           │
-│    ▼           ▼                                           │
-│ ┌──────┐   ┌──────┐                                        │
-│ │USED  │   │EXPIRED│                                       │
-│ └──┬───┘   └───────┘                                       │
-│    │                                                        │
-│    ▼                                                        │
-│ ┌──────────┐                                               │
-│ │COMPLETED │  Purchase completed                           │
-│ └──────────┘                                               │
-│                                                             │
-└─────────────────────────────────────────────────────────────┘
-```
+### Auction
 
-### Token Validation
+- Typically single-item (winner is highest bidder)
 
-Tokens are validated against:
+### Appointment
 
-1. **Signature**: Token hasn't been tampered with
-2. **Expiration**: Token hasn't expired
-3. **Consumer**: Token belongs to the requesting consumer
-4. **Usage**: Token hasn't already been used
-5. **Distribution**: Source distribution is still valid
-
-## Distribution Hierarchy
-
-Distributions exist within sequences, which exist within experiences:
-
-```
-Experience
-└── Sequence (audience-targeted)
-    ├── Queue (one or more)
-    ├── Draw (one or more)
-    ├── Auction (one or more)
-    ├── Appointment (one or more)
-    ├── TimedRelease (one or more)
-    └── Waitlist (at most one)
-```
-
-### Multiple Distributions per Sequence
-
-A sequence can have multiple distributions of the same type running in parallel or sequentially:
-
-```typescript
-// Sequential: Different time windows
-{
-  sequences: [
-    {
-      name: "General Access",
-      queues: [
-        { name: "Morning Queue", openAt: "09:00", closeAt: "12:00" },
-        { name: "Afternoon Queue", openAt: "14:00", closeAt: "17:00" },
-      ],
-    },
-  ];
-}
-
-// Parallel: Different capacity/products
-{
-  sequences: [
-    {
-      name: "Product Selection",
-      queues: [
-        { name: "Product A Queue", maxAdmissions: 100 },
-        { name: "Product B Queue", maxAdmissions: 50 },
-      ],
-    },
-  ];
-}
-```
-
-## Guest vs Authenticated Access
-
-The `supportsGuest` field controls whether anonymous consumers can participate:
-
-| Value   | Behavior                       |
-| ------- | ------------------------------ |
-| `true`  | Anonymous consumers can enter  |
-| `false` | Consumer must be authenticated |
-
-### Use Cases by Type
-
-| Distribution  | Typical Setting | Reasoning              |
-| ------------- | --------------- | ---------------------- |
-| Queue         | `true`          | Low friction entry     |
-| Draw          | `true`          | Maximize entries       |
-| Auction       | `false`         | Payment required       |
-| Appointment   | `false`         | Booking accountability |
-| Timed Release | `true`          | Quick access           |
-| Waitlist      | `true`          | Lead capture           |
-
-## Capacity Management
-
-Distributions manage capacity through different mechanisms:
-
-### Queue Capacity
-
-```typescript
-interface Queue extends BaseDistribution {
-  capacity?: number; // Max consumers in queue
-  admitRate: number; // Admissions per minute
-  maxAdmissions?: number; // Total admissions limit
-  admissionExpirationSeconds?: number; // Token validity
-}
-```
-
-### Draw Capacity
-
-```typescript
-interface Draw extends BaseDistribution {
-  capacity?: number; // Max entries
-  winnerCount: number; // How many to select
-  admissionExpirationSeconds?: number;
-  continueSelectingUntilCompleted?: boolean;
-}
-```
-
-### Auction Capacity
-
-```typescript
-// Auctions typically have single-item capacity
-// Winner count is implicit (highest bidder wins)
-```
-
-## Real-Time Updates
-
-Active distributions maintain real-time state in Valkey for sub-second updates:
-
-- **Queue positions**: Where each consumer is in line
-- **Estimated wait times**: How long until admission
-- **Auction bids**: Current bid amounts
-- **Draw entries**: Entry counts and timing
-
-See [Real-Time Updates](/docs/concepts/real-time) for implementation details.
+- **Slot capacity** — How many bookings per time slot
+- **Time slots** — Available booking times
 
 ## Choosing the Right Distribution
 
-| Scenario                   | Recommended   | Why                             |
-| -------------------------- | ------------- | ------------------------------- |
-| High-demand product launch | Queue         | Predictable flow, fair ordering |
-| Limited sneaker drop       | Draw          | Fair random selection           |
-| Collectible/art sale       | Auction       | Price discovery                 |
-| Store appointment          | Appointment   | Scheduled interaction           |
-| Flash sale                 | Timed Release | Instant access at time          |
-| Product interest capture   | Waitlist      | Notify when available           |
-
-### Decision Flow
+Here's a decision guide:
 
 ```
 Is there more demand than supply?
     │
-    ├── Yes
-    │   │
-    │   └── Is ordering important?
-    │       │
-    │       ├── Yes (first-come fairness) ──► Queue
-    │       │
-    │       └── No (random fairness) ──► Draw
+    ├── YES
+    │     │
+    │     └── Should order matter?
+    │           │
+    │           ├── YES (first-come fairness) ─────► QUEUE
+    │           │
+    │           └── NO (everyone gets equal chance) ─► DRAW
     │
-    └── No
-        │
-        └── Is timing important?
-            │
-            ├── Yes (scheduled access) ──► Appointment
-            │
-            └── No (instant access) ──► Timed Release
+    └── NO
+          │
+          └── Do consumers need specific times?
+                │
+                ├── YES (scheduled access) ─────────► APPOINTMENT
+                │
+                └── NO (instant access) ────────────► TIMED RELEASE
 ```
 
-## API Common Operations
+### Queue
 
-### Get Distribution Status
+**Best for:** High-demand product launches where first-come-first-served feels fair
 
-```bash
-# Queue example
-GET /v1/queues/:id
-Authorization: Bearer sk_live_...
+**Consumer experience:** Join the line, watch position update, get access when it's their turn
 
-# Response includes state
-{
-  "id": "queue-uuid",
-  "name": "Main Queue",
-  "openAt": "2024-03-01T09:00:00Z",
-  "closeAt": "2024-03-01T17:00:00Z",
-  "status": "open",
-  "currentSize": 150,
-  "estimatedWaitTime": 1200
-}
-```
+**Example:** Sneaker drops, concert tickets, limited edition products
 
-### Check Consumer Status
+### Draw (Lottery)
 
-```bash
-# Get consumer's status in distribution
-GET /v1/queues/:queueId/consumers/:consumerId
-Authorization: Bearer sk_live_...
+**Best for:** Situations where demand far exceeds supply and random selection feels most fair
 
-{
-  "status": "QUEUED",
-  "position": 45,
-  "estimatedWaitTimeInSeconds": 600
-}
-```
+**Consumer experience:** Enter the draw, wait for selection, winners notified
+
+**Example:** Exclusive collaborations, oversubscribed events, fairness-focused brands
+
+### Auction
+
+**Best for:** Unique items where price discovery is important
+
+**Consumer experience:** Place bids, monitor competition, highest bid wins
+
+**Example:** Art, collectibles, one-of-a-kind items
+
+### Appointment
+
+**Best for:** Services or pickups that need scheduling
+
+**Consumer experience:** Browse available times, book a slot, receive confirmation
+
+**Example:** Store appointments, consultations, pickup scheduling
+
+### Timed Release
+
+**Best for:** Simple access at a specific time without queuing
+
+**Consumer experience:** Countdown to release, instant access when it opens
+
+**Example:** Flash sales, member-exclusive access, promotional windows
+
+### Waitlist
+
+**Best for:** Capturing interest before launch or handling overflow
+
+**Consumer experience:** Sign up, receive notification when available
+
+**Example:** Pre-launch interest, sold-out items that may return, overflow from other distributions
 
 ## Next Steps
 
-Learn about each distribution type in detail:
+Learn more about each distribution type:
 
-- [Queue Distribution](/docs/concepts/distributions/queue) - FIFO waiting lines
-- [Draw Distribution](/docs/concepts/distributions/lottery) - Random selection
-- [Auction Distribution](/docs/concepts/distributions/auction) - Competitive bidding
-- [Appointment Distribution](/docs/concepts/distributions/appointment) - Time-slot booking
-- [Timed Release Distribution](/docs/concepts/distributions/instant) - Instant access
-- [Waitlist Distribution](/docs/concepts/distributions/exclusive) - Interest capture
+- [Queue Distribution](/concepts/distributions/queue) — First-in-first-out waiting lines
+- [Draw Distribution](/concepts/distributions/lottery) — Random lottery selection
+- [Auction Distribution](/concepts/distributions/auction) — Competitive bidding
+- [Appointment Distribution](/concepts/distributions/appointment) — Time slot booking
+- [Timed Release Distribution](/concepts/distributions/instant) — Instant access at a time
+- [Waitlist Distribution](/concepts/distributions/exclusive) — Interest capture

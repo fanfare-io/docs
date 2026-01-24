@@ -1,8 +1,3 @@
----
-title: Anonymous Consumers Guide
-description: Implement guest checkout flows with anonymous consumer authentication.
----
-
 # Anonymous Consumers Guide
 
 Learn how to implement guest checkout flows with anonymous consumer authentication.
@@ -332,11 +327,7 @@ function AuthEventHandler() {
 ## Complete Example: Guest Experience Flow
 
 ```tsx
-import {
-  FanfareProvider,
-  useFanfareAuth,
-  useExperienceJourney,
-} from "@waitify-io/fanfare-sdk-react";
+import { FanfareProvider, useFanfareAuth, useExperienceJourney } from "@waitify-io/fanfare-sdk-react";
 import { useEffect, useState } from "react";
 
 function GuestExperience({ experienceId }: { experienceId: string }) {
@@ -384,10 +375,7 @@ function GuestExperience({ experienceId }: { experienceId: string }) {
       {/* Actions */}
       <div className="actions">
         {snapshot?.availableActions.sequence.includes("enter_queue") && (
-          <button
-            onClick={() => journey?.perform("enter_queue")}
-            className="primary-btn"
-          >
+          <button onClick={() => journey?.perform("enter_queue")} className="primary-btn">
             Join Queue
           </button>
         )}
@@ -395,10 +383,7 @@ function GuestExperience({ experienceId }: { experienceId: string }) {
         {snapshot?.sequenceStage === "admitted" && (
           <div className="admitted">
             <h3>You're In!</h3>
-            <a
-              href={`/checkout?token=${snapshot.context.admittanceToken}`}
-              className="checkout-btn"
-            >
+            <a href={`/checkout?token=${snapshot.context.admittanceToken}`} className="checkout-btn">
               Continue to Checkout
             </a>
           </div>
@@ -410,12 +395,7 @@ function GuestExperience({ experienceId }: { experienceId: string }) {
 
 export function App() {
   return (
-    <FanfareProvider
-      organizationId="org_xxx"
-      publishableKey="pk_live_xxx"
-      autoRestore={true}
-      autoResume={true}
-    >
+    <FanfareProvider organizationId="org_xxx" publishableKey="pk_live_xxx" autoRestore={true} autoResume={true}>
       <GuestExperience experienceId="exp_product_launch" />
     </FanfareProvider>
   );
@@ -462,9 +442,7 @@ function GuestBanner() {
       <p>Want to save your progress and get notifications?</p>
       <button onClick={() => setShowUpgrade(true)}>Create Account</button>
 
-      {showUpgrade && (
-        <UpgradeForm onSubmit={(email) => requestOtp({ email })} />
-      )}
+      {showUpgrade && <UpgradeForm onSubmit={(email) => requestOtp({ email })} />}
     </div>
   );
 }

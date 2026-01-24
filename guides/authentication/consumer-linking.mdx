@@ -1,8 +1,3 @@
----
-title: Consumer Linking Guide
-description: Upgrade anonymous consumers to identified accounts while preserving participation history.
----
-
 # Consumer Linking Guide
 
 Learn how to upgrade anonymous (guest) consumers to identified accounts while preserving their participation history.
@@ -58,10 +53,7 @@ function LinkAccountPrompt() {
     <div className="link-prompt">
       <div className="link-prompt-content">
         <h3>Want to track your progress?</h3>
-        <p>
-          Add your email to receive notifications and access your account from
-          any device.
-        </p>
+        <p>Add your email to receive notifications and access your account from any device.</p>
 
         <div className="link-prompt-actions">
           <LinkAccountButton />
@@ -182,11 +174,7 @@ function LinkAccountButton() {
               {isLoading ? "Verifying..." : "Verify & Link"}
             </button>
 
-            <button
-              type="button"
-              onClick={() => setStep("email")}
-              className="link-button"
-            >
+            <button type="button" onClick={() => setStep("email")} className="link-button">
               Change email
             </button>
           </form>
@@ -270,33 +258,27 @@ export async function POST(request: Request) {
   }
 
   // 2. Create exchange code via Fanfare API (server-to-server)
-  const response = await fetch(
-    "https://api.fanfare.io/auth/external/authorize",
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-Organization-Id": process.env.FANFARE_ORG_ID!,
-        "X-Secret-Key": process.env.FANFARE_SECRET_KEY!, // Secret key!
-      },
-      body: JSON.stringify({
-        provider: "your-platform", // Your platform identifier
-        issuer: "https://your-domain.com",
-        subject: session.user.id, // Your user's unique ID
-        claims: {
-          email: session.user.email,
-          name: session.user.name,
-          // Add any other relevant claims
-        },
-      }),
+  const response = await fetch("https://api.fanfare.io/auth/external/authorize", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Organization-Id": process.env.FANFARE_ORG_ID!,
+      "X-Secret-Key": process.env.FANFARE_SECRET_KEY!, // Secret key!
     },
-  );
+    body: JSON.stringify({
+      provider: "your-platform", // Your platform identifier
+      issuer: "https://your-domain.com",
+      subject: session.user.id, // Your user's unique ID
+      claims: {
+        email: session.user.email,
+        name: session.user.name,
+        // Add any other relevant claims
+      },
+    }),
+  });
 
   if (!response.ok) {
-    return NextResponse.json(
-      { error: "Failed to create exchange code" },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: "Failed to create exchange code" }, { status: 500 });
   }
 
   const { exchangeCode, expiresAt } = await response.json();
@@ -422,8 +404,7 @@ function ConflictResolutionModal({
     <div className="conflict-modal">
       <h3>Email Already in Use</h3>
       <p>
-        The email <strong>{email}</strong> is already associated with another
-        account.
+        The email <strong>{email}</strong> is already associated with another account.
       </p>
 
       <div className="options">

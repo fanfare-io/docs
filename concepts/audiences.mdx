@@ -1,467 +1,274 @@
 ---
 title: Audiences
-description: Audience targeting, membership rules, and segmentation in Fanfare
+description: Creating consumer groups for targeted access and exclusive experiences
 ---
 
 # Audiences
 
-An **Audience** is a group of consumers defined by rules, manual curation, or external sync. Audiences enable targeted access control, allowing you to create exclusive experiences for specific consumer segments.
+An **Audience** is a group of consumers you want to target with specific access or experiences. Audiences let you create VIP early access, invite-only launches, and targeted promotions.
 
-## Audience Model
+## Why Use Audiences?
 
-```typescript
-interface Audience {
-  // Identity
-  id: string; // UUID
-  organizationId: string; // Parent organization
-  name: string; // Display name
+Audiences help you:
 
-  // Metadata
-  description?: string; // Human-readable description
-  iconName?: string; // Icon identifier for UI
-  metadata?: Record<string, unknown>; // Custom key-value data
-
-  // Type and Configuration
-  type: "DYNAMIC" | "STATIC_LIST" | "SYNCED_LIST";
-
-  // Grouping (for RFM/segmented audiences)
-  groupId?: string; // Links related audiences together
-  groupType?: "SEGMENTED_VALUE" | "RFM";
-  groupName?: string; // Group display name
-
-  // Refresh Settings (for dynamic audiences)
-  refreshIntervalSeconds?: number; // How often to recalculate membership
-  lastRefreshedAt?: string; // Last refresh timestamp
-
-  // Sync Source (for synced lists)
-  primarySyncSourceId?: string;
-  primarySyncSourceType?: string;
-  primarySyncSourceExternalId?: string;
-
-  // Audit
-  createdAt: string;
-  updatedAt: string;
-  archived: boolean;
-}
-```
+- **Reward loyalty** — Give your best consumers early access
+- **Create exclusivity** — Run invite-only launches
+- **Target segments** — Different experiences for different consumer groups
+- **Sync with your tools** — Import audiences from your marketing platforms
 
 ## Audience Types
 
 ### Dynamic Audiences
 
-Dynamic audiences calculate membership automatically based on rules. Membership updates as consumer attributes change.
+Membership is calculated automatically based on rules you define. As consumer attributes change, membership updates automatically.
 
-```typescript
-// Example: VIP customers with high loyalty
-{
-  name: "VIP Customers",
-  type: "DYNAMIC",
-  refreshIntervalSeconds: 3600,  // Recalculate hourly
-  rules: [
-    { field: "loyaltyScore", operator: "GREATER_THAN", values: [100] },
-    { field: "totalOrders", operator: "GREATER_THAN", values: [5] }
-  ]
-}
+**Example:** VIP consumers with high loyalty scores
+
+```
+Audience: "VIP Consumers"
+Rule: Loyalty score greater than 100
+Result: Consumers automatically join/leave as their score changes
 ```
 
 **Best for:**
 
-- Loyalty tiers (high-value customers)
+- Loyalty tiers (high-value consumers)
 - Engagement segments (active users)
-- Geographic targeting (users in specific regions)
+- Geographic targeting (consumers in specific regions)
 
-### Static List Audiences
+### Static Lists
 
-Static lists contain explicitly added consumers. Membership doesn't change automatically.
+Membership is manually curated. Consumers don't automatically join or leave.
 
-```typescript
-// Example: Early adopter list
-{
-  name: "Beta Testers",
-  type: "STATIC_LIST"
-  // Consumers added via imports or API
-}
+**Example:** Beta testers for a new feature
+
+```
+Audience: "Beta Testers"
+Members: Manually added list of consumer emails
+Result: Fixed membership until you change it
 ```
 
 **Best for:**
 
 - Invite lists for exclusive launches
-- Manual VIP curation
-- Contest winners or special access groups
+- Contest winners
+- Manually curated VIP lists
 
-### Synced List Audiences
+### Synced Lists
 
-Synced lists import and maintain membership from external systems like Shopify, Klaviyo, or custom integrations.
+Membership is imported and maintained from external systems like your email platform or e-commerce store.
 
-```typescript
-// Example: Klaviyo segment sync
-{
-  name: "Newsletter Subscribers",
-  type: "SYNCED_LIST",
-  primarySyncSourceType: "KLAVIYO",
-  primarySyncSourceExternalId: "segment_abc123"
-}
+**Example:** Newsletter subscribers from Klaviyo
+
+```
+Audience: "Newsletter Subscribers"
+Source: Synced from Klaviyo segment
+Result: Keeps in sync as your Klaviyo segment changes
 ```
 
 **Best for:**
 
-- Maintaining consistency with existing marketing segments
-- Leveraging ESP (Email Service Provider) segmentation
-- E-commerce platform customer data
+- Using existing marketing segments
+- E-commerce consumer data
+- Maintaining consistency across platforms
 
-## Audience Rules
+## Creating Rules for Dynamic Audiences
 
-Dynamic audiences use rules to determine membership. Rules evaluate consumer attributes using operators.
+Dynamic audiences use rules to determine who qualifies. You define conditions based on consumer attributes.
 
-### Rule Structure
+### Available Attributes
 
-```typescript
-interface AudienceRule {
-  id: string;
-  audienceId: string;
-  field: string; // Consumer attribute to evaluate
-  operator: RuleOperator; // Comparison operator
-  values: (string | number | boolean)[]; // Values to compare against
-  groupId?: string; // For grouping rules with OR logic
-  position?: number; // Evaluation order
-}
-```
+| Attribute      | Description                   | Example               |
+| -------------- | ----------------------------- | --------------------- |
+| Loyalty score  | Consumer value score (0-200+) | Score > 100           |
+| Total orders   | Number of purchases           | Orders > 5            |
+| Lifetime value | Total amount spent            | LTV > $500            |
+| Activity level | Recent engagement             | Activity > 50         |
+| Status         | Account status                | Status = Active       |
+| Location       | Country, region, city         | Country = US          |
+| Email domain   | Consumer's email domain       | Contains @company.com |
 
-### Available Operators
+### Rule Operators
 
-| Operator                | Description              | Example                            |
-| ----------------------- | ------------------------ | ---------------------------------- |
-| `EQUALS`                | Exact match              | `status EQUALS "ACTIVE"`           |
-| `NOT_EQUALS`            | Not exact match          | `status NOT_EQUALS "INACTIVE"`     |
-| `GREATER_THAN`          | Greater than value       | `loyaltyScore GREATER_THAN 100`    |
-| `GREATER_THAN_OR_EQUAL` | Greater than or equal    | `totalOrders >= 5`                 |
-| `LESS_THAN`             | Less than value          | `botScore LESS_THAN 50`            |
-| `LESS_THAN_OR_EQUAL`    | Less than or equal       | `aov <= 500`                       |
-| `BETWEEN`               | Within range (inclusive) | `ltv BETWEEN [100, 1000]`          |
-| `CONTAINS`              | String contains          | `email CONTAINS "@company.com"`    |
-| `NOT_CONTAINS`          | String doesn't contain   | `email NOT_CONTAINS "test"`        |
-| `IN`                    | Value in list            | `lastGeoCountry IN ["US", "CA"]`   |
-| `NOT_IN`                | Value not in list        | `lastGeoRegion NOT_IN ["blocked"]` |
-| `EXISTS`                | Field has value          | `phone EXISTS`                     |
-| `NOT_EXISTS`            | Field is null/missing    | `email NOT_EXISTS`                 |
+| Operator     | Meaning               | Example                      |
+| ------------ | --------------------- | ---------------------------- |
+| Equals       | Exact match           | Country equals "US"          |
+| Greater than | Above value           | Loyalty score > 100          |
+| Less than    | Below value           | Orders < 3                   |
+| Between      | Within range          | LTV between $100-$500        |
+| Contains     | Text includes         | Email contains "@vip"        |
+| In list      | One of several values | Country is US, Canada, or UK |
+| Exists       | Has a value           | Phone exists                 |
 
-### Rule Logic
+### Combining Rules
 
-Rules within the same group use **AND** logic. Rules in different groups use **OR** logic.
-
-```typescript
-// Example: (High LTV AND Active) OR (High Loyalty)
-{
-  rules: [
-    // Group A - both must be true
-    { field: "ltv", operator: "GREATER_THAN", values: [1000], groupId: "A" },
-    { field: "status", operator: "EQUALS", values: ["ACTIVE"], groupId: "A" },
-    // Group B - alternative condition
-    { field: "loyaltyScore", operator: "GREATER_THAN", values: [200], groupId: "B" },
-  ];
-}
-
-// Evaluates as: (ltv > 1000 AND status = "ACTIVE") OR (loyaltyScore > 200)
-```
-
-### Consumer Attributes
-
-Rules can reference these consumer fields:
-
-| Attribute                | Type   | Description                             |
-| ------------------------ | ------ | --------------------------------------- |
-| `loyaltyScore`           | number | Calculated loyalty score (0-200+)       |
-| `ltv`                    | money  | Lifetime value in organization currency |
-| `totalOrders`            | number | Total order count                       |
-| `aov`                    | money  | Average order value                     |
-| `activityScore`          | number | Decayed engagement score                |
-| `purchaseFrequencyScore` | number | Purchase frequency score                |
-| `monetaryScore`          | number | Monetary value score                    |
-| `status`                 | string | `"ACTIVE"` or `"INACTIVE"`              |
-| `email`                  | string | Consumer email address                  |
-| `phone`                  | string | Consumer phone number                   |
-| `lastGeoCountry`         | string | Last detected country code              |
-| `lastGeoRegion`          | string | Last detected region/state              |
-| `lastGeoCity`            | string | Last detected city                      |
-| `metadata.*`             | any    | Custom metadata fields                  |
-
-## Audience Groups
-
-Related audiences can be grouped for easier management. Two grouping strategies are supported:
-
-### Segmented Value Groups
-
-Audiences that segment a continuous value into tiers:
-
-```typescript
-// LTV Tiers
-[
-  {
-    name: "Bronze",
-    groupType: "SEGMENTED_VALUE",
-    groupId: "ltv-tiers",
-    rules: [{ field: "ltv", operator: "LESS_THAN", values: [100] }],
-  },
-  {
-    name: "Silver",
-    groupType: "SEGMENTED_VALUE",
-    groupId: "ltv-tiers",
-    rules: [{ field: "ltv", operator: "BETWEEN", values: [100, 500] }],
-  },
-  {
-    name: "Gold",
-    groupType: "SEGMENTED_VALUE",
-    groupId: "ltv-tiers",
-    rules: [{ field: "ltv", operator: "BETWEEN", values: [500, 1000] }],
-  },
-  {
-    name: "Platinum",
-    groupType: "SEGMENTED_VALUE",
-    groupId: "ltv-tiers",
-    rules: [{ field: "ltv", operator: "GREATER_THAN", values: [1000] }],
-  },
-];
-```
-
-### RFM Groups
-
-Recency-Frequency-Monetary segmentation groups:
-
-```typescript
-// RFM Segments
-[
-  { name: "Champions", groupType: "RFM", groupId: "rfm", rules: [...] },
-  { name: "Loyal Customers", groupType: "RFM", groupId: "rfm", rules: [...] },
-  { name: "At Risk", groupType: "RFM", groupId: "rfm", rules: [...] },
-  { name: "Hibernating", groupType: "RFM", groupId: "rfm", rules: [...] }
-]
-```
-
-## Using Audiences with Sequences
-
-Audiences control access to experience sequences:
-
-```typescript
-// Experience with audience-targeted sequences
-{
-  name: "Product Launch",
-  sequences: [
-    {
-      name: "VIP Early Access",
-      priority: 100,
-      audienceId: "vip-audience-uuid"  // Only VIP members
-    },
-    {
-      name: "Loyalty Members",
-      priority: 50,
-      audienceId: "loyalty-audience-uuid"  // Loyalty program members
-    },
-    {
-      name: "General Access",
-      priority: 0
-      // No audience = open to all
-    }
-  ]
-}
-```
-
-### Access Evaluation Flow
+**AND logic:** All conditions must be true
 
 ```
-Consumer enters experience
-         │
-         ▼
-┌─────────────────────────────────┐
-│ Get sequences by priority (desc)│
-└─────────────────────────────────┘
-         │
-         ▼
-┌─────────────────────────────────┐
-│ For highest priority sequence:  │
-│ Is audienceId set?              │
-└─────────────────────────────────┘
-    │              │
-   Yes            No
-    │              │
-    ▼              ▼
-┌───────────┐  ┌───────────────┐
-│ Check if  │  │ Access granted│
-│ consumer  │  └───────────────┘
-│ in audience│
-└───────────┘
-    │
-┌───┴───┐
-Yes    No
-│       │
-▼       ▼
-Grant   Try next
-access  sequence
+VIP California Consumers:
+├── Loyalty score > 100 (AND)
+├── Region = California (AND)
+└── Status = Active
 ```
 
-## Audience Imports
+**OR logic:** Any condition can be true
 
-Static and synced audiences support bulk imports:
-
-```typescript
-interface AudienceImport {
-  id: string;
-  audienceId: string;
-  status: "PENDING" | "PROCESSING" | "COMPLETED" | "FAILED";
-  totalCount?: number;
-  processedCount?: number;
-  errorCount?: number;
-  createdAt: string;
-  completedAt?: string;
-}
+```
+Eligible for Promotion:
+├── Group A: Loyalty score > 150
+│       (OR)
+└── Group B: Total orders > 10
 ```
 
-### Import Methods
+## Using Audiences with Experiences
 
-1. **CSV Upload**: Upload a CSV with consumer identifiers
-2. **API Batch**: Send batches of consumers via API
-3. **Sync Integration**: Automatic sync from external systems
+Audiences control which consumers can access specific parts of your experience:
 
-## API Operations
-
-### Create Audience
-
-```bash
-POST /v1/audiences
-Authorization: Bearer sk_live_...
-Content-Type: application/json
-
-{
-  "name": "High-Value Customers",
-  "type": "DYNAMIC",
-  "description": "Customers with LTV > $500",
-  "rules": [
-    {
-      "field": "ltv",
-      "operator": "GREATER_THAN",
-      "values": [500]
-    }
-  ]
-}
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                     YOUR EXPERIENCE                              │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  ┌──────────────────┐                                          │
+│  │   VIP ACCESS     │ ◄── Requires: VIP Audience               │
+│  │   Early draw     │                                          │
+│  └──────────────────┘                                          │
+│           │                                                     │
+│           ▼ (if not VIP)                                       │
+│  ┌──────────────────┐                                          │
+│  │  LOYALTY ACCESS  │ ◄── Requires: Loyalty Members Audience   │
+│  │   Priority queue │                                          │
+│  └──────────────────┘                                          │
+│           │                                                     │
+│           ▼ (if not in loyalty program)                        │
+│  ┌──────────────────┐                                          │
+│  │  GENERAL ACCESS  │ ◄── No audience required                 │
+│  │   Standard queue │                                          │
+│  └──────────────────┘                                          │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
 ```
 
-### List Audiences
+### How Routing Works
 
-```bash
-GET /v1/audiences
-Authorization: Bearer sk_live_...
+1. Consumer enters your experience
+2. System checks access paths in priority order
+3. For each path, checks if consumer is in the required audience
+4. Consumer gets the first path they qualify for
 
-# Response
-{
-  "data": [
-    {
-      "id": "uuid",
-      "name": "High-Value Customers",
-      "type": "DYNAMIC",
-      "createdAt": "2024-01-01T00:00:00Z"
-    }
-  ],
-  "pagination": {...}
-}
+## Common Audience Examples
+
+### VIP Consumers
+
+Reward your most valuable consumers with early access:
+
+```
+Audience: "VIP Consumers"
+Type: Dynamic
+Rules:
+├── Loyalty score > 100
+└── Total orders > 5
 ```
 
-### Get Audience with Rules
+### Local Consumers
 
-```bash
-GET /v1/audiences/:id?include=rules
-Authorization: Bearer sk_live_...
+Target consumers near your store for in-person events:
 
-# Response
-{
-  "id": "uuid",
-  "name": "High-Value Customers",
-  "type": "DYNAMIC",
-  "rules": [
-    {
-      "id": "rule-uuid",
-      "field": "ltv",
-      "operator": "GREATER_THAN",
-      "values": [500]
-    }
-  ]
-}
+```
+Audience: "NYC Area Consumers"
+Type: Dynamic
+Rules:
+├── Region = New York
+└── Status = Active
 ```
 
-### Check Consumer Membership
+### High Spenders
 
-```bash
-GET /v1/audiences/:id/consumers/:consumerId
-Authorization: Bearer sk_live_...
+Create exclusive offers for big spenders:
 
-# Response
-{
-  "isMember": true,
-  "matchedRules": ["rule-uuid-1", "rule-uuid-2"]
-}
+```
+Audience: "High Value Consumers"
+Type: Dynamic
+Rules:
+└── Lifetime value > $1,000
 ```
 
-### Add Consumers to Static Audience
+### Newsletter Subscribers
 
-```bash
-POST /v1/audiences/:id/consumers
-Authorization: Bearer sk_live_...
-Content-Type: application/json
+Use your existing email list for early access:
 
-{
-  "consumerIds": ["consumer-uuid-1", "consumer-uuid-2"]
-}
 ```
+Audience: "Newsletter Subscribers"
+Type: Synced
+Source: Klaviyo "Active Subscribers" segment
+```
+
+### Invite List
+
+Hand-pick consumers for exclusive launches:
+
+```
+Audience: "Product Launch Invites"
+Type: Static List
+Members: [imported CSV of email addresses]
+```
+
+## Keeping Audiences Fresh
+
+### Dynamic Audiences
+
+Set how often membership should be recalculated:
+
+| Refresh Rate     | Best For                   |
+| ---------------- | -------------------------- |
+| Every 15 minutes | Real-time access decisions |
+| Every hour       | Most use cases             |
+| Every 24 hours   | Stable segments            |
+
+### Synced Lists
+
+Syncing happens automatically based on your integration:
+
+- **Klaviyo**: Near real-time
+- **Shopify**: Periodic sync
+- **CSV import**: Manual refresh
 
 ## Best Practices
 
-### 1. Start Simple
+### Start Simple
 
 Begin with basic rules and refine over time:
 
-```typescript
-// Start with one clear criteria
-{ field: "loyaltyScore", operator: "GREATER_THAN", values: [50] }
+1. Start with one or two conditions
+2. Test with a small launch
+3. Add complexity based on results
 
-// Add complexity as needed
-// ...later add geographic or engagement filters
-```
+### Use Descriptive Names
 
-### 2. Use Descriptive Names
+Name audiences clearly so your team understands them:
 
-Name audiences to clearly convey their purpose:
+- **Good:** "VIP Consumers - Loyalty Score > 100"
+- **Good:** "NYC Metro Area - Active"
+- **Avoid:** "Audience 1" or "Test"
 
-- "VIP Customers - LTV > $1000"
-- "Early Adopters - First 100 Orders"
-- "US Newsletter Subscribers"
+### Monitor Audience Sizes
 
-### 3. Set Appropriate Refresh Intervals
+Keep an eye on how many consumers qualify:
 
-Balance accuracy with performance:
+- **Too small?** Rules might be too restrictive
+- **Too large?** Rules might be too broad
+- **Unexpected changes?** Something in your data changed
 
-| Audience Type            | Recommended Interval |
-| ------------------------ | -------------------- |
-| Real-time access control | 5-15 minutes         |
-| Marketing segments       | 1-24 hours           |
-| Analytics cohorts        | 24+ hours            |
+### Test Before Launch
 
-### 4. Monitor Audience Sizes
+Verify the right consumers are included before a big launch:
 
-Track membership counts to detect:
+1. Preview audience membership
+2. Spot-check specific consumers
+3. Test the full experience flow
 
-- Rules that are too restrictive (empty audiences)
-- Rules that are too broad (everyone qualifies)
-- Unexpected changes in membership
+## Next Steps
 
-### 5. Test Before Launch
-
-Verify audience membership before using in high-stakes experiences:
-
-```bash
-# Check specific consumers
-GET /v1/audiences/:id/consumers?preview=true&limit=100
-```
-
-## Related Concepts
-
-- [Consumers](/docs/concepts/consumers) - Consumer attributes used in rules
-- [Experiences](/docs/concepts/experiences) - Using audiences with sequences
-- [Distributions](/docs/concepts/distributions/overview) - Distribution-level access control
+- [Consumers](/concepts/consumers) — Consumer attributes used in rules
+- [Experiences](/concepts/experiences) — Using audiences with access paths
+- [Dashboard: Audiences](/dashboard/audiences/overview) — Creating audiences in the dashboard

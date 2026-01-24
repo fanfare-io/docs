@@ -1,8 +1,3 @@
----
-title: Payment Processing Guide
-description: Integrate payment processing with Fanfare admission flows for secure transactions.
----
-
 # Payment Processing Guide
 
 Learn how to integrate payment processing with Fanfare admission flows for secure, validated transactions.
@@ -84,15 +79,8 @@ interface CreatePaymentParams {
 
 router.post("/create-payment-intent", async (req, res) => {
   try {
-    const {
-      admissionToken,
-      consumerId,
-      distributionId,
-      distributionType,
-      amount,
-      currency,
-      items,
-    } = req.body as CreatePaymentParams;
+    const { admissionToken, consumerId, distributionId, distributionType, amount, currency, items } =
+      req.body as CreatePaymentParams;
 
     // 1. Validate admission with Fanfare FIRST
     const isValid = await validateAdmission({
@@ -139,12 +127,7 @@ router.post("/create-payment-intent", async (req, res) => {
 
 ```tsx
 import { loadStripe } from "@stripe/stripe-js";
-import {
-  Elements,
-  PaymentElement,
-  useStripe,
-  useElements,
-} from "@stripe/react-stripe-js";
+import { Elements, PaymentElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import { useState, useEffect } from "react";
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_KEY!);
@@ -158,13 +141,7 @@ interface CheckoutFormProps {
   totalAmount: number;
 }
 
-function PaymentForm({
-  onSuccess,
-  onError,
-}: {
-  onSuccess: () => void;
-  onError: (msg: string) => void;
-}) {
+function PaymentForm({ onSuccess, onError }: { onSuccess: () => void; onError: (msg: string) => void }) {
   const stripe = useStripe();
   const elements = useElements();
   const [isProcessing, setIsProcessing] = useState(false);
@@ -226,9 +203,7 @@ export function StripeCheckout(props: CheckoutFormProps) {
         if (!res.ok) {
           const data = await res.json();
           if (data.error === "ADMISSION_INVALID") {
-            setError(
-              "Your access has expired. Please return to the experience.",
-            );
+            setError("Your access has expired. Please return to the experience.");
             return;
           }
           throw new Error(data.message);
@@ -237,9 +212,7 @@ export function StripeCheckout(props: CheckoutFormProps) {
         const { clientSecret } = await res.json();
         setClientSecret(clientSecret);
       } catch (err) {
-        setError(
-          err instanceof Error ? err.message : "Failed to initialize payment",
-        );
+        setError(err instanceof Error ? err.message : "Failed to initialize payment");
       }
     }
 
@@ -261,10 +234,7 @@ export function StripeCheckout(props: CheckoutFormProps) {
 
   return (
     <Elements stripe={stripePromise} options={{ clientSecret }}>
-      <PaymentForm
-        onSuccess={() => (window.location.href = "/checkout/success")}
-        onError={setError}
-      />
+      <PaymentForm onSuccess={() => (window.location.href = "/checkout/success")} onError={setError} />
     </Elements>
   );
 }
@@ -282,46 +252,36 @@ const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!;
 
 const router = express.Router();
 
-router.post(
-  "/webhook",
-  express.raw({ type: "application/json" }),
-  async (req, res) => {
-    const sig = req.headers["stripe-signature"]!;
+router.post("/webhook", express.raw({ type: "application/json" }), async (req, res) => {
+  const sig = req.headers["stripe-signature"]!;
 
-    let event: Stripe.Event;
-    try {
-      event = stripe.webhooks.constructEvent(req.body, sig, webhookSecret);
-    } catch (err) {
-      console.error("Webhook signature verification failed");
-      return res.status(400).send("Invalid signature");
+  let event: Stripe.Event;
+  try {
+    event = stripe.webhooks.constructEvent(req.body, sig, webhookSecret);
+  } catch (err) {
+    console.error("Webhook signature verification failed");
+    return res.status(400).send("Invalid signature");
+  }
+
+  switch (event.type) {
+    case "payment_intent.succeeded": {
+      const paymentIntent = event.data.object as Stripe.PaymentIntent;
+      await handlePaymentSuccess(paymentIntent);
+      break;
     }
 
-    switch (event.type) {
-      case "payment_intent.succeeded": {
-        const paymentIntent = event.data.object as Stripe.PaymentIntent;
-        await handlePaymentSuccess(paymentIntent);
-        break;
-      }
-
-      case "payment_intent.payment_failed": {
-        const paymentIntent = event.data.object as Stripe.PaymentIntent;
-        await handlePaymentFailure(paymentIntent);
-        break;
-      }
+    case "payment_intent.payment_failed": {
+      const paymentIntent = event.data.object as Stripe.PaymentIntent;
+      await handlePaymentFailure(paymentIntent);
+      break;
     }
+  }
 
-    res.json({ received: true });
-  },
-);
+  res.json({ received: true });
+});
 
 async function handlePaymentSuccess(paymentIntent: Stripe.PaymentIntent) {
-  const {
-    admissionToken,
-    consumerId,
-    distributionId,
-    distributionType,
-    items,
-  } = paymentIntent.metadata;
+  const { admissionToken, consumerId, distributionId, distributionType, items } = paymentIntent.metadata;
 
   // 1. Create order in your system
   const order = await createOrder({
@@ -368,15 +328,7 @@ const paypalClient = new PayPalHttpClient({
 const ordersApi = new OrdersApi(paypalClient);
 
 router.post("/create-paypal-order", async (req, res) => {
-  const {
-    admissionToken,
-    consumerId,
-    distributionId,
-    distributionType,
-    amount,
-    currency,
-    items,
-  } = req.body;
+  const { admissionToken, consumerId, distributionId, distributionType, amount, currency, items } = req.body;
 
   // 1. Validate admission
   const isValid = await validateAdmission({
@@ -475,9 +427,7 @@ export function PayPalCheckout(props: CheckoutFormProps) {
   };
 
   return (
-    <PayPalScriptProvider
-      options={{ clientId: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID! }}
-    >
+    <PayPalScriptProvider options={{ clientId: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID! }}>
       <PayPalButtons
         createOrder={createOrder}
         onApprove={onApprove}
@@ -493,13 +443,7 @@ export function PayPalCheckout(props: CheckoutFormProps) {
 ### Payment Failures
 
 ```tsx
-function PaymentErrorHandler({
-  error,
-  onRetry,
-}: {
-  error: PaymentError;
-  onRetry: () => void;
-}) {
+function PaymentErrorHandler({ error, onRetry }: { error: PaymentError; onRetry: () => void }) {
   const getErrorMessage = (error: PaymentError) => {
     switch (error.code) {
       case "card_declined":
@@ -522,11 +466,7 @@ function PaymentErrorHandler({
       <h3>Payment Failed</h3>
       <p>{getErrorMessage(error)}</p>
 
-      {canRetry ? (
-        <button onClick={onRetry}>Try Again</button>
-      ) : (
-        <a href="/experience">Return to Experience</a>
-      )}
+      {canRetry ? <button onClick={onRetry}>Try Again</button> : <a href="/experience">Return to Experience</a>}
     </div>
   );
 }
@@ -536,10 +476,7 @@ function PaymentErrorHandler({
 
 ```typescript
 // Ensure payments aren't processed twice
-async function createPaymentWithIdempotency(
-  params: CreatePaymentParams,
-  idempotencyKey: string,
-) {
+async function createPaymentWithIdempotency(params: CreatePaymentParams, idempotencyKey: string) {
   return await stripe.paymentIntents.create(
     {
       amount: params.amount,
@@ -548,7 +485,7 @@ async function createPaymentWithIdempotency(
     },
     {
       idempotencyKey,
-    },
+    }
   );
 }
 

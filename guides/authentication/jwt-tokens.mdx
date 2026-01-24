@@ -1,8 +1,3 @@
----
-title: JWT Tokens Guide
-description: Implement server-side authentication using JWT tokens for secure backend-to-backend communication.
----
-
 # JWT Tokens Guide
 
 Learn how to implement server-side authentication using JWT tokens for secure backend-to-backend communication with Fanfare.
@@ -283,8 +278,7 @@ interface ValidationRequest {
 // POST /api/validate-admission
 router.post("/validate-admission", async (req, res) => {
   try {
-    const { queueId, drawId, consumerId, token } =
-      req.body as ValidationRequest;
+    const { queueId, drawId, consumerId, token } = req.body as ValidationRequest;
 
     // Determine endpoint based on distribution type
     let endpoint: string;
@@ -355,8 +349,7 @@ interface CheckoutRequest {
 }
 
 router.post("/checkout", async (req, res) => {
-  const { admissionToken, consumerId, experienceType, distributionId, cart } =
-    req.body as CheckoutRequest;
+  const { admissionToken, consumerId, experienceType, distributionId, cart } = req.body as CheckoutRequest;
 
   // 1. Validate admission token with Fanfare
   const validationResult = await validateAdmission({
@@ -401,12 +394,7 @@ router.post("/checkout", async (req, res) => {
   }
 });
 
-async function validateAdmission(params: {
-  type: string;
-  distributionId: string;
-  consumerId: string;
-  token: string;
-}) {
+async function validateAdmission(params: { type: string; distributionId: string; consumerId: string; token: string }) {
   const endpoint =
     params.type === "queue"
       ? `/queues/${params.distributionId}/validate`
@@ -434,11 +422,7 @@ async function validateAdmission(params: {
   return { valid: await response.json() };
 }
 
-async function completeAdmission(params: {
-  type: string;
-  distributionId: string;
-  consumerId: string;
-}) {
+async function completeAdmission(params: { type: string; distributionId: string; consumerId: string }) {
   const endpoint =
     params.type === "queue"
       ? `/queues/${params.distributionId}/complete`
@@ -517,10 +501,7 @@ const response = await fetch("/your-backend/api/fanfare/authorize");
 
 ```typescript
 // Verify the admission originated from expected experience
-async function validateAdmissionContext(
-  token: string,
-  expectedExperienceId: string,
-) {
+async function validateAdmissionContext(token: string, expectedExperienceId: string) {
   const decoded = decodeAdmissionToken(token);
 
   if (decoded.experienceId !== expectedExperienceId) {

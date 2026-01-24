@@ -1,8 +1,3 @@
----
-title: WooCommerce Integration Guide
-description: Integrate Fanfare experiences with your WooCommerce store on WordPress.
----
-
 # WooCommerce Integration Guide
 
 Learn how to integrate Fanfare experiences with your WooCommerce store on WordPress.
@@ -305,8 +300,7 @@ add_action('woocommerce_before_single_product', 'fanfare_init_display_hook');
     switch (state.stage) {
       case "not_started":
         if (state.startsAt) {
-          statusHtml =
-            '<div class="fanfare-countdown">Starts in: <span class="countdown-timer"></span></div>';
+          statusHtml = '<div class="fanfare-countdown">Starts in: <span class="countdown-timer"></span></div>';
         }
         break;
 
@@ -331,8 +325,7 @@ add_action('woocommerce_before_single_product', 'fanfare_init_display_hook');
         break;
 
       case "expired":
-        statusHtml =
-          '<div class="fanfare-expired">Your access has expired. Please try again.</div>';
+        statusHtml = '<div class="fanfare-expired">Your access has expired. Please try again.</div>';
         break;
     }
 
@@ -369,9 +362,7 @@ add_action('woocommerce_before_single_product', 'fanfare_init_display_hook');
     if (displayMode === "replace") {
       // Show checkout button
       var $checkoutBtn = $(
-        '<button type="button" class="fanfare-checkout-btn button alt">' +
-          "Complete Purchase" +
-          "</button>",
+        '<button type="button" class="fanfare-checkout-btn button alt">' + "Complete Purchase" + "</button>"
       );
 
       $checkoutBtn.on("click", function () {
@@ -412,7 +403,7 @@ add_action('woocommerce_before_single_product', 'fanfare_init_display_hook');
       '<div class="fanfare-error">' +
         "<p>Unable to load experience. Please refresh the page.</p>" +
         '<button class="fanfare-retry">Retry</button>' +
-        "</div>",
+        "</div>"
     );
 
     $container.find(".fanfare-retry").on("click", function () {

@@ -5,7 +5,8 @@
   "description": "Fanfare documentation",
   "scripts": {
     "dev": "mintlify dev",
-    "build": "mintlify build",
+    "build": "mintlify validate",
+    "broken-links": "mintlify broken-links",
     "update": "mintlify update"
   },
   "devDependencies": {

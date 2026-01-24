@@ -1,8 +1,3 @@
----
-title: Order Completion Guide
-description: Complete the Fanfare admission cycle after successful orders with webhook handling.
----
-
 # Order Completion Guide
 
 Learn how to properly complete the Fanfare admission cycle after a successful order, including webhook handling and order status updates.
@@ -76,8 +71,7 @@ interface CompleteAdmissionParams {
 }
 
 export async function completeAdmission(params: CompleteAdmissionParams) {
-  const { distributionId, distributionType, consumerId, orderId, orderAmount } =
-    params;
+  const { distributionId, distributionType, consumerId, orderId, orderAmount } = params;
 
   const endpoints: Record<string, string> = {
     queue: `/queues/${distributionId}/complete`,
@@ -136,15 +130,7 @@ interface CreateOrderParams {
 }
 
 export async function createOrder(params: CreateOrderParams) {
-  const {
-    consumerId,
-    admissionToken,
-    distributionId,
-    distributionType,
-    items,
-    paymentId,
-    totalAmount,
-  } = params;
+  const { consumerId, admissionToken, distributionId, distributionType, items, paymentId, totalAmount } = params;
 
   // 1. Create order in database
   const order = await db
@@ -163,10 +149,7 @@ export async function createOrder(params: CreateOrderParams) {
     .returning();
 
   // 2. Update order status
-  await db
-    .update(orders)
-    .set({ status: "confirmed" })
-    .where(eq(orders.id, order[0].id));
+  await db.update(orders).set({ status: "confirmed" }).where(eq(orders.id, order[0].id));
 
   // 3. Complete Fanfare admission
   try {
@@ -179,10 +162,7 @@ export async function createOrder(params: CreateOrderParams) {
     });
 
     // Mark as synced with Fanfare
-    await db
-      .update(orders)
-      .set({ fanfareSynced: true, fanfareSyncedAt: new Date() })
-      .where(eq(orders.id, order[0].id));
+    await db.update(orders).set({ fanfareSynced: true, fanfareSyncedAt: new Date() }).where(eq(orders.id, order[0].id));
   } catch (error) {
     // Log error but don't fail order
     console.error("Failed to sync with Fanfare:", error);
@@ -220,11 +200,8 @@ export async function processFanfareSyncQueue() {
     .where(
       and(
         lt(fanfareSyncQueue.attempts, MAX_ATTEMPTS),
-        or(
-          isNull(fanfareSyncQueue.nextAttempt),
-          lt(fanfareSyncQueue.nextAttempt, new Date()),
-        ),
-      ),
+        or(isNull(fanfareSyncQueue.nextAttempt), lt(fanfareSyncQueue.nextAttempt, new Date()))
+      )
     )
     .limit(10);
 
@@ -236,17 +213,11 @@ export async function processFanfareSyncQueue() {
 async function processJob(job: SyncJob) {
   try {
     // Get order details
-    const order = await db
-      .select()
-      .from(orders)
-      .where(eq(orders.id, job.orderId))
-      .limit(1);
+    const order = await db.select().from(orders).where(eq(orders.id, job.orderId)).limit(1);
 
     if (!order[0]) {
       // Order doesn't exist, remove job
-      await db
-        .delete(fanfareSyncQueue)
-        .where(eq(fanfareSyncQueue.orderId, job.orderId));
+      await db.delete(fanfareSyncQueue).where(eq(fanfareSyncQueue.orderId, job.orderId));
       return;
     }
 
@@ -260,21 +231,14 @@ async function processJob(job: SyncJob) {
     });
 
     // Success - update order and remove job
-    await db
-      .update(orders)
-      .set({ fanfareSynced: true, fanfareSyncedAt: new Date() })
-      .where(eq(orders.id, job.orderId));
+    await db.update(orders).set({ fanfareSynced: true, fanfareSyncedAt: new Date() }).where(eq(orders.id, job.orderId));
 
-    await db
-      .delete(fanfareSyncQueue)
-      .where(eq(fanfareSyncQueue.orderId, job.orderId));
+    await db.delete(fanfareSyncQueue).where(eq(fanfareSyncQueue.orderId, job.orderId));
 
     console.log(`Fanfare sync successful for order ${job.orderId}`);
   } catch (error) {
     // Update job for retry
-    const nextAttempt = new Date(
-      Date.now() + RETRY_DELAYS[job.attempts] || 600000,
-    );
+    const nextAttempt = new Date(Date.now() + RETRY_DELAYS[job.attempts] || 600000);
 
     await db
       .update(fanfareSyncQueue)
@@ -286,9 +250,7 @@ async function processJob(job: SyncJob) {
       })
       .where(eq(fanfareSyncQueue.orderId, job.orderId));
 
-    console.error(
-      `Fanfare sync failed for order ${job.orderId}, will retry at ${nextAttempt}`,
-    );
+    console.error(`Fanfare sync failed for order ${job.orderId}, will retry at ${nextAttempt}`);
   }
 }
 
@@ -315,66 +277,53 @@ function verifyShopifyWebhook(req: express.Request): boolean {
   const hmac = req.headers["x-shopify-hmac-sha256"] as string;
   const body = (req as any).rawBody;
 
-  const hash = crypto
-    .createHmac("sha256", SHOPIFY_WEBHOOK_SECRET)
-    .update(body, "utf8")
-    .digest("base64");
+  const hash = crypto.createHmac("sha256", SHOPIFY_WEBHOOK_SECRET).update(body, "utf8").digest("base64");
 
   return hmac === hash;
 }
 
-router.post(
-  "/orders/paid",
-  express.raw({ type: "application/json" }),
-  async (req, res) => {
-    // Verify signature
-    if (!verifyShopifyWebhook(req)) {
-      return res.status(401).send("Invalid signature");
+router.post("/orders/paid", express.raw({ type: "application/json" }), async (req, res) => {
+  // Verify signature
+  if (!verifyShopifyWebhook(req)) {
+    return res.status(401).send("Invalid signature");
+  }
+
+  const order = JSON.parse(req.body.toString());
+
+  // Extract Fanfare data from order notes or metafields
+  const fanfareData = extractFanfareData(order);
+
+  if (fanfareData) {
+    try {
+      await completeAdmission({
+        distributionId: fanfareData.distributionId,
+        distributionType: fanfareData.distributionType,
+        consumerId: fanfareData.consumerId,
+        orderId: order.id.toString(),
+        orderAmount: parseFloat(order.total_price),
+      });
+
+      console.log(`Completed admission for Shopify order ${order.id}`);
+    } catch (error) {
+      console.error("Failed to complete admission:", error);
+      // Queue for retry
+      await queueFanfareSync({
+        orderId: order.id.toString(),
+        ...fanfareData,
+      });
     }
+  }
 
-    const order = JSON.parse(req.body.toString());
-
-    // Extract Fanfare data from order notes or metafields
-    const fanfareData = extractFanfareData(order);
-
-    if (fanfareData) {
-      try {
-        await completeAdmission({
-          distributionId: fanfareData.distributionId,
-          distributionType: fanfareData.distributionType,
-          consumerId: fanfareData.consumerId,
-          orderId: order.id.toString(),
-          orderAmount: parseFloat(order.total_price),
-        });
-
-        console.log(`Completed admission for Shopify order ${order.id}`);
-      } catch (error) {
-        console.error("Failed to complete admission:", error);
-        // Queue for retry
-        await queueFanfareSync({
-          orderId: order.id.toString(),
-          ...fanfareData,
-        });
-      }
-    }
-
-    res.status(200).send("OK");
-  },
-);
+  res.status(200).send("OK");
+});
 
 function extractFanfareData(order: any) {
   // Look for Fanfare data in note attributes
   const noteAttributes = order.note_attributes || [];
 
-  const distributionId = noteAttributes.find(
-    (a: any) => a.name === "fanfare_distribution_id",
-  )?.value;
-  const distributionType = noteAttributes.find(
-    (a: any) => a.name === "fanfare_distribution_type",
-  )?.value;
-  const consumerId = noteAttributes.find(
-    (a: any) => a.name === "fanfare_consumer_id",
-  )?.value;
+  const distributionId = noteAttributes.find((a: any) => a.name === "fanfare_distribution_id")?.value;
+  const distributionType = noteAttributes.find((a: any) => a.name === "fanfare_distribution_type")?.value;
+  const consumerId = noteAttributes.find((a: any) => a.name === "fanfare_consumer_id")?.value;
 
   if (!distributionId || !distributionType || !consumerId) {
     return null;
@@ -401,10 +350,7 @@ router.post("/orders/completed", express.json(), async (req, res) => {
   const signature = req.headers["x-wc-webhook-signature"] as string;
   const payload = JSON.stringify(req.body);
 
-  const expectedSignature = crypto
-    .createHmac("sha256", WC_WEBHOOK_SECRET)
-    .update(payload)
-    .digest("base64");
+  const expectedSignature = crypto.createHmac("sha256", WC_WEBHOOK_SECRET).update(payload).digest("base64");
 
   if (signature !== expectedSignature) {
     return res.status(401).send("Invalid signature");
@@ -415,11 +361,8 @@ router.post("/orders/completed", express.json(), async (req, res) => {
   // Extract Fanfare data from order meta
   const meta = order.meta_data || [];
   const fanfareData = {
-    distributionId: meta.find((m: any) => m.key === "_fanfare_distribution_id")
-      ?.value,
-    distributionType: meta.find(
-      (m: any) => m.key === "_fanfare_distribution_type",
-    )?.value,
+    distributionId: meta.find((m: any) => m.key === "_fanfare_distribution_id")?.value,
+    distributionType: meta.find((m: any) => m.key === "_fanfare_distribution_type")?.value,
     consumerId: meta.find((m: any) => m.key === "_fanfare_consumer_id")?.value,
   };
 
@@ -541,8 +484,8 @@ async function completeAdmissionIdempotent(params: CompleteAdmissionParams) {
     .where(
       and(
         eq(completedAdmissions.distributionId, params.distributionId),
-        eq(completedAdmissions.consumerId, params.consumerId),
-      ),
+        eq(completedAdmissions.consumerId, params.consumerId)
+      )
     );
 
   if (existing.length > 0) {
@@ -568,8 +511,8 @@ async function checkUnsyncedOrders() {
     .where(
       and(
         eq(orders.fanfareSynced, false),
-        lt(orders.createdAt, new Date(Date.now() - 30 * 60 * 1000)), // 30+ minutes old
-      ),
+        lt(orders.createdAt, new Date(Date.now() - 30 * 60 * 1000)) // 30+ minutes old
+      )
     );
 
   if (unsynced.length > 0) {

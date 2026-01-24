@@ -1,8 +1,3 @@
----
-title: Custom Platform Integration Guide
-description: Integrate Fanfare experiences with any e-commerce platform or custom system.
----
-
 # Custom Platform Integration Guide
 
 Learn how to integrate Fanfare experiences with any e-commerce platform or custom-built system.
@@ -74,9 +69,7 @@ export const fanfareConfig = {
 // Validate configuration on startup
 export function validateConfig() {
   const required = ["organizationId", "secretKey", "publicKey"];
-  const missing = required.filter(
-    (key) => !fanfareConfig[key as keyof typeof fanfareConfig],
-  );
+  const missing = required.filter((key) => !fanfareConfig[key as keyof typeof fanfareConfig]);
 
   if (missing.length > 0) {
     throw new Error(`Missing Fanfare configuration: ${missing.join(", ")}`);
@@ -127,9 +120,7 @@ export class FanfareAPI {
     });
 
     if (!response.ok) {
-      const error = await response
-        .json()
-        .catch(() => ({ message: "Unknown error" }));
+      const error = await response.json().catch(() => ({ message: "Unknown error" }));
       throw new FanfareAPIError(response.status, error.message, error.code);
     }
 
@@ -182,7 +173,7 @@ export class FanfareAPIError extends Error {
   constructor(
     public status: number,
     message: string,
-    public code?: string,
+    public code?: string
   ) {
     super(message);
     this.name = "FanfareAPIError";
@@ -273,11 +264,7 @@ export const fanfareOrders = pgTable("fanfare_orders", {
       <h1>Limited Edition Product</h1>
 
       <!-- Fanfare Experience Container -->
-      <div
-        id="fanfare-container"
-        data-experience-id="exp_abc123"
-        data-product-id="prod_xyz789"
-      ></div>
+      <div id="fanfare-container" data-experience-id="exp_abc123" data-product-id="prod_xyz789"></div>
 
       <!-- Add to Cart (initially hidden/disabled) -->
       <form id="add-to-cart-form" class="hidden">
@@ -383,19 +370,13 @@ export const fanfareOrders = pgTable("fanfare_orders", {
 
       startCountdown(startDate);
     } else {
-      container.innerHTML =
-        '<div class="fanfare-not-started">' +
-        "<p>Experience not yet available.</p>" +
-        "</div>";
+      container.innerHTML = '<div class="fanfare-not-started">' + "<p>Experience not yet available.</p>" + "</div>";
     }
   }
 
   function renderLoading(container) {
     container.innerHTML =
-      '<div class="fanfare-loading">' +
-      '<div class="spinner"></div>' +
-      "<p>Connecting to experience...</p>" +
-      "</div>";
+      '<div class="fanfare-loading">' + '<div class="spinner"></div>' + "<p>Connecting to experience...</p>" + "</div>";
   }
 
   function renderWaiting(container, state) {
@@ -464,10 +445,7 @@ export const fanfareOrders = pgTable("fanfare_orders", {
 
   function renderCompleted(container) {
     container.innerHTML =
-      '<div class="fanfare-completed">' +
-      '<div class="success-icon">✓</div>' +
-      "<h3>Purchase Complete</h3>" +
-      "</div>";
+      '<div class="fanfare-completed">' + '<div class="success-icon">✓</div>' + "<h3>Purchase Complete</h3>" + "</div>";
   }
 
   function renderError(container, error) {
@@ -482,12 +460,7 @@ export const fanfareOrders = pgTable("fanfare_orders", {
   }
 
   function renderDefault(container, stage) {
-    container.innerHTML =
-      '<div class="fanfare-status">' +
-      "<p>Status: " +
-      stage +
-      "</p>" +
-      "</div>";
+    container.innerHTML = '<div class="fanfare-status">' + "<p>Status: " + stage + "</p>" + "</div>";
   }
 
   // Helper functions
@@ -544,9 +517,7 @@ export const fanfareOrders = pgTable("fanfare_orders", {
       }
 
       var days = Math.floor(distance / (1000 * 60 * 60 * 24));
-      var hours = Math.floor(
-        (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60),
-      );
+      var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
       var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
       var seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
@@ -580,8 +551,7 @@ export const fanfareOrders = pgTable("fanfare_orders", {
       var minutes = Math.floor(distance / (1000 * 60));
       var seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-      countdownEl.innerHTML =
-        minutes + ":" + seconds.toString().padStart(2, "0");
+      countdownEl.innerHTML = minutes + ":" + seconds.toString().padStart(2, "0");
 
       setTimeout(update, 1000);
     }
@@ -614,12 +584,7 @@ interface AdmissionData {
   expiresAt: number;
 }
 
-export function FanfareExperience({
-  experienceId,
-  productId,
-  onAdmitted,
-  onExpired,
-}: FanfareExperienceProps) {
+export function FanfareExperience({ experienceId, productId, onAdmitted, onExpired }: FanfareExperienceProps) {
   const { journey, state, status, start } = useExperienceJourney(experienceId, {
     autoStart: true,
   });
@@ -650,19 +615,11 @@ export function FanfareExperience({
 
     case "waiting":
       return (
-        <WaitingState
-          position={snapshot?.context?.position}
-          estimatedWait={snapshot?.context?.estimatedWaitSeconds}
-        />
+        <WaitingState position={snapshot?.context?.position} estimatedWait={snapshot?.context?.estimatedWaitSeconds} />
       );
 
     case "admitted":
-      return (
-        <AdmittedState
-          expiresAt={snapshot?.context?.admittanceExpiresAt}
-          onExpired={onExpired}
-        />
-      );
+      return <AdmittedState expiresAt={snapshot?.context?.admittanceExpiresAt} onExpired={onExpired} />;
 
     case "completed":
       return <CompletedState />;
@@ -720,13 +677,7 @@ function LoadingState() {
   );
 }
 
-function WaitingState({
-  position,
-  estimatedWait,
-}: {
-  position?: number;
-  estimatedWait?: number;
-}) {
+function WaitingState({ position, estimatedWait }: { position?: number; estimatedWait?: number }) {
   return (
     <div className="fanfare-waiting">
       <div className="queue-position">
@@ -742,13 +693,7 @@ function WaitingState({
   );
 }
 
-function AdmittedState({
-  expiresAt,
-  onExpired,
-}: {
-  expiresAt?: number;
-  onExpired: () => void;
-}) {
+function AdmittedState({ expiresAt, onExpired }: { expiresAt?: number; onExpired: () => void }) {
   const [timeRemaining, setTimeRemaining] = useState("");
 
   useEffect(() => {
@@ -789,13 +734,7 @@ function CompletedState() {
   );
 }
 
-function ErrorState({
-  message,
-  onRetry,
-}: {
-  message?: string;
-  onRetry: () => void;
-}) {
+function ErrorState({ message, onRetry }: { message?: string; onRetry: () => void }) {
   return (
     <div className="fanfare-error">
       <h3>Something went wrong</h3>
@@ -837,11 +776,7 @@ interface FanfareAdmission {
   expiresAt: number;
 }
 
-export async function validateFanfareAdmission(
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) {
+export async function validateFanfareAdmission(req: Request, res: Response, next: NextFunction) {
   const admissionData = req.body.fanfareAdmission;
 
   if (!admissionData) {
@@ -851,10 +786,7 @@ export async function validateFanfareAdmission(
 
   let admission: FanfareAdmission;
   try {
-    admission =
-      typeof admissionData === "string"
-        ? JSON.parse(admissionData)
-        : admissionData;
+    admission = typeof admissionData === "string" ? JSON.parse(admissionData) : admissionData;
   } catch {
     return res.status(400).json({
       error: "INVALID_ADMISSION_DATA",
@@ -1006,10 +938,7 @@ router.post("/complete-order/:orderId", async (req, res) => {
     }
 
     // Update main order status
-    await db
-      .update(orders)
-      .set({ status: "completed" })
-      .where(eq(orders.id, orderId));
+    await db.update(orders).set({ status: "completed" }).where(eq(orders.id, orderId));
 
     res.json({ success: true });
   } catch (error) {
@@ -1021,9 +950,7 @@ router.post("/complete-order/:orderId", async (req, res) => {
   }
 });
 
-function calculateTotal(
-  items: Array<{ price: number; quantity: number }>,
-): number {
+function calculateTotal(items: Array<{ price: number; quantity: number }>): number {
   return items.reduce((sum, item) => sum + item.price * item.quantity, 0);
 }
 
@@ -1045,60 +972,53 @@ const router = express.Router();
 
 // Verify webhook signature
 function verifySignature(payload: string, signature: string): boolean {
-  const expected = crypto
-    .createHmac("sha256", fanfareConfig.webhookSecret)
-    .update(payload)
-    .digest("hex");
+  const expected = crypto.createHmac("sha256", fanfareConfig.webhookSecret).update(payload).digest("hex");
 
   return crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expected));
 }
 
-router.post(
-  "/",
-  express.raw({ type: "application/json" }),
-  async (req, res) => {
-    const signature = req.headers["x-fanfare-signature"] as string;
-    const payload = req.body.toString();
+router.post("/", express.raw({ type: "application/json" }), async (req, res) => {
+  const signature = req.headers["x-fanfare-signature"] as string;
+  const payload = req.body.toString();
 
-    if (!signature || !verifySignature(payload, signature)) {
-      return res.status(401).json({ error: "Invalid signature" });
+  if (!signature || !verifySignature(payload, signature)) {
+    return res.status(401).json({ error: "Invalid signature" });
+  }
+
+  const event = JSON.parse(payload);
+
+  try {
+    switch (event.type) {
+      case "admission.created":
+        await handleAdmissionCreated(event.data);
+        break;
+
+      case "admission.expired":
+        await handleAdmissionExpired(event.data);
+        break;
+
+      case "admission.completed":
+        await handleAdmissionCompleted(event.data);
+        break;
+
+      case "experience.started":
+        await handleExperienceStarted(event.data);
+        break;
+
+      case "experience.ended":
+        await handleExperienceEnded(event.data);
+        break;
+
+      default:
+        console.log("Unhandled Fanfare event:", event.type);
     }
 
-    const event = JSON.parse(payload);
-
-    try {
-      switch (event.type) {
-        case "admission.created":
-          await handleAdmissionCreated(event.data);
-          break;
-
-        case "admission.expired":
-          await handleAdmissionExpired(event.data);
-          break;
-
-        case "admission.completed":
-          await handleAdmissionCompleted(event.data);
-          break;
-
-        case "experience.started":
-          await handleExperienceStarted(event.data);
-          break;
-
-        case "experience.ended":
-          await handleExperienceEnded(event.data);
-          break;
-
-        default:
-          console.log("Unhandled Fanfare event:", event.type);
-      }
-
-      res.json({ received: true });
-    } catch (error) {
-      console.error("Webhook handler error:", error);
-      res.status(500).json({ error: "Handler failed" });
-    }
-  },
-);
+    res.json({ received: true });
+  } catch (error) {
+    console.error("Webhook handler error:", error);
+    res.status(500).json({ error: "Handler failed" });
+  }
+});
 
 async function handleAdmissionCreated(data: AdmissionEvent) {
   // Track admission for analytics
@@ -1115,10 +1035,7 @@ async function handleAdmissionCreated(data: AdmissionEvent) {
 }
 
 async function handleAdmissionExpired(data: AdmissionEvent) {
-  await db
-    .update(fanfareAdmissions)
-    .set({ status: "expired" })
-    .where(eq(fanfareAdmissions.id, data.admissionId));
+  await db.update(fanfareAdmissions).set({ status: "expired" }).where(eq(fanfareAdmissions.id, data.admissionId));
 
   // Optionally notify customer
   // await sendAdmissionExpiredEmail(data.consumerId);
@@ -1306,10 +1223,7 @@ export default router;
 ### 1. Handle Network Failures Gracefully
 
 ```typescript
-async function safeCompleteAdmission(
-  params: CompleteAdmissionParams,
-  maxRetries = 3,
-) {
+async function safeCompleteAdmission(params: CompleteAdmissionParams, maxRetries = 3) {
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
       await fanfareAPI.completeAdmission(params);
@@ -1330,16 +1244,10 @@ async function safeCompleteAdmission(
 ### 2. Implement Idempotency
 
 ```typescript
-async function completeAdmissionIdempotent(
-  orderId: string,
-  params: CompleteAdmissionParams,
-) {
+async function completeAdmissionIdempotent(orderId: string, params: CompleteAdmissionParams) {
   // Check if already completed
   const existing = await db.query.fanfareOrders.findFirst({
-    where: and(
-      eq(fanfareOrders.orderId, orderId),
-      eq(fanfareOrders.fanfareCompleted, true),
-    ),
+    where: and(eq(fanfareOrders.orderId, orderId), eq(fanfareOrders.fanfareCompleted, true)),
   });
 
   if (existing) {

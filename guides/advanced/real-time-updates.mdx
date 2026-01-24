@@ -1,8 +1,3 @@
----
-title: Real-Time Updates Guide
-description: Implement real-time updates for live queue positions, stock levels, and state changes.
----
-
 # Real-Time Updates Guide
 
 Learn how to implement real-time updates in your Fanfare integration for live queue positions, stock levels, and experience state changes.
@@ -45,10 +40,7 @@ Real-time updates keep your users informed about their queue position, remaining
 The Fanfare React SDK provides automatic real-time updates through hooks:
 
 ```tsx
-import {
-  useExperienceJourney,
-  useFanfare,
-} from "@waitify-io/fanfare-sdk-react";
+import { useExperienceJourney, useFanfare } from "@waitify-io/fanfare-sdk-react";
 
 function QueueExperience({ experienceId }: { experienceId: string }) {
   const { state, journey } = useExperienceJourney(experienceId, {
@@ -70,23 +62,14 @@ function QueueExperience({ experienceId }: { experienceId: string }) {
 
   return (
     <div className="queue-display">
-      <PositionDisplay
-        position={snapshot?.context?.position}
-        lastUpdate={state?.lastUpdate}
-      />
+      <PositionDisplay position={snapshot?.context?.position} lastUpdate={state?.lastUpdate} />
       <EstimatedWait seconds={snapshot?.context?.estimatedWaitSeconds} />
       <QueueStatus stage={snapshot?.sequenceStage} />
     </div>
   );
 }
 
-function PositionDisplay({
-  position,
-  lastUpdate,
-}: {
-  position?: number;
-  lastUpdate?: number;
-}) {
+function PositionDisplay({ position, lastUpdate }: { position?: number; lastUpdate?: number }) {
   const [isUpdating, setIsUpdating] = useState(false);
 
   // Show update animation when position changes
@@ -100,9 +83,7 @@ function PositionDisplay({
     <div className={`position-display ${isUpdating ? "updating" : ""}`}>
       <span className="position">{position ?? "--"}</span>
       <span className="label">Your position</span>
-      {lastUpdate && (
-        <span className="last-update">Updated {formatTimeAgo(lastUpdate)}</span>
-      )}
+      {lastUpdate && <span className="last-update">Updated {formatTimeAgo(lastUpdate)}</span>}
     </div>
   );
 }
@@ -294,10 +275,7 @@ router.get("/queue/:experienceId", async (req, res) => {
 });
 
 // Publish updates from your application
-export async function publishQueueUpdate(
-  experienceId: string,
-  update: QueueUpdate,
-) {
+export async function publishQueueUpdate(experienceId: string, update: QueueUpdate) {
   await redis.publish(`queue:${experienceId}:updates`, JSON.stringify(update));
 }
 
@@ -469,9 +447,7 @@ export function setupWebSocketServer(server: http.Server) {
         const parsed = JSON.parse(message.toString());
         await handleClientMessage(connectionId, parsed);
       } catch (error) {
-        ws.send(
-          JSON.stringify({ type: "error", message: "Invalid message format" }),
-        );
+        ws.send(JSON.stringify({ type: "error", message: "Invalid message format" }));
       }
     });
 
@@ -497,10 +473,7 @@ export function setupWebSocketServer(server: http.Server) {
   return wss;
 }
 
-async function handleClientMessage(
-  connectionId: string,
-  message: { type: string; data?: Record<string, unknown> },
-) {
+async function handleClientMessage(connectionId: string, message: { type: string; data?: Record<string, unknown> }) {
   const connection = connections.get(connectionId);
   if (!connection) return;
 
@@ -510,13 +483,8 @@ async function handleClientMessage(
       break;
 
     case "refresh":
-      const state = await getQueueState(
-        connection.experienceId,
-        connection.consumerId,
-      );
-      connection.ws.send(
-        JSON.stringify({ type: "state_refresh", data: state }),
-      );
+      const state = await getQueueState(connection.experienceId, connection.consumerId);
+      connection.ws.send(JSON.stringify({ type: "state_refresh", data: state }));
       break;
   }
 }
@@ -544,18 +512,11 @@ function subscribeToUpdates() {
 }
 
 // Publish updates
-export function broadcastQueueUpdate(
-  experienceId: string,
-  update: Record<string, unknown>,
-) {
+export function broadcastQueueUpdate(experienceId: string, update: Record<string, unknown>) {
   redis.publish(`queue:${experienceId}:updates`, JSON.stringify(update));
 }
 
-export function sendToConsumer(
-  experienceId: string,
-  consumerId: string,
-  update: Record<string, unknown>,
-) {
+export function sendToConsumer(experienceId: string, consumerId: string, update: Record<string, unknown>) {
   const connectionId = `${consumerId}:${experienceId}`;
   const connection = connections.get(connectionId);
 
@@ -713,40 +674,37 @@ export function useOptimisticUpdate<T>(initialValue: T) {
     error: null,
   });
 
-  const update = useCallback(
-    async (optimisticValue: T, updateFn: () => Promise<T>) => {
-      // Set optimistic value immediately
-      setState((prev) => ({
-        ...prev,
-        pending: optimisticValue,
+  const update = useCallback(async (optimisticValue: T, updateFn: () => Promise<T>) => {
+    // Set optimistic value immediately
+    setState((prev) => ({
+      ...prev,
+      pending: optimisticValue,
+      error: null,
+    }));
+
+    try {
+      // Perform actual update
+      const result = await updateFn();
+
+      // Confirm with server response
+      setState({
+        current: result,
+        pending: null,
         error: null,
+      });
+
+      return result;
+    } catch (error) {
+      // Rollback on error
+      setState((prev) => ({
+        current: prev.current,
+        pending: null,
+        error: error instanceof Error ? error : new Error("Update failed"),
       }));
 
-      try {
-        // Perform actual update
-        const result = await updateFn();
-
-        // Confirm with server response
-        setState({
-          current: result,
-          pending: null,
-          error: null,
-        });
-
-        return result;
-      } catch (error) {
-        // Rollback on error
-        setState((prev) => ({
-          current: prev.current,
-          pending: null,
-          error: error instanceof Error ? error : new Error("Update failed"),
-        }));
-
-        throw error;
-      }
-    },
-    [],
-  );
+      throw error;
+    }
+  }, []);
 
   // Return the optimistic value if pending, otherwise current
   const value = state.pending ?? state.current;
@@ -756,8 +714,7 @@ export function useOptimisticUpdate<T>(initialValue: T) {
     isPending: state.pending !== null,
     error: state.error,
     update,
-    reset: () =>
-      setState({ current: state.current, pending: null, error: null }),
+    reset: () => setState({ current: state.current, pending: null, error: null }),
   };
 }
 
@@ -768,7 +725,7 @@ function AddToCartButton({ productId }: { productId: string }) {
   const handleAddToCart = async () => {
     await update(
       cartCount + 1, // Optimistic value
-      () => addToCartAPI(productId), // Actual API call
+      () => addToCartAPI(productId) // Actual API call
     );
   };
 
@@ -794,11 +751,7 @@ interface AnimatedValueProps {
   formatFn?: (value: number) => string;
 }
 
-export function AnimatedValue({
-  value,
-  duration = 500,
-  formatFn = String,
-}: AnimatedValueProps) {
+export function AnimatedValue({ value, duration = 500, formatFn = String }: AnimatedValueProps) {
   const [displayValue, setDisplayValue] = useState(value);
   const previousValueRef = useRef(value);
 
@@ -833,11 +786,7 @@ export function AnimatedValue({
 function QueuePosition({ position }: { position: number }) {
   return (
     <div className="queue-position">
-      <AnimatedValue
-        value={position}
-        duration={800}
-        formatFn={(v) => v.toLocaleString()}
-      />
+      <AnimatedValue value={position} duration={800} formatFn={(v) => v.toLocaleString()} />
     </div>
   );
 }
@@ -883,10 +832,7 @@ function StockCounter({ productId }: { productId: string }) {
 // hooks/useBatchedUpdates.ts
 import { useState, useCallback, useRef, useEffect } from "react";
 
-export function useBatchedUpdates<T>(
-  initialValue: T,
-  batchInterval: number = 100,
-) {
+export function useBatchedUpdates<T>(initialValue: T, batchInterval: number = 100) {
   const [value, setValue] = useState(initialValue);
   const pendingUpdateRef = useRef<T | null>(null);
   const timeoutRef = useRef<NodeJS.Timeout>();
@@ -905,7 +851,7 @@ export function useBatchedUpdates<T>(
         }, batchInterval);
       }
     },
-    [batchInterval],
+    [batchInterval]
   );
 
   useEffect(() => {
@@ -944,11 +890,7 @@ function VirtualizedQueueList({ entries }: { entries: QueueEntry[] }) {
   });
 
   return (
-    <div
-      ref={parentRef}
-      className="queue-list-container"
-      style={{ height: "400px", overflow: "auto" }}
-    >
+    <div ref={parentRef} className="queue-list-container" style={{ height: "400px", overflow: "auto" }}>
       <div
         style={{
           height: `${virtualizer.getTotalSize()}px`,
@@ -987,23 +929,17 @@ function useRealTimeWithFallback(experienceId: string) {
   const [usePolling, setUsePolling] = useState(false);
 
   // Try WebSocket first
-  const { isConnected, lastMessage } = useWebSocket(
-    `wss://api.fanfare.io/ws/queue?experienceId=${experienceId}`,
-    {
-      onError: () => setUsePolling(true),
-      reconnect: false,
-    },
-  );
+  const { isConnected, lastMessage } = useWebSocket(`wss://api.fanfare.io/ws/queue?experienceId=${experienceId}`, {
+    onError: () => setUsePolling(true),
+    reconnect: false,
+  });
 
   // Fall back to polling
-  const { data: polledData } = useAdaptivePolling(
-    () => fetchQueueState(experienceId),
-    {
-      enabled: usePolling || !isConnected,
-      minInterval: 5000,
-      maxInterval: 30000,
-    },
-  );
+  const { data: polledData } = useAdaptivePolling(() => fetchQueueState(experienceId), {
+    enabled: usePolling || !isConnected,
+    minInterval: 5000,
+    maxInterval: 30000,
+  });
 
   return isConnected ? lastMessage : polledData;
 }
@@ -1014,9 +950,7 @@ function useRealTimeWithFallback(experienceId: string) {
 ```tsx
 function ConnectionIndicator({ isConnected }: { isConnected: boolean }) {
   return (
-    <div
-      className={`connection-indicator ${isConnected ? "connected" : "disconnected"}`}
-    >
+    <div className={`connection-indicator ${isConnected ? "connected" : "disconnected"}`}>
       <span className="dot" />
       <span className="label">{isConnected ? "Live" : "Reconnecting..."}</span>
     </div>
@@ -1028,10 +962,7 @@ function ConnectionIndicator({ isConnected }: { isConnected: boolean }) {
 
 ```typescript
 // Prevent overwhelming the client with updates
-function createRateLimitedHandler(
-  handler: (data: unknown) => void,
-  minInterval: number,
-) {
+function createRateLimitedHandler(handler: (data: unknown) => void, minInterval: number) {
   let lastCall = 0;
   let pendingData: unknown = null;
   let timeoutId: NodeJS.Timeout | null = null;

@@ -1,8 +1,3 @@
----
-title: Webhooks Guide
-description: Receive and process Fanfare webhooks for real-time event notifications.
----
-
 # Webhooks Guide
 
 Learn how to receive and process Fanfare webhooks for real-time event notifications.
@@ -131,7 +126,7 @@ router.use(
     verify: (req, res, buf) => {
       (req as { rawBody?: Buffer }).rawBody = buf;
     },
-  }),
+  })
 );
 
 // Verify webhook signature
@@ -152,16 +147,10 @@ function verifySignature(payload: string | Buffer, signature: string): boolean {
 
   // Compute expected signature
   const signedPayload = `${timestamp}.${payload}`;
-  const expectedSig = crypto
-    .createHmac("sha256", WEBHOOK_SECRET)
-    .update(signedPayload)
-    .digest("hex");
+  const expectedSig = crypto.createHmac("sha256", WEBHOOK_SECRET).update(signedPayload).digest("hex");
 
   // Constant-time comparison
-  return crypto.timingSafeEqual(
-    Buffer.from(receivedSig),
-    Buffer.from(expectedSig),
-  );
+  return crypto.timingSafeEqual(Buffer.from(receivedSig), Buffer.from(expectedSig));
 }
 
 router.post("/", async (req, res) => {
@@ -212,10 +201,7 @@ async function getRawBody(req: NextApiRequest): Promise<string> {
   return Buffer.concat(chunks).toString("utf8");
 }
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse,
-) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
@@ -245,15 +231,9 @@ function verifySignature(payload: string, signature: string): boolean {
   if (!timestamp || !receivedSig) return false;
 
   const signedPayload = `${timestamp}.${payload}`;
-  const expectedSig = crypto
-    .createHmac("sha256", WEBHOOK_SECRET)
-    .update(signedPayload)
-    .digest("hex");
+  const expectedSig = crypto.createHmac("sha256", WEBHOOK_SECRET).update(signedPayload).digest("hex");
 
-  return crypto.timingSafeEqual(
-    Buffer.from(receivedSig),
-    Buffer.from(expectedSig),
-  );
+  return crypto.timingSafeEqual(Buffer.from(receivedSig), Buffer.from(expectedSig));
 }
 ```
 
@@ -315,10 +295,7 @@ export async function processWebhookEvent(event: WebhookEvent) {
 }
 
 async function routeWebhookEvent(event: WebhookEvent) {
-  const handlers: Record<
-    string,
-    (data: WebhookEvent["data"]) => Promise<void>
-  > = {
+  const handlers: Record<string, (data: WebhookEvent["data"]) => Promise<void>> = {
     // Queue events
     "queue.consumer_entered": handleConsumerEntered,
     "queue.consumer_admitted": handleConsumerAdmitted,
@@ -371,13 +348,7 @@ interface ConsumerAdmittedData {
 }
 
 async function handleConsumerAdmitted(data: ConsumerAdmittedData) {
-  const {
-    consumerId,
-    experienceId,
-    distributionId,
-    admissionToken,
-    expiresAt,
-  } = data;
+  const { consumerId, experienceId, distributionId, admissionToken, expiresAt } = data;
 
   // Store admission record
   await db.insert(admissions).values({
@@ -434,12 +405,7 @@ async function handleAdmissionCompleted(data: AdmissionCompletedData) {
       completedAt: new Date(completedAt),
       orderId,
     })
-    .where(
-      and(
-        eq(admissions.consumerId, consumerId),
-        eq(admissions.experienceId, experienceId),
-      ),
-    );
+    .where(and(eq(admissions.consumerId, consumerId), eq(admissions.experienceId, experienceId)));
 
   // Track conversion
   await analytics.track("admission_converted", {
@@ -466,12 +432,7 @@ async function handleAdmissionExpired(data: AdmissionExpiredData) {
       status: "expired",
       expiredAt: new Date(expiredAt),
     })
-    .where(
-      and(
-        eq(admissions.consumerId, consumerId),
-        eq(admissions.experienceId, experienceId),
-      ),
-    );
+    .where(and(eq(admissions.consumerId, consumerId), eq(admissions.experienceId, experienceId)));
 
   // Release any reserved inventory
   await releaseReservations(consumerId, experienceId);
@@ -610,7 +571,7 @@ async function processDeadLetterQueue() {
   const deadLetters = await db.query.webhookDeadLetterQueue.findMany({
     where: and(
       lt(webhookDeadLetterQueue.retryCount, 3),
-      lt(webhookDeadLetterQueue.failedAt, new Date(Date.now() - 3600000)),
+      lt(webhookDeadLetterQueue.failedAt, new Date(Date.now() - 3600000))
     ),
     limit: 10,
   });
@@ -621,9 +582,7 @@ async function processDeadLetterQueue() {
       await processWebhookEvent(event);
 
       // Remove from dead letter queue
-      await db
-        .delete(webhookDeadLetterQueue)
-        .where(eq(webhookDeadLetterQueue.id, item.id));
+      await db.delete(webhookDeadLetterQueue).where(eq(webhookDeadLetterQueue.id, item.id));
     } catch (error) {
       // Increment retry count
       await db
@@ -703,7 +662,7 @@ describe("handleConsumerAdmitted", () => {
     expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
       expect.objectContaining({
         template: "admission-granted",
-      }),
+      })
     );
   });
 });
@@ -804,11 +763,7 @@ async function handleWithOrdering(event: WebhookEvent) {
 
 ```typescript
 // Track webhook metrics
-async function recordWebhookMetrics(
-  event: WebhookEvent,
-  processingTime: number,
-  success: boolean,
-) {
+async function recordWebhookMetrics(event: WebhookEvent, processingTime: number, success: boolean) {
   await metrics.record("webhook_processed", {
     eventType: event.type,
     success,
