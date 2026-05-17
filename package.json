@@ -10,7 +10,7 @@
     "update": "mintlify update"
   },
   "devDependencies": {
-    "mintlify": "^4.2.0"
+    "mintlify": "^4.2.566"
   },
   "engines": {
     "node": ">=18.0.0 <25.0.0"
