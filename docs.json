@@ -195,27 +195,346 @@
             ]
           },
           {
-            "group": "Consumer API",
-            "pages": [
-              "api/consumer-api/overview",
-              "api/consumer-api/experiences",
-              "api/consumer-api/queue",
-              "api/consumer-api/auction",
-              "api/consumer-api/lottery",
-              "api/consumer-api/consumer"
-            ]
-          },
-          {
             "group": "Admin API",
             "pages": [
               "api/admin-api/overview",
-              "api/admin-api/experiences",
-              "api/admin-api/consumers",
-              "api/admin-api/analytics",
-              "api/admin-api/audiences",
-              "api/admin-api/products",
-              "api/admin-api/organizations",
-              "api/admin-api/distributions"
+              {
+                "group": "Analytics",
+                "pages": [
+                  "api/openapi/admin-api.json POST /analytics/query"
+                ]
+              },
+              {
+                "group": "Audiences",
+                "pages": [
+                  "api/openapi/admin-api.json GET /audiences",
+                  "api/openapi/admin-api.json POST /audiences",
+                  "api/openapi/admin-api.json GET /audiences/{audienceId}",
+                  "api/openapi/admin-api.json PUT /audiences/{audienceId}",
+                  "api/openapi/admin-api.json DELETE /audiences/{audienceId}",
+                  "api/openapi/admin-api.json GET /audiences/{audienceId}/count",
+                  "api/openapi/admin-api.json GET /audiences/{audienceId}/import",
+                  "api/openapi/admin-api.json POST /audiences/{audienceId}/import",
+                  "api/openapi/admin-api.json GET /audiences/{audienceId}/members",
+                  "api/openapi/admin-api.json POST /audiences/{audienceId}/members",
+                  "api/openapi/admin-api.json GET /audiences/{audienceId}/rules",
+                  "api/openapi/admin-api.json POST /audiences/{audienceId}/rules",
+                  "api/openapi/admin-api.json PUT /audiences/{audienceId}/rules",
+                  "api/openapi/admin-api.json GET /audiences/{audienceId}/rules/{ruleId}",
+                  "api/openapi/admin-api.json PUT /audiences/{audienceId}/rules/{ruleId}",
+                  "api/openapi/admin-api.json DELETE /audiences/{audienceId}/rules/{ruleId}",
+                  "api/openapi/admin-api.json GET /audiences/{audienceId}/status",
+                  "api/openapi/admin-api.json POST /audiences/{audienceId}/sync",
+                  "api/openapi/admin-api.json GET /audiences/groups/{groupId}",
+                  "api/openapi/admin-api.json DELETE /audiences/groups/{groupId}",
+                  "api/openapi/admin-api.json GET /audiences/groups/{groupId}/members",
+                  "api/openapi/admin-api.json POST /audiences/import/klaviyo",
+                  "api/openapi/admin-api.json POST /audiences/import/mailchimp",
+                  "api/openapi/admin-api.json POST /audiences/import/sendgrid",
+                  "api/openapi/admin-api.json POST /audiences/loyalty-tiers",
+                  "api/openapi/admin-api.json PUT /audiences/loyalty-tiers/{groupId}"
+                ]
+              },
+              {
+                "group": "Consumers",
+                "pages": [
+                  "api/openapi/admin-api.json GET /consumers",
+                  "api/openapi/admin-api.json GET /consumers/{id}",
+                  "api/openapi/admin-api.json PUT /consumers/{id}",
+                  "api/openapi/admin-api.json DELETE /consumers/{id}",
+                  "api/openapi/admin-api.json GET /consumers/{id}/audiences",
+                  "api/openapi/admin-api.json GET /consumers/{id}/loyalty-transactions",
+                  "api/openapi/admin-api.json GET /consumers/{id}/timeline",
+                  "api/openapi/admin-api.json POST /consumers/batch",
+                  "api/openapi/admin-api.json GET /consumers/distribution"
+                ]
+              },
+              {
+                "group": "Distributions",
+                "pages": [
+                  "api/openapi/admin-api.json GET /announcements",
+                  "api/openapi/admin-api.json POST /announcements",
+                  "api/openapi/admin-api.json GET /announcements/{id}",
+                  "api/openapi/admin-api.json PUT /announcements/{id}",
+                  "api/openapi/admin-api.json DELETE /announcements/{id}",
+                  "api/openapi/admin-api.json GET /appointments",
+                  "api/openapi/admin-api.json POST /appointments",
+                  "api/openapi/admin-api.json GET /appointments/{appointmentId}/slots",
+                  "api/openapi/admin-api.json GET /appointments/{appointmentId}/slots/{slotId}/attendees",
+                  "api/openapi/admin-api.json DELETE /appointments/{appointmentId}/slots/{slotId}/attendees/{consumerId}",
+                  "api/openapi/admin-api.json GET /appointments/{id}",
+                  "api/openapi/admin-api.json PUT /appointments/{id}",
+                  "api/openapi/admin-api.json DELETE /appointments/{id}",
+                  "api/openapi/admin-api.json GET /auctions",
+                  "api/openapi/admin-api.json POST /auctions",
+                  "api/openapi/admin-api.json GET /auctions/{id}",
+                  "api/openapi/admin-api.json PUT /auctions/{id}",
+                  "api/openapi/admin-api.json DELETE /auctions/{id}",
+                  "api/openapi/admin-api.json GET /draws",
+                  "api/openapi/admin-api.json POST /draws",
+                  "api/openapi/admin-api.json GET /draws/{id}",
+                  "api/openapi/admin-api.json PUT /draws/{id}",
+                  "api/openapi/admin-api.json DELETE /draws/{id}",
+                  "api/openapi/admin-api.json GET /queues",
+                  "api/openapi/admin-api.json POST /queues",
+                  "api/openapi/admin-api.json GET /queues/{id}",
+                  "api/openapi/admin-api.json PUT /queues/{id}",
+                  "api/openapi/admin-api.json DELETE /queues/{id}",
+                  "api/openapi/admin-api.json GET /scheduled-events",
+                  "api/openapi/admin-api.json GET /sequences",
+                  "api/openapi/admin-api.json POST /sequences",
+                  "api/openapi/admin-api.json GET /sequences/{sequenceId}",
+                  "api/openapi/admin-api.json PUT /sequences/{sequenceId}",
+                  "api/openapi/admin-api.json DELETE /sequences/{sequenceId}",
+                  "api/openapi/admin-api.json GET /sequences/{sequenceId}/metrics",
+                  "api/openapi/admin-api.json GET /sequences/{sequenceId}/order-limits",
+                  "api/openapi/admin-api.json POST /sequences/{sequenceId}/order-limits",
+                  "api/openapi/admin-api.json GET /sequences/{sequenceId}/order-limits/{limitId}",
+                  "api/openapi/admin-api.json PUT /sequences/{sequenceId}/order-limits/{limitId}",
+                  "api/openapi/admin-api.json DELETE /sequences/{sequenceId}/order-limits/{limitId}",
+                  "api/openapi/admin-api.json GET /sequences/{sequenceId}/products",
+                  "api/openapi/admin-api.json POST /sequences/{sequenceId}/products",
+                  "api/openapi/admin-api.json PUT /sequences/{sequenceId}/products",
+                  "api/openapi/admin-api.json GET /sequences/{sequenceId}/products/{productId}",
+                  "api/openapi/admin-api.json PUT /sequences/{sequenceId}/products/{productId}",
+                  "api/openapi/admin-api.json DELETE /sequences/{sequenceId}/products/{productId}",
+                  "api/openapi/admin-api.json GET /sequences/{sequenceId}/waitlist",
+                  "api/openapi/admin-api.json GET /sequences/{sequenceId}/waitlist/consumers",
+                  "api/openapi/admin-api.json POST /sequences/{sequenceId}/waitlist/enter",
+                  "api/openapi/admin-api.json GET /timed-releases",
+                  "api/openapi/admin-api.json POST /timed-releases",
+                  "api/openapi/admin-api.json GET /timed-releases/{id}",
+                  "api/openapi/admin-api.json PUT /timed-releases/{id}",
+                  "api/openapi/admin-api.json DELETE /timed-releases/{id}",
+                  "api/openapi/admin-api.json GET /waitlists",
+                  "api/openapi/admin-api.json POST /waitlists",
+                  "api/openapi/admin-api.json GET /waitlists/{id}",
+                  "api/openapi/admin-api.json PUT /waitlists/{id}",
+                  "api/openapi/admin-api.json DELETE /waitlists/{id}",
+                  "api/openapi/admin-api.json GET /waitlists/{id}/consumers",
+                  "api/openapi/admin-api.json GET /waitlists/{id}/export",
+                  "api/openapi/admin-api.json POST /waitlists/{id}/export",
+                  "api/openapi/admin-api.json GET /waitlists/{id}/export/{fileId}"
+                ]
+              },
+              {
+                "group": "Experiences",
+                "pages": [
+                  "api/openapi/admin-api.json GET /experience-pages",
+                  "api/openapi/admin-api.json POST /experience-pages",
+                  "api/openapi/admin-api.json GET /experience-pages/{id}",
+                  "api/openapi/admin-api.json PUT /experience-pages/{id}",
+                  "api/openapi/admin-api.json DELETE /experience-pages/{id}",
+                  "api/openapi/admin-api.json GET /experiences",
+                  "api/openapi/admin-api.json POST /experiences",
+                  "api/openapi/admin-api.json GET /experiences/{id}",
+                  "api/openapi/admin-api.json PUT /experiences/{id}",
+                  "api/openapi/admin-api.json DELETE /experiences/{id}",
+                  "api/openapi/admin-api.json GET /experiences/{id}/metrics"
+                ]
+              },
+              {
+                "group": "Organizations",
+                "pages": [
+                  "api/openapi/admin-api.json POST /organizations",
+                  "api/openapi/admin-api.json PUT /organizations",
+                  "api/openapi/admin-api.json GET /organizations/current",
+                  "api/openapi/admin-api.json GET /organizations/slug/availability"
+                ]
+              },
+              {
+                "group": "Products",
+                "pages": [
+                  "api/openapi/admin-api.json GET /products",
+                  "api/openapi/admin-api.json POST /products",
+                  "api/openapi/admin-api.json GET /products/{productId}",
+                  "api/openapi/admin-api.json PUT /products/{productId}",
+                  "api/openapi/admin-api.json DELETE /products/{productId}",
+                  "api/openapi/admin-api.json GET /products/{productId}/media-assets",
+                  "api/openapi/admin-api.json POST /products/{productId}/media-assets",
+                  "api/openapi/admin-api.json PUT /products/{productId}/media-assets/{assetId}",
+                  "api/openapi/admin-api.json DELETE /products/{productId}/media-assets/{assetId}",
+                  "api/openapi/admin-api.json PUT /products/{productId}/media-assets/reorder",
+                  "api/openapi/admin-api.json GET /products/{productId}/metrics",
+                  "api/openapi/admin-api.json GET /products/{productId}/variant-options",
+                  "api/openapi/admin-api.json POST /products/{productId}/variant-options",
+                  "api/openapi/admin-api.json DELETE /products/{productId}/variant-options/{optionId}",
+                  "api/openapi/admin-api.json GET /products/{productId}/variants",
+                  "api/openapi/admin-api.json POST /products/{productId}/variants",
+                  "api/openapi/admin-api.json GET /products/{productId}/variants/{variantId}",
+                  "api/openapi/admin-api.json PUT /products/{productId}/variants/{variantId}",
+                  "api/openapi/admin-api.json DELETE /products/{productId}/variants/{variantId}",
+                  "api/openapi/admin-api.json PATCH /products/{productId}/variants/{variantId}/inventory",
+                  "api/openapi/admin-api.json GET /products/{productId}/variants/{variantId}/media-assets",
+                  "api/openapi/admin-api.json POST /products/{productId}/variants/{variantId}/media-assets",
+                  "api/openapi/admin-api.json PUT /products/{productId}/variants/{variantId}/media-assets",
+                  "api/openapi/admin-api.json DELETE /products/{productId}/variants/{variantId}/media-assets/{mediaAssetId}",
+                  "api/openapi/admin-api.json PUT /products/{productId}/variants/{variantId}/media-assets/reorder",
+                  "api/openapi/admin-api.json PUT /products/{productId}/variants/{variantId}/option-assignments",
+                  "api/openapi/admin-api.json GET /products/{productId}/variants/available",
+                  "api/openapi/admin-api.json GET /products/search",
+                  "api/openapi/admin-api.json GET /variant-options",
+                  "api/openapi/admin-api.json POST /variant-options",
+                  "api/openapi/admin-api.json GET /variant-options/{optionId}",
+                  "api/openapi/admin-api.json PATCH /variant-options/{optionId}",
+                  "api/openapi/admin-api.json DELETE /variant-options/{optionId}",
+                  "api/openapi/admin-api.json POST /variant-options/{optionId}/get-or-create-value",
+                  "api/openapi/admin-api.json GET /variant-options/{optionId}/values",
+                  "api/openapi/admin-api.json POST /variant-options/{optionId}/values",
+                  "api/openapi/admin-api.json PATCH /variant-options/{optionId}/values/{valueId}",
+                  "api/openapi/admin-api.json DELETE /variant-options/{optionId}/values/{valueId}",
+                  "api/openapi/admin-api.json PUT /variant-options/{optionId}/values/reorder",
+                  "api/openapi/admin-api.json POST /variant-options/apply-templates",
+                  "api/openapi/admin-api.json PUT /variant-options/reorder"
+                ]
+              }
+            ]
+          },
+          {
+            "group": "Consumer API",
+            "pages": [
+              "api/consumer-api/overview",
+              {
+                "group": "Appointments",
+                "pages": [
+                  "api/openapi/consumer-api.json GET /appointments/{appointmentId}",
+                  "api/openapi/consumer-api.json POST /appointments/{appointmentId}/book",
+                  "api/openapi/consumer-api.json POST /appointments/{appointmentId}/cancel",
+                  "api/openapi/consumer-api.json GET /appointments/{appointmentId}/me",
+                  "api/openapi/consumer-api.json POST /appointments/{appointmentId}/reschedule",
+                  "api/openapi/consumer-api.json GET /appointments/{appointmentId}/slots"
+                ]
+              },
+              {
+                "group": "Auctions",
+                "pages": [
+                  "api/openapi/consumer-api.json GET /auctions/{auctionId}",
+                  "api/openapi/consumer-api.json POST /auctions/{auctionId}/bid",
+                  "api/openapi/consumer-api.json GET /auctions/{auctionId}/bids",
+                  "api/openapi/consumer-api.json GET /auctions/{auctionId}/bids/history",
+                  "api/openapi/consumer-api.json GET /auctions/{auctionId}/current-price",
+                  "api/openapi/consumer-api.json POST /auctions/{auctionId}/enter",
+                  "api/openapi/consumer-api.json GET /auctions/{auctionId}/highest-bid",
+                  "api/openapi/consumer-api.json GET /auctions/{auctionId}/status"
+                ]
+              },
+              {
+                "group": "Auth",
+                "pages": [
+                  "api/openapi/consumer-api.json POST /auth/external/authorize",
+                  "api/openapi/consumer-api.json POST /auth/external/exchange",
+                  "api/openapi/consumer-api.json POST /auth/guest",
+                  "api/openapi/consumer-api.json POST /auth/logout",
+                  "api/openapi/consumer-api.json POST /auth/otp/request",
+                  "api/openapi/consumer-api.json POST /auth/otp/verify",
+                  "api/openapi/consumer-api.json POST /auth/refresh"
+                ]
+              },
+              {
+                "group": "Consumers",
+                "pages": [
+                  "api/openapi/consumer-api.json GET /consumers/{id}",
+                  "api/openapi/consumer-api.json GET /consumers/me"
+                ]
+              },
+              {
+                "group": "Draws",
+                "pages": [
+                  "api/openapi/consumer-api.json GET /draws/{drawId}",
+                  "api/openapi/consumer-api.json POST /draws/{drawId}/complete",
+                  "api/openapi/consumer-api.json POST /draws/{drawId}/deny",
+                  "api/openapi/consumer-api.json POST /draws/{drawId}/enter",
+                  "api/openapi/consumer-api.json POST /draws/{drawId}/leave",
+                  "api/openapi/consumer-api.json GET /draws/{drawId}/status",
+                  "api/openapi/consumer-api.json POST /draws/{drawId}/validate"
+                ]
+              },
+              {
+                "group": "Experiences",
+                "pages": [
+                  "api/openapi/consumer-api.json GET /experiences/{experienceId}",
+                  "api/openapi/consumer-api.json POST /experiences/{experienceId}/enter",
+                  "api/openapi/consumer-api.json DELETE /experiences/{experienceId}/leave",
+                  "api/openapi/consumer-api.json POST /experiences/{experienceId}/route"
+                ]
+              },
+              {
+                "group": "Loyalty",
+                "pages": [
+                  "api/openapi/consumer-api.json GET /loyalty/balance",
+                  "api/openapi/consumer-api.json GET /loyalty/expirations",
+                  "api/openapi/consumer-api.json GET /loyalty/history"
+                ]
+              },
+              {
+                "group": "Organizations",
+                "pages": [
+                  "api/openapi/consumer-api.json GET /organizations/{organizationId}/settings"
+                ]
+              },
+              {
+                "group": "Queues",
+                "pages": [
+                  "api/openapi/consumer-api.json GET /queues/{queueId}",
+                  "api/openapi/consumer-api.json POST /queues/{queueId}/admit",
+                  "api/openapi/consumer-api.json POST /queues/{queueId}/complete",
+                  "api/openapi/consumer-api.json POST /queues/{queueId}/deny",
+                  "api/openapi/consumer-api.json POST /queues/{queueId}/enter",
+                  "api/openapi/consumer-api.json POST /queues/{queueId}/leave",
+                  "api/openapi/consumer-api.json GET /queues/{queueId}/status",
+                  "api/openapi/consumer-api.json POST /queues/{queueId}/validate"
+                ]
+              },
+              {
+                "group": "Timed Releases",
+                "pages": [
+                  "api/openapi/consumer-api.json GET /timed-releases/{timedReleaseId}",
+                  "api/openapi/consumer-api.json POST /timed-releases/{timedReleaseId}/complete",
+                  "api/openapi/consumer-api.json POST /timed-releases/{timedReleaseId}/enter",
+                  "api/openapi/consumer-api.json POST /timed-releases/{timedReleaseId}/leave",
+                  "api/openapi/consumer-api.json GET /timed-releases/{timedReleaseId}/status"
+                ]
+              },
+              {
+                "group": "Waitlists",
+                "pages": [
+                  "api/openapi/consumer-api.json POST /waitlists/{waitlistId}/enter",
+                  "api/openapi/consumer-api.json DELETE /waitlists/{waitlistId}/leave",
+                  "api/openapi/consumer-api.json GET /waitlists/{waitlistId}/status"
+                ]
+              }
+            ]
+          },
+          {
+            "group": "Checkout API",
+            "pages": [
+              "api/checkout-api/overview",
+              {
+                "group": "Checkout",
+                "pages": [
+                  "api/openapi/checkout-api.json POST /checkout"
+                ]
+              },
+              {
+                "group": "Payments",
+                "pages": [
+                  "api/openapi/checkout-api.json POST /payments/cancellations",
+                  "api/openapi/checkout-api.json POST /payments/refunds"
+                ]
+              }
+            ]
+          },
+          {
+            "group": "Beacon API",
+            "pages": [
+              "api/beacon-api/overview",
+              {
+                "group": "Events",
+                "pages": [
+                  "api/openapi/beacon-api.json POST /events",
+                  "api/openapi/beacon-api.json POST /events/batch"
+                ]
+              }
             ]
           },
           {
@@ -505,5 +824,28 @@
   },
   "search": {
     "prompt": "Search documentation..."
+  },
+  "api": {
+    "openapi": [
+      "api/openapi/admin-api.json",
+      "api/openapi/consumer-api.json",
+      "api/openapi/checkout-api.json",
+      "api/openapi/beacon-api.json"
+    ],
+    "playground": {
+      "display": "interactive"
+    },
+    "examples": {
+      "languages": [
+        "bash",
+        "javascript",
+        "python",
+        "go"
+      ],
+      "defaults": "required"
+    },
+    "params": {
+      "expanded": "closed"
+    }
   }
 }

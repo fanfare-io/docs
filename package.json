@@ -2,12 +2,17 @@
   "name": "@fanfare/docs",
   "version": "1.0.0",
   "private": true,
+  "packageManager": "pnpm@10.2.0",
   "description": "Fanfare documentation",
   "scripts": {
     "dev": "mintlify dev",
     "build": "mintlify validate",
     "broken-links": "mintlify broken-links",
-    "update": "mintlify update"
+    "update": "mintlify update",
+    "generate:openapi": "node scripts/generate-openapi.mjs",
+    "generate:openapi:local": "node scripts/generate-openapi.mjs --env local",
+    "generate:openapi:production": "node scripts/generate-openapi.mjs --env production",
+    "check:openapi": "mintlify openapi-check api/openapi/admin-api.json && mintlify openapi-check api/openapi/consumer-api.json && mintlify openapi-check api/openapi/checkout-api.json && mintlify openapi-check api/openapi/beacon-api.json"
   },
   "devDependencies": {
     "mintlify": "^4.2.0"

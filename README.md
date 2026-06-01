@@ -1,32 +1,57 @@
-# Mintlify Starter Kit
+# Fanfare Documentation
 
-Use the starter kit to get your docs deployed and ready to customize.
-
-Click the green **Use this template** button at the top of this repo to copy the Mintlify starter kit. The starter kit contains examples with
-
-- Guide pages
-- Navigation
-- Customizations
-- API reference pages
-- Use of popular components
-
-**[Follow the full quickstart guide](https://starter.mintlify.com/quickstart)**
+This repository contains the public Fanfare documentation site.
 
 ## Development
 
-Install the [Mintlify CLI](https://www.npmjs.com/package/mint) to preview your documentation changes locally. To install, use the following command:
-
-```
-npm i -g mint
-```
-
-Run the following command at the root of your documentation, where your `docs.json` is located:
-
-```
-mint dev
+```bash
+pnpm install
+pnpm dev
 ```
 
-View your local preview at `http://localhost:3000`.
+View the local preview at `http://localhost:3000`.
+
+## OpenAPI Reference
+
+API reference specs are generated from the Fanfare service OpenAPI output and committed as static files under `api/openapi/`.
+
+The preferred local flow is to export raw specs from `fanfare-mono`, then let this repo filter and format them for Mintlify:
+
+```bash
+# From fanfare-mono
+pnpm openapi:export --output ../docs/tmp/openapi-raw
+
+# From this repo
+node scripts/generate-openapi.mjs --env local \
+  --admin-url tmp/openapi-raw/admin-api.raw.json \
+  --consumer-url tmp/openapi-raw/consumer-api.raw.json \
+  --checkout-url tmp/openapi-raw/checkout-api.raw.json \
+  --beacon-url tmp/openapi-raw/beacon-api.raw.json
+
+pnpm check:openapi
+pnpm build
+pnpm broken-links
+```
+
+You can also generate from running local services when you want to inspect the hosted `/docs` pages directly. Start services with OpenAPI explicitly enabled:
+
+```bash
+OPENAPI_ENABLED=1 pnpm -F @fanfare-io/admin-app dev
+OPENAPI_ENABLED=1 pnpm -F @fanfare-io/consumer-app dev
+OPENAPI_ENABLED=1 pnpm -F @fanfare-io/checkout-app dev
+OPENAPI_ENABLED=1 pnpm -F @fanfare-io/beacon-app dev
+```
+
+Then refresh the docs specs:
+
+```bash
+pnpm generate:openapi:local
+pnpm check:openapi
+pnpm build
+pnpm broken-links
+```
+
+The generator applies a public allowlist before writing specs. Internal routes such as health checks, support tools, kill switches, reconciliation routes, and provider webhooks are not published. The sync workflow in `fanfare-mono` uses the exporter flow and opens a docs PR when API-related changes land.
 
 ## Publishing changes
 
