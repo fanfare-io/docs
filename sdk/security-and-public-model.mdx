@@ -1,0 +1,47 @@
+---
+title: Public Integration Model
+description: What public SDK docs intentionally expose and what your integration should not depend on.
+---
+
+# Public Integration Model
+
+These docs are public, so they describe only the contract your application needs in order to integrate safely.
+
+![Public integration model showing the public SDK contract customers can build against and private internals they should not infer.](/images/sdk/public-contract-boundary.webp)
+
+## What is public
+
+You can rely on:
+
+- Package names, exported SDK APIs, component props, and event names.
+- Public journey states such as `ready`, `routing`, `gated`, and `routed`.
+- Public sequence states such as `upcoming`, `active`, `participating`, `admitted`, and `denied`.
+- Public actions exposed by `JourneyView`, such as `start()`, `reroute()`, `enter()`, and `leave()`.
+- Component customization surfaces: theme, variant, slots, render props, callbacks, locale, and translation overrides.
+
+## What is not public
+
+Do not build against or document:
+
+- Private routing decisions or why one consumer received a particular path.
+- Private abuse-prevention or verification mechanics.
+- Internal cache, polling, queueing, retry, or storage implementation details.
+- Internal service topology or endpoint behavior not required by the SDK contract.
+- Any assumed ordering or timing that is not represented by the public state model.
+
+The SDK may ask the user to authenticate, provide an access code, complete an additional verification step, wait, participate, or proceed after admission. Your UI should respond to those states without trying to infer private decision logic.
+
+## Safe language for customer UI
+
+Prefer outcome-oriented language:
+
+| Instead of | Use |
+| --- | --- |
+| "Verification was triggered by signal X" | "Additional verification is required" |
+| "Access was denied because of rule X" | "Access is not available right now" |
+| "The queue let you through because..." | "You have been admitted" |
+| "Your current attempt count is X" | "Please try again later" |
+
+## Handling sensitive runtime values
+
+Admission grants and session-related values should be treated as sensitive runtime data. Use them only for the intended next step in your integration, such as opening checkout or passing control to your backend. Avoid logging them to analytics tools, browser consoles, customer support screenshots, or third-party error reports.

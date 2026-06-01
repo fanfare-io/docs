@@ -68,82 +68,51 @@
         ]
       },
       {
-        "tab": "SDK Reference",
+        "tab": "SDK",
         "groups": [
+          {
+            "group": "Start Here",
+            "pages": [
+              "sdk/overview",
+              "sdk/choose-your-path",
+              "sdk/security-and-public-model"
+            ]
+          },
           {
             "group": "Core SDK",
             "pages": [
-              "sdk/core/overview",
-              "sdk/core/initialization",
-              "sdk/core/client",
-              "sdk/core/experiences",
-              "sdk/core/consumers",
-              "sdk/core/events",
-              "sdk/core/state",
-              "sdk/core/errors",
-              "sdk/core/types"
+              "sdk/core/quickstart",
+              "sdk/core/journey-state",
+              "sdk/core/gates-and-auth",
+              "sdk/core/events-and-resume"
             ]
           },
           {
-            "group": "React SDK",
+            "group": "Components",
             "pages": [
-              "sdk/react/overview",
-              "sdk/react/provider",
-              "sdk/react/context"
+              "sdk/components/overview",
+              "sdk/components/react",
+              "sdk/components/theming",
+              "sdk/components/slots",
+              "sdk/components/i18n",
+              "sdk/components/web-components"
             ]
           },
           {
-            "group": "React Hooks",
+            "group": "Examples",
             "pages": [
-              "sdk/react/hooks/overview",
-              "sdk/react/hooks/use-queue",
-              "sdk/react/hooks/use-draw",
-              "sdk/react/hooks/use-auction",
-              "sdk/react/hooks/use-waitlist",
-              "sdk/react/hooks/use-timed-release",
-              "sdk/react/hooks/use-experience-journey"
+              "sdk/examples/core-headless",
+              "sdk/examples/react-widget",
+              "sdk/examples/react-custom-ui",
+              "sdk/examples/web-component"
             ]
           },
           {
-            "group": "React Widgets",
+            "group": "Reference",
             "pages": [
-              "sdk/react/widgets/overview",
-              "sdk/react/widgets/queue-widget",
-              "sdk/react/widgets/draw-widget",
-              "sdk/react/widgets/auction-widget",
-              "sdk/react/widgets/experience-widget",
-              "sdk/react/widgets/waitlist-widget",
-              "sdk/react/widgets/timed-release-widget"
-            ]
-          },
-          {
-            "group": "Customization",
-            "pages": [
-              "sdk/react/customization/theming",
-              "sdk/react/customization/styling",
-              "sdk/react/customization/i18n",
-              "sdk/react/customization/components",
-              "sdk/react/customization/headless"
-            ]
-          },
-          {
-            "group": "Solid SDK",
-            "pages": [
-              "sdk/solid/overview",
-              "sdk/solid/provider",
-              "sdk/solid/primitives",
-              "sdk/solid/components",
-              "sdk/solid/web-components"
-            ]
-          },
-          {
-            "group": "Migration",
-            "pages": [
-              "sdk/migration/overview",
-              "sdk/migration/v1-to-v2",
-              "sdk/migration/react-to-solid",
-              "sdk/migration/custom-to-widgets",
-              "sdk/migration/changelog"
+              "sdk/reference/configuration",
+              "sdk/reference/types",
+              "sdk/reference/testing"
             ]
           }
         ]

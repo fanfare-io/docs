@@ -1,0 +1,37 @@
+---
+title: Components Overview
+description: Use Fanfare's supported UI layer while keeping control over branding and key flows.
+---
+
+# Components Overview
+
+The component packages sit on top of the same journey contract as the core SDK. They do not create a separate integration model. They render the public journey state for you and expose customization points where your application needs control.
+
+![Fanfare component layering showing ExperienceWidget, useExperienceJourney, JourneyView, JourneySnapshot, and customization hooks.](/images/sdk/component-layering.webp)
+
+## Supported component entrypoint
+
+`ExperienceWidget` is the primary UI entrypoint for queue, draw, auction, timed release, appointment, waitlist, gated, admitted, denied, and error states.
+
+Do not start new integrations with standalone distribution widgets. The supported model is journey-first:
+
+- Use `ExperienceWidget` for drop-in UI.
+- Use slots for targeted replacement.
+- Use a render prop or `useExperienceJourney` for full custom UI.
+
+## Customization ladder
+
+| Level | Use for | API |
+| --- | --- | --- |
+| Theme | Brand colors, typography, and imagery. | `theme`, `ThemeProvider` |
+| Variant | Packaged presentation style. | `variant` |
+| i18n | Button labels, messages, and locale. | `locale`, `translations`, `I18nProvider` |
+| Slots | Replace specific journey states while keeping default behavior. | `slots` |
+| Render prop | Replace the whole widget UI for one instance. | `children` |
+| Hook | Build your own component tree. | `useExperienceJourney` |
+
+## React or web components
+
+Use [React Components](/sdk/components/react) when your application is React and you want TypeScript props, hooks, and direct slot rendering.
+
+Use [Web Components](/sdk/components/web-components) when you need a custom element that can run inside static HTML, a CMS, or another framework.

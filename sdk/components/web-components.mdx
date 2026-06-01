@@ -1,0 +1,108 @@
+---
+title: Web Components
+description: Embed Fanfare with a framework-agnostic custom element.
+---
+
+# Web Components
+
+Use web components when you need to embed Fanfare into static HTML, a CMS, or a host framework where mounting React is not practical.
+
+## Install
+
+```bash
+pnpm add @fanfare-io/fanfare-sdk-core @fanfare-io/fanfare-sdk-solid solid-js
+```
+
+## Register the element
+
+```html
+<script type="module">
+  import { registerWebComponents } from "@fanfare-io/fanfare-sdk-solid";
+
+  registerWebComponents({
+    organizationId: "org_123",
+    publishableKey: "pk_live_123",
+    environment: "production",
+  });
+</script>
+```
+
+Call `registerWebComponents()` once before rendering Fanfare custom elements.
+
+## Render the widget
+
+```html
+<fanfare-experience-widget
+  experience-id="exp_123"
+  auto-start
+  checkout-url="/checkout"
+></fanfare-experience-widget>
+```
+
+`<fanfare-experience-widget>` is the supported custom element for the full journey. It renders the same public journey states as the React `ExperienceWidget`.
+
+## Attributes
+
+| Attribute | Purpose |
+| --- | --- |
+| `experience-id` | Required experience ID. |
+| `organization-id` | Optional per-element organization override. |
+| `publishable-key` | Optional per-element publishable key override. |
+| `environment` | Optional SDK environment. |
+| `api-url` | Optional API URL override. |
+| `debug` | Enables debug logging for troubleshooting. |
+| `auto-start` | Starts the journey when the element is ready. |
+| `auto-enter-waitlist` | Enters the waitlist automatically when that action is available. |
+| `access-code` | Provides an access code when starting or rerouting. |
+| `checkout-url` | Destination for the default admitted CTA. |
+| `locale` | Locale for built-in text. |
+| `translations` | JSON object of translation overrides. |
+| `theme-config` | JSON object matching `BrandTheme`. |
+| `variant` | `default`, `retro`, `rounded`, or `clean`. |
+| `container-class` | CSS class applied to the widget container. |
+
+## Theme and copy
+
+```html
+<fanfare-experience-widget
+  experience-id="exp_123"
+  auto-start
+  locale="en"
+  variant="rounded"
+  theme-config='{"primary":"#0F766E","fontFamily":"Inter, system-ui, sans-serif"}'
+  translations='{"queue.enter":"Join the line","admitted.cta":"Shop now"}'
+></fanfare-experience-widget>
+```
+
+Use valid JSON for `theme-config` and `translations`.
+
+## Events
+
+Web component events bubble and are composed, so they can be handled by the host page.
+
+```html
+<script>
+  const widget = document.querySelector("fanfare-experience-widget");
+
+  widget.addEventListener("fanfare-journey-change", (event) => {
+    console.log("Journey changed", event.detail.experienceId);
+  });
+
+  widget.addEventListener("fanfare-admitted", (event) => {
+    const grant = event.detail.grant;
+    fetch("/api/fanfare/admission", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ grant }),
+    }).then(() => {
+      window.location.assign("/checkout");
+    });
+  });
+
+  widget.addEventListener("fanfare-error", (event) => {
+    console.error("Fanfare error", event.detail.error);
+  });
+</script>
+```
+
+Avoid sending `grant` or raw snapshot details to third-party logs or analytics.

@@ -1,0 +1,79 @@
+---
+title: Internationalization
+description: Set locales and override component text.
+---
+
+# Internationalization
+
+Fanfare components ship with default text and locale support. You can set the active locale and override any message key your integration needs to own.
+
+## Set locale on the provider
+
+```tsx
+import { FanfareProvider } from "@fanfare-io/fanfare-sdk-react";
+
+export function App() {
+  return (
+    <FanfareProvider
+      organizationId="org_123"
+      publishableKey="pk_live_123"
+      locale="fr"
+    >
+      <ProductLaunchPage />
+    </FanfareProvider>
+  );
+}
+```
+
+Supported default locale data includes English, Spanish, French, German, Italian, Portuguese, Japanese, and Chinese. Locale values are extensible so your app can pass regional locale tags where needed.
+
+## Override messages
+
+```tsx
+import { FanfareProvider } from "@fanfare-io/fanfare-sdk-react";
+
+export function App() {
+  return (
+    <FanfareProvider
+      organizationId="org_123"
+      publishableKey="pk_live_123"
+      translations={{
+        "queue.enter": "Join the line",
+        "queue.leave": "Leave the line",
+        "admitted.cta": "Continue to checkout",
+        "error.retry": "Try again",
+      }}
+    >
+      <ProductLaunchPage />
+    </FanfareProvider>
+  );
+}
+```
+
+Translation overrides are partial. Any key you do not override falls back to the SDK default for the active locale.
+
+## Use translations in custom UI
+
+```tsx
+import { useTranslations } from "@fanfare-io/fanfare-sdk-react";
+
+export function CustomButton({ onClick }: { onClick: () => void }) {
+  const { t } = useTranslations();
+
+  return <button onClick={onClick}>{t("queue.enter")}</button>;
+}
+```
+
+## Type-safe keys
+
+```ts
+import type { TranslationMessageKey } from "@fanfare-io/fanfare-sdk-react";
+
+const customCopy: Partial<Record<TranslationMessageKey, string>> = {
+  "common.continue": "Continue",
+  "admitted.cta": "Shop now",
+};
+```
+
+Use customer-friendly copy. For verification and access decisions, keep the message outcome-oriented and avoid describing private enforcement logic.
+

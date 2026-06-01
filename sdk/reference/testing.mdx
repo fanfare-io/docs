@@ -1,0 +1,54 @@
+---
+title: Testing Your Integration
+description: Test public journey states, callbacks, and customization without depending on private internals.
+---
+
+# Testing Your Integration
+
+Test your integration from the public contract:
+
+- The right UI renders for each public journey state.
+- Buttons call the actions exposed by the current `JourneyView`.
+- Gates show generic, customer-safe messaging.
+- Admission sends the consumer to the next app step.
+- Sensitive runtime values are not sent to third-party logs.
+
+![SDK testing workflow showing setup, simulated public states, rendered behavior verification, and full-flow release testing.](/images/sdk/testing-workflow.webp)
+
+## Recommended coverage
+
+| Scenario | What to verify |
+| --- | --- |
+| Ready | Start CTA appears and calls `start()`. |
+| Routing | Loading state appears without offering invalid actions. |
+| Gated auth | Auth UI completes, then reroutes. |
+| Gated access code | Code submission calls `reroute({ accessCode })`. |
+| Upcoming | Timing and optional waitlist action render. |
+| Active | Enter action is available. |
+| Participating | Participation status renders and valid actions are available. |
+| Admitted | Checkout handoff runs and does not leak the grant. |
+| Denied | Recovery copy is clear and generic. |
+| Error | Retry or support path is visible. |
+
+## Component integration tests
+
+For React custom UI, wrap your Fanfare usage behind a small app-level component boundary so tests can provide controlled journey states.
+
+```tsx
+export function LaunchExperience({ experienceId }: { experienceId: string }) {
+  const journey = useExperienceJourney(experienceId);
+
+  return <LaunchExperienceView {...journey} />;
+}
+```
+
+Test `LaunchExperienceView` with representative `view` values. Keep SDK network behavior in a smaller number of integration tests.
+
+## Manual QA checklist
+
+- Start from a clean browser profile.
+- Repeat with an existing session.
+- Open the same experience in two tabs.
+- Verify loading, gated, participating, admitted, denied, and error copy.
+- Confirm checkout receives only the values it needs.
+- Confirm analytics use high-level outcomes rather than raw grants or snapshots.

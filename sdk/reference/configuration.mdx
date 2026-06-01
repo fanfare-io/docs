@@ -1,0 +1,81 @@
+---
+title: Configuration Reference
+description: Public configuration options for SDK, React, and web component integrations.
+---
+
+# Configuration Reference
+
+## Core SDK
+
+```ts
+import initFanfare from "@fanfare-io/fanfare-sdk-core";
+
+const sdk = await initFanfare({
+  organizationId: "org_123",
+  publishableKey: "pk_live_123",
+  environment: "production",
+});
+```
+
+| Option | Type | Purpose |
+| --- | --- | --- |
+| `organizationId` | `string` | Your Fanfare organization ID. |
+| `publishableKey` | `string` | Your browser-safe publishable key. |
+| `environment` | `production` or `development` | Selects the Fanfare environment. |
+| `apiUrl` | `string` | Overrides the API URL when directed by Fanfare. |
+| `credentials` | `RequestCredentials` | Controls browser credential behavior for SDK requests. |
+| `debug` | `boolean` | Enables SDK debug logging. Use only for development or guided troubleshooting. |
+| `auth.persistSession` | `boolean` | Controls local session persistence. |
+| `auth.sessionDuration` | `number` | Session duration in seconds when applicable. |
+| `sync` | `boolean` or configuration object | Enables or configures browser tab synchronization. |
+| `features` | `object` | Advanced feature flags. Use only with guidance from Fanfare. |
+
+Only use non-default values when your integration requires them or your Fanfare contact recommends them.
+
+## React provider
+
+`FanfareProvider` accepts the core SDK configuration plus React-specific props.
+
+| Prop | Purpose |
+| --- | --- |
+| `children` | React subtree that can use Fanfare hooks and components. |
+| `autoRestore` | Restores local session on mount. Defaults to `true`. |
+| `autoResume` | Resumes known journeys after restore. Defaults to `true`. |
+| `loadingComponent` | React node shown while the SDK initializes. |
+| `locale` | Locale for SDK component text. |
+| `translations` | Partial translation overrides. |
+
+## ExperienceWidget
+
+| Prop | Purpose |
+| --- | --- |
+| `experienceId` | Required experience ID. |
+| `autoStart` | Starts the journey on mount. |
+| `accessCode` | Provides an access code when starting or rerouting. |
+| `autoEnterWaitlist` | Enters waitlist automatically when available. |
+| `theme` | Per-widget brand theme. |
+| `variant` | `default`, `retro`, `rounded`, or `clean`. |
+| `slots` | Targeted stage overrides. |
+| `children` | Full render prop override for the widget instance. |
+| `checkoutUrl` | Default checkout destination for admitted state. |
+| `onJourneyChange` | Called when the raw journey snapshot changes. |
+| `onAdmitted` | Called when an admission grant is available. |
+| `onError` | Called when the widget reports an error. |
+| `className` | Additional class for the React widget container. |
+
+## Web component registration
+
+| Option | Purpose |
+| --- | --- |
+| `organizationId` | Default organization ID for registered elements. |
+| `publishableKey` | Default publishable key for registered elements. |
+| `environment` | Default SDK environment. |
+| `apiUrl` | API URL override. |
+| `debug` | Enables debug logging. |
+| `autoRestore` | Restores local session on mount. |
+| `autoResume` | Resumes known journeys after restore. |
+| `locale` | Default locale. |
+| `translations` | Default translation overrides. |
+| `themeConfig` | Default brand theme. |
+| `variant` | Default widget variant. |
+| `containerClass` | Default container class. |
