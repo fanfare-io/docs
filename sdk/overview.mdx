@@ -11,21 +11,7 @@ This SDK documentation is intentionally contract-first. It explains the public s
 
 ## Mental model
 
-```text
-[Your app]
-   |
-   |  use core directly, or use a component adapter
-   v
-[Fanfare SDK]
-   |
-   |  starts journeys, reads state, performs valid actions
-   v
-[Fanfare API]
-   |
-   |  returns the consumer's current public journey state
-   v
-[Your UI]
-```
+![Fanfare SDK mental model showing a customer application using the SDK to read public journey state and actions from Fanfare.](/images/sdk/sdk-mental-model.webp)
 
 The core concept is a **journey**. A journey represents one consumer's progress through one Fanfare experience. Your integration reads the journey state and presents the right UI for that state.
 

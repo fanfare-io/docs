@@ -10,24 +10,7 @@ A journey has two layers of public state:
 - `journeyStage`: the top-level state of the journey.
 - `sequence.stage`: the current state inside a routed experience.
 
-```text
-[ready]
-   |
-   v
-[routing]
-   |
-   +--> [gated]
-   |
-   +--> [routed]
-          |
-          +--> no_sequence
-          +--> upcoming
-          +--> waitlist_entered
-          +--> active
-          +--> participating
-          +--> admitted
-          +--> denied
-```
+![Public journey state model showing ready, routing, gated, routed, and the routed sequence states.](/images/sdk/journey-state-model.webp)
 
 ## Use `view$` first
 
@@ -80,4 +63,3 @@ This prevents your integration from presenting actions that are not valid for th
 ## Public-state mindset
 
 The state model tells you what the consumer can do next. It does not tell you private reasons for routing, verification, admission, or denial. Keep your UI tied to the public state and avoid messaging that implies knowledge of private enforcement logic.
-

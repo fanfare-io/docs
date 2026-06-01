@@ -13,6 +13,8 @@ Test your integration from the public contract:
 - Admission sends the consumer to the next app step.
 - Sensitive runtime values are not sent to third-party logs.
 
+![SDK testing workflow showing setup, simulated public states, rendered behavior verification, and full-flow release testing.](/images/sdk/testing-workflow.webp)
+
 ## Recommended coverage
 
 | Scenario | What to verify |
@@ -50,4 +52,3 @@ Test `LaunchExperienceView` with representative `view` values. Keep SDK network 
 - Verify loading, gated, participating, admitted, denied, and error copy.
 - Confirm checkout receives only the values it needs.
 - Confirm analytics use high-level outcomes rather than raw grants or snapshots.
-
