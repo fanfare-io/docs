@@ -1,0 +1,136 @@
+---
+title: Core SDK Quickstart
+description: Start an experience journey and render from the public journey view.
+---
+
+# Core SDK Quickstart
+
+Use the core SDK when you want to own the UI. The core SDK gives you a journey handle. Your application reads the current `JourneyView` and calls only the actions available in that view.
+
+## Install
+
+```bash
+pnpm add @fanfare-io/fanfare-sdk-core
+```
+
+## Initialize the SDK
+
+```ts
+import initFanfare from "@fanfare-io/fanfare-sdk-core";
+
+const sdk = await initFanfare({
+  organizationId: "org_123",
+  publishableKey: "pk_live_123",
+  environment: "production",
+});
+```
+
+Create the SDK once in the part of your application that owns the consumer experience. When that application area unmounts permanently, call `sdk.destroy()`.
+
+## Create a journey
+
+```ts
+const journey = sdk.journeys.get("exp_123");
+```
+
+The journey exposes four stores:
+
+| Store | Use for |
+| --- | --- |
+| `view$` | Normal UI rendering and valid actions |
+| `snapshot$` | Diagnostics or exhaustive state inspection |
+| `events$` | User-facing journey events |
+| `latestEvent$` | Toasts, announcements, or analytics triggers |
+
+Most integrations should render from `view$`.
+
+## Render from `JourneyView`
+
+```ts
+import type { JourneyView } from "@fanfare-io/fanfare-sdk-core/experiences";
+
+const unsubscribe = journey.view$.listen((view) => {
+  renderJourney(view);
+});
+
+function renderJourney(view: JourneyView) {
+  if (view.journeyStage === "ready") {
+    showStartButton(() => view.start());
+    return;
+  }
+
+  if (view.journeyStage === "routing") {
+    showLoadingState();
+    return;
+  }
+
+  if (view.journeyStage === "gated") {
+    showGate(view.gates, (accessCode) => view.reroute({ accessCode }));
+    return;
+  }
+
+  renderSequence(view.sequence);
+}
+```
+
+The key rule: actions live on the view for the current state. If an action is not present in the current view, your UI should not offer it.
+
+## Render routed sequence states
+
+```ts
+import type { SequenceView } from "@fanfare-io/fanfare-sdk-core/experiences";
+
+function renderSequence(sequence: SequenceView) {
+  if (sequence.stage === "upcoming") {
+    showUpcoming({
+      onJoinWaitlist: sequence.enterWaitlist,
+    });
+    return;
+  }
+
+  if (sequence.stage === "active") {
+    if ("enter" in sequence) {
+      showEnterButton(() => sequence.enter());
+    } else {
+      showAppointmentPicker((slotId, locationId) => sequence.book(slotId, locationId));
+    }
+    return;
+  }
+
+  if (sequence.stage === "participating") {
+    showParticipation({
+      type: sequence.participation.type,
+      onLeave: () => sequence.leave(),
+    });
+    return;
+  }
+
+  if (sequence.stage === "admitted") {
+    showCheckout(sequence.admissionGrant);
+    return;
+  }
+
+  if (sequence.stage === "denied") {
+    showDenied({
+      reason: sequence.reason,
+      onReenter: sequence.reenter,
+    });
+  }
+}
+```
+
+## Resume existing journeys
+
+If the consumer returns to your app with an existing session, resume known journeys before rendering your main experience surface.
+
+```ts
+await sdk.journeys.resumeAll();
+```
+
+Resume tells the SDK to reconstruct public journey state. Your UI should still render from the latest `view$` value after resume completes.
+
+## Next steps
+
+- Read [Journey State](/sdk/core/journey-state) to understand the full state model.
+- Read [Gates and Auth](/sdk/core/gates-and-auth) before implementing authentication or access-code flows.
+- Use [Core Headless Example](/sdk/examples/core-headless) for a more complete UI sketch.

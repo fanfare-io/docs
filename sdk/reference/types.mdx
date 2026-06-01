@@ -1,0 +1,79 @@
+---
+title: Type Reference
+description: High-level public types used by SDK integrations.
+---
+
+# Type Reference
+
+This page summarizes the public types most customer integrations need. Use your editor's TypeScript support for the full generated definitions.
+
+## Core SDK
+
+```ts
+import type {
+  FanfareConfig,
+  FanfareSDK,
+} from "@fanfare-io/fanfare-sdk-core";
+```
+
+| Type | Purpose |
+| --- | --- |
+| `FanfareConfig` | Initialization options for `initFanfare()`. |
+| `FanfareSDK` | Main SDK instance with `auth`, `journeys`, `challenges`, `beacon`, and `destroy()`. |
+
+## Journey types
+
+```ts
+import type {
+  JourneyHandle,
+  JourneySnapshot,
+  JourneyView,
+  SequenceView,
+} from "@fanfare-io/fanfare-sdk-core/experiences";
+```
+
+| Type | Purpose |
+| --- | --- |
+| `JourneyHandle` | Handle returned by `sdk.journeys.get(experienceId)`. |
+| `JourneyView` | Primary UI and action surface. |
+| `JourneySnapshot` | Raw discriminated state for diagnostics or exhaustive rendering. |
+| `SequenceView` | Routed sequence state and state-gated actions. |
+
+## Theme types
+
+```ts
+import type {
+  BrandTheme,
+  WidgetVariant,
+} from "@fanfare-io/fanfare-sdk-core/theme";
+```
+
+`WidgetVariant` is one of `default`, `retro`, `rounded`, or `clean`.
+
+## i18n types
+
+```ts
+import type {
+  Locale,
+  PartialTranslationMessages,
+  TranslationMessageKey,
+} from "@fanfare-io/fanfare-sdk-react";
+```
+
+Use `TranslationMessageKey` to keep overrides aligned with SDK message keys.
+
+## Widget types
+
+```ts
+import type {
+  ExperienceRenderProps,
+  ExperienceWidgetProps,
+  ExperienceWidgetSlots,
+} from "@fanfare-io/fanfare-sdk-react";
+```
+
+Use these when building wrappers around `ExperienceWidget` or sharing slot definitions across pages.
+
+## Public-only contract
+
+The types above are the contract your application should depend on. Avoid reaching into internals or building behavior from fields that are not exported through these public package paths.

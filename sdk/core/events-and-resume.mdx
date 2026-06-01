@@ -1,0 +1,69 @@
+---
+title: Events and Resume
+description: Observe journey events and restore existing journeys safely.
+---
+
+# Events and Resume
+
+The journey state is the source of truth for rendering. Events are useful for side effects: toasts, analytics, announcements, and debugging.
+
+## Journey events
+
+```ts
+const unsubscribe = journey.latestEvent$.listen((event) => {
+  if (!event) return;
+
+  showToast(event.message);
+  journey.ackEvent(event.id);
+});
+```
+
+Use event messages as user-facing notifications when appropriate. Do not use events as a replacement for state rendering. If the UI needs to know what to show, read `view$`.
+
+## SDK event bus
+
+The SDK also exposes an event bus for cross-surface observation.
+
+```ts
+const off = sdk.on("auth:authenticated", () => {
+  console.log("Consumer authenticated");
+});
+```
+
+Use event handlers for integration side effects, and remember to unsubscribe when the owning component or page is destroyed.
+
+## Resume
+
+Call `resumeAll()` after SDK initialization when you want to restore known journey state for the current browser session.
+
+```ts
+const sdk = await initFanfare({
+  organizationId: "org_123",
+  publishableKey: "pk_live_123",
+});
+
+await sdk.journeys.resumeAll();
+```
+
+After resume, render from `journey.view$` as usual.
+
+## Cross-tab behavior
+
+The SDK can synchronize public session and journey state across tabs. You can keep the default behavior for most browser integrations.
+
+```ts
+const sdk = await initFanfare({
+  organizationId: "org_123",
+  publishableKey: "pk_live_123",
+  sync: {
+    enabled: true,
+  },
+});
+```
+
+If your host application has unusual storage or tab-isolation requirements, discuss the right sync configuration with your Fanfare contact.
+
+## Data handling
+
+Avoid sending admission grants, session values, or raw snapshots to third-party analytics and logging tools. If you need analytics, record high-level outcomes such as `journey_started`, `journey_gated`, `journey_admitted`, or `journey_denied` without sensitive runtime values.
+

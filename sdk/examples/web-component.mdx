@@ -1,0 +1,60 @@
+---
+title: Web Component Example
+description: Embed the full Fanfare experience widget in HTML.
+---
+
+# Web Component Example
+
+Use the web component when your host page is not a React application.
+
+```html
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <script type="module">
+      import { registerWebComponents } from "@fanfare-io/fanfare-sdk-solid";
+
+      registerWebComponents({
+        organizationId: "org_123",
+        publishableKey: "pk_live_123",
+        environment: "production",
+        locale: "en",
+        themeConfig: {
+          primary: "#8C14FF",
+          fontFamily: "Inter, system-ui, sans-serif",
+        },
+        variant: "clean",
+      });
+    </script>
+  </head>
+  <body>
+    <fanfare-experience-widget
+      experience-id="exp_123"
+      auto-start
+      checkout-url="/checkout"
+    ></fanfare-experience-widget>
+
+    <script>
+      const widget = document.querySelector("fanfare-experience-widget");
+
+      widget.addEventListener("fanfare-admitted", (event) => {
+        const grant = event.detail.grant;
+        fetch("/api/fanfare/admission", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ grant }),
+        }).then(() => {
+          window.location.assign("/checkout");
+        });
+      });
+
+      widget.addEventListener("fanfare-error", (event) => {
+        console.error("Fanfare widget error", event.detail.error);
+      });
+    </script>
+  </body>
+</html>
+```
+
+Do not log admission grants or raw journey snapshots to third-party analytics. Use high-level events such as "admitted" or "denied" for reporting.

@@ -1,0 +1,83 @@
+---
+title: Slots and Render Props
+description: Replace specific widget states or take over the full widget rendering.
+---
+
+# Slots and Render Props
+
+Slots let you replace specific parts of `ExperienceWidget` while keeping the default journey orchestration. Use slots when most of the widget works for you but one or two states need custom brand treatment.
+
+## Slot example
+
+```tsx
+import { ExperienceWidget } from "@fanfare-io/fanfare-sdk-react";
+
+export function LaunchWidget() {
+  return (
+    <ExperienceWidget
+      experienceId="exp_123"
+      slots={{
+        upcoming: ({ startsAt, canEnterWaitlist, onEnterWaitlist }) => (
+          <section className="launch-upcoming">
+            <h2>Early access opens soon</h2>
+            {startsAt ? <p>Starts {startsAt.toLocaleString()}</p> : null}
+            {canEnterWaitlist ? (
+              <button onClick={onEnterWaitlist}>Notify me</button>
+            ) : null}
+          </section>
+        ),
+        admitted: ({ admissionGrant }) => (
+          <CheckoutButton admissionGrant={admissionGrant}>
+            Continue to checkout
+          </CheckoutButton>
+        ),
+      }}
+    />
+  );
+}
+```
+
+## Available slots
+
+| Slot | Rendered when |
+| --- | --- |
+| `start` | The journey is ready and waiting to start. |
+| `loading` | The journey or a stage action is loading. |
+| `auth` | Authentication is required. |
+| `accessCode` | An access code is required. |
+| `challenge` | Additional verification is required. |
+| `upcoming` | The sequence is scheduled but not active. |
+| `waitlist` | The consumer has joined the waitlist. |
+| `enterable` | The sequence is active and the consumer can enter. |
+| `participating` | The consumer is participating. |
+| `admitted` | The consumer has been admitted. |
+| `expired` | A previous admission is no longer usable. |
+| `ended` | The experience or sequence has ended. |
+| `error` | The widget cannot continue without recovery. |
+
+Slot props include the current `snapshot`, `view`, and `error` where relevant, plus state-specific callbacks such as `onStart`, `onEnter`, `onLeave`, `onRetry`, or `onEnterWaitlist`.
+
+## Render prop
+
+Use the render prop when you want the widget to create and observe the journey, but you want to own the entire UI for that widget instance.
+
+```tsx
+<ExperienceWidget experienceId="exp_123">
+  {({ view, start, isStarting, error }) => {
+    if (error) return <ErrorPanel message={error} />;
+    if (!view) return <LoadingPanel />;
+
+    if (view.journeyStage === "ready") {
+      return (
+        <button disabled={isStarting} onClick={() => void start()}>
+          Enter launch
+        </button>
+      );
+    }
+
+    return <CustomJourneyView view={view} />;
+  }}
+</ExperienceWidget>
+```
+
+If you need to share journey state across multiple components or routes, use `useExperienceJourney` directly instead of the render prop.

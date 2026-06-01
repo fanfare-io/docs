@@ -1,0 +1,67 @@
+---
+title: Choose Your Path
+description: Decide whether to integrate with the core SDK, React components, or web components.
+---
+
+# Choose Your Path
+
+Start by deciding how much UI ownership you want. The lower-level path gives you maximum control. The component paths give you faster setup and a supported default experience.
+
+```text
+Do you need full control over the UI?
+  |
+  +-- yes --> Core SDK
+  |
+  +-- no --> Are you using React?
+          |
+          +-- yes --> React ExperienceWidget
+          |
+          +-- no --> Web component
+```
+
+## Core SDK
+
+Choose the core SDK when your team wants to design every screen and connect the SDK state to your own components, router, analytics, and checkout behavior.
+
+| Pros | Tradeoffs |
+| --- | --- |
+| Full UI control | You own every state and edge case |
+| Works with any framework | More application code |
+| Best fit for custom flows | Requires deeper understanding of `JourneyView` |
+
+Use this path if your customer journey is highly branded, your product page already has a complex state model, or you need to integrate with a framework that does not have a Fanfare adapter.
+
+## React components
+
+Choose React components when you want a supported UI layer but still need branding, slot overrides, callbacks, and custom copy.
+
+| Pros | Tradeoffs |
+| --- | --- |
+| Fastest React setup | The widget owns the default layout |
+| Supported journey UI | Deep customization uses slots or render props |
+| Built-in theming and i18n | You still need to handle checkout and app routing |
+
+Use this path for most React storefronts and launch pages. You can start with `ExperienceWidget`, then move specific sections into slots as your design becomes more bespoke.
+
+## Web components
+
+Choose web components when you need to embed Fanfare into a static page, CMS, tag-managed page, or non-React application.
+
+| Pros | Tradeoffs |
+| --- | --- |
+| Framework-agnostic embed | Customization is mostly attributes, theme config, and host CSS |
+| Good for CMS and static pages | Complex UI customization usually moves to core or React |
+| Events bubble through the DOM | Type checking depends on your host tooling |
+
+Use this path when the host application cannot mount React directly, or when the integration team needs a simple HTML custom element.
+
+## Hybrid path
+
+Many teams use more than one path:
+
+- Use `ExperienceWidget` for the first launch.
+- Add slots for brand-critical states.
+- Move to `useExperienceJourney` or core SDK for a fully custom UI.
+
+The important rule is to keep your application logic based on the public journey states and actions. Do not build behavior around private implementation details or assumptions about why a consumer reached a state.
+

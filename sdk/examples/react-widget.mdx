@@ -1,0 +1,73 @@
+---
+title: React Widget Example
+description: Use ExperienceWidget for a supported React UI.
+---
+
+# React Widget Example
+
+This is the fastest React integration path. The widget renders the journey UI and your app handles routing after admission.
+
+```tsx
+import {
+  ExperienceWidget,
+  FanfareProvider,
+} from "@fanfare-io/fanfare-sdk-react";
+import "@fanfare-io/fanfare-sdk-react/styles";
+
+export function App() {
+  return (
+    <FanfareProvider
+      organizationId="org_123"
+      publishableKey="pk_live_123"
+      environment="production"
+      locale="en"
+    >
+      <LaunchPage />
+    </FanfareProvider>
+  );
+}
+
+function LaunchPage() {
+  return (
+    <main>
+      <h1>Limited release</h1>
+
+      <ExperienceWidget
+        experienceId="exp_123"
+        autoStart
+        theme={{
+          primary: "#8C14FF",
+          fontFamily: "Inter, system-ui, sans-serif",
+        }}
+        variant="clean"
+        onAdmitted={async (grant) => {
+          await fetch("/api/fanfare/admission", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ grant }),
+          });
+
+          window.location.assign("/checkout");
+        }}
+      />
+    </main>
+  );
+}
+```
+
+## When to add slots
+
+Start with the default widget. Add slots when a specific state needs custom markup, such as a branded upcoming screen or a checkout CTA that connects to your router.
+
+```tsx
+<ExperienceWidget
+  experienceId="exp_123"
+  slots={{
+    admitted: ({ admissionGrant }) => (
+      <CheckoutButton grant={admissionGrant} />
+    ),
+  }}
+/>
+```
+
+Keep business behavior in your app. Keep access decisions in the Fanfare journey state.

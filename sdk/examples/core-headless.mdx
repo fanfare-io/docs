@@ -1,0 +1,102 @@
+---
+title: Core Headless Example
+description: Build a custom UI directly from JourneyView.
+---
+
+# Core Headless Example
+
+This example shows the shape of a headless integration. Your application owns all UI. Fanfare provides the public state and state-gated actions.
+
+```ts
+import initFanfare from "@fanfare-io/fanfare-sdk-core";
+import type {
+  JourneyView,
+  SequenceView,
+} from "@fanfare-io/fanfare-sdk-core/experiences";
+
+const sdk = await initFanfare({
+  organizationId: "org_123",
+  publishableKey: "pk_live_123",
+  environment: "production",
+});
+
+const journey = sdk.journeys.get("exp_123");
+
+journey.view$.listen((view) => {
+  render(view);
+});
+
+function render(view: JourneyView) {
+  if (view.journeyStage === "ready") {
+    mountStartButton(() => view.start());
+    return;
+  }
+
+  if (view.journeyStage === "routing") {
+    mountLoading();
+    return;
+  }
+
+  if (view.journeyStage === "gated") {
+    mountGate({
+      gates: view.gates,
+      onAccessCode: (accessCode) => view.reroute({ accessCode }),
+      onRetry: () => view.retry(),
+    });
+    return;
+  }
+
+  renderSequence(view.sequence);
+}
+
+function renderSequence(sequence: SequenceView) {
+  switch (sequence.stage) {
+    case "upcoming":
+      mountUpcoming({ onWaitlist: sequence.enterWaitlist });
+      return;
+
+    case "waitlist_entered":
+      mountWaitlist({ onLeave: () => sequence.leaveWaitlist() });
+      return;
+
+    case "active":
+      if ("enter" in sequence) {
+        mountEnterButton(() => sequence.enter());
+      } else {
+        mountAppointmentPicker((slotId, locationId) => sequence.book(slotId, locationId));
+      }
+      return;
+
+    case "participating":
+      mountParticipation({
+        type: sequence.participation.type,
+        onLeave: () => sequence.leave(),
+      });
+      return;
+
+    case "admitted":
+      mountCheckout(sequence.admissionGrant);
+      return;
+
+    case "denied":
+      mountDenied({ onReenter: sequence.reenter });
+      return;
+
+    case "no_sequence":
+      mountUnavailable();
+  }
+}
+```
+
+## Recommended app responsibilities
+
+- Own the product page, checkout routing, analytics policy, and visual design.
+- Render every public state you can receive.
+- Call only the actions exposed by the current `JourneyView`.
+- Keep grants and session values out of third-party logs.
+
+## What to avoid
+
+- Do not infer private routing or enforcement decisions from the state.
+- Do not assume a state transition order that is not represented by `JourneyView`.
+- Do not show buttons for actions that are not present in the current state.

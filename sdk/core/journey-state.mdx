@@ -1,0 +1,83 @@
+---
+title: Journey State
+description: Understand the public journey state model used by every SDK integration path.
+---
+
+# Journey State
+
+A journey has two layers of public state:
+
+- `journeyStage`: the top-level state of the journey.
+- `sequence.stage`: the current state inside a routed experience.
+
+```text
+[ready]
+   |
+   v
+[routing]
+   |
+   +--> [gated]
+   |
+   +--> [routed]
+          |
+          +--> no_sequence
+          +--> upcoming
+          +--> waitlist_entered
+          +--> active
+          +--> participating
+          +--> admitted
+          +--> denied
+```
+
+## Use `view$` first
+
+`JourneyView` is the primary public UI surface. It exposes only the actions valid for the current state.
+
+```ts
+const view = journey.view$.get();
+
+if (view.journeyStage === "routed" && view.sequence.stage === "active") {
+  await view.sequence.enter();
+}
+```
+
+Use `snapshot$` when you need raw diagnostic fields, event history, or exhaustive state inspection. Do not drive normal UI from private assumptions about how the snapshot was produced.
+
+## Top-level stages
+
+| Stage | Meaning | Typical UI |
+| --- | --- | --- |
+| `ready` | The journey exists but has not started. | Start button or auto-start setup |
+| `routing` | Fanfare is resolving the consumer's current public path. | Loading state |
+| `gated` | The consumer must complete a public requirement before continuing. | Auth, access-code, or verification UI |
+| `routed` | The consumer has a public sequence state. | Upcoming, enterable, participating, admitted, or denied UI |
+
+## Routed sequence stages
+
+| Stage | Meaning | Typical action |
+| --- | --- | --- |
+| `no_sequence` | No public sequence is currently available. | Explain that access is not available |
+| `upcoming` | A sequence is scheduled but not active yet. | Show timing and optional waitlist action |
+| `waitlist_entered` | The consumer joined the waitlist. | Show waitlist status and leave action |
+| `active` | A sequence is available for entry. | Let the consumer enter or book |
+| `participating` | The consumer is participating. | Show status and valid participation actions |
+| `admitted` | The consumer has access to proceed. | Send them to checkout or the next app step |
+| `denied` | Access is not available for this journey state. | Show recovery or re-entry only if provided |
+
+## State-gated actions
+
+Actions are intentionally state-gated. For example:
+
+- `ready` exposes `start()`.
+- `gated` exposes `reroute()` and `retry()`.
+- `routed.upcoming` may expose `enterWaitlist()`.
+- `routed.active` exposes `enter()` or appointment booking.
+- `routed.participating` exposes actions for the participation type.
+- `routed.denied` may expose `reenter()`.
+
+This prevents your integration from presenting actions that are not valid for the current consumer state.
+
+## Public-state mindset
+
+The state model tells you what the consumer can do next. It does not tell you private reasons for routing, verification, admission, or denial. Keep your UI tied to the public state and avoid messaging that implies knowledge of private enforcement logic.
+

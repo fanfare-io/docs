@@ -1,0 +1,94 @@
+---
+title: Theming
+description: Brand Fanfare components with theme values and variants.
+---
+
+# Theming
+
+Fanfare components support brand-level theming through `BrandTheme` values and packaged variants.
+
+## Theme fields
+
+```ts
+type BrandTheme = {
+  primary?: string;
+  secondary?: string;
+  background?: string;
+  surface?: string;
+  text?: string;
+  muted?: string;
+  success?: string;
+  warning?: string;
+  danger?: string;
+  fontFamily?: string;
+  fontHeading?: string;
+  logoUrl?: string;
+  headerImageUrl?: string;
+  variant?: "default" | "retro" | "rounded" | "clean";
+};
+```
+
+Use theme values for presentation only. Do not use variants or theme fields to control access behavior.
+
+## Theme a widget
+
+```tsx
+import { ExperienceWidget } from "@fanfare-io/fanfare-sdk-react";
+import "@fanfare-io/fanfare-sdk-react/styles";
+
+export function LaunchWidget() {
+  return (
+    <ExperienceWidget
+      experienceId="exp_123"
+      theme={{
+        primary: "#0F766E",
+        secondary: "#CCFBF1",
+        background: "#FFFFFF",
+        text: "#111827",
+        fontFamily: "Inter, system-ui, sans-serif",
+        fontHeading: "Instrument Serif, Georgia, serif",
+        logoUrl: "https://cdn.example.com/logo.svg",
+      }}
+      variant="rounded"
+    />
+  );
+}
+```
+
+## Theme a subtree
+
+```tsx
+import {
+  ExperienceWidget,
+  ThemeProvider,
+} from "@fanfare-io/fanfare-sdk-react";
+
+export function BrandedLaunchArea() {
+  return (
+    <ThemeProvider
+      theme={{
+        primary: "#8C14FF",
+        surface: "transparent",
+        fontFamily: "Inter, system-ui, sans-serif",
+      }}
+      variant="clean"
+    >
+      <ExperienceWidget experienceId="exp_123" autoStart />
+    </ThemeProvider>
+  );
+}
+```
+
+Nested themes shallow-merge over parent themes. This lets you set a site-level brand theme and override a single widget when needed.
+
+## Variants
+
+| Variant | Use when |
+| --- | --- |
+| `default` | You want the standard component presentation. |
+| `rounded` | You want a softer, more rounded layout. |
+| `clean` | You want a minimal, quieter presentation. |
+| `retro` | You want a more stylized launch-page treatment. |
+
+Variants change presentation, not state or behavior.
+

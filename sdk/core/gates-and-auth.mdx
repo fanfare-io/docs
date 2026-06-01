@@ -1,0 +1,86 @@
+---
+title: Gates and Auth
+description: Handle authentication, access codes, and additional verification with the public journey contract.
+---
+
+# Gates and Auth
+
+When a journey is `gated`, Fanfare is telling your application that the consumer must complete a public requirement before the journey can continue.
+
+```ts
+const view = journey.view$.get();
+
+if (view.journeyStage === "gated") {
+  const firstGate = view.gates[0];
+  showGate(firstGate);
+}
+```
+
+Your integration should present the appropriate UI, complete the required customer action, then call `reroute()` to ask Fanfare for the next public state.
+
+## Gate types
+
+| Gate | What to show | How to continue |
+| --- | --- | --- |
+| `authentication` | Email or phone sign-in, depending on your integration. | Complete auth, then call `view.reroute()`. |
+| `access_code` | Access-code form. | Call `view.reroute({ accessCode })`. |
+| `bot_check` | Additional verification UI. | Complete verification, then call `view.reroute()`. |
+
+Do not explain private enforcement details in your UI. Use clear outcome language such as "Additional verification is required" or "Enter your access code to continue."
+
+## Email or phone auth
+
+```ts
+async function authenticateWithEmail(email: string, code: string) {
+  await sdk.auth.requestOtp({ email });
+  await sdk.auth.verifyOtp({ email, code });
+
+  const view = journey.view$.get();
+  if (view.journeyStage === "gated") {
+    await view.reroute();
+  }
+}
+```
+
+You can also create a guest session for flows that allow anonymous participation:
+
+```ts
+const auth = sdk.auth.check();
+
+if (!auth.isAuthenticated) {
+  await sdk.auth.guest();
+}
+```
+
+## Access codes
+
+```ts
+async function submitAccessCode(accessCode: string) {
+  const view = journey.view$.get();
+
+  if (view.journeyStage !== "gated") {
+    return;
+  }
+
+  await view.reroute({ accessCode });
+}
+```
+
+If the code is invalid, the journey may remain gated. Keep the consumer on the access-code UI and let the next `view$` value drive the message.
+
+## Additional verification
+
+For additional verification, render the verification experience your Fanfare contact has enabled for your account. When the user completes it, verify the challenge result and reroute.
+
+```ts
+async function completeVerification(challengeId: string, token: string) {
+  await sdk.challenges.verify({ challengeId, token });
+
+  const view = journey.view$.get();
+  if (view.journeyStage === "gated") {
+    await view.reroute();
+  }
+}
+```
+
+Keep verification copy generic. The integration should not expose why a verification step appeared or how Fanfare evaluates access.

@@ -1,0 +1,114 @@
+---
+title: React Components
+description: Integrate Fanfare with React using FanfareProvider, ExperienceWidget, and useExperienceJourney.
+---
+
+# React Components
+
+React integrations usually start with `FanfareProvider` and `ExperienceWidget`.
+
+## Install
+
+```bash
+pnpm add @fanfare-io/fanfare-sdk-core @fanfare-io/fanfare-sdk-react motion
+```
+
+The React package has peer dependencies on `react`, `react-dom`, and `motion`.
+
+## Add the provider
+
+```tsx
+import { FanfareProvider } from "@fanfare-io/fanfare-sdk-react";
+
+export function App() {
+  return (
+    <FanfareProvider
+      organizationId="org_123"
+      publishableKey="pk_live_123"
+      environment="production"
+    >
+      <ProductLaunchPage />
+    </FanfareProvider>
+  );
+}
+```
+
+`FanfareProvider` initializes the core SDK, restores the local session by default, and provides the SDK to hooks and components below it.
+
+## Render the full widget
+
+```tsx
+import { ExperienceWidget } from "@fanfare-io/fanfare-sdk-react";
+import "@fanfare-io/fanfare-sdk-react/styles";
+
+export function ProductLaunchPage() {
+  return (
+    <ExperienceWidget
+      experienceId="exp_123"
+      autoStart
+      checkoutUrl="/checkout"
+    />
+  );
+}
+```
+
+Use `checkoutUrl` for default admitted-state navigation.
+
+Use `onAdmitted` when your application needs to coordinate custom routing or server handoff.
+
+```tsx
+<ExperienceWidget
+  experienceId="exp_123"
+  autoStart
+  onAdmitted={async (grant) => {
+    await fetch("/api/fanfare/admission", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ grant }),
+    });
+
+    window.location.assign("/checkout");
+  }}
+/>
+```
+
+Avoid logging the grant value to third-party tools or placing it in URLs.
+
+## Build custom React UI
+
+Use `useExperienceJourney` when you want React state and lifecycle handling without the default widget layout.
+
+```tsx
+import { useExperienceJourney } from "@fanfare-io/fanfare-sdk-react";
+
+export function CustomExperience({ experienceId }: { experienceId: string }) {
+  const { view, start, error } = useExperienceJourney(experienceId);
+
+  if (error) return <ErrorPanel message={error} />;
+  if (!view) return <LoadingPanel />;
+
+  if (view.journeyStage === "ready") {
+    return <button onClick={() => void start()}>Start</button>;
+  }
+
+  if (view.journeyStage === "routing") {
+    return <LoadingPanel />;
+  }
+
+  if (view.journeyStage === "gated") {
+    return <GatePanel view={view} />;
+  }
+
+  return <SequencePanel sequence={view.sequence} />;
+}
+```
+
+The hook returns the same public journey model as the core SDK:
+
+| Field | Use for |
+| --- | --- |
+| `journey` | Access to the underlying journey handle. |
+| `view` | Normal rendering and state-gated actions. |
+| `snapshot` | Debugging or exhaustive inspection. |
+| `error` | Adapter-level setup or action errors. |
+| `start()` | Convenience method for starting the journey. |
