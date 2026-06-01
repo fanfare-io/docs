@@ -7,17 +7,7 @@ description: Decide whether to integrate with the core SDK, React components, or
 
 Start by deciding how much UI ownership you want. The lower-level path gives you maximum control. The component paths give you faster setup and a supported default experience.
 
-```text
-Do you need full control over the UI?
-  |
-  +-- yes --> Core SDK
-  |
-  +-- no --> Are you using React?
-          |
-          +-- yes --> React ExperienceWidget
-          |
-          +-- no --> Web component
-```
+![Decision workflow showing when to use the Core SDK, React ExperienceWidget, or web component.](/images/sdk/choose-your-path-workflow.webp)
 
 ## Core SDK
 
@@ -64,4 +54,3 @@ Many teams use more than one path:
 - Move to `useExperienceJourney` or core SDK for a fully custom UI.
 
 The important rule is to keep your application logic based on the public journey states and actions. Do not build behavior around private implementation details or assumptions about why a consumer reached a state.
-
