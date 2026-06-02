@@ -7,6 +7,8 @@ description: Configure program status, point expiration, and loyalty limits.
 
 Use **Loyalty > Settings** to define the program-level contract for your organization. These settings control whether customers can earn points, whether points expire, and how large balances or earning totals can become.
 
+Experience-level selection settings are configured separately. Queue and draw experiences can optionally enable loyalty bias, but that setting is off by default and is managed on the experience configuration screen.
+
 ## Program Status
 
 | Setting | Behavior |
@@ -45,10 +47,14 @@ Point limits are program controls, not customer segmentation rules. Use audience
 - Say whether points expire and what the customer can do to keep or use them.
 - Show upcoming expirations when your UI needs to prompt action.
 - Avoid promising points for events you have set to `0`.
+- If a queue uses loyalty-biased admission, avoid precise numeric queue positions and use qualitative progress language.
+- If a draw uses loyalty-biased selection, avoid promising a fixed chance or guaranteed outcome.
 - Keep reward terms aligned with your own legal and support policies.
 
 ## Related Pages
 
 - [Points management](/dashboard/loyalty/points-management)
 - [Loyalty programs concept](/concepts/loyalty)
+- [Configure queue experiences](/dashboard/experiences/configure-queue)
+- [Configure draw experiences](/dashboard/experiences/configure-lottery)
 - [Consumer Loyalty API](/api/consumer-api/loyalty)

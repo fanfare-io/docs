@@ -81,8 +81,19 @@ _Caption: Configure how winners are selected_
 | **Entry Capacity** | `capacity` | No | Maximum draw entries. |
 | **Admission Window** | `admissionExpirationSeconds` | No | How long selected winners have to continue. |
 | **Continue Selecting** | `continueSelectingUntilCompleted` | No | Continue replacement selection until the configured winner count completes, when supported for the launch. |
+| **Loyalty-Biased Selection** | `loyaltyBiasEnabled` | No | Optionally gives loyal or engaged entrants improved opportunity. Off by default. |
 
 Winner selection is separate from product allocation. Draw configuration decides which eligible consumers are selected as winners; product allocation decides what product a selected consumer receives.
+
+### Loyalty-Biased Selection
+
+Use loyalty-biased selection when loyalty or engagement should influence opportunity for a specific draw experience. This setting is optional and off by default.
+
+When enabled:
+
+- Selection remains non-guaranteed.
+- Customer copy should not promise a fixed chance or guaranteed outcome.
+- Promotion terms should be reviewed for legal and fairness requirements before launch.
 
 ### Product Allocation
 
@@ -206,8 +217,8 @@ _Caption: A fully configured product launch draw_
 
 ### Fair Selection
 
-1. **Use pure random for giveaways** - Ensures fairness
-2. **Document your method** - Be transparent about selection
+1. **Choose the right selection mode** - Use standard random selection when every entrant should have the same opportunity, and loyalty-biased selection only when loyalty should be part of the promotion
+2. **Document your terms** - Be transparent about eligibility and customer-facing rules
 3. **Exclude duplicates** - Verify one entry per person
 4. **Audit trail** - Keep records of selection process
 

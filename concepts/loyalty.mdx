@@ -9,6 +9,8 @@ A Fanfare loyalty program gives each consumer a points balance that can grow thr
 
 Use loyalty when you want rewards to reflect real customer participation across experiences, purchases, messaging, and other engagement. Use audiences when you want those balances to drive access decisions, such as member-only launches or tiered early access.
 
+Loyalty can also inform queue admission or draw selection when an experience-level loyalty setting is enabled. This is optional and off by default. When enabled, Fanfare can give more engaged or loyal consumers improved opportunity in the queue or draw, while still preserving non-guaranteed outcomes for every participant.
+
 ## Core Model
 
 | Concept | Meaning |
@@ -67,10 +69,23 @@ Loyalty fields can be used with audiences to create tiers and targeted access gr
 
 Loyalty audiences are still audiences: they determine who qualifies for a segment, while the loyalty program determines how points are earned, deducted, expired, and displayed.
 
+## Loyalty-Biased Experiences
+
+For queue and draw experiences, you can choose whether loyalty should influence queue admission or draw selection opportunity. Use this when your promotion should recognize engagement without creating a guaranteed entitlement.
+
+| Experience | Customer-facing behavior |
+| --- | --- |
+| Queue | Loyal or highly engaged consumers may receive improved opportunity to be admitted, but admission is not guaranteed. |
+| Draw | Loyal or highly engaged entrants may receive improved opportunity to be selected, but winning is not guaranteed. |
+
+Keep public copy qualitative. For queues with loyalty bias enabled, avoid precise numeric positions such as "you are #42 in line"; use progress or status language such as "you're in line" and "watch for your access window." For draws, avoid promising a fixed chance or outcome. Teams should review legal, fairness, and promotion rules before using loyalty-biased queue admission or draw selection, especially for regulated promotions.
+
 ## Where To Configure
 
 - [Loyalty dashboard overview](/dashboard/loyalty/overview)
 - [Loyalty configuration](/dashboard/loyalty/configuration)
 - [Points management](/dashboard/loyalty/points-management)
+- [Configure queue experiences](/dashboard/experiences/configure-queue)
+- [Configure draw experiences](/dashboard/experiences/configure-lottery)
 - [Consumer Loyalty API](/api/consumer-api/loyalty)
 - [Loyalty program use case](/guides/use-cases/loyalty-program)

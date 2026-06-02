@@ -5,7 +5,9 @@ description: Random selection lottery for fair winner selection
 
 # Draw Distribution (Lottery)
 
-A **Draw** is a lottery-style distribution that randomly selects winners from a pool of entries. Draws are ideal when fairness means "equal chance" rather than "first come, first served."
+A **Draw** is a lottery-style distribution that randomly selects winners from a pool of entries. Standard draws are ideal when fairness means "equal chance" rather than "first come, first served."
+
+Draws can also optionally use loyalty-biased selection. When enabled for a specific experience, Fanfare can give more loyal or engaged entrants improved opportunity to be selected while preserving non-guaranteed outcomes. The setting is off by default.
 
 ## How Draws Work
 
@@ -50,7 +52,7 @@ A **Draw** is a lottery-style distribution that randomly selects winners from a 
 1. Draw opens at the scheduled start time
 2. Consumers enter the draw (one active entry per consumer)
 3. Entries accumulate until the draw time
-4. No position or ranking—all entries have equal chance
+4. No queue position; standard draws give all entries equal chance
 
 ### Selection Event
 
@@ -73,7 +75,7 @@ Consumers see:
 - Entry confirmation message
 - Countdown to draw time
 - Total number of entries (optional)
-- Their odds if displayed
+- Their odds if displayed for a standard draw
 
 ### At Draw Time
 
@@ -172,6 +174,16 @@ When enabled, if a winner doesn't complete in time:
 - Backfill continues until the winner count is completed, the draw closes, or the entry pool is exhausted
 - Useful for ensuring all inventory gets sold
 
+### Loyalty-Biased Selection
+
+Enable loyalty-biased selection only when the draw should recognize loyalty or engagement as part of the promotion. It does not guarantee a win and should not be described as a fixed chance of selection.
+
+When this setting is enabled:
+
+- Tell consumers that loyalty may improve opportunity, not that it guarantees an outcome.
+- Keep draw result messaging simple: entered, selected, not selected, or expired.
+- Review promotion, fairness, and eligibility language before launch.
+
 ## Best Practices
 
 ### 1. Choose an Entry Window That Fits Your Launch
@@ -214,6 +226,7 @@ Be transparent about odds:
 - Show entry count if helpful
 - Communicate winner count
 - Let consumers know when to expect results
+- Avoid fixed-odds language when loyalty-biased selection is enabled
 
 ## Common Patterns
 
@@ -247,13 +260,15 @@ Create separate access paths for different consumer groups:
 
 ## How Selection Works
 
-Fanfare draws use randomized selection to give every entry an equal chance:
+Fanfare draws use randomized selection. For standard draws, every entry has an equal chance:
 
-1. **Equal probability** — Each entry has the same chance of being selected
+1. **Equal opportunity** — Each entry has the same chance of being selected in a standard draw
 2. **Automated** — The system handles selection without manual intervention
 3. **Transparent** — Winners are notified immediately; non-winners are informed of the result
 
 The selection process runs automatically at the scheduled draw time.
+
+If loyalty-biased selection is enabled, selection still remains probabilistic, but loyal or highly engaged entrants may receive improved opportunity. Use clear promotion terms and avoid promising a guaranteed result.
 
 ## Related Concepts
 

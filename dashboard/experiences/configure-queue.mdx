@@ -1,11 +1,11 @@
 ---
 title: Configure Queue
-description: Set up first-come, first-served queue experiences for product launches and limited releases
+description: Set up queue experiences for product launches and limited releases
 ---
 
 # Configure Queue Experience
 
-Queue experiences provide first-come, first-served access to products or services. Consumers join the queue and are served in the order they arrive, making this ideal for product launches, limited releases, and high-demand events.
+Queue experiences manage high demand by letting consumers join a virtual waiting line. By default, queues serve consumers in the order they arrive, making them ideal for product launches, limited releases, and high-demand events.
 
 ## When to Use Queues
 
@@ -43,6 +43,7 @@ _Caption: The queue creation form with all configuration options_
 | **Queue Capacity** | `capacity` | No | Maximum consumers allowed in the queue. |
 | **Max Admissions** | `maxAdmissions` | No | Maximum consumers who can be admitted. |
 | **Admission Window** | `admissionExpirationSeconds` | No | How long admitted consumers have to continue. |
+| **Loyalty-Biased Admission** | `loyaltyBiasEnabled` | No | Optionally gives loyal or engaged consumers improved opportunity. Off by default. |
 
 ### Timing Window
 
@@ -105,6 +106,16 @@ _Caption: Set timeouts to keep the queue moving_
 
 ## Advanced Queue Options
 
+### Loyalty-Biased Admission
+
+Use loyalty-biased admission when loyalty or engagement should influence opportunity for a specific queue experience. This setting is optional and off by default.
+
+When enabled:
+
+- Admission remains non-guaranteed.
+- Customer copy should use qualitative progress language, not precise numeric queue positions.
+- Promotion terms should be reviewed for legal and fairness requirements before launch.
+
 ### Position Estimation
 
 Show consumers estimated wait times based on:
@@ -126,7 +137,7 @@ Configure when consumers receive updates:
 | Event                 | Notification                            |
 | --------------------- | --------------------------------------- |
 | **Entry Confirmed**   | Confirmation of queue entry             |
-| **Position Update**   | Regular position updates (configurable) |
+| **Position Update**   | Regular progress updates (configurable) |
 | **Near Front**        | Alert when approaching front of queue   |
 | **Your Turn**         | Notification to complete purchase       |
 | **Checkout Reminder** | Warning before timeout                  |
