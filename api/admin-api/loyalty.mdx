@@ -1,0 +1,60 @@
+---
+title: Admin Loyalty API
+description: Server-side loyalty management contracts for settings, event points, adjustments, and loyalty audiences.
+---
+
+# Admin Loyalty API
+
+The Admin API loyalty surface is for server-side management. Keep Admin API credentials on your server and use it for back-office workflows, not browser-facing customer UI.
+
+## Management Areas
+
+| Area | Operations |
+| --- | --- |
+| Program settings | Read and update enabled state, expiration policy, and optional point limits. |
+| Event points | Read the merged event-point configuration and update organization overrides. |
+| Manual adjustments | Add or deduct points for a specific consumer with a support reason or external reference. |
+| Consumer history | Read a consumer's loyalty transaction history from the generated consumer-management endpoint. |
+| Loyalty audiences | Create or update audience tiers based on loyalty fields. |
+
+## Settings Contract
+
+Settings include:
+
+- `enabled`
+- `expirationType`: `none`, `fixed`, or `inactivity`
+- `fixedExpireMonths`
+- `inactivityExpireMonths`
+- `maxBalance`
+- `dailyEarnCap`
+- `monthlyEarnCap`
+
+When `expirationType` is `fixed`, send a positive `fixedExpireMonths` value. When `expirationType` is `inactivity`, send a positive `inactivityExpireMonths` value. Optional limits can be omitted or set to `null` when there is no configured limit.
+
+## Event Points Contract
+
+Event points are returned as a record of event type to point value. The read response includes defaults merged with organization overrides. Updates send only the override values you want to customize; clearing overrides returns the organization to default values.
+
+Use the dashboard category names when explaining earning behavior to operators: engagement, conversion, social/message, queue, draw, auction, appointment, and waitlist.
+
+## Manual Adjustment Contract
+
+Manual adjustments require a consumer ID and a non-zero point delta. Positive values add points and negative values deduct points. The response returns whether the adjustment was applied, the applied point amount, the resulting balance, lifetime points, and a transaction ID when one is created.
+
+Use manual adjustments for support and correction workflows. Do not expose Admin API adjustment actions in public customer applications.
+
+## Generated References
+
+The generated Admin OpenAPI reference currently includes related loyalty endpoints for:
+
+- `GET /consumers/{id}/loyalty-transactions`
+- `POST /audiences/loyalty-tiers`
+- `PUT /audiences/loyalty-tiers/{groupId}`
+
+Use those generated pages for request and response schemas when they are available in the API Reference navigation. The settings, event-points, and manual-adjustment dashboard surfaces are documented here at a narrative level.
+
+## Related Pages
+
+- [Loyalty configuration](/dashboard/loyalty/configuration)
+- [Points management](/dashboard/loyalty/points-management)
+- [Consumer Loyalty API](/api/consumer-api/loyalty)

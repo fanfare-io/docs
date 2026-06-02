@@ -1,0 +1,54 @@
+---
+title: Loyalty Configuration
+description: Configure program status, point expiration, and loyalty limits.
+---
+
+# Loyalty Configuration
+
+Use **Loyalty > Settings** to define the program-level contract for your organization. These settings control whether customers can earn points, whether points expire, and how large balances or earning totals can become.
+
+## Program Status
+
+| Setting | Behavior |
+| --- | --- |
+| Enabled | Eligible events and admin adjustments can affect loyalty balances. Customer-facing loyalty endpoints return loyalty data for authenticated consumers. |
+| Disabled | The program is paused. Keep customer-facing UI prepared to handle unavailable loyalty data. |
+
+Use the status setting when you are launching, pausing, or changing a program. If your storefront displays loyalty, keep a fallback state for customers who do not have available loyalty data.
+
+## Expiration Policy
+
+The dashboard supports three policies.
+
+| Policy | Configuration | Customer-visible behavior |
+| --- | --- | --- |
+| None | No month value required. | Points do not expire. |
+| Fixed | Set the number of months after earning. | Points expire based on the earning bucket after the configured number of months. Redemptions or deductions consume older expiring points first at a conceptual level. |
+| Inactivity | Set the number of months without qualifying activity. | Points expire when the customer has no earning or redemption activity for the configured period. Earning or redeeming points resets the customer activity window. |
+
+Choose copy in your customer experience that matches the policy. For fixed expiration, show upcoming expiration dates when relevant. For inactivity expiration, explain that account activity keeps points active without exposing implementation details.
+
+## Limits
+
+Each limit is optional. Leave the field empty when you do not want that configured limit.
+
+| Limit | Meaning |
+| --- | --- |
+| Maximum balance | Maximum current balance a customer can hold. |
+| Daily earn cap | Maximum points a customer can earn in a day. |
+| Monthly earn cap | Maximum points a customer can earn in a month. |
+
+Point limits are program controls, not customer segmentation rules. Use audiences when you want to create customer groups from loyalty balance or lifetime points.
+
+## Public Copy Guidelines
+
+- Say whether points expire and what the customer can do to keep or use them.
+- Show upcoming expirations when your UI needs to prompt action.
+- Avoid promising points for events you have set to `0`.
+- Keep reward terms aligned with your own legal and support policies.
+
+## Related Pages
+
+- [Points management](/dashboard/loyalty/points-management)
+- [Loyalty programs concept](/concepts/loyalty)
+- [Consumer Loyalty API](/api/consumer-api/loyalty)

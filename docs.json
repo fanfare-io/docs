@@ -49,6 +49,7 @@
               "concepts/experiences",
               "concepts/audiences",
               "concepts/consumers",
+              "concepts/loyalty",
               "concepts/products",
               "concepts/real-time"
             ]
@@ -168,7 +169,8 @@
               "guides/use-cases/flash-sale",
               "guides/use-cases/limited-edition",
               "guides/use-cases/appointment-booking",
-              "guides/use-cases/event-ticketing"
+              "guides/use-cases/event-ticketing",
+              "guides/use-cases/loyalty-program"
             ]
           },
           {
@@ -198,6 +200,7 @@
             "group": "Admin API",
             "pages": [
               "api/admin-api/overview",
+              "api/admin-api/loyalty",
               {
                 "group": "Analytics",
                 "pages": [
@@ -396,6 +399,7 @@
             "group": "Consumer API",
             "pages": [
               "api/consumer-api/overview",
+              "api/consumer-api/loyalty",
               {
                 "group": "Appointments",
                 "pages": [
@@ -590,6 +594,14 @@
               "dashboard/consumers/overview",
               "dashboard/consumers/consumer-details",
               "dashboard/consumers/consumer-activity"
+            ]
+          },
+          {
+            "group": "Loyalty",
+            "pages": [
+              "dashboard/loyalty/overview",
+              "dashboard/loyalty/configuration",
+              "dashboard/loyalty/points-management"
             ]
           },
           {
