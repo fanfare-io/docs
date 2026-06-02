@@ -28,7 +28,7 @@ Cursor-based pagination uses opaque cursors instead of page numbers, offering se
 ### Example Request
 
 ```http
-GET /api/v1/consumers?first=20&after=eyJpZCI6ImNvbnNfMDFIWFlaIn0= HTTP/1.1
+GET /api/consumers?first=20&after=eyJpZCI6ImNvbnNfMDFIWFlaIn0= HTTP/1.1
 Host: admin.fanfare.io
 Authorization: Bearer sk_live_xxxxxxxxxxxx
 ```
@@ -73,13 +73,13 @@ Authorization: Bearer sk_live_xxxxxxxxxxxx
 Fetch the first page:
 
 ```http
-GET /api/v1/consumers?first=20 HTTP/1.1
+GET /api/consumers?first=20 HTTP/1.1
 ```
 
 Fetch the next page using `endCursor`:
 
 ```http
-GET /api/v1/consumers?first=20&after=eyJpZCI6ImNvbnNfMDFIWFlaMn0= HTTP/1.1
+GET /api/consumers?first=20&after=eyJpZCI6ImNvbnNfMDFIWFlaMn0= HTTP/1.1
 ```
 
 ### Backward Pagination
@@ -87,7 +87,7 @@ GET /api/v1/consumers?first=20&after=eyJpZCI6ImNvbnNfMDFIWFlaMn0= HTTP/1.1
 Fetch the previous page using `startCursor`:
 
 ```http
-GET /api/v1/consumers?last=20&before=eyJpZCI6ImNvbnNfMDFIWFlaIn0= HTTP/1.1
+GET /api/consumers?last=20&before=eyJpZCI6ImNvbnNfMDFIWFlaIn0= HTTP/1.1
 ```
 
 ### With Search
@@ -95,7 +95,7 @@ GET /api/v1/consumers?last=20&before=eyJpZCI6ImNvbnNfMDFIWFlaIn0= HTTP/1.1
 Combine pagination with search:
 
 ```http
-GET /api/v1/consumers?first=20&search=john HTTP/1.1
+GET /api/consumers?first=20&search=john HTTP/1.1
 ```
 
 Note: Search requires at least 2 characters.
@@ -105,7 +105,7 @@ Note: Search requires at least 2 characters.
 Combine pagination with custom sorting:
 
 ```http
-GET /api/v1/consumers?first=20&sortBy=createdAt&sortDir=desc HTTP/1.1
+GET /api/consumers?first=20&sortBy=createdAt&sortDir=desc HTTP/1.1
 ```
 
 ## Implementation Guide

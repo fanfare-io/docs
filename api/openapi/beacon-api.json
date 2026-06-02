@@ -7125,12 +7125,12 @@
   ],
   "servers": [
     {
-      "description": "Local development",
-      "url": "http://localhost:4803"
-    },
-    {
       "description": "Production",
       "url": "https://beacon.fanfare.io/api"
+    },
+    {
+      "description": "Local development",
+      "url": "http://localhost:4803"
     }
   ]
 }

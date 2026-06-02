@@ -165,7 +165,7 @@ interface GuestSession {
   consumerId: string; // Unique consumer identifier (UUIDv7)
   guestId: string; // Same as consumerId for guests
   expiresAt: string; // ISO 8601 timestamp
-  deviceFingerprint?: string; // Browser fingerprint (if enabled)
+  sessionSignals?: Record<string, unknown>;
 }
 ```
 
@@ -248,36 +248,26 @@ The SDK synchronizes sessions across browser tabs automatically:
 - **Active participations**: Queue/draw entries shared
 - **Token refresh**: One tab refreshes, all tabs update
 
-## Step 6: Device Fingerprinting
+## Step 6: Session Integrity
 
-Guest sessions can be bound to a device fingerprint for security:
+Guest sessions include SDK-managed integrity signals for security:
 
 ```typescript
 <FanfareProvider
   organizationId="org_xxx"
   publishableKey="pk_live_xxx"
-  features={{
-    fingerprinting: true  // Enable device fingerprinting (default)
-  }}
 />
 ```
 
-### Fingerprint Benefits
+### Integrity Benefits
 
 - **Fraud prevention**: Detect suspicious multi-account behavior
-- **Session binding**: Tie admission grants to the originating device
+- **Session binding**: Keep grants scoped to the active session
 - **Queue position protection**: Prevent queue position transfer
 
 ### Privacy Considerations
 
-```typescript
-// Disable fingerprinting for privacy compliance
-<FanfareProvider
-  features={{
-    fingerprinting: false
-  }}
-/>
-```
+Work with your legal and privacy teams to disclose collection and consent requirements appropriate to your implementation.
 
 ## Step 7: Anonymous Session Events
 

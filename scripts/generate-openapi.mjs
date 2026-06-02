@@ -9,8 +9,14 @@ const METHOD_ORDER = new Map(METHODS.map((method, index) => [method, index]));
 const PUBLIC_OMITTED_SCHEMA_FIELDS = new Set([
   "botScore",
   "deviceFingerprint",
+  "encryptionSeed",
   "fingerprint",
   "lastRiskAssessmentAt",
+  "passkeys",
+  "passwordHash",
+  "passwordResetCode",
+  "passwordResetCodeExpiresAt",
+  "publicKey",
   "riskAssessment",
   "riskScore",
   "source",
@@ -364,13 +370,6 @@ function endpointHref(serviceName, method, path) {
 }
 
 function buildServers(service, env) {
-  if (env === "local") {
-    return [
-      { url: service.localBaseUrl, description: "Local development" },
-      { url: service.productionBaseUrl, description: "Production" },
-    ];
-  }
-
   return [
     { url: service.productionBaseUrl, description: "Production" },
     { url: service.localBaseUrl, description: "Local development" },

@@ -75,10 +75,6 @@
                         }
                       ]
                     },
-                    "encryptionSeed": {
-                      "minLength": 1,
-                      "type": "string"
-                    },
                     "id": {
                       "format": "uuid",
                       "type": "string"
@@ -165,8 +161,7 @@
                   },
                   "required": [
                     "id",
-                    "timeZone",
-                    "encryptionSeed"
+                    "timeZone"
                   ],
                   "type": "object"
                 }
@@ -1528,10 +1523,6 @@
                       "minLength": 1,
                       "type": "string"
                     },
-                    "encryptionSeed": {
-                      "minLength": 1,
-                      "type": "string"
-                    },
                     "floorPrice": {
                       "anyOf": [
                         {
@@ -1667,7 +1658,6 @@
                   "required": [
                     "id",
                     "timeZone",
-                    "encryptionSeed",
                     "settleAt",
                     "currencyCode"
                   ],
@@ -9018,10 +9008,6 @@
                                             }
                                           ]
                                         },
-                                        "encryptionSeed": {
-                                          "minLength": 1,
-                                          "type": "string"
-                                        },
                                         "id": {
                                           "format": "uuid",
                                           "type": "string"
@@ -9108,8 +9094,7 @@
                                       },
                                       "required": [
                                         "id",
-                                        "timeZone",
-                                        "encryptionSeed"
+                                        "timeZone"
                                       ],
                                       "type": "object"
                                     },
@@ -9167,10 +9152,6 @@
                                           ]
                                         },
                                         "currencyCode": {
-                                          "minLength": 1,
-                                          "type": "string"
-                                        },
-                                        "encryptionSeed": {
                                           "minLength": 1,
                                           "type": "string"
                                         },
@@ -9309,7 +9290,6 @@
                                       "required": [
                                         "id",
                                         "timeZone",
-                                        "encryptionSeed",
                                         "settleAt",
                                         "currencyCode"
                                       ],
@@ -11491,10 +11471,6 @@
                                                 }
                                               ]
                                             },
-                                            "encryptionSeed": {
-                                              "minLength": 1,
-                                              "type": "string"
-                                            },
                                             "id": {
                                               "format": "uuid",
                                               "type": "string"
@@ -11581,8 +11557,7 @@
                                           },
                                           "required": [
                                             "id",
-                                            "timeZone",
-                                            "encryptionSeed"
+                                            "timeZone"
                                           ],
                                           "type": "object"
                                         },
@@ -11640,10 +11615,6 @@
                                               ]
                                             },
                                             "currencyCode": {
-                                              "minLength": 1,
-                                              "type": "string"
-                                            },
-                                            "encryptionSeed": {
                                               "minLength": 1,
                                               "type": "string"
                                             },
@@ -11782,7 +11753,6 @@
                                           "required": [
                                             "id",
                                             "timeZone",
-                                            "encryptionSeed",
                                             "settleAt",
                                             "currencyCode"
                                           ],
@@ -14512,10 +14482,6 @@
                     "createdBy": {
                       "type": "string"
                     },
-                    "encryptionSeed": {
-                      "minLength": 1,
-                      "type": "string"
-                    },
                     "id": {
                       "format": "uuid",
                       "type": "string"
@@ -14624,7 +14590,6 @@
                     "sequenceId",
                     "name",
                     "timeZone",
-                    "encryptionSeed",
                     "admitRate"
                   ],
                   "type": "object"
@@ -18805,12 +18770,12 @@
   },
   "servers": [
     {
-      "description": "Local development",
-      "url": "http://localhost:4802"
-    },
-    {
       "description": "Production",
       "url": "https://consumer.fanfare.io/api"
+    },
+    {
+      "description": "Local development",
+      "url": "http://localhost:4802"
     }
   ]
 }

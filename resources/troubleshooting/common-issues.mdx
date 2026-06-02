@@ -257,8 +257,15 @@ client.on("queue:access-granted", async ({ handoffToken, expiresAt }) => {
     return;
   }
 
-  // Use token immediately
-  window.location.href = `/checkout?token=${handoffToken}`;
+  // Exchange the grant server-side, then navigate without putting it in the URL.
+  await fetch("/api/checkout/handoff", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${handoffToken}`,
+    },
+  });
+
+  window.location.href = "/checkout";
 });
 ```
 
@@ -325,7 +332,7 @@ client.on("queue:access-granted", async ({ handoffToken, expiresAt }) => {
 1. **Lazy load the SDK**
 
    ```typescript
-   const client = await import("@fanfare/sdk").then((m) => new m.FanfareClient({ publishableKey: "..." }));
+   const client = await import("@fanfare-io/fanfare-sdk-core").then((m) => new m.FanfareClient({ publishableKey: "..." }));
    ```
 
 2. **Preconnect to API**

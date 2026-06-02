@@ -680,18 +680,8 @@
     "global": {
       "anchors": [
         {
-          "anchor": "API Status",
-          "href": "https://status.fanfare.io",
-          "icon": "signal"
-        },
-        {
-          "anchor": "GitHub",
-          "href": "https://github.com/waitify-io",
-          "icon": "github"
-        },
-        {
           "anchor": "Support",
-          "href": "mailto:support@fanfare.io",
+          "href": "/resources/support/contact",
           "icon": "envelope"
         }
       ]
@@ -713,7 +703,6 @@
   "contextual": {
     "options": [
       "copy",
-      "view",
       "chatgpt",
       "claude",
       "cursor"
@@ -722,13 +711,12 @@
   "footer": {
     "socials": {
       "x": "https://x.com/fanfare_io",
-      "github": "https://github.com/waitify-io",
       "linkedin": "https://linkedin.com/company/fanfare-io"
     }
   },
   "feedback": {
     "thumbsRating": true,
-    "suggestEdit": true
+    "suggestEdit": false
   },
   "seo": {
     "indexHiddenPages": false

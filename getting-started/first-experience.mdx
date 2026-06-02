@@ -100,11 +100,21 @@ function QueueExperience() {
 
   if (view.journeyStage === "routed" && view.sequence.stage === "admitted") {
     const admissionGrant = view.sequence.admissionGrant;
+    const proceedToCheckout = async () => {
+      await fetch("/api/checkout/handoff", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${admissionGrant}`,
+        },
+      });
+      window.location.assign("/checkout");
+    };
+
     return (
       <div className="queue-admitted">
         <h2>You are in!</h2>
         <p>You have been admitted. Complete your purchase now.</p>
-        <a href={`/checkout?token=${admissionGrant}`}>Proceed to Checkout</a>
+        <button onClick={proceedToCheckout}>Proceed to Checkout</button>
       </div>
     );
   }
@@ -152,6 +162,15 @@ import { useExperienceJourney } from "@fanfare-io/fanfare-sdk-react";
 
 function DrawExperience() {
   const { view, start, error } = useExperienceJourney("exp_draw_experience_id");
+  const proceedToCheckout = async (admissionGrant: string) => {
+    await fetch("/api/checkout/handoff", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${admissionGrant}`,
+      },
+    });
+    window.location.assign("/checkout");
+  };
 
   if (view?.journeyStage === "ready") {
     return <button onClick={() => start()}>Enter Draw</button>;
@@ -162,7 +181,7 @@ function DrawExperience() {
   }
 
   if (view?.journeyStage === "routed" && view.sequence.stage === "admitted") {
-    return <a href={`/checkout?token=${view.sequence.admissionGrant}`}>Complete Purchase</a>;
+    return <button onClick={() => proceedToCheckout(view.sequence.admissionGrant)}>Complete Purchase</button>;
   }
 
   return error ? <p>{error}</p> : <p>Loading draw...</p>;
@@ -182,6 +201,15 @@ function AuctionExperience() {
   const { view, start, error } = useExperienceJourney("exp_auction_experience_id", {
     autoStart: true,
   });
+  const proceedToCheckout = async (admissionGrant: string) => {
+    await fetch("/api/checkout/handoff", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${admissionGrant}`,
+      },
+    });
+    window.location.assign("/checkout");
+  };
 
   if (view?.journeyStage === "ready") {
     return <button onClick={() => start()}>Start Auction</button>;
@@ -202,7 +230,7 @@ function AuctionExperience() {
   }
 
   if (view?.journeyStage === "routed" && view.sequence.stage === "admitted") {
-    return <a href={`/checkout?token=${view.sequence.admissionGrant}`}>Complete Purchase</a>;
+    return <button onClick={() => proceedToCheckout(view.sequence.admissionGrant)}>Complete Purchase</button>;
   }
 
   return error ? <p>{error}</p> : <p>Loading auction...</p>;
@@ -218,6 +246,15 @@ import { useExperienceJourney } from "@fanfare-io/fanfare-sdk-react";
 
 function TimedReleaseExperience() {
   const { view, start } = useExperienceJourney("exp_timed_release_experience_id");
+  const proceedToCheckout = async (admissionGrant: string) => {
+    await fetch("/api/checkout/handoff", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${admissionGrant}`,
+      },
+    });
+    window.location.assign("/checkout");
+  };
 
   if (view?.journeyStage === "ready") {
     return <button onClick={() => start()}>Enter</button>;
@@ -228,7 +265,7 @@ function TimedReleaseExperience() {
   }
 
   if (view?.journeyStage === "routed" && view.sequence.stage === "admitted") {
-    return <a href={`/checkout?token=${view.sequence.admissionGrant}`}>Complete Purchase</a>;
+    return <button onClick={() => proceedToCheckout(view.sequence.admissionGrant)}>Complete Purchase</button>;
   }
 
   return <p>Loading...</p>;

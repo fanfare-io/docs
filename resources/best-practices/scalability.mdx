@@ -110,8 +110,15 @@ client.on("queue:position-updated", ({ position, estimatedWait }) => {
 
 // Handle access grants
 client.on("queue:access-granted", ({ handoffToken }) => {
-  // Redirect to checkout
-  window.location.href = `/checkout?token=${handoffToken}`;
+  // Exchange the grant server-side, then navigate without putting it in the URL.
+  fetch("/api/checkout/handoff", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${handoffToken}`,
+    },
+  }).then(() => {
+    window.location.href = "/checkout";
+  });
 });
 ```
 

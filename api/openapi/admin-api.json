@@ -4158,10 +4158,6 @@
                           "createdBy": {
                             "type": "string"
                           },
-                          "encryptionSeed": {
-                            "minLength": 1,
-                            "type": "string"
-                          },
                           "id": {
                             "format": "uuid",
                             "type": "string"
@@ -4287,8 +4283,7 @@
                           "archived",
                           "sequenceId",
                           "name",
-                          "timeZone",
-                          "encryptionSeed"
+                          "timeZone"
                         ],
                         "type": "object"
                       },
@@ -4490,10 +4485,6 @@
                     "nullable": true,
                     "type": "string"
                   },
-                  "encryptionSeed": {
-                    "nullable": true,
-                    "type": "string"
-                  },
                   "locationId": {
                     "format": "uuid",
                     "nullable": true,
@@ -4580,10 +4571,6 @@
                       "type": "string"
                     },
                     "createdBy": {
-                      "type": "string"
-                    },
-                    "encryptionSeed": {
-                      "minLength": 1,
                       "type": "string"
                     },
                     "id": {
@@ -4711,8 +4698,7 @@
                     "archived",
                     "sequenceId",
                     "name",
-                    "timeZone",
-                    "encryptionSeed"
+                    "timeZone"
                   ],
                   "type": "object"
                 }
@@ -5712,10 +5698,6 @@
                     "createdBy": {
                       "type": "string"
                     },
-                    "encryptionSeed": {
-                      "minLength": 1,
-                      "type": "string"
-                    },
                     "id": {
                       "format": "uuid",
                       "type": "string"
@@ -5841,8 +5823,7 @@
                     "archived",
                     "sequenceId",
                     "name",
-                    "timeZone",
-                    "encryptionSeed"
+                    "timeZone"
                   ],
                   "type": "object"
                 }
@@ -6016,9 +5997,6 @@
                     "nullable": true,
                     "type": "string"
                   },
-                  "encryptionSeed": {
-                    "type": "string"
-                  },
                   "locationId": {
                     "format": "uuid",
                     "nullable": true,
@@ -6097,10 +6075,6 @@
                       "type": "string"
                     },
                     "createdBy": {
-                      "type": "string"
-                    },
-                    "encryptionSeed": {
-                      "minLength": 1,
                       "type": "string"
                     },
                     "id": {
@@ -6228,8 +6202,7 @@
                     "archived",
                     "sequenceId",
                     "name",
-                    "timeZone",
-                    "encryptionSeed"
+                    "timeZone"
                   ],
                   "type": "object"
                 }
@@ -6440,10 +6413,6 @@
                     "createdBy": {
                       "type": "string"
                     },
-                    "encryptionSeed": {
-                      "minLength": 1,
-                      "type": "string"
-                    },
                     "id": {
                       "format": "uuid",
                       "type": "string"
@@ -6569,8 +6538,7 @@
                     "archived",
                     "sequenceId",
                     "name",
-                    "timeZone",
-                    "encryptionSeed"
+                    "timeZone"
                   ],
                   "type": "object"
                 }
@@ -6783,10 +6751,6 @@
                           "createdBy": {
                             "type": "string"
                           },
-                          "encryptionSeed": {
-                            "minLength": 1,
-                            "type": "string"
-                          },
                           "floorPrice": {
                             "anyOf": [
                               {
@@ -6961,7 +6925,6 @@
                           "sequenceId",
                           "name",
                           "timeZone",
-                          "encryptionSeed",
                           "settleAt"
                         ],
                         "type": "object"
@@ -7171,10 +7134,6 @@
                     "nullable": true,
                     "type": "string"
                   },
-                  "encryptionSeed": {
-                    "nullable": true,
-                    "type": "string"
-                  },
                   "floorPrice": {
                     "nullable": true,
                     "type": "string"
@@ -7287,10 +7246,6 @@
                       "type": "string"
                     },
                     "createdBy": {
-                      "type": "string"
-                    },
-                    "encryptionSeed": {
-                      "minLength": 1,
                       "type": "string"
                     },
                     "floorPrice": {
@@ -7467,7 +7422,6 @@
                     "sequenceId",
                     "name",
                     "timeZone",
-                    "encryptionSeed",
                     "settleAt"
                   ],
                   "type": "object"
@@ -7688,10 +7642,6 @@
                     "createdBy": {
                       "type": "string"
                     },
-                    "encryptionSeed": {
-                      "minLength": 1,
-                      "type": "string"
-                    },
                     "floorPrice": {
                       "anyOf": [
                         {
@@ -7866,7 +7816,6 @@
                     "sequenceId",
                     "name",
                     "timeZone",
-                    "encryptionSeed",
                     "settleAt"
                   ],
                   "type": "object"
@@ -8048,9 +7997,6 @@
                     "nullable": true,
                     "type": "string"
                   },
-                  "encryptionSeed": {
-                    "type": "string"
-                  },
                   "floorPrice": {
                     "nullable": true,
                     "type": "string"
@@ -8154,10 +8100,6 @@
                       "type": "string"
                     },
                     "createdBy": {
-                      "type": "string"
-                    },
-                    "encryptionSeed": {
-                      "minLength": 1,
                       "type": "string"
                     },
                     "floorPrice": {
@@ -8334,7 +8276,6 @@
                     "sequenceId",
                     "name",
                     "timeZone",
-                    "encryptionSeed",
                     "settleAt"
                   ],
                   "type": "object"
@@ -8553,10 +8494,6 @@
                     "createdBy": {
                       "type": "string"
                     },
-                    "encryptionSeed": {
-                      "minLength": 1,
-                      "type": "string"
-                    },
                     "floorPrice": {
                       "anyOf": [
                         {
@@ -8731,7 +8668,6 @@
                     "sequenceId",
                     "name",
                     "timeZone",
-                    "encryptionSeed",
                     "settleAt"
                   ],
                   "type": "object"
@@ -12923,92 +12859,6 @@
                             "format": "uuid",
                             "type": "string"
                           },
-                          "passkeys": {
-                            "anyOf": [
-                              {
-                                "items": {
-                                  "properties": {
-                                    "counter": {
-                                      "type": "number"
-                                    },
-                                    "createdAt": {
-                                      "format": "date-time",
-                                      "type": "string"
-                                    },
-                                    "id": {
-                                      "format": "uuid",
-                                      "type": "string"
-                                    },
-                                    "lastUsed": {
-                                      "anyOf": [
-                                        {
-                                          "format": "date-time",
-                                          "type": "string"
-                                        },
-                                        {
-                                          "type": "null"
-                                        }
-                                      ]
-                                    },
-                                    "name": {
-                                      "anyOf": [
-                                        {
-                                          "type": "string"
-                                        },
-                                        {
-                                          "type": "null"
-                                        }
-                                      ]
-                                    },
-                                    "publicKey": {
-                                      "type": "string"
-                                    }
-                                  },
-                                  "required": [
-                                    "id",
-                                    "publicKey",
-                                    "counter",
-                                    "createdAt"
-                                  ],
-                                  "type": "object"
-                                },
-                                "type": "array"
-                              },
-                              {
-                                "type": "null"
-                              }
-                            ]
-                          },
-                          "passwordHash": {
-                            "anyOf": [
-                              {
-                                "type": "string"
-                              },
-                              {
-                                "type": "null"
-                              }
-                            ]
-                          },
-                          "passwordResetCode": {
-                            "anyOf": [
-                              {
-                                "type": "string"
-                              },
-                              {
-                                "type": "null"
-                              }
-                            ]
-                          },
-                          "passwordResetCodeExpiresAt": {
-                            "anyOf": [
-                              {
-                                "type": "string"
-                              },
-                              {
-                                "type": "null"
-                              }
-                            ]
-                          },
                           "phone": {
                             "anyOf": [
                               {
@@ -17167,92 +17017,6 @@
                             "format": "uuid",
                             "type": "string"
                           },
-                          "passkeys": {
-                            "anyOf": [
-                              {
-                                "items": {
-                                  "properties": {
-                                    "counter": {
-                                      "type": "number"
-                                    },
-                                    "createdAt": {
-                                      "format": "date-time",
-                                      "type": "string"
-                                    },
-                                    "id": {
-                                      "format": "uuid",
-                                      "type": "string"
-                                    },
-                                    "lastUsed": {
-                                      "anyOf": [
-                                        {
-                                          "format": "date-time",
-                                          "type": "string"
-                                        },
-                                        {
-                                          "type": "null"
-                                        }
-                                      ]
-                                    },
-                                    "name": {
-                                      "anyOf": [
-                                        {
-                                          "type": "string"
-                                        },
-                                        {
-                                          "type": "null"
-                                        }
-                                      ]
-                                    },
-                                    "publicKey": {
-                                      "type": "string"
-                                    }
-                                  },
-                                  "required": [
-                                    "id",
-                                    "publicKey",
-                                    "counter",
-                                    "createdAt"
-                                  ],
-                                  "type": "object"
-                                },
-                                "type": "array"
-                              },
-                              {
-                                "type": "null"
-                              }
-                            ]
-                          },
-                          "passwordHash": {
-                            "anyOf": [
-                              {
-                                "type": "string"
-                              },
-                              {
-                                "type": "null"
-                              }
-                            ]
-                          },
-                          "passwordResetCode": {
-                            "anyOf": [
-                              {
-                                "type": "string"
-                              },
-                              {
-                                "type": "null"
-                              }
-                            ]
-                          },
-                          "passwordResetCodeExpiresAt": {
-                            "anyOf": [
-                              {
-                                "type": "string"
-                              },
-                              {
-                                "type": "null"
-                              }
-                            ]
-                          },
                           "phone": {
                             "anyOf": [
                               {
@@ -20232,92 +19996,6 @@
                             "format": "uuid",
                             "type": "string"
                           },
-                          "passkeys": {
-                            "anyOf": [
-                              {
-                                "items": {
-                                  "properties": {
-                                    "counter": {
-                                      "type": "number"
-                                    },
-                                    "createdAt": {
-                                      "format": "date-time",
-                                      "type": "string"
-                                    },
-                                    "id": {
-                                      "format": "uuid",
-                                      "type": "string"
-                                    },
-                                    "lastUsed": {
-                                      "anyOf": [
-                                        {
-                                          "format": "date-time",
-                                          "type": "string"
-                                        },
-                                        {
-                                          "type": "null"
-                                        }
-                                      ]
-                                    },
-                                    "name": {
-                                      "anyOf": [
-                                        {
-                                          "type": "string"
-                                        },
-                                        {
-                                          "type": "null"
-                                        }
-                                      ]
-                                    },
-                                    "publicKey": {
-                                      "type": "string"
-                                    }
-                                  },
-                                  "required": [
-                                    "id",
-                                    "publicKey",
-                                    "counter",
-                                    "createdAt"
-                                  ],
-                                  "type": "object"
-                                },
-                                "type": "array"
-                              },
-                              {
-                                "type": "null"
-                              }
-                            ]
-                          },
-                          "passwordHash": {
-                            "anyOf": [
-                              {
-                                "type": "string"
-                              },
-                              {
-                                "type": "null"
-                              }
-                            ]
-                          },
-                          "passwordResetCode": {
-                            "anyOf": [
-                              {
-                                "type": "string"
-                              },
-                              {
-                                "type": "null"
-                              }
-                            ]
-                          },
-                          "passwordResetCodeExpiresAt": {
-                            "anyOf": [
-                              {
-                                "type": "string"
-                              },
-                              {
-                                "type": "null"
-                              }
-                            ]
-                          },
                           "phone": {
                             "anyOf": [
                               {
@@ -21087,92 +20765,6 @@
                     "organizationId": {
                       "format": "uuid",
                       "type": "string"
-                    },
-                    "passkeys": {
-                      "anyOf": [
-                        {
-                          "items": {
-                            "properties": {
-                              "counter": {
-                                "type": "number"
-                              },
-                              "createdAt": {
-                                "format": "date-time",
-                                "type": "string"
-                              },
-                              "id": {
-                                "format": "uuid",
-                                "type": "string"
-                              },
-                              "lastUsed": {
-                                "anyOf": [
-                                  {
-                                    "format": "date-time",
-                                    "type": "string"
-                                  },
-                                  {
-                                    "type": "null"
-                                  }
-                                ]
-                              },
-                              "name": {
-                                "anyOf": [
-                                  {
-                                    "type": "string"
-                                  },
-                                  {
-                                    "type": "null"
-                                  }
-                                ]
-                              },
-                              "publicKey": {
-                                "type": "string"
-                              }
-                            },
-                            "required": [
-                              "id",
-                              "publicKey",
-                              "counter",
-                              "createdAt"
-                            ],
-                            "type": "object"
-                          },
-                          "type": "array"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
-                    "passwordHash": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
-                    "passwordResetCode": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
-                    "passwordResetCodeExpiresAt": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
                     },
                     "phone": {
                       "anyOf": [
@@ -21982,92 +21574,6 @@
                       "format": "uuid",
                       "type": "string"
                     },
-                    "passkeys": {
-                      "anyOf": [
-                        {
-                          "items": {
-                            "properties": {
-                              "counter": {
-                                "type": "number"
-                              },
-                              "createdAt": {
-                                "format": "date-time",
-                                "type": "string"
-                              },
-                              "id": {
-                                "format": "uuid",
-                                "type": "string"
-                              },
-                              "lastUsed": {
-                                "anyOf": [
-                                  {
-                                    "format": "date-time",
-                                    "type": "string"
-                                  },
-                                  {
-                                    "type": "null"
-                                  }
-                                ]
-                              },
-                              "name": {
-                                "anyOf": [
-                                  {
-                                    "type": "string"
-                                  },
-                                  {
-                                    "type": "null"
-                                  }
-                                ]
-                              },
-                              "publicKey": {
-                                "type": "string"
-                              }
-                            },
-                            "required": [
-                              "id",
-                              "publicKey",
-                              "counter",
-                              "createdAt"
-                            ],
-                            "type": "object"
-                          },
-                          "type": "array"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
-                    "passwordHash": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
-                    "passwordResetCode": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
-                    "passwordResetCodeExpiresAt": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
                     "phone": {
                       "anyOf": [
                         {
@@ -22691,92 +22197,6 @@
                     "organizationId": {
                       "format": "uuid",
                       "type": "string"
-                    },
-                    "passkeys": {
-                      "anyOf": [
-                        {
-                          "items": {
-                            "properties": {
-                              "counter": {
-                                "type": "number"
-                              },
-                              "createdAt": {
-                                "format": "date-time",
-                                "type": "string"
-                              },
-                              "id": {
-                                "format": "uuid",
-                                "type": "string"
-                              },
-                              "lastUsed": {
-                                "anyOf": [
-                                  {
-                                    "format": "date-time",
-                                    "type": "string"
-                                  },
-                                  {
-                                    "type": "null"
-                                  }
-                                ]
-                              },
-                              "name": {
-                                "anyOf": [
-                                  {
-                                    "type": "string"
-                                  },
-                                  {
-                                    "type": "null"
-                                  }
-                                ]
-                              },
-                              "publicKey": {
-                                "type": "string"
-                              }
-                            },
-                            "required": [
-                              "id",
-                              "publicKey",
-                              "counter",
-                              "createdAt"
-                            ],
-                            "type": "object"
-                          },
-                          "type": "array"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
-                    "passwordHash": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
-                    "passwordResetCode": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
-                    "passwordResetCodeExpiresAt": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
                     },
                     "phone": {
                       "anyOf": [
@@ -24752,54 +24172,6 @@
                           "nullable": true,
                           "type": "string"
                         },
-                        "passkeys": {
-                          "items": {
-                            "properties": {
-                              "counter": {
-                                "type": "number"
-                              },
-                              "createdAt": {
-                                "type": "string"
-                              },
-                              "id": {
-                                "format": "uuid",
-                                "type": "string"
-                              },
-                              "lastUsed": {
-                                "nullable": true,
-                                "type": "string"
-                              },
-                              "name": {
-                                "nullable": true,
-                                "type": "string"
-                              },
-                              "publicKey": {
-                                "type": "string"
-                              }
-                            },
-                            "required": [
-                              "id",
-                              "publicKey",
-                              "counter",
-                              "createdAt"
-                            ],
-                            "type": "object"
-                          },
-                          "nullable": true,
-                          "type": "array"
-                        },
-                        "passwordHash": {
-                          "nullable": true,
-                          "type": "string"
-                        },
-                        "passwordResetCode": {
-                          "nullable": true,
-                          "type": "string"
-                        },
-                        "passwordResetCodeExpiresAt": {
-                          "nullable": true,
-                          "type": "string"
-                        },
                         "phone": {
                           "nullable": true,
                           "type": "string"
@@ -25178,92 +24550,6 @@
                       "organizationId": {
                         "format": "uuid",
                         "type": "string"
-                      },
-                      "passkeys": {
-                        "anyOf": [
-                          {
-                            "items": {
-                              "properties": {
-                                "counter": {
-                                  "type": "number"
-                                },
-                                "createdAt": {
-                                  "format": "date-time",
-                                  "type": "string"
-                                },
-                                "id": {
-                                  "format": "uuid",
-                                  "type": "string"
-                                },
-                                "lastUsed": {
-                                  "anyOf": [
-                                    {
-                                      "format": "date-time",
-                                      "type": "string"
-                                    },
-                                    {
-                                      "type": "null"
-                                    }
-                                  ]
-                                },
-                                "name": {
-                                  "anyOf": [
-                                    {
-                                      "type": "string"
-                                    },
-                                    {
-                                      "type": "null"
-                                    }
-                                  ]
-                                },
-                                "publicKey": {
-                                  "type": "string"
-                                }
-                              },
-                              "required": [
-                                "id",
-                                "publicKey",
-                                "counter",
-                                "createdAt"
-                              ],
-                              "type": "object"
-                            },
-                            "type": "array"
-                          },
-                          {
-                            "type": "null"
-                          }
-                        ]
-                      },
-                      "passwordHash": {
-                        "anyOf": [
-                          {
-                            "type": "string"
-                          },
-                          {
-                            "type": "null"
-                          }
-                        ]
-                      },
-                      "passwordResetCode": {
-                        "anyOf": [
-                          {
-                            "type": "string"
-                          },
-                          {
-                            "type": "null"
-                          }
-                        ]
-                      },
-                      "passwordResetCodeExpiresAt": {
-                        "anyOf": [
-                          {
-                            "type": "string"
-                          },
-                          {
-                            "type": "null"
-                          }
-                        ]
                       },
                       "phone": {
                         "anyOf": [
@@ -25932,10 +25218,6 @@
                             "format": "date-time",
                             "type": "string"
                           },
-                          "encryptionSeed": {
-                            "minLength": 1,
-                            "type": "string"
-                          },
                           "id": {
                             "format": "uuid",
                             "type": "string"
@@ -26037,7 +25319,6 @@
                           "sequenceId",
                           "name",
                           "timeZone",
-                          "encryptionSeed",
                           "drawAt",
                           "winnerCount"
                         ],
@@ -26252,10 +25533,6 @@
                   "drawAt": {
                     "type": "string"
                   },
-                  "encryptionSeed": {
-                    "nullable": true,
-                    "type": "string"
-                  },
                   "loyaltyBiasEnabled": {
                     "type": "boolean"
                   },
@@ -26363,10 +25640,6 @@
                       "format": "date-time",
                       "type": "string"
                     },
-                    "encryptionSeed": {
-                      "minLength": 1,
-                      "type": "string"
-                    },
                     "id": {
                       "format": "uuid",
                       "type": "string"
@@ -26468,7 +25741,6 @@
                     "sequenceId",
                     "name",
                     "timeZone",
-                    "encryptionSeed",
                     "drawAt",
                     "winnerCount"
                   ],
@@ -26707,10 +25979,6 @@
                       "format": "date-time",
                       "type": "string"
                     },
-                    "encryptionSeed": {
-                      "minLength": 1,
-                      "type": "string"
-                    },
                     "id": {
                       "format": "uuid",
                       "type": "string"
@@ -26812,7 +26080,6 @@
                     "sequenceId",
                     "name",
                     "timeZone",
-                    "encryptionSeed",
                     "drawAt",
                     "winnerCount"
                   ],
@@ -26999,9 +26266,6 @@
                   "drawAt": {
                     "type": "string"
                   },
-                  "encryptionSeed": {
-                    "type": "string"
-                  },
                   "loyaltyBiasEnabled": {
                     "type": "boolean"
                   },
@@ -27097,10 +26361,6 @@
                     },
                     "drawAt": {
                       "format": "date-time",
-                      "type": "string"
-                    },
-                    "encryptionSeed": {
-                      "minLength": 1,
                       "type": "string"
                     },
                     "id": {
@@ -27204,7 +26464,6 @@
                     "sequenceId",
                     "name",
                     "timeZone",
-                    "encryptionSeed",
                     "drawAt",
                     "winnerCount"
                   ],
@@ -27441,10 +26700,6 @@
                       "format": "date-time",
                       "type": "string"
                     },
-                    "encryptionSeed": {
-                      "minLength": 1,
-                      "type": "string"
-                    },
                     "id": {
                       "format": "uuid",
                       "type": "string"
@@ -27546,7 +26801,6 @@
                     "sequenceId",
                     "name",
                     "timeZone",
-                    "encryptionSeed",
                     "drawAt",
                     "winnerCount"
                   ],
@@ -35936,10 +35190,6 @@
                                               "createdBy": {
                                                 "type": "string"
                                               },
-                                              "encryptionSeed": {
-                                                "minLength": 1,
-                                                "type": "string"
-                                              },
                                               "id": {
                                                 "format": "uuid",
                                                 "type": "string"
@@ -36065,8 +35315,7 @@
                                               "archived",
                                               "sequenceId",
                                               "name",
-                                              "timeZone",
-                                              "encryptionSeed"
+                                              "timeZone"
                                             ],
                                             "type": "object"
                                           },
@@ -36134,10 +35383,6 @@
                                                 "type": "string"
                                               },
                                               "createdBy": {
-                                                "type": "string"
-                                              },
-                                              "encryptionSeed": {
-                                                "minLength": 1,
                                                 "type": "string"
                                               },
                                               "floorPrice": {
@@ -36314,7 +35559,6 @@
                                               "sequenceId",
                                               "name",
                                               "timeZone",
-                                              "encryptionSeed",
                                               "settleAt"
                                             ],
                                             "type": "object"
@@ -36421,10 +35665,6 @@
                                                 "format": "date-time",
                                                 "type": "string"
                                               },
-                                              "encryptionSeed": {
-                                                "minLength": 1,
-                                                "type": "string"
-                                              },
                                               "id": {
                                                 "format": "uuid",
                                                 "type": "string"
@@ -36526,7 +35766,6 @@
                                               "sequenceId",
                                               "name",
                                               "timeZone",
-                                              "encryptionSeed",
                                               "drawAt",
                                               "winnerCount"
                                             ],
@@ -36640,10 +35879,6 @@
                                               "createdBy": {
                                                 "type": "string"
                                               },
-                                              "encryptionSeed": {
-                                                "minLength": 1,
-                                                "type": "string"
-                                              },
                                               "id": {
                                                 "format": "uuid",
                                                 "type": "string"
@@ -36752,7 +35987,6 @@
                                               "sequenceId",
                                               "name",
                                               "timeZone",
-                                              "encryptionSeed",
                                               "admitRate"
                                             ],
                                             "type": "object"
@@ -36801,10 +36035,6 @@
                                                 "type": "string"
                                               },
                                               "createdBy": {
-                                                "type": "string"
-                                              },
-                                              "encryptionSeed": {
-                                                "minLength": 1,
                                                 "type": "string"
                                               },
                                               "id": {
@@ -36905,7 +36135,6 @@
                                               "sequenceId",
                                               "name",
                                               "timeZone",
-                                              "encryptionSeed",
                                               "supportsGuest"
                                             ],
                                             "type": "object"
@@ -37430,10 +36659,6 @@
                               "nullable": true,
                               "type": "string"
                             },
-                            "encryptionSeed": {
-                              "nullable": true,
-                              "type": "string"
-                            },
                             "locationId": {
                               "format": "uuid",
                               "nullable": true,
@@ -37482,10 +36707,6 @@
                               "type": "number"
                             },
                             "closeAt": {
-                              "nullable": true,
-                              "type": "string"
-                            },
-                            "encryptionSeed": {
                               "nullable": true,
                               "type": "string"
                             },
@@ -37572,10 +36793,6 @@
                             "drawAt": {
                               "type": "string"
                             },
-                            "encryptionSeed": {
-                              "nullable": true,
-                              "type": "string"
-                            },
                             "loyaltyBiasEnabled": {
                               "type": "boolean"
                             },
@@ -37637,10 +36854,6 @@
                               "nullable": true,
                               "type": "string"
                             },
-                            "encryptionSeed": {
-                              "nullable": true,
-                              "type": "string"
-                            },
                             "loyaltyBiasEnabled": {
                               "type": "boolean"
                             },
@@ -37693,10 +36906,6 @@
                         "items": {
                           "properties": {
                             "closeAt": {
-                              "nullable": true,
-                              "type": "string"
-                            },
-                            "encryptionSeed": {
                               "nullable": true,
                               "type": "string"
                             },
@@ -39856,10 +39065,6 @@
                                         "createdBy": {
                                           "type": "string"
                                         },
-                                        "encryptionSeed": {
-                                          "minLength": 1,
-                                          "type": "string"
-                                        },
                                         "id": {
                                           "format": "uuid",
                                           "type": "string"
@@ -39985,8 +39190,7 @@
                                         "archived",
                                         "sequenceId",
                                         "name",
-                                        "timeZone",
-                                        "encryptionSeed"
+                                        "timeZone"
                                       ],
                                       "type": "object"
                                     },
@@ -40054,10 +39258,6 @@
                                           "type": "string"
                                         },
                                         "createdBy": {
-                                          "type": "string"
-                                        },
-                                        "encryptionSeed": {
-                                          "minLength": 1,
                                           "type": "string"
                                         },
                                         "floorPrice": {
@@ -40234,7 +39434,6 @@
                                         "sequenceId",
                                         "name",
                                         "timeZone",
-                                        "encryptionSeed",
                                         "settleAt"
                                       ],
                                       "type": "object"
@@ -40341,10 +39540,6 @@
                                           "format": "date-time",
                                           "type": "string"
                                         },
-                                        "encryptionSeed": {
-                                          "minLength": 1,
-                                          "type": "string"
-                                        },
                                         "id": {
                                           "format": "uuid",
                                           "type": "string"
@@ -40446,7 +39641,6 @@
                                         "sequenceId",
                                         "name",
                                         "timeZone",
-                                        "encryptionSeed",
                                         "drawAt",
                                         "winnerCount"
                                       ],
@@ -40560,10 +39754,6 @@
                                         "createdBy": {
                                           "type": "string"
                                         },
-                                        "encryptionSeed": {
-                                          "minLength": 1,
-                                          "type": "string"
-                                        },
                                         "id": {
                                           "format": "uuid",
                                           "type": "string"
@@ -40672,7 +39862,6 @@
                                         "sequenceId",
                                         "name",
                                         "timeZone",
-                                        "encryptionSeed",
                                         "admitRate"
                                       ],
                                       "type": "object"
@@ -40721,10 +39910,6 @@
                                           "type": "string"
                                         },
                                         "createdBy": {
-                                          "type": "string"
-                                        },
-                                        "encryptionSeed": {
-                                          "minLength": 1,
                                           "type": "string"
                                         },
                                         "id": {
@@ -40825,7 +40010,6 @@
                                         "sequenceId",
                                         "name",
                                         "timeZone",
-                                        "encryptionSeed",
                                         "supportsGuest"
                                       ],
                                       "type": "object"
@@ -58158,10 +57342,6 @@
                           "createdBy": {
                             "type": "string"
                           },
-                          "encryptionSeed": {
-                            "minLength": 1,
-                            "type": "string"
-                          },
                           "id": {
                             "format": "uuid",
                             "type": "string"
@@ -58270,7 +57450,6 @@
                           "sequenceId",
                           "name",
                           "timeZone",
-                          "encryptionSeed",
                           "admitRate"
                         ],
                         "type": "object"
@@ -58480,10 +57659,6 @@
                     "nullable": true,
                     "type": "string"
                   },
-                  "encryptionSeed": {
-                    "nullable": true,
-                    "type": "string"
-                  },
                   "loyaltyBiasEnabled": {
                     "type": "boolean"
                   },
@@ -58578,10 +57753,6 @@
                       "type": "string"
                     },
                     "createdBy": {
-                      "type": "string"
-                    },
-                    "encryptionSeed": {
-                      "minLength": 1,
                       "type": "string"
                     },
                     "id": {
@@ -58692,7 +57863,6 @@
                     "sequenceId",
                     "name",
                     "timeZone",
-                    "encryptionSeed",
                     "admitRate"
                   ],
                   "type": "object"
@@ -58919,10 +58089,6 @@
                     "createdBy": {
                       "type": "string"
                     },
-                    "encryptionSeed": {
-                      "minLength": 1,
-                      "type": "string"
-                    },
                     "id": {
                       "format": "uuid",
                       "type": "string"
@@ -59031,7 +58197,6 @@
                     "sequenceId",
                     "name",
                     "timeZone",
-                    "encryptionSeed",
                     "admitRate"
                   ],
                   "type": "object"
@@ -59213,9 +58378,6 @@
                     "nullable": true,
                     "type": "string"
                   },
-                  "encryptionSeed": {
-                    "type": "string"
-                  },
                   "loyaltyBiasEnabled": {
                     "type": "boolean"
                   },
@@ -59301,10 +58463,6 @@
                       "type": "string"
                     },
                     "createdBy": {
-                      "type": "string"
-                    },
-                    "encryptionSeed": {
-                      "minLength": 1,
                       "type": "string"
                     },
                     "id": {
@@ -59415,7 +58573,6 @@
                     "sequenceId",
                     "name",
                     "timeZone",
-                    "encryptionSeed",
                     "admitRate"
                   ],
                   "type": "object"
@@ -59640,10 +58797,6 @@
                     "createdBy": {
                       "type": "string"
                     },
-                    "encryptionSeed": {
-                      "minLength": 1,
-                      "type": "string"
-                    },
                     "id": {
                       "format": "uuid",
                       "type": "string"
@@ -59752,7 +58905,6 @@
                     "sequenceId",
                     "name",
                     "timeZone",
-                    "encryptionSeed",
                     "admitRate"
                   ],
                   "type": "object"
@@ -60759,10 +59911,6 @@
                                     "createdBy": {
                                       "type": "string"
                                     },
-                                    "encryptionSeed": {
-                                      "minLength": 1,
-                                      "type": "string"
-                                    },
                                     "id": {
                                       "format": "uuid",
                                       "type": "string"
@@ -60888,8 +60036,7 @@
                                     "archived",
                                     "sequenceId",
                                     "name",
-                                    "timeZone",
-                                    "encryptionSeed"
+                                    "timeZone"
                                   ],
                                   "type": "object"
                                 },
@@ -60957,10 +60104,6 @@
                                       "type": "string"
                                     },
                                     "createdBy": {
-                                      "type": "string"
-                                    },
-                                    "encryptionSeed": {
-                                      "minLength": 1,
                                       "type": "string"
                                     },
                                     "floorPrice": {
@@ -61137,7 +60280,6 @@
                                     "sequenceId",
                                     "name",
                                     "timeZone",
-                                    "encryptionSeed",
                                     "settleAt"
                                   ],
                                   "type": "object"
@@ -61244,10 +60386,6 @@
                                       "format": "date-time",
                                       "type": "string"
                                     },
-                                    "encryptionSeed": {
-                                      "minLength": 1,
-                                      "type": "string"
-                                    },
                                     "id": {
                                       "format": "uuid",
                                       "type": "string"
@@ -61349,7 +60487,6 @@
                                     "sequenceId",
                                     "name",
                                     "timeZone",
-                                    "encryptionSeed",
                                     "drawAt",
                                     "winnerCount"
                                   ],
@@ -61463,10 +60600,6 @@
                                     "createdBy": {
                                       "type": "string"
                                     },
-                                    "encryptionSeed": {
-                                      "minLength": 1,
-                                      "type": "string"
-                                    },
                                     "id": {
                                       "format": "uuid",
                                       "type": "string"
@@ -61575,7 +60708,6 @@
                                     "sequenceId",
                                     "name",
                                     "timeZone",
-                                    "encryptionSeed",
                                     "admitRate"
                                   ],
                                   "type": "object"
@@ -61624,10 +60756,6 @@
                                       "type": "string"
                                     },
                                     "createdBy": {
-                                      "type": "string"
-                                    },
-                                    "encryptionSeed": {
-                                      "minLength": 1,
                                       "type": "string"
                                     },
                                     "id": {
@@ -61728,7 +60856,6 @@
                                     "sequenceId",
                                     "name",
                                     "timeZone",
-                                    "encryptionSeed",
                                     "supportsGuest"
                                   ],
                                   "type": "object"
@@ -62955,10 +62082,6 @@
                               "createdBy": {
                                 "type": "string"
                               },
-                              "encryptionSeed": {
-                                "minLength": 1,
-                                "type": "string"
-                              },
                               "id": {
                                 "format": "uuid",
                                 "type": "string"
@@ -63084,8 +62207,7 @@
                               "archived",
                               "sequenceId",
                               "name",
-                              "timeZone",
-                              "encryptionSeed"
+                              "timeZone"
                             ],
                             "type": "object"
                           },
@@ -63153,10 +62275,6 @@
                                 "type": "string"
                               },
                               "createdBy": {
-                                "type": "string"
-                              },
-                              "encryptionSeed": {
-                                "minLength": 1,
                                 "type": "string"
                               },
                               "floorPrice": {
@@ -63333,7 +62451,6 @@
                               "sequenceId",
                               "name",
                               "timeZone",
-                              "encryptionSeed",
                               "settleAt"
                             ],
                             "type": "object"
@@ -63440,10 +62557,6 @@
                                 "format": "date-time",
                                 "type": "string"
                               },
-                              "encryptionSeed": {
-                                "minLength": 1,
-                                "type": "string"
-                              },
                               "id": {
                                 "format": "uuid",
                                 "type": "string"
@@ -63545,7 +62658,6 @@
                               "sequenceId",
                               "name",
                               "timeZone",
-                              "encryptionSeed",
                               "drawAt",
                               "winnerCount"
                             ],
@@ -63659,10 +62771,6 @@
                               "createdBy": {
                                 "type": "string"
                               },
-                              "encryptionSeed": {
-                                "minLength": 1,
-                                "type": "string"
-                              },
                               "id": {
                                 "format": "uuid",
                                 "type": "string"
@@ -63771,7 +62879,6 @@
                               "sequenceId",
                               "name",
                               "timeZone",
-                              "encryptionSeed",
                               "admitRate"
                             ],
                             "type": "object"
@@ -63820,10 +62927,6 @@
                                 "type": "string"
                               },
                               "createdBy": {
-                                "type": "string"
-                              },
-                              "encryptionSeed": {
-                                "minLength": 1,
                                 "type": "string"
                               },
                               "id": {
@@ -63924,7 +63027,6 @@
                               "sequenceId",
                               "name",
                               "timeZone",
-                              "encryptionSeed",
                               "supportsGuest"
                             ],
                             "type": "object"
@@ -68478,92 +67580,6 @@
                             "format": "uuid",
                             "type": "string"
                           },
-                          "passkeys": {
-                            "anyOf": [
-                              {
-                                "items": {
-                                  "properties": {
-                                    "counter": {
-                                      "type": "number"
-                                    },
-                                    "createdAt": {
-                                      "format": "date-time",
-                                      "type": "string"
-                                    },
-                                    "id": {
-                                      "format": "uuid",
-                                      "type": "string"
-                                    },
-                                    "lastUsed": {
-                                      "anyOf": [
-                                        {
-                                          "format": "date-time",
-                                          "type": "string"
-                                        },
-                                        {
-                                          "type": "null"
-                                        }
-                                      ]
-                                    },
-                                    "name": {
-                                      "anyOf": [
-                                        {
-                                          "type": "string"
-                                        },
-                                        {
-                                          "type": "null"
-                                        }
-                                      ]
-                                    },
-                                    "publicKey": {
-                                      "type": "string"
-                                    }
-                                  },
-                                  "required": [
-                                    "id",
-                                    "publicKey",
-                                    "counter",
-                                    "createdAt"
-                                  ],
-                                  "type": "object"
-                                },
-                                "type": "array"
-                              },
-                              {
-                                "type": "null"
-                              }
-                            ]
-                          },
-                          "passwordHash": {
-                            "anyOf": [
-                              {
-                                "type": "string"
-                              },
-                              {
-                                "type": "null"
-                              }
-                            ]
-                          },
-                          "passwordResetCode": {
-                            "anyOf": [
-                              {
-                                "type": "string"
-                              },
-                              {
-                                "type": "null"
-                              }
-                            ]
-                          },
-                          "passwordResetCodeExpiresAt": {
-                            "anyOf": [
-                              {
-                                "type": "string"
-                              },
-                              {
-                                "type": "null"
-                              }
-                            ]
-                          },
                           "phone": {
                             "anyOf": [
                               {
@@ -69212,10 +68228,6 @@
                           "createdBy": {
                             "type": "string"
                           },
-                          "encryptionSeed": {
-                            "minLength": 1,
-                            "type": "string"
-                          },
                           "id": {
                             "format": "uuid",
                             "type": "string"
@@ -69314,7 +68326,6 @@
                           "sequenceId",
                           "name",
                           "timeZone",
-                          "encryptionSeed",
                           "supportsGuest"
                         ],
                         "type": "object"
@@ -69513,10 +68524,6 @@
                     "nullable": true,
                     "type": "string"
                   },
-                  "encryptionSeed": {
-                    "nullable": true,
-                    "type": "string"
-                  },
                   "name": {
                     "type": "string"
                   },
@@ -69584,10 +68591,6 @@
                       "type": "string"
                     },
                     "createdBy": {
-                      "type": "string"
-                    },
-                    "encryptionSeed": {
-                      "minLength": 1,
                       "type": "string"
                     },
                     "id": {
@@ -69688,7 +68691,6 @@
                     "sequenceId",
                     "name",
                     "timeZone",
-                    "encryptionSeed",
                     "supportsGuest"
                   ],
                   "type": "object"
@@ -69892,10 +68894,6 @@
                     "createdBy": {
                       "type": "string"
                     },
-                    "encryptionSeed": {
-                      "minLength": 1,
-                      "type": "string"
-                    },
                     "id": {
                       "format": "uuid",
                       "type": "string"
@@ -69994,7 +68992,6 @@
                     "sequenceId",
                     "name",
                     "timeZone",
-                    "encryptionSeed",
                     "supportsGuest"
                   ],
                   "type": "object"
@@ -70165,9 +69162,6 @@
                     "nullable": true,
                     "type": "string"
                   },
-                  "encryptionSeed": {
-                    "type": "string"
-                  },
                   "name": {
                     "type": "string"
                   },
@@ -70226,10 +69220,6 @@
                       "type": "string"
                     },
                     "createdBy": {
-                      "type": "string"
-                    },
-                    "encryptionSeed": {
-                      "minLength": 1,
                       "type": "string"
                     },
                     "id": {
@@ -70330,7 +69320,6 @@
                     "sequenceId",
                     "name",
                     "timeZone",
-                    "encryptionSeed",
                     "supportsGuest"
                   ],
                   "type": "object"
@@ -70532,10 +69521,6 @@
                     "createdBy": {
                       "type": "string"
                     },
-                    "encryptionSeed": {
-                      "minLength": 1,
-                      "type": "string"
-                    },
                     "id": {
                       "format": "uuid",
                       "type": "string"
@@ -70634,7 +69619,6 @@
                     "sequenceId",
                     "name",
                     "timeZone",
-                    "encryptionSeed",
                     "supportsGuest"
                   ],
                   "type": "object"
@@ -76831,12 +75815,12 @@
   ],
   "servers": [
     {
-      "description": "Local development",
-      "url": "http://localhost:4800"
-    },
-    {
       "description": "Production",
       "url": "https://admin.fanfare.io/api"
+    },
+    {
+      "description": "Local development",
+      "url": "http://localhost:4800"
     }
   ]
 }

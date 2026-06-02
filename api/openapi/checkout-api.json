@@ -627,12 +627,12 @@
   ],
   "servers": [
     {
-      "description": "Local development",
-      "url": "http://localhost:4805"
-    },
-    {
       "description": "Production",
       "url": "https://checkout.fanfare.io/api"
+    },
+    {
+      "description": "Local development",
+      "url": "http://localhost:4805"
     }
   ]
 }
