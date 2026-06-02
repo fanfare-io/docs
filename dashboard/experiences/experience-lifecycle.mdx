@@ -1,448 +1,91 @@
 ---
 title: Experience Lifecycle
-description: Manage experience states from draft to completion, including publishing, pausing, and ending
+description: Understand how experience timing and distribution status work
 ---
 
 # Experience Lifecycle
 
-This guide covers how to manage experiences through their complete lifecycle, from creation to completion. Understanding the lifecycle helps you effectively control access and respond to changing conditions.
+An experience is a container for one or more access paths and distributions. Its visible timing is derived from those distributions rather than managed as a separate top-level status state machine.
 
-## Lifecycle Overview
+Use this page to understand what operators and consumers should expect as an experience moves from setup to active participation to completion.
 
-All experiences progress through a standard lifecycle:
+## Lifecycle Model
 
 ```
-Creation → Draft → Published/Scheduled → Active → Processing → Completed
-                        ↓          ↓                  ↓
-                     Paused    Cancelled          Failed
+Configure experience
+       │
+       ▼
+Distributions scheduled
+       │
+       ├── upcoming
+       ├── active
+       ├── ended
+       └── killed
 ```
 
-{/* IMAGE_PLACEHOLDER
-Type: screenshot
-Page: /app/experiences/{experienceId}
-Shows: Experience timeline visualization showing lifecycle stages
-Annotations: Label each stage in the timeline
-Alt text: "Experience lifecycle timeline showing progression from draft to completed"
-*/}
+## During Setup
 
+Before consumers can participate, confirm:
 
-_Caption: Experiences progress through defined stages from creation to completion_
+- Products and variants are attached
+- Access paths and audience eligibility are configured
+- Distribution timing is set
+- Checkout or completion handling is ready if the experience sells products
+- Preview and test flows work with the intended consumer states
 
-## Experience States
+Experience-level open and close times are calculated from the distributions attached to the experience. If the schedule looks wrong, inspect the distribution timing first.
 
-### Draft
+## Distribution Timing States
 
-The initial state after creation. The experience is not visible to consumers.
+| State | Meaning | Consumer experience |
+| --- | --- | --- |
+| **upcoming** | The distribution has not opened yet | Consumers may see launch timing or waiting UI |
+| **active** | Consumers can take the supported action | Consumers can enter, bid, book, or claim depending on type |
+| **ended** | The distribution window has closed | Consumers see outcome or closed-state messaging |
+| **killed** | The distribution has been manually stopped | Consumers should see that participation is unavailable |
 
-**Available Actions:**
+Different distribution types may add type-specific details, such as draw selection, auction settlement, appointment availability, or queue admission.
 
-- Edit all settings
-- Preview experience
-- Publish to make active
-- Delete experience
+## Access Paths
 
-{/* IMAGE_PLACEHOLDER
-Type: screenshot
-Page: /app/experiences/{experienceId}
-Shows: Experience in draft state with Publish button visible
-Annotations: Highlight the Publish button
-Alt text: "Draft experience with publish action available"
-*/}
+Sequences define ordered access paths inside an experience. Higher numeric priority is evaluated first. Audiences and access codes decide whether a consumer is eligible for a path; they do not define ordering by themselves.
 
+Common patterns:
 
-_Caption: Draft experiences can be fully edited before publishing_
+- VIP early access with a high-priority sequence
+- Access-code presale followed by general access
+- Main access path followed by a lower-priority fallback
 
-### Scheduled
+## Monitoring
 
-Published but waiting for the start date. Consumers can see the experience but cannot interact yet.
+During an active experience, watch:
 
-**Available Actions:**
-
-- Edit most settings
-- Pause before start
-- Cancel experience
-- Update schedule
-
-### Active
-
-The experience is live and accepting consumer participation.
-
-**Available Actions:**
-
-- Monitor analytics
-- Pause experience
-- End early
-- View entries
-- Limited editing
-
-{/* IMAGE_PLACEHOLDER
-Type: screenshot
-Page: /app/experiences/{experienceId}
-Shows: Active experience with real-time stats and pause option
-Annotations: Highlight active status badge and pause button
-Alt text: "Active experience showing real-time participation"
-*/}
-
-
-_Caption: Active experiences show real-time participation metrics_
-
-### Paused
-
-Temporarily stopped. Consumers see a paused message.
-
-**Available Actions:**
-
-- Resume experience
-- End experience
-- View current entries
-- Investigate issues
-
-### Processing
-
-For draws and auctions, this state indicates winner selection or auction settlement is in progress.
-
-**Available Actions:**
-
-- View progress
-- Wait for completion
-- Cancel (with caution)
-
-### Completed
-
-The experience has finished successfully.
-
-**Available Actions:**
-
-- View final results
-- Export data
-- Archive experience
-- Delete experience
-
-### Cancelled
-
-Manually cancelled before completion.
-
-**Available Actions:**
-
-- View what was collected
-- Delete experience
-
-### Failed
-
-Processing failed (e.g., draw couldn't complete, payment failed).
-
-**Available Actions:**
-
-- Investigate error
-- Retry processing
-- Contact support
-- Cancel experience
-
-## Publishing an Experience
-
-### Pre-Publish Checklist
-
-Before publishing, verify:
-
-- [ ] Product information is correct
-- [ ] Audience settings are configured
-- [ ] Schedule is accurate (check time zone)
-- [ ] Inventory/capacity is set
-- [ ] Notifications are configured
-- [ ] Preview looks correct
-
-### Publishing Steps
-
-1. Navigate to the experience detail page
-2. Review all settings in the summary
-3. Click **Publish** button
-4. Confirm the action in the dialog
-5. Experience moves to Scheduled or Active state
-
-{/* IMAGE_PLACEHOLDER
-Type: screenshot
-Page: /app/experiences/{experienceId}
-Shows: Publish confirmation dialog
-Annotations: Highlight confirm button
-Alt text: "Publish experience confirmation dialog"
-*/}
-
-
-_Caption: Confirm before publishing your experience_
-
-### After Publishing
-
-- Experience appears in consumer-facing channels
-- Countdown shows if not yet started
-- You'll receive confirmation notification
-- Limited editing available
-
-## Pausing and Resuming
-
-### When to Pause
-
-Pause an experience when:
-
-- Technical issues occur
-- Inventory needs adjustment
-- External factors require a hold
-- Investigation is needed
-
-### How to Pause
-
-1. Navigate to the active experience
-2. Click **Pause** in the actions
-3. Confirm the pause action
-4. Experience immediately stops accepting entries
-
-{/* IMAGE_PLACEHOLDER
-Type: screenshot
-Page: /app/experiences/{experienceId}
-Shows: Pause confirmation dialog
-Annotations: None needed
-Alt text: "Pause experience confirmation"
-*/}
-
-
-_Caption: Pausing immediately stops consumer participation_
-
-### Consumer Experience When Paused
-
-- New entries are blocked
-- Existing entries are preserved
-- Message displays: "This experience is temporarily paused"
-- Position in queue/draw is maintained
-
-### Resuming
-
-To resume a paused experience:
-
-1. Navigate to the paused experience
-2. Click **Resume** in the actions
-3. Confirm resumption
-4. Experience immediately accepts entries again
-
-<Warning>
-Long pauses may frustrate consumers. Communicate the reason if possible and resume promptly.
-</Warning>
-
-## Ending Experiences
-
-### Automatic Ending
-
-Experiences end automatically when:
-
-- End date/time is reached
-- Inventory is exhausted
-- All slots are filled (appointments)
-
-### Manual Early Ending
-
-To end an experience before its scheduled end:
-
-1. Navigate to the experience
-2. Click **End Experience** or **End Early**
-3. Select end option:
-   - **End Now** - Immediate stop
-   - **Process Now** - Stop entries and begin processing
-4. Confirm the action
-
-{/* IMAGE_PLACEHOLDER
-Type: screenshot
-Page: /app/experiences/{experienceId}
-Shows: End experience options dialog
-Annotations: Label each end option
-Alt text: "End experience options showing End Now and Process Now"
-*/}
-
-
-_Caption: Choose how to end your experience_
-
-### Post-Ending Behavior
-
-| Experience Type | What Happens                                            |
-| --------------- | ------------------------------------------------------- |
-| **Queue**       | Remaining entries can complete checkout (if configured) |
-| **Draw**        | Winner selection begins                                 |
-| **Auction**     | Settlement process starts                               |
-| **Appointment** | No new bookings; existing appointments continue         |
-
-## Cancelling Experiences
-
-### When to Cancel
-
-Cancel when:
-
-- The experience should not continue
-- A critical error requires stopping
-- Business decision to not proceed
-
-### Cancellation vs. Ending
-
-| Action     | Use When          | Consumer Impact                        |
-| ---------- | ----------------- | -------------------------------------- |
-| **End**    | Normal completion | Graceful conclusion, processing occurs |
-| **Cancel** | Abnormal stop     | No processing, all entries void        |
-
-### How to Cancel
-
-1. Navigate to the experience
-2. Click **Cancel Experience**
-3. Optionally enter a cancellation reason
-4. Confirm cancellation
-5. Consumers are notified (if configured)
-
-{/* IMAGE_PLACEHOLDER
-Type: screenshot
-Page: /app/experiences/{experienceId}
-Shows: Cancel confirmation with reason field
-Annotations: Highlight reason input
-Alt text: "Cancel experience dialog with optional reason"
-*/}
-
-
-_Caption: Provide a reason when cancelling for record-keeping_
-
-<Caution>
-Cancellation cannot be undone. Cancelled experiences cannot be resumed or reprocessed.
-</Caution>
-
-## Editing During Lifecycle
-
-### What Can Be Edited
-
-Editing capabilities depend on the current state:
-
-| Setting          | Draft | Scheduled | Active  | Paused  |
-| ---------------- | ----- | --------- | ------- | ------- |
-| Name/Description | Yes   | Yes       | Yes     | Yes     |
-| Product          | Yes   | Yes       | No      | No      |
-| Audience         | Yes   | Yes       | Limited | Limited |
-| Schedule         | Yes   | Yes       | Limited | Limited |
-| Inventory        | Yes   | Yes       | Yes     | Yes     |
-| Notifications    | Yes   | Yes       | Yes     | Yes     |
-| Design/Theme     | Yes   | Yes       | Yes     | Yes     |
-
-### Inventory Adjustments
-
-You can adjust inventory during active experiences:
-
-- Increase inventory to serve more consumers
-- Decrease inventory (with caution)
-- Release reserved inventory
-
-{/* IMAGE_PLACEHOLDER
-Type: screenshot
-Page: /app/experiences/{experienceId}
-Shows: Inventory adjustment panel
-Annotations: Show increase/decrease controls
-Alt text: "Inventory adjustment controls for active experience"
-*/}
-
-
-_Caption: Adjust inventory even during active experiences_
-
-## Timeline Visualization
-
-### Experience Timeline
-
-The experience detail page shows a visual timeline of:
-
-- Key dates (start, end, draw time, etc.)
-- Sequences and their schedules
-- Upcoming events
-- Completed milestones
-
-{/* IMAGE_PLACEHOLDER
-Type: screenshot
-Page: /app/experiences/{experienceId}
-Shows: Experience timeline component with multiple events
-Annotations: Label timeline elements
-Alt text: "Experience timeline showing scheduled events and milestones"
-*/}
-
-
-_Caption: The timeline shows all scheduled events for your experience_
-
-### Upcoming Events
-
-The system displays upcoming events:
-
-- Entry window opens
-- Entry window closes
-- Draw time
-- Settlement deadline
-- Checkout deadline
-
-## Notifications During Lifecycle
-
-### Admin Notifications
-
-Receive notifications for:
-
-- Experience published
-- Experience started
-- Reaching milestones (50%, 75%, 100% of inventory)
-- Experience paused
-- Experience ended
-- Processing completed
-- Errors or failures
-
-### Consumer Notifications
-
-Consumers receive notifications based on your settings:
-
-- Entry confirmed
-- Experience starting/ending
-- Position updates
-- Results (win/lose)
-
-## Best Practices
-
-### Before Publishing
-
-1. **Test thoroughly** - Use preview and test entries
-2. **Check all dates** - Verify time zones
-3. **Confirm inventory** - Match actual availability
-4. **Review notifications** - Ensure messages are ready
-
-### During Active Period
-
-1. **Monitor regularly** - Check dashboard frequently
-2. **Respond quickly** - Address issues immediately
-3. **Communicate changes** - Notify consumers of any modifications
-4. **Document decisions** - Record why changes were made
-
-### After Completion
-
-1. **Review results** - Analyze what worked
-2. **Export data** - Save important information
-3. **Follow up** - Handle any pending issues
-4. **Plan improvements** - Apply learnings to future experiences
+- Entrants, admits, winners, bookings, or bids for the active distribution type
+- Inventory and variant availability when products are involved
+- Checkout completion and order sync if consumers purchase after admission
+- Consumer support signals such as expired access, unavailable products, or failed payment attempts
 
 ## Troubleshooting
 
-### Experience Won't Publish
+### Experience Opens At The Wrong Time
 
-- Check all required fields are complete
-- Verify dates are in the future
-- Ensure product/audience exist
-- Look for validation errors
+Check the distribution schedule and timezone. Experience timing is derived from child distributions.
 
-### Experience Stuck Processing
+### Consumers Do Not Reach The Expected Path
 
-- Allow adequate time (varies by type)
-- Check for processing errors
-- Contact support if extended delay
+Check sequence priority, audience membership, and access-code requirements. If multiple paths can match, the higher-priority eligible sequence is used first.
 
-### Unexpected State Change
+### Product Availability Looks Wrong
 
-- Review audit log for actions
-- Check automated triggers
-- Verify no conflicting schedules
+Check variant inventory policy, variant quantity, and product allocation settings. Experience capacity and product inventory are related but separate concepts.
+
+### Consumers Cannot Complete Checkout
+
+Check admission validity, product/variant availability, payment provider state, and order completion sync.
 
 ## Related Guides
 
-- [Create Experience](/dashboard/experiences/create-experience) - Initial creation
-- [Experience Analytics](/dashboard/experiences/experience-analytics) - Monitoring performance
-- [Experiences Overview](/dashboard/experiences/overview) - Managing multiple experiences
+- [Experiences Overview](/dashboard/experiences/overview) - Manage experiences
+- [Create Experience](/dashboard/experiences/create-experience) - Build a new experience
+- [Audiences](/dashboard/audiences/overview) - Configure eligibility
+- [Products](/concepts/products) - Understand products and variants

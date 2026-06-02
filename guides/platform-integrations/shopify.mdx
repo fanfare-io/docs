@@ -43,36 +43,15 @@ The app handles:
 
 ### Option 2: Custom Integration
 
-For stores requiring custom implementations:
+For stores requiring custom implementations, bundle the current Fanfare SDK into your theme or storefront app and render from the public journey state. Do not rely on the deprecated global CDN snippet.
 
 ```liquid
 <!-- In your theme's product.liquid or collection.liquid -->
-<script src="https://cdn.fanfare.io/sdk/v1/fanfare-sdk.min.js"></script>
-
 <div id="fanfare-experience" data-experience-id="{{ product.metafields.fanfare.experience_id }}"></div>
-
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const container = document.getElementById("fanfare-experience");
-    const experienceId = container.dataset.experienceId;
-
-    if (experienceId) {
-      Fanfare.init({
-        organizationId: "{{ shop.metafields.fanfare.organization_id }}",
-        environment: "production",
-      });
-
-      Fanfare.renderExperience(container, {
-        experienceId: experienceId,
-        onAdmitted: function (admission) {
-          // Redirect to checkout with admission token
-          window.location.href = "/cart?fanfare_token=" + admission.token;
-        },
-      });
-    }
-  });
-</script>
+{{ "fanfare-integration.js" | asset_url | script_tag }}
 ```
+
+Your bundled script should initialize `@fanfare-io/fanfare-sdk-core`, call `sdk.journeys.get(experienceId)`, render from `journey.view$`, and hand the `admissionGrant` to your cart or checkout flow when the sequence reaches `admitted`. See [Custom Platform Integration](/guides/platform-integrations/custom-platform) for the framework-agnostic pattern.
 
 ## Step 1: Configure Experience in Admin
 
@@ -171,148 +150,50 @@ The Fanfare Shopify app includes a theme app extension for easy embedding.
 
 ### Initialize the SDK
 
+Build `assets/fanfare-integration.js` with the current core SDK package. The script should render from `journey.view$` and only offer actions exposed by the current public view.
+
 ```javascript
-// assets/fanfare-integration.js
-(function () {
-  // Wait for SDK to load
-  function initFanfare() {
-    if (typeof Fanfare === "undefined") {
-      setTimeout(initFanfare, 100);
-      return;
+import initFanfare from "@fanfare-io/fanfare-sdk-core";
+
+const sdk = await initFanfare({
+  organizationId: window.FanfareConfig.organizationId,
+  publishableKey: window.FanfareConfig.publishableKey,
+});
+
+document.querySelectorAll(".fanfare-experience").forEach((container) => {
+  const journey = sdk.journeys.get(container.dataset.experienceId);
+
+  journey.view$.listen((view) => {
+    if (view.journeyStage === "routed" && view.sequence.stage === "admitted") {
+      showCheckoutButton(container, view.sequence.admissionGrant);
     }
+  });
 
-    // Get organization ID from theme settings
-    const orgId = window.FanfareConfig?.organizationId;
-    if (!orgId) {
-      console.error("Fanfare: Missing organization ID");
-      return;
-    }
-
-    Fanfare.init({
-      organizationId: orgId,
-      environment: "production",
-    });
-
-    // Initialize all experience containers on page
-    document.querySelectorAll(".fanfare-experience").forEach(initExperience);
+  const initialView = journey.view$.get();
+  if (initialView.journeyStage === "ready") {
+    void initialView.start();
   }
+});
 
-  function initExperience(container) {
-    const experienceId = container.dataset.experienceId;
-    if (!experienceId) return;
+function showCheckoutButton(container, admissionGrant) {
+  const button = document.createElement("button");
+  button.className = "fanfare-checkout-btn";
+  button.textContent = "Complete Purchase";
+  button.onclick = () => addToCartAndCheckout(container.dataset.variantId, admissionGrant);
+  container.appendChild(button);
+}
 
-    const config = {
-      experienceId: experienceId,
-      displayMode: container.dataset.displayMode || "inline",
-      productId: container.dataset.productId,
-      variantId: container.dataset.variantId,
-    };
-
-    Fanfare.renderExperience(container, {
-      ...config,
-      onStateChange: function (state) {
-        handleStateChange(container, state);
-      },
-      onAdmitted: function (admission) {
-        handleAdmission(container, admission);
-      },
-      onError: function (error) {
-        handleError(container, error);
-      },
-    });
-  }
-
-  function handleStateChange(container, state) {
-    // Update UI based on state
-    const statusEl = container.querySelector(".fanfare-status");
-    if (statusEl) {
-      statusEl.textContent = getStatusText(state);
-    }
-  }
-
-  function handleAdmission(container, admission) {
-    const autoRedirect = container.dataset.autoRedirect === "true";
-    const variantId = container.dataset.variantId;
-
-    if (autoRedirect && variantId) {
-      // Add to cart and redirect to checkout
-      addToCartAndCheckout(variantId, admission.token);
-    } else {
-      // Show checkout button
-      showCheckoutButton(container, admission);
-    }
-  }
-
-  function addToCartAndCheckout(variantId, admissionToken) {
-    // Add item to Shopify cart
-    fetch("/cart/add.js", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        items: [
-          {
-            id: variantId,
-            quantity: 1,
-            properties: {
-              _fanfare_token: admissionToken,
-              _fanfare_admitted_at: new Date().toISOString(),
-            },
-          },
-        ],
-      }),
-    })
-      .then(function (response) {
-        if (response.ok) {
-          // Redirect to checkout
-          window.location.href = "/checkout";
-        } else {
-          throw new Error("Failed to add to cart");
-        }
-      })
-      .catch(function (error) {
-        console.error("Cart error:", error);
-        alert("Failed to add item to cart. Please try again.");
-      });
-  }
-
-  function showCheckoutButton(container, admission) {
-    const button = document.createElement("button");
-    button.className = "fanfare-checkout-btn";
-    button.textContent = "Complete Purchase";
-    button.onclick = function () {
-      addToCartAndCheckout(container.dataset.variantId, admission.token);
-    };
-    container.appendChild(button);
-  }
-
-  function handleError(container, error) {
-    console.error("Fanfare error:", error);
-    const errorEl = document.createElement("div");
-    errorEl.className = "fanfare-error";
-    errorEl.textContent = "Unable to load experience. Please refresh the page.";
-    container.appendChild(errorEl);
-  }
-
-  function getStatusText(state) {
-    const statusMap = {
-      not_started: "Experience not started",
-      entering: "Joining...",
-      routing: "Finding your place...",
-      waiting: "You're in the queue",
-      admitted: "You're in! Complete your purchase",
-      completed: "Purchase complete",
-      expired: "Session expired",
-    };
-    return statusMap[state.stage] || state.stage;
-  }
-
-  // Start initialization
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", initFanfare);
-  } else {
-    initFanfare();
-  }
-})();
+function addToCartAndCheckout(variantId, admissionGrant) {
+  return fetch("/cart/add.js", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      items: [{ id: variantId, quantity: 1, properties: { _fanfare_token: admissionGrant } }],
+    }),
+  }).then(() => {
+    window.location.href = "/checkout";
+  });
+}
 ```
 
 ### Include in Theme
@@ -322,9 +203,9 @@ The Fanfare Shopify app includes a theme app extension for easy embedding.
 <script>
   window.FanfareConfig = {
     organizationId: "{{ shop.metafields.fanfare.organization_id }}",
+    publishableKey: "{{ shop.metafields.fanfare.publishable_key }}",
   };
 </script>
-<script src="https://cdn.fanfare.io/sdk/v1/fanfare-sdk.min.js" async></script>
 {{ "fanfare-integration.js" | asset_url | script_tag }}
 ```
 
@@ -595,23 +476,12 @@ async function validateFanfareTokens(items: CartLine[]): Promise<boolean> {
 
 ## Best Practices
 
-### 1. Pre-load Experience Data
-
-```javascript
-// Prefetch experience status on page load
-Fanfare.prefetch(experienceId).then(function (status) {
-  if (status.state === "not_started") {
-    showCountdown(status.startsAt);
-  }
-});
-```
-
-### 2. Handle Browser Back Button
+### 1. Handle Browser Back Button
 
 ```javascript
 // Prevent users from losing their place
 window.addEventListener("popstate", function (event) {
-  if (Fanfare.hasActiveSession()) {
+  if (sessionStorage.getItem("fanfare_admission")) {
     if (!confirm("Leaving may forfeit your place in the experience. Continue?")) {
       history.pushState(null, "", location.href);
     }
@@ -619,7 +489,7 @@ window.addEventListener("popstate", function (event) {
 });
 ```
 
-### 3. Mobile Optimization
+### 2. Mobile Optimization
 
 ```liquid
 {% comment %} Responsive container {% endcomment %}

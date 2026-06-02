@@ -16,7 +16,7 @@ Type: screenshot
 Page: /app/experiences
 Shows: Experiences list with multiple experiences in different states (draft, active, completed)
 Annotations: Highlight the Create Experience button and status indicators
-Alt text: "Experiences list showing multiple experiences with different statuses"
+Alt text: "Experiences list showing multiple experiences with derived timing statuses"
 */}
 
 
@@ -55,7 +55,7 @@ When you have experiences, they're displayed in a sortable, searchable table.
 | **Name**       | Experience name (click to view details)          |
 | **Type**       | Queue, Draw, Auction, or Appointment             |
 | **Product**    | Associated product                               |
-| **Status**     | Current state (Draft, Active, Paused, Completed) |
+| **Status**     | Derived timing state from the attached distributions |
 | **Entries**    | Number of consumer entries                       |
 | **Start Date** | When the experience begins                       |
 | **End Date**   | When the experience ends                         |
@@ -77,26 +77,23 @@ Alt text: "Experiences table with search and sort functionality"
 
 _Caption: Search and sort experiences to find what you need_
 
-## Experience Statuses
+## Experience Timing
 
-Experiences progress through several statuses:
+Experience timing is derived from the distributions attached to the experience. Use the distribution status to understand what consumers can do.
 
-| Status         | Description                       | Actions Available     |
-| -------------- | --------------------------------- | --------------------- |
-| **Draft**      | Not yet published                 | Edit, Publish, Delete |
-| **Scheduled**  | Published, waiting for start date | Edit, Pause, Delete   |
-| **Active**     | Currently accepting entries       | Pause, End Early      |
-| **Paused**     | Temporarily stopped               | Resume, End           |
-| **Processing** | Draw/auction in progress          | View Progress         |
-| **Completed**  | Finished, no more entries         | View Results, Delete  |
-| **Cancelled**  | Manually cancelled                | Delete                |
+| State | Description | Typical operator focus |
+| --- | --- | --- |
+| **upcoming** | The next distribution has not opened yet | Confirm schedule, products, and eligibility |
+| **active** | A distribution is open for consumer action | Monitor entries, bids, bookings, or admits |
+| **ended** | The distribution window has closed | Review outcomes and completion state |
+| **killed** | A distribution has been manually stopped | Communicate status and review impact |
 
 {/* IMAGE_PLACEHOLDER
 Type: screenshot
 Page: /app/experiences
 Shows: Experiences with different status badges visible
 Annotations: Circle different status badges
-Alt text: "Experience status badges showing Draft, Active, and Completed states"
+Alt text: "Experience status badges showing upcoming, active, ended, and killed timing states"
 */}
 
 
@@ -209,8 +206,8 @@ _Caption: Access SDK integration code and technical settings_
 
 Sequences allow you to create multiple distribution phases within a single experience. For example:
 
-- **VIP Access** (Priority 1) - Early access for VIP customers
-- **General Access** (Priority 2) - Open to all audiences
+- **VIP Access** (Priority 100) - Early access for VIP customers
+- **General Access** (Priority 10) - Open to all eligible consumers
 
 {/* IMAGE_PLACEHOLDER
 Type: screenshot
@@ -226,7 +223,7 @@ _Caption: Create multiple distribution sequences for phased access_
 ### Adding a Sequence
 
 1. Click **Add Sequence** below the sequences table
-2. Set the priority (lower numbers run first)
+2. Set the priority (higher numbers are evaluated first)
 3. Choose a color for visual identification
 4. Configure the sequence's distributions
 

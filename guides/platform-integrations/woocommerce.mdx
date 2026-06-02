@@ -43,23 +43,16 @@ Add the Fanfare SDK directly to your theme:
 function fanfare_enqueue_scripts() {
     if (is_product()) {
         wp_enqueue_script(
-            'fanfare-sdk',
-            'https://cdn.fanfare.io/sdk/v1/fanfare-sdk.min.js',
-            array(),
-            '1.0.0',
-            true
-        );
-
-        wp_enqueue_script(
             'fanfare-integration',
             get_template_directory_uri() . '/js/fanfare-integration.js',
-            array('fanfare-sdk', 'jquery'),
+            array('jquery'),
             '1.0.0',
             true
         );
 
         wp_localize_script('fanfare-integration', 'FanfareConfig', array(
             'organizationId' => get_option('fanfare_organization_id'),
+            'publishableKey' => get_option('fanfare_publishable_key'),
             'ajaxUrl' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('fanfare_nonce'),
         ));
@@ -67,6 +60,8 @@ function fanfare_enqueue_scripts() {
 }
 add_action('wp_enqueue_scripts', 'fanfare_enqueue_scripts');
 ```
+
+Build `fanfare-integration.js` with the current `@fanfare-io/fanfare-sdk-core` package, initialize it with the localized organization ID and publishable key, and render from `journey.view$`. See [Custom Platform Integration](/guides/platform-integrations/custom-platform) for the framework-agnostic pattern.
 
 ## Step 1: Configure Organization Settings
 
@@ -226,204 +221,38 @@ add_action('woocommerce_before_single_product', 'fanfare_init_display_hook');
 
 ```javascript
 // js/fanfare-integration.js
-(function ($) {
-  "use strict";
+import initFanfare from "@fanfare-io/fanfare-sdk-core";
 
-  $(document).ready(function () {
-    initFanfareExperience();
+const sdk = await initFanfare({
+  organizationId: FanfareConfig.organizationId,
+  publishableKey: FanfareConfig.publishableKey,
+});
+
+const container = document.getElementById("fanfare-experience");
+const journey = sdk.journeys.get(container.dataset.experienceId);
+
+journey.view$.listen((view) => {
+  if (view.journeyStage === "routed" && view.sequence.stage === "admitted") {
+    storeAdmission(container.dataset.productId, view.sequence.admissionGrant, view.sequence.admissionGrantExpiresAt);
+  }
+});
+
+const initialView = journey.view$.get();
+if (initialView.journeyStage === "ready") {
+  void initialView.start();
+}
+
+function storeAdmission(productId, admissionGrant, expiresAt) {
+  const body = new URLSearchParams({
+    action: "fanfare_store_admission",
+    nonce: FanfareConfig.nonce,
+    product_id: productId,
+    admission_token: admissionGrant,
+    expires_at: expiresAt ? String(expiresAt) : "",
   });
 
-  function initFanfareExperience() {
-    var $container = $("#fanfare-experience");
-    if (!$container.length) return;
-
-    var experienceId = $container.data("experience-id");
-    var productId = $container.data("product-id");
-    var displayMode = $container.data("display-mode");
-
-    // Initialize Fanfare SDK
-    Fanfare.init({
-      organizationId: FanfareConfig.organizationId,
-      environment: "production",
-    });
-
-    // Render experience
-    Fanfare.renderExperience($container[0], {
-      experienceId: experienceId,
-
-      onStateChange: function (state) {
-        handleStateChange($container, state, displayMode);
-      },
-
-      onAdmitted: function (admission) {
-        handleAdmission($container, admission, productId);
-      },
-
-      onError: function (error) {
-        handleError($container, error);
-      },
-    });
-  }
-
-  function handleStateChange($container, state, displayMode) {
-    // Update add-to-cart button visibility
-    var $addToCart = $("form.cart");
-
-    if (displayMode === "replace") {
-      if (state.stage === "admitted") {
-        // Show checkout button instead of add to cart
-        $container.addClass("fanfare-admitted");
-      }
-    } else {
-      // Disable add to cart until admitted
-      var $button = $addToCart.find('button[type="submit"]');
-
-      if (state.stage === "admitted") {
-        $button.prop("disabled", false);
-        $button.text($button.data("original-text") || "Add to cart");
-      } else if (state.stage === "waiting" || state.stage === "routing") {
-        if (!$button.data("original-text")) {
-          $button.data("original-text", $button.text());
-        }
-        $button.prop("disabled", true);
-        $button.text("Waiting for access...");
-      }
-    }
-
-    // Update status display
-    updateStatusDisplay($container, state);
-  }
-
-  function updateStatusDisplay($container, state) {
-    var statusHtml = "";
-
-    switch (state.stage) {
-      case "not_started":
-        if (state.startsAt) {
-          statusHtml = '<div class="fanfare-countdown">Starts in: <span class="countdown-timer"></span></div>';
-        }
-        break;
-
-      case "waiting":
-        statusHtml =
-          '<div class="fanfare-queue-status">' +
-          '<div class="queue-position">Position: <strong>' +
-          state.position +
-          "</strong></div>" +
-          '<div class="queue-estimate">Estimated wait: ' +
-          formatWaitTime(state.estimatedWait) +
-          "</div>" +
-          "</div>";
-        break;
-
-      case "admitted":
-        statusHtml =
-          '<div class="fanfare-admitted-status">' +
-          '<div class="admitted-message">You have access!</div>' +
-          '<div class="admitted-timer">Time remaining: <span class="admission-countdown"></span></div>' +
-          "</div>";
-        break;
-
-      case "expired":
-        statusHtml = '<div class="fanfare-expired">Your access has expired. Please try again.</div>';
-        break;
-    }
-
-    $container.find(".fanfare-status").html(statusHtml);
-  }
-
-  function handleAdmission($container, admission, productId) {
-    // Store admission data for checkout
-    $.ajax({
-      url: FanfareConfig.ajaxUrl,
-      method: "POST",
-      data: {
-        action: "fanfare_store_admission",
-        nonce: FanfareConfig.nonce,
-        product_id: productId,
-        admission_token: admission.token,
-        consumer_id: admission.consumerId,
-        experience_id: admission.experienceId,
-        distribution_type: admission.distributionType,
-        expires_at: admission.expiresAt,
-      },
-      success: function (response) {
-        if (response.success) {
-          // Enable checkout
-          enableCheckout($container, productId);
-        }
-      },
-    });
-  }
-
-  function enableCheckout($container, productId) {
-    var displayMode = $container.data("display-mode");
-
-    if (displayMode === "replace") {
-      // Show checkout button
-      var $checkoutBtn = $(
-        '<button type="button" class="fanfare-checkout-btn button alt">' + "Complete Purchase" + "</button>"
-      );
-
-      $checkoutBtn.on("click", function () {
-        addToCartAndCheckout(productId);
-      });
-
-      $container.append($checkoutBtn);
-    } else {
-      // Re-enable add to cart form
-      $("form.cart").removeClass("fanfare-disabled");
-      $('form.cart button[type="submit"]').prop("disabled", false);
-    }
-  }
-
-  function addToCartAndCheckout(productId) {
-    $.ajax({
-      url: FanfareConfig.ajaxUrl,
-      method: "POST",
-      data: {
-        action: "fanfare_add_to_cart",
-        nonce: FanfareConfig.nonce,
-        product_id: productId,
-        quantity: 1,
-      },
-      success: function (response) {
-        if (response.success) {
-          window.location.href = response.data.checkout_url;
-        } else {
-          alert(response.data.message || "Failed to add to cart");
-        }
-      },
-    });
-  }
-
-  function handleError($container, error) {
-    console.error("Fanfare error:", error);
-    $container.html(
-      '<div class="fanfare-error">' +
-        "<p>Unable to load experience. Please refresh the page.</p>" +
-        '<button class="fanfare-retry">Retry</button>' +
-        "</div>"
-    );
-
-    $container.find(".fanfare-retry").on("click", function () {
-      location.reload();
-    });
-  }
-
-  function formatWaitTime(seconds) {
-    if (!seconds) return "Calculating...";
-
-    var minutes = Math.floor(seconds / 60);
-    if (minutes < 1) return "Less than a minute";
-    if (minutes === 1) return "About 1 minute";
-    if (minutes < 60) return "About " + minutes + " minutes";
-
-    var hours = Math.floor(minutes / 60);
-    if (hours === 1) return "About 1 hour";
-    return "About " + hours + " hours";
-  }
-})(jQuery);
+  return fetch(FanfareConfig.ajaxUrl, { method: "POST", body });
+}
 ```
 
 ## Step 4: Server-Side Handling
@@ -437,9 +266,6 @@ function fanfare_store_admission() {
 
     $product_id = intval($_POST['product_id']);
     $admission_token = sanitize_text_field($_POST['admission_token']);
-    $consumer_id = sanitize_text_field($_POST['consumer_id']);
-    $experience_id = sanitize_text_field($_POST['experience_id']);
-    $distribution_type = sanitize_text_field($_POST['distribution_type']);
     $expires_at = sanitize_text_field($_POST['expires_at']);
 
     // Store in session
@@ -451,9 +277,6 @@ function fanfare_store_admission() {
     $admission_data = array(
         'product_id' => $product_id,
         'token' => $admission_token,
-        'consumer_id' => $consumer_id,
-        'experience_id' => $experience_id,
-        'distribution_type' => $distribution_type,
         'expires_at' => $expires_at,
         'stored_at' => time(),
     );
@@ -481,7 +304,7 @@ function fanfare_add_to_cart() {
     }
 
     // Validate admission hasn't expired
-    if (strtotime($admission['expires_at']) < time()) {
+    if (!empty($admission['expires_at']) && strtotime($admission['expires_at']) < time()) {
         wp_send_json_error(array('message' => 'Your access has expired'));
         return;
     }
@@ -489,9 +312,6 @@ function fanfare_add_to_cart() {
     // Add to cart with custom data
     $cart_item_data = array(
         'fanfare_token' => $admission['token'],
-        'fanfare_consumer_id' => $admission['consumer_id'],
-        'fanfare_experience_id' => $admission['experience_id'],
-        'fanfare_distribution_type' => $admission['distribution_type'],
     );
 
     $cart_item_key = WC()->cart->add_to_cart($product_id, $quantity, 0, array(), $cart_item_data);

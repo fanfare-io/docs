@@ -256,7 +256,6 @@ export const fanfareOrders = pgTable("fanfare_orders", {
 <html>
   <head>
     <title>Product Page</title>
-    <script src="https://cdn.fanfare.io/sdk/v1/fanfare-sdk.min.js"></script>
     <link rel="stylesheet" href="/css/fanfare.css" />
   </head>
   <body>
@@ -274,104 +273,98 @@ export const fanfareOrders = pgTable("fanfare_orders", {
       </form>
     </div>
 
-    <script src="/js/fanfare-integration.js"></script>
+    <script type="module" src="/js/fanfare-integration.js"></script>
   </body>
 </html>
 ```
 
 ```javascript
 // js/fanfare-integration.js
+import initFanfare from "@fanfare-io/fanfare-sdk-core";
+
 (function () {
   "use strict";
 
-  // Configuration from server-rendered data or API
   const config = {
     organizationId: window.FANFARE_ORG_ID,
-    apiEndpoint: "/api/fanfare",
+    publishableKey: window.FANFARE_PUBLISHABLE_KEY,
   };
 
-  // Initialize on page load
   document.addEventListener("DOMContentLoaded", init);
 
-  function init() {
+  async function init() {
     const container = document.getElementById("fanfare-container");
     if (!container) return;
 
     const experienceId = container.dataset.experienceId;
     const productId = container.dataset.productId;
 
-    // Initialize Fanfare SDK
-    Fanfare.init({
+    const fanfare = await initFanfare({
       organizationId: config.organizationId,
-      environment: "production",
+      publishableKey: config.publishableKey,
     });
 
-    // Create and render experience
-    const journey = Fanfare.createExperienceJourney(experienceId);
+    const journey = fanfare.journeys.get(experienceId);
 
-    journey.subscribe(function (state) {
-      renderState(container, state, productId);
+    journey.view$.listen(function (view) {
+      renderState(container, view, productId);
     });
 
-    // Start the journey
-    journey.start();
+    const initialView = journey.view$.get();
+    if (initialView.journeyStage === "ready") {
+      void initialView.start();
+    }
 
-    // Store journey reference for cleanup
     container._fanfareJourney = journey;
   }
 
-  function renderState(container, state, productId) {
-    const stage = state.snapshot?.sequenceStage || state.stage;
+  function renderState(container, view, productId) {
+    if (!view || view.journeyStage === "routing") {
+      renderLoading(container);
+      return;
+    }
+
+    if (view.journeyStage === "ready") {
+      renderNotStarted(container, view);
+      return;
+    }
+
+    if (view.journeyStage === "gated") {
+      renderGated(container, view);
+      return;
+    }
+
+    const stage = view.sequence.stage;
 
     switch (stage) {
-      case "not_started":
-        renderNotStarted(container, state);
-        break;
-
-      case "entering":
-      case "routing":
-        renderLoading(container);
-        break;
-
-      case "waiting":
-        renderWaiting(container, state);
+      case "upcoming":
+      case "waitlist_entered":
+      case "participating":
+        renderWaiting(container, view);
         break;
 
       case "admitted":
-        renderAdmitted(container, state, productId);
+        renderAdmitted(container, view, productId);
         break;
 
-      case "completed":
-        renderCompleted(container);
+      case "active":
+        renderEnterable(container, view);
         break;
 
-      case "error":
-        renderError(container, state.error);
-        break;
-
+      case "denied":
+      case "no_sequence":
       default:
         renderDefault(container, stage);
     }
   }
 
-  function renderNotStarted(container, state) {
-    const startsAt = state.snapshot?.context?.startsAt;
-
-    if (startsAt) {
-      const startDate = new Date(startsAt);
-      container.innerHTML =
-        '<div class="fanfare-not-started">' +
-        "<h3>Experience Starting Soon</h3>" +
-        "<p>Starts at: <strong>" +
-        startDate.toLocaleString() +
-        "</strong></p>" +
-        '<div id="countdown"></div>' +
-        "</div>";
-
-      startCountdown(startDate);
-    } else {
-      container.innerHTML = '<div class="fanfare-not-started">' + "<p>Experience not yet available.</p>" + "</div>";
-    }
+  function renderNotStarted(container, view) {
+    container.innerHTML =
+      '<div class="fanfare-not-started">' +
+      "<p>Experience not yet started.</p>" +
+      '<button id="fanfare-start">Start</button>' +
+      "</div>";
+    document.getElementById("fanfare-start")?.addEventListener("click", () => view.start());
   }
 
   function renderLoading(container) {
@@ -379,41 +372,35 @@ export const fanfareOrders = pgTable("fanfare_orders", {
       '<div class="fanfare-loading">' + '<div class="spinner"></div>' + "<p>Connecting to experience...</p>" + "</div>";
   }
 
-  function renderWaiting(container, state) {
-    const context = state.snapshot?.context || {};
-    const position = context.position || "Calculating...";
-    const estimatedWait = context.estimatedWaitSeconds;
+  function renderGated(container, view) {
+    container.innerHTML =
+      '<div class="fanfare-gated">' + "<p>Complete the required step to continue.</p>" + "</div>";
+  }
 
+  function renderEnterable(container, view) {
+    container.innerHTML =
+      '<div class="fanfare-enterable">' +
+      "<p>Access is available.</p>" +
+      '<button id="fanfare-enter">Enter</button>' +
+      "</div>";
+    if ("enter" in view.sequence) {
+      document.getElementById("fanfare-enter")?.addEventListener("click", () => view.sequence.enter());
+    }
+  }
+
+  function renderWaiting(container, view) {
     container.innerHTML =
       '<div class="fanfare-waiting">' +
-      '<div class="queue-position">' +
-      "<span>Your position</span>" +
-      '<strong id="position">' +
-      position +
-      "</strong>" +
-      "</div>" +
-      '<div class="estimated-wait">' +
-      "<span>Estimated wait</span>" +
-      '<strong id="wait-time">' +
-      formatWaitTime(estimatedWait) +
-      "</strong>" +
-      "</div>" +
       '<p class="waiting-message">Please keep this page open.</p>' +
       "</div>";
   }
 
-  function renderAdmitted(container, state, productId) {
-    const context = state.snapshot?.context || {};
-    const token = context.admittanceToken;
-    const expiresAt = context.admittanceExpiresAt;
+  function renderAdmitted(container, view, productId) {
+    const token = view.sequence.admissionGrant;
+    const expiresAt = view.sequence.admissionGrantExpiresAt;
 
-    // Store admission data
     storeAdmission({
       token: token,
-      consumerId: context.consumerId,
-      experienceId: context.experienceId,
-      distributionId: context.distributionId,
-      distributionType: context.distributionType,
       expiresAt: expiresAt,
     });
 
@@ -427,36 +414,19 @@ export const fanfareOrders = pgTable("fanfare_orders", {
       "</div>" +
       "</div>";
 
-    // Show add to cart form
     showAddToCartForm(token);
 
-    // Start expiration countdown
-    startAdmissionCountdown(new Date(expiresAt), function () {
-      // Admission expired
-      container.innerHTML =
-        '<div class="fanfare-expired">' +
-        "<h3>Access Expired</h3>" +
-        "<p>Your checkout window has ended.</p>" +
-        '<button onclick="location.reload()">Try Again</button>' +
-        "</div>";
-      hideAddToCartForm();
-    });
-  }
-
-  function renderCompleted(container) {
-    container.innerHTML =
-      '<div class="fanfare-completed">' + '<div class="success-icon">✓</div>' + "<h3>Purchase Complete</h3>" + "</div>";
-  }
-
-  function renderError(container, error) {
-    container.innerHTML =
-      '<div class="fanfare-error">' +
-      "<h3>Something went wrong</h3>" +
-      "<p>" +
-      (error?.message || "Please try again.") +
-      "</p>" +
-      '<button onclick="location.reload()">Retry</button>' +
-      "</div>";
+    if (expiresAt) {
+      startAdmissionCountdown(new Date(expiresAt), function () {
+        container.innerHTML =
+          '<div class="fanfare-expired">' +
+          "<h3>Access Expired</h3>" +
+          "<p>Your checkout window has ended.</p>" +
+          '<button onclick="location.reload()">Try Again</button>' +
+          "</div>";
+        hideAddToCartForm();
+      });
+    }
   }
 
   function renderDefault(container, stage) {
@@ -565,8 +535,8 @@ export const fanfareOrders = pgTable("fanfare_orders", {
 
 ```tsx
 // components/FanfareExperience.tsx
-import { useExperienceJourney } from "@waitify-io/fanfare-sdk-react";
-import { useState, useEffect, useCallback } from "react";
+import { useExperienceJourney } from "@fanfare-io/fanfare-sdk-react";
+import { useEffect } from "react";
 
 interface FanfareExperienceProps {
   experienceId: string;
@@ -577,93 +547,76 @@ interface FanfareExperienceProps {
 
 interface AdmissionData {
   token: string;
-  consumerId: string;
-  experienceId: string;
-  distributionId: string;
-  distributionType: string;
-  expiresAt: number;
+  expiresAt?: number;
 }
 
 export function FanfareExperience({ experienceId, productId, onAdmitted, onExpired }: FanfareExperienceProps) {
-  const { journey, state, status, start } = useExperienceJourney(experienceId, {
+  const { view, error } = useExperienceJourney(experienceId, {
     autoStart: true,
   });
 
-  const snapshot = state?.snapshot;
-  const stage = snapshot?.sequenceStage || "not_started";
-
   useEffect(() => {
-    if (stage === "admitted" && snapshot?.context?.admittanceToken) {
+    if (view?.journeyStage === "routed" && view.sequence.stage === "admitted") {
       onAdmitted({
-        token: snapshot.context.admittanceToken,
-        consumerId: snapshot.context.consumerId,
-        experienceId: snapshot.context.experienceId,
-        distributionId: snapshot.context.distributionId,
-        distributionType: snapshot.context.distributionType,
-        expiresAt: snapshot.context.admittanceExpiresAt,
+        token: view.sequence.admissionGrant,
+        expiresAt: view.sequence.admissionGrantExpiresAt,
       });
     }
-  }, [stage, snapshot, onAdmitted]);
+  }, [view, onAdmitted]);
 
-  switch (stage) {
-    case "not_started":
-      return <NotStartedState startsAt={snapshot?.context?.startsAt} />;
-
-    case "entering":
-    case "routing":
-      return <LoadingState />;
-
-    case "waiting":
-      return (
-        <WaitingState position={snapshot?.context?.position} estimatedWait={snapshot?.context?.estimatedWaitSeconds} />
-      );
-
-    case "admitted":
-      return <AdmittedState expiresAt={snapshot?.context?.admittanceExpiresAt} onExpired={onExpired} />;
-
-    case "completed":
-      return <CompletedState />;
-
-    case "error":
-      return <ErrorState message={state?.error?.message} onRetry={start} />;
-
-    default:
-      return <div>Status: {stage}</div>;
+  if (error) {
+    return <ErrorState message={error} />;
   }
+
+  if (!view || view.journeyStage === "routing") {
+    return <LoadingState />;
+  }
+
+  if (view.journeyStage === "ready") {
+    return <StartState onStart={() => view.start()} />;
+  }
+
+  if (view.journeyStage === "gated") {
+    return <GatedState />;
+  }
+
+  if (view.sequence.stage === "active" && "enter" in view.sequence) {
+    return <EnterableState onEnter={() => view.sequence.enter()} />;
+  }
+
+  if (view.sequence.stage === "participating" && view.sequence.participation.type === "queue") {
+    return <WaitingState />;
+  }
+
+  if (view.sequence.stage === "admitted") {
+    return <AdmittedState expiresAt={view.sequence.admissionGrantExpiresAt} onExpired={onExpired} />;
+  }
+
+  return <div>Status: {view.sequence.stage}</div>;
 }
 
-function NotStartedState({ startsAt }: { startsAt?: number }) {
-  const [countdown, setCountdown] = useState("");
-
-  useEffect(() => {
-    if (!startsAt) return;
-
-    const interval = setInterval(() => {
-      const distance = startsAt - Date.now();
-      if (distance <= 0) {
-        window.location.reload();
-        return;
-      }
-
-      const hours = Math.floor(distance / (1000 * 60 * 60));
-      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-      setCountdown(`${hours}h ${minutes}m ${seconds}s`);
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [startsAt]);
-
+function StartState({ onStart }: { onStart: () => void }) {
   return (
     <div className="fanfare-not-started">
-      <h3>Experience Starting Soon</h3>
-      {startsAt && (
-        <>
-          <p>Starts at: {new Date(startsAt).toLocaleString()}</p>
-          <div className="countdown">{countdown}</div>
-        </>
-      )}
+      <p>Experience ready.</p>
+      <button onClick={onStart}>Start</button>
+    </div>
+  );
+}
+
+function GatedState() {
+  return (
+    <div className="fanfare-gated">
+      <p>Complete the required step to continue.</p>
+    </div>
+  );
+}
+
+function EnterableState({ onEnter }: { onEnter: () => void }) {
+  return (
+    <div className="fanfare-enterable">
+      <p>Access is available.</p>
+      <button onClick={onEnter}>Enter</button>
     </div>
   );
 }
@@ -677,17 +630,9 @@ function LoadingState() {
   );
 }
 
-function WaitingState({ position, estimatedWait }: { position?: number; estimatedWait?: number }) {
+function WaitingState() {
   return (
     <div className="fanfare-waiting">
-      <div className="queue-position">
-        <span>Your position</span>
-        <strong>{position ?? "Calculating..."}</strong>
-      </div>
-      <div className="estimated-wait">
-        <span>Estimated wait</span>
-        <strong>{formatWaitTime(estimatedWait)}</strong>
-      </div>
       <p className="waiting-message">Please keep this page open.</p>
     </div>
   );
@@ -725,21 +670,11 @@ function AdmittedState({ expiresAt, onExpired }: { expiresAt?: number; onExpired
   );
 }
 
-function CompletedState() {
-  return (
-    <div className="fanfare-completed">
-      <div className="success-icon">✓</div>
-      <h3>Purchase Complete</h3>
-    </div>
-  );
-}
-
-function ErrorState({ message, onRetry }: { message?: string; onRetry: () => void }) {
+function ErrorState({ message }: { message?: string }) {
   return (
     <div className="fanfare-error">
       <h3>Something went wrong</h3>
       <p>{message || "Please try again."}</p>
-      <button onClick={onRetry}>Retry</button>
     </div>
   );
 }

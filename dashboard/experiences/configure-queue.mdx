@@ -153,24 +153,22 @@ Configure when consumers receive updates:
 | **Your Turn**         | Notification to complete purchase       |
 | **Checkout Reminder** | Warning before timeout                  |
 
-## Queue States
-
-Queues progress through these states:
+## Queue Timing
 
 ```
-Draft → Scheduled → Entry Open → Processing → Completed
-                         ↓
-                      Paused
+upcoming → active → ended
+              ↓
+            killed
 ```
 
-| State          | Description                         | Consumer Experience    |
-| -------------- | ----------------------------------- | ---------------------- |
-| **Draft**      | Not published                       | Not visible            |
-| **Scheduled**  | Published, waiting for entry window | See countdown          |
-| **Entry Open** | Accepting new entries               | Can join queue         |
-| **Processing** | Serving consumers                   | Active queue display   |
-| **Paused**     | Temporarily stopped                 | "Queue paused" message |
-| **Completed**  | Finished                            | "Queue closed" message |
+Queue visibility and consumer actions are derived from the distribution timing state:
+
+| State | Description | Consumer experience |
+| --- | --- | --- |
+| **upcoming** | The queue is scheduled but not active yet | Countdown or waitlist prompt |
+| **active** | The queue is accepting or serving consumers | Join, wait, or admission UI |
+| **ended** | The queue window has closed | Closed or outcome UI |
+| **killed** | The queue was manually stopped | Clear unavailable messaging |
 
 ## Example: Product Launch Queue
 
@@ -232,7 +230,7 @@ _Caption: A fully configured product launch queue_
 
 1. **Monitor in real-time** - Watch the dashboard for issues
 2. **Respond to support requests** - Handle consumer questions quickly
-3. **Pause if needed** - Don't hesitate to pause if problems arise
+3. **Stop entry if needed** - Use the dashboard controls if an operational issue requires ending consumer entry
 4. **Track completion rate** - Monitor how many complete vs. timeout
 
 ### Common Mistakes to Avoid

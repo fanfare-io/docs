@@ -99,7 +99,7 @@ Within an experience, you can create multiple **access paths** (called sequences
 
 When a consumer enters your experience:
 
-1. The system checks sequences in priority order (highest first)
+1. The system checks sequences in priority order (higher numeric priority first)
 2. For each sequence, it checks if the consumer qualifies:
    - Are they in the required audience? (if set)
    - Do they have the access code? (if required)
@@ -158,7 +158,9 @@ You can offer several products in one experience — useful for collection drops
 You can control how products are selected:
 
 - **Consumer chooses** — Consumers pick their preferred product
-- **Random assignment** — System assigns a product (great for mystery boxes)
+- **Random assignment** — Fanfare assigns from the configured product pool (great for mystery boxes)
+
+For random assignment, product weights let you make some products more or less likely while keeping assignment automatic. Keep those weights separate from draw odds: draw configuration decides which consumers are selected, while product allocation decides what an admitted or selected consumer receives.
 
 ## Theming and Customization
 
@@ -222,7 +224,7 @@ Consumer completes their purchase within the access window.
 
 ### Design Access Paths Thoughtfully
 
-- Higher priority paths should have stricter requirements
+- Higher-priority paths should have stricter eligibility requirements
 - Always have a general access path as a fallback
 - Test your routing logic before launch
 

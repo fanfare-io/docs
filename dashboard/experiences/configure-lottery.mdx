@@ -86,6 +86,8 @@ _Caption: Configure how winners are selected_
 | -------------------------- | ------------------------------ | ------------------ |
 | **Pure Random**            | Equal chance for everyone      | Fair giveaways     |
 | **Weighted by Engagement** | Higher chance for active users | Rewarding loyalty  |
+
+Winner selection is separate from product allocation. If the experience uses system-assigned products, configure product weights in the product allocation step so Fanfare can assign from the product pool after a consumer is selected.
 | **Weighted by Tier**       | Based on loyalty tier          | VIP prioritization |
 
 ### Inventory Allocation
@@ -160,23 +162,22 @@ Configure what non-winners see:
 | **Related Products** | Show similar available products      |
 | **Next Draw**        | Info about upcoming draws            |
 
-## Draw States
+## Draw Timing
 
 ```
-Draft → Scheduled → Entry Open → Entry Closed → Drawing → Confirmation → Completed
-                                                   ↓
-                                               Cancelled
+upcoming → active → ended
+              ↓
+            killed
 ```
 
-| State            | Description                         |
-| ---------------- | ----------------------------------- |
-| **Draft**        | Not published                       |
-| **Scheduled**    | Published, waiting for entry window |
-| **Entry Open**   | Accepting entries                   |
-| **Entry Closed** | No more entries, waiting for draw   |
-| **Drawing**      | Selection in progress               |
-| **Confirmation** | Winners confirming                  |
-| **Completed**    | All inventory allocated or expired  |
+Draw visibility and entry actions are derived from the distribution timing state:
+
+| State | Description |
+| --- | --- |
+| **upcoming** | The draw is scheduled but entries have not opened |
+| **active** | Entries are open |
+| **ended** | Entries have closed and winner confirmation can proceed |
+| **killed** | The draw was manually stopped |
 
 ## Example: Product Launch Draw
 
