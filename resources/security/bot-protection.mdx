@@ -1,286 +1,85 @@
 ---
 title: Bot Protection
-description: How Fanfare protects against bots and fraudulent access to your experiences.
+description: How Fanfare helps protect high-demand experiences from automated misuse.
 ---
 
-# Bot Protection
-
-Fanfare includes comprehensive protection against bots, automated scripts, and fraudulent access attempts to ensure fair distribution to legitimate consumers.
+Fanfare includes bot and abuse protection designed to help keep high-demand experiences fair for legitimate consumers.
 
 <Note>
-  This documentation describes bot protection features at a high level. Specific detection methods and thresholds are
-  not disclosed to maintain their effectiveness.
+  This page describes the public integration contract at a high level. Specific detection signals, thresholds, and enforcement rules are intentionally not documented publicly.
 </Note>
 
 ## Why Bot Protection Matters
 
-High-demand product launches attract automated abuse:
-
-- **Reseller bots** attempting to purchase inventory for resale
-- **Credential stuffing** using stolen account lists
-- **Scalping scripts** that bypass queue mechanisms
-- **DDoS attacks** attempting to disrupt launches
-
-Fanfare's protection ensures your products reach real consumers.
+High-demand launches can attract automated abuse, including scripted entry attempts, account misuse, queue bypass attempts, and disruptive traffic spikes. Fanfare helps preserve a fair path for real consumers without requiring customers to build their own anti-abuse system.
 
 ## Protection Layers
 
-### Device Fingerprinting
-
-Every consumer interaction includes a device fingerprint that helps identify unique devices:
-
-```typescript
-// Fingerprinting is enabled by default
-const client = new FanfareClient({
-  publishableKey: "pk_live_...",
-});
-
-// The SDK automatically includes fingerprint data
-// No additional code required
-```
-
-**What fingerprinting provides**:
-
-- Identifies unique devices across sessions
-- Detects device spoofing attempts
-- Links multiple accounts to single devices
-- Prevents "ghost" accounts from bots
-
-**Privacy-focused design**:
-
-- Fingerprints are hashed, not raw device data
-- Cannot reverse-engineer device specifications
-- Compliant with privacy regulations
-- Consumers can clear by clearing browser data
-
-### Rate Limiting
-
-All endpoints are rate-limited to prevent automated abuse:
-
-| Action           | Limit      | Window    |
-| ---------------- | ---------- | --------- |
-| Experience entry | Per-device | Per event |
-| Queue join       | Per-device | Per event |
-| Authentication   | Per-IP     | Rolling   |
-| API calls        | Per-key    | Rolling   |
-
-Rate limits are adaptive and may vary based on threat level.
-
-### Behavioral Analysis
-
-Fanfare analyzes interaction patterns to distinguish humans from bots:
+Fanfare combines several categories of protection:
 
 <CardGroup cols={2}>
-  <Card title="Timing Analysis" icon="clock">
-    Evaluates request timing patterns
+  <Card title="Client integrity" icon="shield-check">
+    The SDK includes the client-side context needed by Fanfare protection.
   </Card>
-  <Card title="Interaction Patterns" icon="hand-pointer">
-    Analyzes how users interact with the page
+  <Card title="Traffic controls" icon="gauge">
+    Request patterns are monitored and controlled to reduce automated abuse.
   </Card>
-  <Card title="Navigation Flow" icon="route">
-    Tracks expected vs. anomalous paths
+  <Card title="Experience rules" icon="sliders">
+    Entry, purchase, and participation limits can be configured per launch.
   </Card>
-  <Card title="Session Behavior" icon="chart-line">
-    Monitors session-level patterns
+  <Card title="Review signals" icon="chart-line">
+    Dashboards surface aggregate protection outcomes for launch monitoring.
   </Card>
 </CardGroup>
-
-### Challenge Systems
-
-When suspicious activity is detected, consumers may be presented with challenges:
-
-- **Invisible challenges**: Resolved automatically for legitimate users
-- **Interactive challenges**: Require human interaction
-- **Escalation**: Progressive challenges based on risk level
 
 ## Configuring Protection
 
 ### Protection Levels
 
-Configure protection strength for your organization:
+Choose the protection level that matches the expected launch profile:
 
-| Level    | Description                            | Use Case       |
-| -------- | -------------------------------------- | -------------- |
-| Standard | Balanced protection and UX             | Most launches  |
-| Enhanced | Stricter checks, may affect some users | High-demand    |
-| Maximum  | Strictest protection                   | Extreme demand |
+| Level    | Description                            | Use Case      |
+| -------- | -------------------------------------- | ------------- |
+| Standard | Balanced protection and UX             | Most launches |
+| Enhanced | Stricter checks for higher-demand work | Major drops   |
+| Maximum  | Most restrictive protection posture    | Peak demand   |
 
-Configure in your dashboard under **Settings > Security**.
+Configure protection in the dashboard under **Settings > Security**.
 
 ### Per-Experience Settings
 
-Different experiences may need different protection:
+Different experiences may need different protection levels. Use the dashboard or API to configure the protection posture, authentication requirements, and participation limits for each experience.
 
-```typescript
-// Experience configuration (via dashboard or API)
-const experienceSettings = {
-  security: {
-    protectionLevel: "enhanced",
-    requireFingerprint: true,
-    allowGuests: true, // Set false for authenticated-only
-  },
-};
-```
+### Purchase And Participation Limits
 
-### Purchase Limits
+Combine bot protection with customer-facing limits such as:
 
-Combine bot protection with purchase limits:
+- Maximum entries per verified consumer
+- Maximum purchases per order or experience
+- Authentication requirements for specific launches
+- Draw or queue mechanics for fair allocation
 
-```typescript
-const orderLimits = {
-  maxPerConsumer: 1, // Per verified consumer
-  maxPerDevice: 2, // Per device fingerprint
-  enforcementLevel: "strict",
-};
-```
+## Consumer Experience
 
-## Handling Bot Challenges
-
-### Consumer Experience
-
-When a consumer is challenged:
-
-1. **Seamless path**: Most legitimate users proceed without interruption
-2. **Challenge path**: Some users see a brief verification step
-3. **Blocked path**: Clear bots are denied access
-
-### SDK Events
-
-Listen for protection events in your integration:
-
-```typescript
-// Handle challenge events
-client.on("security:challenge-required", (challenge) => {
-  // SDK handles this automatically
-  // Custom UI can be provided if needed
-});
-
-client.on("security:access-denied", (reason) => {
-  // Consumer was blocked
-  showBlockedMessage();
-});
-```
-
-### Error Handling
-
-Handle protection-related errors gracefully:
+Most legitimate consumers should continue without interruption. When additional verification is required, the SDK handles the verification flow and returns a clear state to your integration. Consumers who cannot be verified should see a plain, helpful message and a support path.
 
 ```typescript
 try {
   await client.experiences.enter(experienceId);
 } catch (error) {
   if (error.code === "ACCESS_DENIED") {
-    showMessage(
-      "We couldn't verify your access. " + "Please ensure you're using a supported browser " + "and try again."
-    );
+    showMessage("We could not verify your access. Please try again or contact support.");
   }
 }
 ```
 
-## Best Practices
+## Integration Recommendations
 
-### For High-Demand Launches
+1. Keep the SDK updated so your integration receives current protection behavior.
+2. Use Fanfare SDKs or documented APIs rather than recreating protection-sensitive flows.
+3. Validate server-side handoffs before fulfilling inventory or issuing rewards.
+4. Monitor launch dashboards and support channels during high-demand moments.
 
-<AccordionGroup>
-  <Accordion title="Enable enhanced protection">
-    Increase protection level before high-profile launches.
-  </Accordion>
+## Monitoring And Support
 
-<Accordion title="Require authentication">Authenticated consumers are harder for bots to impersonate.</Accordion>
-
-<Accordion title="Set purchase limits">Limit quantities per consumer and per device.</Accordion>
-
-<Accordion title="Use draws for fairness">Random selection eliminates speed-based bot advantages.</Accordion>
-
-  <Accordion title="Monitor in real-time">
-    Watch your dashboard during launches for anomalies.
-  </Accordion>
-</AccordionGroup>
-
-### Integration Recommendations
-
-1. **Keep SDK updated**: Latest SDK has latest protections
-2. **Don't bypass fingerprinting**: Required for protection
-3. **Implement server-side validation**: Always validate handoffs
-4. **Monitor error rates**: Spikes may indicate attack attempts
-
-## Monitoring & Alerts
-
-### Dashboard Metrics
-
-Monitor bot protection effectiveness:
-
-- **Challenge rate**: Percentage of users challenged
-- **Block rate**: Percentage of users blocked
-- **False positive rate**: Legitimate users incorrectly blocked
-
-### Alert Configuration
-
-Set up alerts for unusual activity:
-
-```typescript
-// Alert configuration example
-const alerts = {
-  highBlockRate: {
-    threshold: 10, // Percent
-    action: "notify",
-  },
-  suspectedAttack: {
-    threshold: 100, // Blocks per minute
-    action: "escalate",
-  },
-};
-```
-
-## Support for Blocked Users
-
-### Legitimate User Appeals
-
-If a legitimate consumer is blocked:
-
-1. **Retry**: Clear browser data and try again
-2. **Different device**: Try from a different device
-3. **Contact support**: Provide error code for investigation
-
-### Error Codes
-
-When consumers are blocked, provide the error code:
-
-| Code  | Meaning                    | User Action          |
-| ----- | -------------------------- | -------------------- |
-| BP001 | Device verification failed | Clear browser, retry |
-| BP002 | Unusual activity detected  | Wait, retry          |
-| BP003 | Access limit reached       | Contact support      |
-
-### Support Requests
-
-When consumers contact you about being blocked:
-
-1. Collect the error code
-2. Note the approximate time
-3. Forward to Fanfare support with organization ID
-4. We'll investigate and adjust if needed
-
-## Limitations
-
-### What Protection Cannot Prevent
-
-- **Dedicated human resellers**: Real people acting quickly
-- **Shared household devices**: Legitimate multi-user scenarios
-- **Corporate networks**: Many users behind one IP
-
-These are addressed through purchase limits and fair distribution methods like draws.
-
-### Balancing Security and Experience
-
-More aggressive protection may impact some legitimate users. We recommend:
-
-- **Standard** for most launches
-- **Enhanced** for known high-demand events
-- **Maximum** only for extreme situations
-
-## Related Resources
-
-- [Fairness Guide](/resources/best-practices/fairness) - Fair distribution strategies
-- [Security Overview](/resources/security/overview) - Security architecture
-- [Contact Support](/resources/support/contact) - Report issues
+The dashboard reports aggregate protection outcomes so teams can understand whether a launch is healthy and whether legitimate consumers need help. If a consumer reports that they were blocked, collect the experience, approximate time, and any displayed support code, then contact Fanfare support for review.

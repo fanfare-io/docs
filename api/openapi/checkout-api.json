@@ -1,5 +1,13 @@
 {
-  "components": {},
+  "components": {
+    "securitySchemes": {
+      "CheckoutSecretKeyAuth": {
+        "description": "Fanfare secret key. Keep secret credentials on your server.",
+        "scheme": "bearer",
+        "type": "http"
+      }
+    }
+  },
   "info": {
     "description": "Checkout API for Fanfare",
     "title": "Fanfare Checkout API",
@@ -212,10 +220,10 @@
           "Checkout"
         ],
         "x-mint": {
-          "href": "/api-reference/checkout/post",
+          "href": "/api-reference/checkout-checkout/post",
           "metadata": {
-            "title": "POST /checkout",
-            "sidebarTitle": "POST /checkout"
+            "sidebarTitle": "POST /checkout",
+            "title": "POST /checkout"
           }
         }
       }
@@ -402,10 +410,10 @@
           "Payments"
         ],
         "x-mint": {
-          "href": "/api-reference/payments-cancellations/post",
+          "href": "/api-reference/checkout-payments-cancellations/post",
           "metadata": {
-            "title": "POST /payments/cancellations",
-            "sidebarTitle": "POST /payments/cancellations"
+            "sidebarTitle": "POST /payments/cancellations",
+            "title": "POST /payments/cancellations"
           }
         }
       }
@@ -603,15 +611,20 @@
           "Payments"
         ],
         "x-mint": {
-          "href": "/api-reference/payments-refunds/post",
+          "href": "/api-reference/checkout-payments-refunds/post",
           "metadata": {
-            "title": "POST /payments/refunds",
-            "sidebarTitle": "POST /payments/refunds"
+            "sidebarTitle": "POST /payments/refunds",
+            "title": "POST /payments/refunds"
           }
         }
       }
     }
   },
+  "security": [
+    {
+      "CheckoutSecretKeyAuth": []
+    }
+  ],
   "servers": [
     {
       "description": "Local development",

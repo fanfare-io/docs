@@ -1,5 +1,13 @@
 {
-  "components": {},
+  "components": {
+    "securitySchemes": {
+      "SecretKeyAuth": {
+        "description": "Fanfare secret key. Keep secret credentials on your server.",
+        "scheme": "bearer",
+        "type": "http"
+      }
+    }
+  },
   "info": {
     "description": "Admin API for Fanfare",
     "title": "Fanfare Admin API",
@@ -391,10 +399,10 @@
           "Analytics"
         ],
         "x-mint": {
-          "href": "/api-reference/analytics-query/post",
+          "href": "/api-reference/admin-analytics-query/post",
           "metadata": {
-            "title": "POST /analytics/query",
-            "sidebarTitle": "POST /analytics/query"
+            "sidebarTitle": "POST /analytics/query",
+            "title": "POST /analytics/query"
           }
         }
       }
@@ -1067,10 +1075,10 @@
           "Distributions"
         ],
         "x-mint": {
-          "href": "/api-reference/announcements/get",
+          "href": "/api-reference/admin-announcements/get",
           "metadata": {
-            "title": "GET /announcements",
-            "sidebarTitle": "GET /announcements"
+            "sidebarTitle": "GET /announcements",
+            "title": "GET /announcements"
           }
         }
       },
@@ -1931,10 +1939,10 @@
           "Distributions"
         ],
         "x-mint": {
-          "href": "/api-reference/announcements/post",
+          "href": "/api-reference/admin-announcements/post",
           "metadata": {
-            "title": "POST /announcements",
-            "sidebarTitle": "POST /announcements"
+            "sidebarTitle": "POST /announcements",
+            "title": "POST /announcements"
           }
         }
       }
@@ -2576,10 +2584,10 @@
           "Distributions"
         ],
         "x-mint": {
-          "href": "/api-reference/announcements-by-id/get",
+          "href": "/api-reference/admin-announcements-by-id/get",
           "metadata": {
-            "title": "GET /announcements/{id}",
-            "sidebarTitle": "GET /announcements/{id}"
+            "sidebarTitle": "GET /announcements/{id}",
+            "title": "GET /announcements/{id}"
           }
         }
       },
@@ -3442,10 +3450,10 @@
           "Distributions"
         ],
         "x-mint": {
-          "href": "/api-reference/announcements-by-id/put",
+          "href": "/api-reference/admin-announcements-by-id/put",
           "metadata": {
-            "title": "PUT /announcements/{id}",
-            "sidebarTitle": "PUT /announcements/{id}"
+            "sidebarTitle": "PUT /announcements/{id}",
+            "title": "PUT /announcements/{id}"
           }
         }
       },
@@ -4085,10 +4093,10 @@
           "Distributions"
         ],
         "x-mint": {
-          "href": "/api-reference/announcements-by-id/delete",
+          "href": "/api-reference/admin-announcements-by-id/delete",
           "metadata": {
-            "title": "DELETE /announcements/{id}",
-            "sidebarTitle": "DELETE /announcements/{id}"
+            "sidebarTitle": "DELETE /announcements/{id}",
+            "title": "DELETE /announcements/{id}"
           }
         }
       }
@@ -4459,10 +4467,10 @@
           "Distributions"
         ],
         "x-mint": {
-          "href": "/api-reference/appointments/get",
+          "href": "/api-reference/admin-appointments/get",
           "metadata": {
-            "title": "GET /appointments",
-            "sidebarTitle": "GET /appointments"
+            "sidebarTitle": "GET /appointments",
+            "title": "GET /appointments"
           }
         }
       },
@@ -4845,10 +4853,10 @@
           "Distributions"
         ],
         "x-mint": {
-          "href": "/api-reference/appointments/post",
+          "href": "/api-reference/admin-appointments/post",
           "metadata": {
-            "title": "POST /appointments",
-            "sidebarTitle": "POST /appointments"
+            "sidebarTitle": "POST /appointments",
+            "title": "POST /appointments"
           }
         }
       }
@@ -5134,10 +5142,10 @@
           "Distributions"
         ],
         "x-mint": {
-          "href": "/api-reference/appointments-by-appointment-id-slots/get",
+          "href": "/api-reference/admin-appointments-by-appointment-id-slots/get",
           "metadata": {
-            "title": "GET /appointments/{appointmentId}/slots",
-            "sidebarTitle": "GET /appointments/{appointmentId}/slots"
+            "sidebarTitle": "GET /appointments/{appointmentId}/slots",
+            "title": "GET /appointments/{appointmentId}/slots"
           }
         }
       }
@@ -5438,10 +5446,10 @@
           "Distributions"
         ],
         "x-mint": {
-          "href": "/api-reference/appointments-by-appointment-id-slots-by-slot-id-attendees/get",
+          "href": "/api-reference/admin-appointments-by-appointment-id-slots-by-slot-id-attendees/get",
           "metadata": {
-            "title": "GET /appointments/{appointmentId}/slots/{slotId}/attendees",
-            "sidebarTitle": "GET /appointments/{appointmentId}/slots/{slotId}/attendees"
+            "sidebarTitle": "GET /appointments/{appointmentId}/slots/{slotId}/attendees",
+            "title": "GET /appointments/{appointmentId}/slots/{slotId}/attendees"
           }
         }
       }
@@ -5632,10 +5640,10 @@
           "Distributions"
         ],
         "x-mint": {
-          "href": "/api-reference/appointments-by-appointment-id-slots-by-slot-id-attendees-by-consumer-id/delete",
+          "href": "/api-reference/admin-appointments-by-appointment-id-slots-by-slot-id-attendees-by-consumer-id/delete",
           "metadata": {
-            "title": "DELETE /appointments/{appointmentId}/slots/{slotId}/attendees/{consumerId}",
-            "sidebarTitle": "DELETE /appointments/{appointmentId}/slots/{slotId}/attendees/{consumerId}"
+            "sidebarTitle": "DELETE /appointments/{appointmentId}/slots/{slotId}/attendees/{consumerId}",
+            "title": "DELETE /appointments/{appointmentId}/slots/{slotId}/attendees/{consumerId}"
           }
         }
       }
@@ -5975,10 +5983,10 @@
           "Distributions"
         ],
         "x-mint": {
-          "href": "/api-reference/appointments-by-id/get",
+          "href": "/api-reference/admin-appointments-by-id/get",
           "metadata": {
-            "title": "GET /appointments/{id}",
-            "sidebarTitle": "GET /appointments/{id}"
+            "sidebarTitle": "GET /appointments/{id}",
+            "title": "GET /appointments/{id}"
           }
         }
       },
@@ -6362,10 +6370,10 @@
           "Distributions"
         ],
         "x-mint": {
-          "href": "/api-reference/appointments-by-id/put",
+          "href": "/api-reference/admin-appointments-by-id/put",
           "metadata": {
-            "title": "PUT /appointments/{id}",
-            "sidebarTitle": "PUT /appointments/{id}"
+            "sidebarTitle": "PUT /appointments/{id}",
+            "title": "PUT /appointments/{id}"
           }
         }
       },
@@ -6703,10 +6711,10 @@
           "Distributions"
         ],
         "x-mint": {
-          "href": "/api-reference/appointments-by-id/delete",
+          "href": "/api-reference/admin-appointments-by-id/delete",
           "metadata": {
-            "title": "DELETE /appointments/{id}",
-            "sidebarTitle": "DELETE /appointments/{id}"
+            "sidebarTitle": "DELETE /appointments/{id}",
+            "title": "DELETE /appointments/{id}"
           }
         }
       }
@@ -7133,10 +7141,10 @@
           "Distributions"
         ],
         "x-mint": {
-          "href": "/api-reference/auctions/get",
+          "href": "/api-reference/admin-auctions/get",
           "metadata": {
-            "title": "GET /auctions",
-            "sidebarTitle": "GET /auctions"
+            "sidebarTitle": "GET /auctions",
+            "title": "GET /auctions"
           }
         }
       },
@@ -7601,10 +7609,10 @@
           "Distributions"
         ],
         "x-mint": {
-          "href": "/api-reference/auctions/post",
+          "href": "/api-reference/admin-auctions/post",
           "metadata": {
-            "title": "POST /auctions",
-            "sidebarTitle": "POST /auctions"
+            "sidebarTitle": "POST /auctions",
+            "title": "POST /auctions"
           }
         }
       }
@@ -8000,10 +8008,10 @@
           "Distributions"
         ],
         "x-mint": {
-          "href": "/api-reference/auctions-by-id/get",
+          "href": "/api-reference/admin-auctions-by-id/get",
           "metadata": {
-            "title": "GET /auctions/{id}",
-            "sidebarTitle": "GET /auctions/{id}"
+            "sidebarTitle": "GET /auctions/{id}",
+            "title": "GET /auctions/{id}"
           }
         }
       },
@@ -8468,10 +8476,10 @@
           "Distributions"
         ],
         "x-mint": {
-          "href": "/api-reference/auctions-by-id/put",
+          "href": "/api-reference/admin-auctions-by-id/put",
           "metadata": {
-            "title": "PUT /auctions/{id}",
-            "sidebarTitle": "PUT /auctions/{id}"
+            "sidebarTitle": "PUT /auctions/{id}",
+            "title": "PUT /auctions/{id}"
           }
         }
       },
@@ -8865,10 +8873,10 @@
           "Distributions"
         ],
         "x-mint": {
-          "href": "/api-reference/auctions-by-id/delete",
+          "href": "/api-reference/admin-auctions-by-id/delete",
           "metadata": {
-            "title": "DELETE /auctions/{id}",
-            "sidebarTitle": "DELETE /auctions/{id}"
+            "sidebarTitle": "DELETE /auctions/{id}",
+            "title": "DELETE /auctions/{id}"
           }
         }
       }
@@ -9570,10 +9578,10 @@
           "Audiences"
         ],
         "x-mint": {
-          "href": "/api-reference/audiences/get",
+          "href": "/api-reference/admin-audiences/get",
           "metadata": {
-            "title": "GET /audiences",
-            "sidebarTitle": "GET /audiences"
+            "sidebarTitle": "GET /audiences",
+            "title": "GET /audiences"
           }
         }
       },
@@ -10393,10 +10401,10 @@
           "Audiences"
         ],
         "x-mint": {
-          "href": "/api-reference/audiences/post",
+          "href": "/api-reference/admin-audiences/post",
           "metadata": {
-            "title": "POST /audiences",
-            "sidebarTitle": "POST /audiences"
+            "sidebarTitle": "POST /audiences",
+            "title": "POST /audiences"
           }
         }
       }
@@ -11067,10 +11075,10 @@
           "Audiences"
         ],
         "x-mint": {
-          "href": "/api-reference/audiences-by-audience-id/get",
+          "href": "/api-reference/admin-audiences-by-audience-id/get",
           "metadata": {
-            "title": "GET /audiences/{audienceId}",
-            "sidebarTitle": "GET /audiences/{audienceId}"
+            "sidebarTitle": "GET /audiences/{audienceId}",
+            "title": "GET /audiences/{audienceId}"
           }
         }
       },
@@ -11483,10 +11491,10 @@
           "Audiences"
         ],
         "x-mint": {
-          "href": "/api-reference/audiences-by-audience-id/put",
+          "href": "/api-reference/admin-audiences-by-audience-id/put",
           "metadata": {
-            "title": "PUT /audiences/{audienceId}",
-            "sidebarTitle": "PUT /audiences/{audienceId}"
+            "sidebarTitle": "PUT /audiences/{audienceId}",
+            "title": "PUT /audiences/{audienceId}"
           }
         }
       },
@@ -11838,10 +11846,10 @@
           "Audiences"
         ],
         "x-mint": {
-          "href": "/api-reference/audiences-by-audience-id/delete",
+          "href": "/api-reference/admin-audiences-by-audience-id/delete",
           "metadata": {
-            "title": "DELETE /audiences/{audienceId}",
-            "sidebarTitle": "DELETE /audiences/{audienceId}"
+            "sidebarTitle": "DELETE /audiences/{audienceId}",
+            "title": "DELETE /audiences/{audienceId}"
           }
         }
       }
@@ -11871,21 +11879,11 @@
                     },
                     "count": {
                       "type": "number"
-                    },
-                    "source": {
-                      "enum": [
-                        "valkey_alias",
-                        "valkey_staged",
-                        "sync_source",
-                        "db_list",
-                        "unknown"
-                      ]
                     }
                   },
                   "required": [
                     "audienceId",
-                    "count",
-                    "source"
+                    "count"
                   ],
                   "type": "object"
                 }
@@ -12026,10 +12024,10 @@
           "Audiences"
         ],
         "x-mint": {
-          "href": "/api-reference/audiences-by-audience-id-count/get",
+          "href": "/api-reference/admin-audiences-by-audience-id-count/get",
           "metadata": {
-            "title": "GET /audiences/{audienceId}/count",
-            "sidebarTitle": "GET /audiences/{audienceId}/count"
+            "sidebarTitle": "GET /audiences/{audienceId}/count",
+            "title": "GET /audiences/{audienceId}/count"
           }
         }
       }
@@ -12306,10 +12304,10 @@
           "Audiences"
         ],
         "x-mint": {
-          "href": "/api-reference/audiences-by-audience-id-import/get",
+          "href": "/api-reference/admin-audiences-by-audience-id-import/get",
           "metadata": {
-            "title": "GET /audiences/{audienceId}/import",
-            "sidebarTitle": "GET /audiences/{audienceId}/import"
+            "sidebarTitle": "GET /audiences/{audienceId}/import",
+            "title": "GET /audiences/{audienceId}/import"
           }
         }
       },
@@ -12588,10 +12586,10 @@
           "Audiences"
         ],
         "x-mint": {
-          "href": "/api-reference/audiences-by-audience-id-import/post",
+          "href": "/api-reference/admin-audiences-by-audience-id-import/post",
           "metadata": {
-            "title": "POST /audiences/{audienceId}/import",
-            "sidebarTitle": "POST /audiences/{audienceId}/import"
+            "sidebarTitle": "POST /audiences/{audienceId}/import",
+            "title": "POST /audiences/{audienceId}/import"
           }
         }
       }
@@ -13461,10 +13459,10 @@
           "Audiences"
         ],
         "x-mint": {
-          "href": "/api-reference/audiences-by-audience-id-members/get",
+          "href": "/api-reference/admin-audiences-by-audience-id-members/get",
           "metadata": {
-            "title": "GET /audiences/{audienceId}/members",
-            "sidebarTitle": "GET /audiences/{audienceId}/members"
+            "sidebarTitle": "GET /audiences/{audienceId}/members",
+            "title": "GET /audiences/{audienceId}/members"
           }
         }
       },
@@ -13657,10 +13655,10 @@
           "Audiences"
         ],
         "x-mint": {
-          "href": "/api-reference/audiences-by-audience-id-members/post",
+          "href": "/api-reference/admin-audiences-by-audience-id-members/post",
           "metadata": {
-            "title": "POST /audiences/{audienceId}/members",
-            "sidebarTitle": "POST /audiences/{audienceId}/members"
+            "sidebarTitle": "POST /audiences/{audienceId}/members",
+            "title": "POST /audiences/{audienceId}/members"
           }
         }
       }
@@ -13909,10 +13907,10 @@
           "Audiences"
         ],
         "x-mint": {
-          "href": "/api-reference/audiences-by-audience-id-rules/get",
+          "href": "/api-reference/admin-audiences-by-audience-id-rules/get",
           "metadata": {
-            "title": "GET /audiences/{audienceId}/rules",
-            "sidebarTitle": "GET /audiences/{audienceId}/rules"
+            "sidebarTitle": "GET /audiences/{audienceId}/rules",
+            "title": "GET /audiences/{audienceId}/rules"
           }
         }
       },
@@ -14226,10 +14224,10 @@
           "Audiences"
         ],
         "x-mint": {
-          "href": "/api-reference/audiences-by-audience-id-rules/post",
+          "href": "/api-reference/admin-audiences-by-audience-id-rules/post",
           "metadata": {
-            "title": "POST /audiences/{audienceId}/rules",
-            "sidebarTitle": "POST /audiences/{audienceId}/rules"
+            "sidebarTitle": "POST /audiences/{audienceId}/rules",
+            "title": "POST /audiences/{audienceId}/rules"
           }
         }
       },
@@ -14557,10 +14555,10 @@
           "Audiences"
         ],
         "x-mint": {
-          "href": "/api-reference/audiences-by-audience-id-rules/put",
+          "href": "/api-reference/admin-audiences-by-audience-id-rules/put",
           "metadata": {
-            "title": "PUT /audiences/{audienceId}/rules",
-            "sidebarTitle": "PUT /audiences/{audienceId}/rules"
+            "sidebarTitle": "PUT /audiences/{audienceId}/rules",
+            "title": "PUT /audiences/{audienceId}/rules"
           }
         }
       }
@@ -14814,10 +14812,10 @@
           "Audiences"
         ],
         "x-mint": {
-          "href": "/api-reference/audiences-by-audience-id-rules-by-rule-id/get",
+          "href": "/api-reference/admin-audiences-by-audience-id-rules-by-rule-id/get",
           "metadata": {
-            "title": "GET /audiences/{audienceId}/rules/{ruleId}",
-            "sidebarTitle": "GET /audiences/{audienceId}/rules/{ruleId}"
+            "sidebarTitle": "GET /audiences/{audienceId}/rules/{ruleId}",
+            "title": "GET /audiences/{audienceId}/rules/{ruleId}"
           }
         }
       },
@@ -15134,10 +15132,10 @@
           "Audiences"
         ],
         "x-mint": {
-          "href": "/api-reference/audiences-by-audience-id-rules-by-rule-id/put",
+          "href": "/api-reference/admin-audiences-by-audience-id-rules-by-rule-id/put",
           "metadata": {
-            "title": "PUT /audiences/{audienceId}/rules/{ruleId}",
-            "sidebarTitle": "PUT /audiences/{audienceId}/rules/{ruleId}"
+            "sidebarTitle": "PUT /audiences/{audienceId}/rules/{ruleId}",
+            "title": "PUT /audiences/{audienceId}/rules/{ruleId}"
           }
         }
       },
@@ -15389,10 +15387,10 @@
           "Audiences"
         ],
         "x-mint": {
-          "href": "/api-reference/audiences-by-audience-id-rules-by-rule-id/delete",
+          "href": "/api-reference/admin-audiences-by-audience-id-rules-by-rule-id/delete",
           "metadata": {
-            "title": "DELETE /audiences/{audienceId}/rules/{ruleId}",
-            "sidebarTitle": "DELETE /audiences/{audienceId}/rules/{ruleId}"
+            "sidebarTitle": "DELETE /audiences/{audienceId}/rules/{ruleId}",
+            "title": "DELETE /audiences/{audienceId}/rules/{ruleId}"
           }
         }
       }
@@ -15629,10 +15627,10 @@
           "Audiences"
         ],
         "x-mint": {
-          "href": "/api-reference/audiences-by-audience-id-status/get",
+          "href": "/api-reference/admin-audiences-by-audience-id-status/get",
           "metadata": {
-            "title": "GET /audiences/{audienceId}/status",
-            "sidebarTitle": "GET /audiences/{audienceId}/status"
+            "sidebarTitle": "GET /audiences/{audienceId}/status",
+            "title": "GET /audiences/{audienceId}/status"
           }
         }
       }
@@ -15811,10 +15809,10 @@
           "Audiences"
         ],
         "x-mint": {
-          "href": "/api-reference/audiences-by-audience-id-sync/post",
+          "href": "/api-reference/admin-audiences-by-audience-id-sync/post",
           "metadata": {
-            "title": "POST /audiences/{audienceId}/sync",
-            "sidebarTitle": "POST /audiences/{audienceId}/sync"
+            "sidebarTitle": "POST /audiences/{audienceId}/sync",
+            "title": "POST /audiences/{audienceId}/sync"
           }
         }
       }
@@ -16488,10 +16486,10 @@
           "Audiences"
         ],
         "x-mint": {
-          "href": "/api-reference/audiences-groups-by-group-id/get",
+          "href": "/api-reference/admin-audiences-groups-by-group-id/get",
           "metadata": {
-            "title": "GET /audiences/groups/{groupId}",
-            "sidebarTitle": "GET /audiences/groups/{groupId}"
+            "sidebarTitle": "GET /audiences/groups/{groupId}",
+            "title": "GET /audiences/groups/{groupId}"
           }
         }
       },
@@ -16846,10 +16844,10 @@
           "Audiences"
         ],
         "x-mint": {
-          "href": "/api-reference/audiences-groups-by-group-id/delete",
+          "href": "/api-reference/admin-audiences-groups-by-group-id/delete",
           "metadata": {
-            "title": "DELETE /audiences/groups/{groupId}",
-            "sidebarTitle": "DELETE /audiences/groups/{groupId}"
+            "sidebarTitle": "DELETE /audiences/groups/{groupId}",
+            "title": "DELETE /audiences/groups/{groupId}"
           }
         }
       }
@@ -17719,10 +17717,10 @@
           "Audiences"
         ],
         "x-mint": {
-          "href": "/api-reference/audiences-groups-by-group-id-members/get",
+          "href": "/api-reference/admin-audiences-groups-by-group-id-members/get",
           "metadata": {
-            "title": "GET /audiences/groups/{groupId}/members",
-            "sidebarTitle": "GET /audiences/groups/{groupId}/members"
+            "sidebarTitle": "GET /audiences/groups/{groupId}/members",
+            "title": "GET /audiences/groups/{groupId}/members"
           }
         }
       }
@@ -17951,10 +17949,10 @@
           "Audiences"
         ],
         "x-mint": {
-          "href": "/api-reference/audiences-import-klaviyo/post",
+          "href": "/api-reference/admin-audiences-import-klaviyo/post",
           "metadata": {
-            "title": "POST /audiences/import/klaviyo",
-            "sidebarTitle": "POST /audiences/import/klaviyo"
+            "sidebarTitle": "POST /audiences/import/klaviyo",
+            "title": "POST /audiences/import/klaviyo"
           }
         }
       }
@@ -18183,10 +18181,10 @@
           "Audiences"
         ],
         "x-mint": {
-          "href": "/api-reference/audiences-import-mailchimp/post",
+          "href": "/api-reference/admin-audiences-import-mailchimp/post",
           "metadata": {
-            "title": "POST /audiences/import/mailchimp",
-            "sidebarTitle": "POST /audiences/import/mailchimp"
+            "sidebarTitle": "POST /audiences/import/mailchimp",
+            "title": "POST /audiences/import/mailchimp"
           }
         }
       }
@@ -18415,10 +18413,10 @@
           "Audiences"
         ],
         "x-mint": {
-          "href": "/api-reference/audiences-import-sendgrid/post",
+          "href": "/api-reference/admin-audiences-import-sendgrid/post",
           "metadata": {
-            "title": "POST /audiences/import/sendgrid",
-            "sidebarTitle": "POST /audiences/import/sendgrid"
+            "sidebarTitle": "POST /audiences/import/sendgrid",
+            "title": "POST /audiences/import/sendgrid"
           }
         }
       }
@@ -19170,10 +19168,10 @@
           "Audiences"
         ],
         "x-mint": {
-          "href": "/api-reference/audiences-loyalty-tiers/post",
+          "href": "/api-reference/admin-audiences-loyalty-tiers/post",
           "metadata": {
-            "title": "POST /audiences/loyalty-tiers",
-            "sidebarTitle": "POST /audiences/loyalty-tiers"
+            "sidebarTitle": "POST /audiences/loyalty-tiers",
+            "title": "POST /audiences/loyalty-tiers"
           }
         }
       }
@@ -19935,10 +19933,10 @@
           "Audiences"
         ],
         "x-mint": {
-          "href": "/api-reference/audiences-loyalty-tiers-by-group-id/put",
+          "href": "/api-reference/admin-audiences-loyalty-tiers-by-group-id/put",
           "metadata": {
-            "title": "PUT /audiences/loyalty-tiers/{groupId}",
-            "sidebarTitle": "PUT /audiences/loyalty-tiers/{groupId}"
+            "sidebarTitle": "PUT /audiences/loyalty-tiers/{groupId}",
+            "title": "PUT /audiences/loyalty-tiers/{groupId}"
           }
         }
       }
@@ -20798,10 +20796,10 @@
           "Consumers"
         ],
         "x-mint": {
-          "href": "/api-reference/consumers/get",
+          "href": "/api-reference/admin-consumers/get",
           "metadata": {
-            "title": "GET /consumers",
-            "sidebarTitle": "GET /consumers"
+            "sidebarTitle": "GET /consumers",
+            "title": "GET /consumers"
           }
         }
       }
@@ -21630,10 +21628,10 @@
           "Consumers"
         ],
         "x-mint": {
-          "href": "/api-reference/consumers-by-id/get",
+          "href": "/api-reference/admin-consumers-by-id/get",
           "metadata": {
-            "title": "GET /consumers/{id}",
-            "sidebarTitle": "GET /consumers/{id}"
+            "sidebarTitle": "GET /consumers/{id}",
+            "title": "GET /consumers/{id}"
           }
         }
       },
@@ -22432,10 +22430,10 @@
           "Consumers"
         ],
         "x-mint": {
-          "href": "/api-reference/consumers-by-id/put",
+          "href": "/api-reference/admin-consumers-by-id/put",
           "metadata": {
-            "title": "PUT /consumers/{id}",
-            "sidebarTitle": "PUT /consumers/{id}"
+            "sidebarTitle": "PUT /consumers/{id}",
+            "title": "PUT /consumers/{id}"
           }
         }
       },
@@ -23156,10 +23154,10 @@
           "Consumers"
         ],
         "x-mint": {
-          "href": "/api-reference/consumers-by-id/delete",
+          "href": "/api-reference/admin-consumers-by-id/delete",
           "metadata": {
-            "title": "DELETE /consumers/{id}",
-            "sidebarTitle": "DELETE /consumers/{id}"
+            "sidebarTitle": "DELETE /consumers/{id}",
+            "title": "DELETE /consumers/{id}"
           }
         }
       }
@@ -23516,10 +23514,10 @@
           "Consumers"
         ],
         "x-mint": {
-          "href": "/api-reference/consumers-by-id-audiences/get",
+          "href": "/api-reference/admin-consumers-by-id-audiences/get",
           "metadata": {
-            "title": "GET /consumers/{id}/audiences",
-            "sidebarTitle": "GET /consumers/{id}/audiences"
+            "sidebarTitle": "GET /consumers/{id}/audiences",
+            "title": "GET /consumers/{id}/audiences"
           }
         }
       }
@@ -23802,10 +23800,10 @@
           "Consumers"
         ],
         "x-mint": {
-          "href": "/api-reference/consumers-by-id-loyalty-transactions/get",
+          "href": "/api-reference/admin-consumers-by-id-loyalty-transactions/get",
           "metadata": {
-            "title": "GET /consumers/{id}/loyalty-transactions",
-            "sidebarTitle": "GET /consumers/{id}/loyalty-transactions"
+            "sidebarTitle": "GET /consumers/{id}/loyalty-transactions",
+            "title": "GET /consumers/{id}/loyalty-transactions"
           }
         }
       }
@@ -24664,10 +24662,10 @@
           "Consumers"
         ],
         "x-mint": {
-          "href": "/api-reference/consumers-by-id-timeline/get",
+          "href": "/api-reference/admin-consumers-by-id-timeline/get",
           "metadata": {
-            "title": "GET /consumers/{id}/timeline",
-            "sidebarTitle": "GET /consumers/{id}/timeline"
+            "sidebarTitle": "GET /consumers/{id}/timeline",
+            "title": "GET /consumers/{id}/timeline"
           }
         }
       }
@@ -25659,10 +25657,10 @@
           "Consumers"
         ],
         "x-mint": {
-          "href": "/api-reference/consumers-batch/post",
+          "href": "/api-reference/admin-consumers-batch/post",
           "metadata": {
-            "title": "POST /consumers/batch",
-            "sidebarTitle": "POST /consumers/batch"
+            "sidebarTitle": "POST /consumers/batch",
+            "title": "POST /consumers/batch"
           }
         }
       }
@@ -25943,10 +25941,10 @@
           "Consumers"
         ],
         "x-mint": {
-          "href": "/api-reference/consumers-distribution/get",
+          "href": "/api-reference/admin-consumers-distribution/get",
           "metadata": {
-            "title": "GET /consumers/distribution",
-            "sidebarTitle": "GET /consumers/distribution"
+            "sidebarTitle": "GET /consumers/distribution",
+            "title": "GET /consumers/distribution"
           }
         }
       }
@@ -26318,10 +26316,10 @@
           "Distributions"
         ],
         "x-mint": {
-          "href": "/api-reference/draws/get",
+          "href": "/api-reference/admin-draws/get",
           "metadata": {
-            "title": "GET /draws",
-            "sidebarTitle": "GET /draws"
+            "sidebarTitle": "GET /draws",
+            "title": "GET /draws"
           }
         }
       },
@@ -26711,10 +26709,10 @@
           "Distributions"
         ],
         "x-mint": {
-          "href": "/api-reference/draws/post",
+          "href": "/api-reference/admin-draws/post",
           "metadata": {
-            "title": "POST /draws",
-            "sidebarTitle": "POST /draws"
+            "sidebarTitle": "POST /draws",
+            "title": "POST /draws"
           }
         }
       }
@@ -27055,10 +27053,10 @@
           "Distributions"
         ],
         "x-mint": {
-          "href": "/api-reference/draws-by-id/get",
+          "href": "/api-reference/admin-draws-by-id/get",
           "metadata": {
-            "title": "GET /draws/{id}",
-            "sidebarTitle": "GET /draws/{id}"
+            "sidebarTitle": "GET /draws/{id}",
+            "title": "GET /draws/{id}"
           }
         }
       },
@@ -27447,10 +27445,10 @@
           "Distributions"
         ],
         "x-mint": {
-          "href": "/api-reference/draws-by-id/put",
+          "href": "/api-reference/admin-draws-by-id/put",
           "metadata": {
-            "title": "PUT /draws/{id}",
-            "sidebarTitle": "PUT /draws/{id}"
+            "sidebarTitle": "PUT /draws/{id}",
+            "title": "PUT /draws/{id}"
           }
         }
       },
@@ -27789,10 +27787,10 @@
           "Distributions"
         ],
         "x-mint": {
-          "href": "/api-reference/draws-by-id/delete",
+          "href": "/api-reference/admin-draws-by-id/delete",
           "metadata": {
-            "title": "DELETE /draws/{id}",
-            "sidebarTitle": "DELETE /draws/{id}"
+            "sidebarTitle": "DELETE /draws/{id}",
+            "title": "DELETE /draws/{id}"
           }
         }
       }
@@ -28928,10 +28926,10 @@
           "Experiences"
         ],
         "x-mint": {
-          "href": "/api-reference/experience-pages/get",
+          "href": "/api-reference/admin-experience-pages/get",
           "metadata": {
-            "title": "GET /experience-pages",
-            "sidebarTitle": "GET /experience-pages"
+            "sidebarTitle": "GET /experience-pages",
+            "title": "GET /experience-pages"
           }
         }
       },
@@ -30338,10 +30336,10 @@
           "Experiences"
         ],
         "x-mint": {
-          "href": "/api-reference/experience-pages/post",
+          "href": "/api-reference/admin-experience-pages/post",
           "metadata": {
-            "title": "POST /experience-pages",
-            "sidebarTitle": "POST /experience-pages"
+            "sidebarTitle": "POST /experience-pages",
+            "title": "POST /experience-pages"
           }
         }
       }
@@ -31446,10 +31444,10 @@
           "Experiences"
         ],
         "x-mint": {
-          "href": "/api-reference/experience-pages-by-id/get",
+          "href": "/api-reference/admin-experience-pages-by-id/get",
           "metadata": {
-            "title": "GET /experience-pages/{id}",
-            "sidebarTitle": "GET /experience-pages/{id}"
+            "sidebarTitle": "GET /experience-pages/{id}",
+            "title": "GET /experience-pages/{id}"
           }
         }
       },
@@ -32857,10 +32855,10 @@
           "Experiences"
         ],
         "x-mint": {
-          "href": "/api-reference/experience-pages-by-id/put",
+          "href": "/api-reference/admin-experience-pages-by-id/put",
           "metadata": {
-            "title": "PUT /experience-pages/{id}",
-            "sidebarTitle": "PUT /experience-pages/{id}"
+            "sidebarTitle": "PUT /experience-pages/{id}",
+            "title": "PUT /experience-pages/{id}"
           }
         }
       },
@@ -33963,10 +33961,10 @@
           "Experiences"
         ],
         "x-mint": {
-          "href": "/api-reference/experience-pages-by-id/delete",
+          "href": "/api-reference/admin-experience-pages-by-id/delete",
           "metadata": {
-            "title": "DELETE /experience-pages/{id}",
-            "sidebarTitle": "DELETE /experience-pages/{id}"
+            "sidebarTitle": "DELETE /experience-pages/{id}",
+            "title": "DELETE /experience-pages/{id}"
           }
         }
       }
@@ -37451,10 +37449,10 @@
           "Experiences"
         ],
         "x-mint": {
-          "href": "/api-reference/experiences/get",
+          "href": "/api-reference/admin-experiences/get",
           "metadata": {
-            "title": "GET /experiences",
-            "sidebarTitle": "GET /experiences"
+            "sidebarTitle": "GET /experiences",
+            "title": "GET /experiences"
           }
         }
       },
@@ -41333,10 +41331,10 @@
           "Experiences"
         ],
         "x-mint": {
-          "href": "/api-reference/experiences/post",
+          "href": "/api-reference/admin-experiences/post",
           "metadata": {
-            "title": "POST /experiences",
-            "sidebarTitle": "POST /experiences"
+            "sidebarTitle": "POST /experiences",
+            "title": "POST /experiences"
           }
         }
       }
@@ -43093,10 +43091,10 @@
           "Experiences"
         ],
         "x-mint": {
-          "href": "/api-reference/experiences-by-id/get",
+          "href": "/api-reference/admin-experiences-by-id/get",
           "metadata": {
-            "title": "GET /experiences/{id}",
-            "sidebarTitle": "GET /experiences/{id}"
+            "sidebarTitle": "GET /experiences/{id}",
+            "title": "GET /experiences/{id}"
           }
         }
       },
@@ -44968,10 +44966,10 @@
           "Experiences"
         ],
         "x-mint": {
-          "href": "/api-reference/experiences-by-id/put",
+          "href": "/api-reference/admin-experiences-by-id/put",
           "metadata": {
-            "title": "PUT /experiences/{id}",
-            "sidebarTitle": "PUT /experiences/{id}"
+            "sidebarTitle": "PUT /experiences/{id}",
+            "title": "PUT /experiences/{id}"
           }
         }
       },
@@ -46726,10 +46724,10 @@
           "Experiences"
         ],
         "x-mint": {
-          "href": "/api-reference/experiences-by-id/delete",
+          "href": "/api-reference/admin-experiences-by-id/delete",
           "metadata": {
-            "title": "DELETE /experiences/{id}",
-            "sidebarTitle": "DELETE /experiences/{id}"
+            "sidebarTitle": "DELETE /experiences/{id}",
+            "title": "DELETE /experiences/{id}"
           }
         }
       }
@@ -46952,243 +46950,15 @@
           "Experiences"
         ],
         "x-mint": {
-          "href": "/api-reference/experiences-by-id-metrics/get",
+          "href": "/api-reference/admin-experiences-by-id-metrics/get",
           "metadata": {
-            "title": "GET /experiences/{id}/metrics",
-            "sidebarTitle": "GET /experiences/{id}/metrics"
+            "sidebarTitle": "GET /experiences/{id}/metrics",
+            "title": "GET /experiences/{id}/metrics"
           }
         }
       }
     },
     "/organizations": {
-      "post": {
-        "description": "Create a new organization with associated Clerk user and membership",
-        "operationId": "postOrganizations",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "properties": {
-                  "companyName": {
-                    "type": "string"
-                  },
-                  "companyUrl": {
-                    "nullable": true,
-                    "type": "string"
-                  },
-                  "countryCode": {
-                    "type": "string"
-                  },
-                  "currencyCode": {
-                    "type": "string"
-                  },
-                  "email": {
-                    "nullable": true,
-                    "type": "string"
-                  },
-                  "languageCode": {
-                    "type": "string"
-                  },
-                  "plan": {
-                    "enum": [
-                      "FREE",
-                      "BASIC",
-                      "PRO",
-                      "ENTERPRISE"
-                    ],
-                    "nullable": true,
-                    "type": "string"
-                  },
-                  "slug": {
-                    "type": "string"
-                  },
-                  "timeZone": {
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "companyName"
-                ],
-                "type": "object"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "clerkOrganizationId": {
-                      "type": "string"
-                    },
-                    "organizationId": {
-                      "type": "string"
-                    },
-                    "publishableKey": {
-                      "type": "string"
-                    },
-                    "secretKey": {
-                      "type": "string"
-                    },
-                    "userId": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "organizationId",
-                    "userId",
-                    "publishableKey",
-                    "secretKey",
-                    "clerkOrganizationId"
-                  ],
-                  "type": "object"
-                }
-              }
-            },
-            "description": "Organization created successfully"
-          },
-          "400": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "error": {
-                      "const": "validation_error"
-                    },
-                    "issues": {
-                      "items": {
-                        "properties": {
-                          "expected": {
-                            "type": "string"
-                          },
-                          "kind": {
-                            "type": "string"
-                          },
-                          "message": {
-                            "type": "string"
-                          },
-                          "path": {
-                            "items": {
-                              "properties": {
-                                "input": {},
-                                "key": {
-                                  "type": "string"
-                                },
-                                "origin": {
-                                  "type": "string"
-                                },
-                                "type": {
-                                  "type": "string"
-                                }
-                              },
-                              "required": [
-                                "type",
-                                "origin",
-                                "input",
-                                "key"
-                              ],
-                              "type": "object"
-                            },
-                            "type": "array"
-                          },
-                          "received": {
-                            "type": "string"
-                          },
-                          "type": {
-                            "type": "string"
-                          }
-                        },
-                        "required": [
-                          "kind",
-                          "type",
-                          "expected",
-                          "received",
-                          "message",
-                          "path"
-                        ],
-                        "type": "object"
-                      },
-                      "type": "array"
-                    }
-                  },
-                  "required": [
-                    "error",
-                    "issues"
-                  ],
-                  "type": "object"
-                }
-              }
-            },
-            "description": "Bad Request - Invalid input schema"
-          },
-          "401": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ],
-                  "type": "object"
-                }
-              }
-            },
-            "description": "Unauthorized - Authentication required"
-          },
-          "403": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ],
-                  "type": "object"
-                }
-              }
-            },
-            "description": "Forbidden - User must be authenticated"
-          },
-          "500": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ],
-                  "type": "object"
-                }
-              }
-            },
-            "description": "Internal server error"
-          }
-        },
-        "tags": [
-          "Organizations"
-        ],
-        "x-mint": {
-          "href": "/api-reference/organizations/post",
-          "metadata": {
-            "title": "POST /organizations",
-            "sidebarTitle": "POST /organizations"
-          }
-        }
-      },
       "put": {
         "description": "Update organization details",
         "operationId": "putOrganizations",
@@ -47487,10 +47257,10 @@
           "Organizations"
         ],
         "x-mint": {
-          "href": "/api-reference/organizations/put",
+          "href": "/api-reference/admin-organizations/put",
           "metadata": {
-            "title": "PUT /organizations",
-            "sidebarTitle": "PUT /organizations"
+            "sidebarTitle": "PUT /organizations",
+            "title": "PUT /organizations"
           }
         }
       }
@@ -47735,10 +47505,10 @@
           "Organizations"
         ],
         "x-mint": {
-          "href": "/api-reference/organizations-current/get",
+          "href": "/api-reference/admin-organizations-current/get",
           "metadata": {
-            "title": "GET /organizations/current",
-            "sidebarTitle": "GET /organizations/current"
+            "sidebarTitle": "GET /organizations/current",
+            "title": "GET /organizations/current"
           }
         }
       }
@@ -47916,10 +47686,10 @@
           "Organizations"
         ],
         "x-mint": {
-          "href": "/api-reference/organizations-slug-availability/get",
+          "href": "/api-reference/admin-organizations-slug-availability/get",
           "metadata": {
-            "title": "GET /organizations/slug/availability",
-            "sidebarTitle": "GET /organizations/slug/availability"
+            "sidebarTitle": "GET /organizations/slug/availability",
+            "title": "GET /organizations/slug/availability"
           }
         }
       }
@@ -48715,10 +48485,10 @@
           "Products"
         ],
         "x-mint": {
-          "href": "/api-reference/products/get",
+          "href": "/api-reference/admin-products/get",
           "metadata": {
-            "title": "GET /products",
-            "sidebarTitle": "GET /products"
+            "sidebarTitle": "GET /products",
+            "title": "GET /products"
           }
         }
       },
@@ -49688,10 +49458,10 @@
           "Products"
         ],
         "x-mint": {
-          "href": "/api-reference/products/post",
+          "href": "/api-reference/admin-products/post",
           "metadata": {
-            "title": "POST /products",
-            "sidebarTitle": "POST /products"
+            "sidebarTitle": "POST /products",
+            "title": "POST /products"
           }
         }
       }
@@ -50456,10 +50226,10 @@
           "Products"
         ],
         "x-mint": {
-          "href": "/api-reference/products-by-product-id/get",
+          "href": "/api-reference/admin-products-by-product-id/get",
           "metadata": {
-            "title": "GET /products/{productId}",
-            "sidebarTitle": "GET /products/{productId}"
+            "sidebarTitle": "GET /products/{productId}",
+            "title": "GET /products/{productId}"
           }
         }
       },
@@ -50784,10 +50554,10 @@
           "Products"
         ],
         "x-mint": {
-          "href": "/api-reference/products-by-product-id/put",
+          "href": "/api-reference/admin-products-by-product-id/put",
           "metadata": {
-            "title": "PUT /products/{productId}",
-            "sidebarTitle": "PUT /products/{productId}"
+            "sidebarTitle": "PUT /products/{productId}",
+            "title": "PUT /products/{productId}"
           }
         }
       },
@@ -51081,10 +50851,10 @@
           "Products"
         ],
         "x-mint": {
-          "href": "/api-reference/products-by-product-id/delete",
+          "href": "/api-reference/admin-products-by-product-id/delete",
           "metadata": {
-            "title": "DELETE /products/{productId}",
-            "sidebarTitle": "DELETE /products/{productId}"
+            "sidebarTitle": "DELETE /products/{productId}",
+            "title": "DELETE /products/{productId}"
           }
         }
       }
@@ -51417,10 +51187,10 @@
           "Products"
         ],
         "x-mint": {
-          "href": "/api-reference/products-by-product-id-media-assets/get",
+          "href": "/api-reference/admin-products-by-product-id-media-assets/get",
           "metadata": {
-            "title": "GET /products/{productId}/media-assets",
-            "sidebarTitle": "GET /products/{productId}/media-assets"
+            "sidebarTitle": "GET /products/{productId}/media-assets",
+            "title": "GET /products/{productId}/media-assets"
           }
         }
       },
@@ -51783,10 +51553,10 @@
           "Products"
         ],
         "x-mint": {
-          "href": "/api-reference/products-by-product-id-media-assets/post",
+          "href": "/api-reference/admin-products-by-product-id-media-assets/post",
           "metadata": {
-            "title": "POST /products/{productId}/media-assets",
-            "sidebarTitle": "POST /products/{productId}/media-assets"
+            "sidebarTitle": "POST /products/{productId}/media-assets",
+            "title": "POST /products/{productId}/media-assets"
           }
         }
       }
@@ -52003,10 +51773,10 @@
           "Products"
         ],
         "x-mint": {
-          "href": "/api-reference/products-by-product-id-media-assets-by-asset-id/put",
+          "href": "/api-reference/admin-products-by-product-id-media-assets-by-asset-id/put",
           "metadata": {
-            "title": "PUT /products/{productId}/media-assets/{assetId}",
-            "sidebarTitle": "PUT /products/{productId}/media-assets/{assetId}"
+            "sidebarTitle": "PUT /products/{productId}/media-assets/{assetId}",
+            "title": "PUT /products/{productId}/media-assets/{assetId}"
           }
         }
       },
@@ -52183,10 +51953,10 @@
           "Products"
         ],
         "x-mint": {
-          "href": "/api-reference/products-by-product-id-media-assets-by-asset-id/delete",
+          "href": "/api-reference/admin-products-by-product-id-media-assets-by-asset-id/delete",
           "metadata": {
-            "title": "DELETE /products/{productId}/media-assets/{assetId}",
-            "sidebarTitle": "DELETE /products/{productId}/media-assets/{assetId}"
+            "sidebarTitle": "DELETE /products/{productId}/media-assets/{assetId}",
+            "title": "DELETE /products/{productId}/media-assets/{assetId}"
           }
         }
       }
@@ -52378,10 +52148,10 @@
           "Products"
         ],
         "x-mint": {
-          "href": "/api-reference/products-by-product-id-media-assets-reorder/put",
+          "href": "/api-reference/admin-products-by-product-id-media-assets-reorder/put",
           "metadata": {
-            "title": "PUT /products/{productId}/media-assets/reorder",
-            "sidebarTitle": "PUT /products/{productId}/media-assets/reorder"
+            "sidebarTitle": "PUT /products/{productId}/media-assets/reorder",
+            "title": "PUT /products/{productId}/media-assets/reorder"
           }
         }
       }
@@ -52571,10 +52341,10 @@
           "Products"
         ],
         "x-mint": {
-          "href": "/api-reference/products-by-product-id-metrics/get",
+          "href": "/api-reference/admin-products-by-product-id-metrics/get",
           "metadata": {
-            "title": "GET /products/{productId}/metrics",
-            "sidebarTitle": "GET /products/{productId}/metrics"
+            "sidebarTitle": "GET /products/{productId}/metrics",
+            "title": "GET /products/{productId}/metrics"
           }
         }
       }
@@ -52955,10 +52725,10 @@
           "Products"
         ],
         "x-mint": {
-          "href": "/api-reference/products-by-product-id-variant-options/get",
+          "href": "/api-reference/admin-products-by-product-id-variant-options/get",
           "metadata": {
-            "title": "GET /products/{productId}/variant-options",
-            "sidebarTitle": "GET /products/{productId}/variant-options"
+            "sidebarTitle": "GET /products/{productId}/variant-options",
+            "title": "GET /products/{productId}/variant-options"
           }
         }
       },
@@ -53372,10 +53142,10 @@
           "Products"
         ],
         "x-mint": {
-          "href": "/api-reference/products-by-product-id-variant-options/post",
+          "href": "/api-reference/admin-products-by-product-id-variant-options/post",
           "metadata": {
-            "title": "POST /products/{productId}/variant-options",
-            "sidebarTitle": "POST /products/{productId}/variant-options"
+            "sidebarTitle": "POST /products/{productId}/variant-options",
+            "title": "POST /products/{productId}/variant-options"
           }
         }
       }
@@ -53554,10 +53324,10 @@
           "Products"
         ],
         "x-mint": {
-          "href": "/api-reference/products-by-product-id-variant-options-by-option-id/delete",
+          "href": "/api-reference/admin-products-by-product-id-variant-options-by-option-id/delete",
           "metadata": {
-            "title": "DELETE /products/{productId}/variant-options/{optionId}",
-            "sidebarTitle": "DELETE /products/{productId}/variant-options/{optionId}"
+            "sidebarTitle": "DELETE /products/{productId}/variant-options/{optionId}",
+            "title": "DELETE /products/{productId}/variant-options/{optionId}"
           }
         }
       }
@@ -53882,10 +53652,10 @@
           "Products"
         ],
         "x-mint": {
-          "href": "/api-reference/products-by-product-id-variants/get",
+          "href": "/api-reference/admin-products-by-product-id-variants/get",
           "metadata": {
-            "title": "GET /products/{productId}/variants",
-            "sidebarTitle": "GET /products/{productId}/variants"
+            "sidebarTitle": "GET /products/{productId}/variants",
+            "title": "GET /products/{productId}/variants"
           }
         }
       },
@@ -54240,10 +54010,10 @@
           "Products"
         ],
         "x-mint": {
-          "href": "/api-reference/products-by-product-id-variants/post",
+          "href": "/api-reference/admin-products-by-product-id-variants/post",
           "metadata": {
-            "title": "POST /products/{productId}/variants",
-            "sidebarTitle": "POST /products/{productId}/variants"
+            "sidebarTitle": "POST /products/{productId}/variants",
+            "title": "POST /products/{productId}/variants"
           }
         }
       }
@@ -54573,10 +54343,10 @@
           "Products"
         ],
         "x-mint": {
-          "href": "/api-reference/products-by-product-id-variants-by-variant-id/get",
+          "href": "/api-reference/admin-products-by-product-id-variants-by-variant-id/get",
           "metadata": {
-            "title": "GET /products/{productId}/variants/{variantId}",
-            "sidebarTitle": "GET /products/{productId}/variants/{variantId}"
+            "sidebarTitle": "GET /products/{productId}/variants/{variantId}",
+            "title": "GET /products/{productId}/variants/{variantId}"
           }
         }
       },
@@ -54909,10 +54679,10 @@
           "Products"
         ],
         "x-mint": {
-          "href": "/api-reference/products-by-product-id-variants-by-variant-id/put",
+          "href": "/api-reference/admin-products-by-product-id-variants-by-variant-id/put",
           "metadata": {
-            "title": "PUT /products/{productId}/variants/{variantId}",
-            "sidebarTitle": "PUT /products/{productId}/variants/{variantId}"
+            "sidebarTitle": "PUT /products/{productId}/variants/{variantId}",
+            "title": "PUT /products/{productId}/variants/{variantId}"
           }
         }
       },
@@ -55211,10 +54981,10 @@
           "Products"
         ],
         "x-mint": {
-          "href": "/api-reference/products-by-product-id-variants-by-variant-id/delete",
+          "href": "/api-reference/admin-products-by-product-id-variants-by-variant-id/delete",
           "metadata": {
-            "title": "DELETE /products/{productId}/variants/{variantId}",
-            "sidebarTitle": "DELETE /products/{productId}/variants/{variantId}"
+            "sidebarTitle": "DELETE /products/{productId}/variants/{variantId}",
+            "title": "DELETE /products/{productId}/variants/{variantId}"
           }
         }
       }
@@ -55532,10 +55302,10 @@
           "Products"
         ],
         "x-mint": {
-          "href": "/api-reference/products-by-product-id-variants-by-variant-id-inventory/patch",
+          "href": "/api-reference/admin-products-by-product-id-variants-by-variant-id-inventory/patch",
           "metadata": {
-            "title": "PATCH /products/{productId}/variants/{variantId}/inventory",
-            "sidebarTitle": "PATCH /products/{productId}/variants/{variantId}/inventory"
+            "sidebarTitle": "PATCH /products/{productId}/variants/{variantId}/inventory",
+            "title": "PATCH /products/{productId}/variants/{variantId}/inventory"
           }
         }
       }
@@ -55872,10 +55642,10 @@
           "Products"
         ],
         "x-mint": {
-          "href": "/api-reference/products-by-product-id-variants-by-variant-id-media-assets/get",
+          "href": "/api-reference/admin-products-by-product-id-variants-by-variant-id-media-assets/get",
           "metadata": {
-            "title": "GET /products/{productId}/variants/{variantId}/media-assets",
-            "sidebarTitle": "GET /products/{productId}/variants/{variantId}/media-assets"
+            "sidebarTitle": "GET /products/{productId}/variants/{variantId}/media-assets",
+            "title": "GET /products/{productId}/variants/{variantId}/media-assets"
           }
         }
       },
@@ -56229,10 +55999,10 @@
           "Products"
         ],
         "x-mint": {
-          "href": "/api-reference/products-by-product-id-variants-by-variant-id-media-assets/post",
+          "href": "/api-reference/admin-products-by-product-id-variants-by-variant-id-media-assets/post",
           "metadata": {
-            "title": "POST /products/{productId}/variants/{variantId}/media-assets",
-            "sidebarTitle": "POST /products/{productId}/variants/{variantId}/media-assets"
+            "sidebarTitle": "POST /products/{productId}/variants/{variantId}/media-assets",
+            "title": "POST /products/{productId}/variants/{variantId}/media-assets"
           }
         }
       },
@@ -56588,10 +56358,10 @@
           "Products"
         ],
         "x-mint": {
-          "href": "/api-reference/products-by-product-id-variants-by-variant-id-media-assets/put",
+          "href": "/api-reference/admin-products-by-product-id-variants-by-variant-id-media-assets/put",
           "metadata": {
-            "title": "PUT /products/{productId}/variants/{variantId}/media-assets",
-            "sidebarTitle": "PUT /products/{productId}/variants/{variantId}/media-assets"
+            "sidebarTitle": "PUT /products/{productId}/variants/{variantId}/media-assets",
+            "title": "PUT /products/{productId}/variants/{variantId}/media-assets"
           }
         }
       }
@@ -56778,10 +56548,10 @@
           "Products"
         ],
         "x-mint": {
-          "href": "/api-reference/products-by-product-id-variants-by-variant-id-media-assets-by-media-asset-id/delete",
+          "href": "/api-reference/admin-products-by-product-id-variants-by-variant-id-media-assets-by-media-asset-id/delete",
           "metadata": {
-            "title": "DELETE /products/{productId}/variants/{variantId}/media-assets/{mediaAssetId}",
-            "sidebarTitle": "DELETE /products/{productId}/variants/{variantId}/media-assets/{mediaAssetId}"
+            "sidebarTitle": "DELETE /products/{productId}/variants/{variantId}/media-assets/{mediaAssetId}",
+            "title": "DELETE /products/{productId}/variants/{variantId}/media-assets/{mediaAssetId}"
           }
         }
       }
@@ -56981,10 +56751,10 @@
           "Products"
         ],
         "x-mint": {
-          "href": "/api-reference/products-by-product-id-variants-by-variant-id-media-assets-reorder/put",
+          "href": "/api-reference/admin-products-by-product-id-variants-by-variant-id-media-assets-reorder/put",
           "metadata": {
-            "title": "PUT /products/{productId}/variants/{variantId}/media-assets/reorder",
-            "sidebarTitle": "PUT /products/{productId}/variants/{variantId}/media-assets/reorder"
+            "sidebarTitle": "PUT /products/{productId}/variants/{variantId}/media-assets/reorder",
+            "title": "PUT /products/{productId}/variants/{variantId}/media-assets/reorder"
           }
         }
       }
@@ -57348,10 +57118,10 @@
           "Products"
         ],
         "x-mint": {
-          "href": "/api-reference/products-by-product-id-variants-by-variant-id-option-assignments/put",
+          "href": "/api-reference/admin-products-by-product-id-variants-by-variant-id-option-assignments/put",
           "metadata": {
-            "title": "PUT /products/{productId}/variants/{variantId}/option-assignments",
-            "sidebarTitle": "PUT /products/{productId}/variants/{variantId}/option-assignments"
+            "sidebarTitle": "PUT /products/{productId}/variants/{variantId}/option-assignments",
+            "title": "PUT /products/{productId}/variants/{variantId}/option-assignments"
           }
         }
       }
@@ -57647,10 +57417,10 @@
           "Products"
         ],
         "x-mint": {
-          "href": "/api-reference/products-by-product-id-variants-available/get",
+          "href": "/api-reference/admin-products-by-product-id-variants-available/get",
           "metadata": {
-            "title": "GET /products/{productId}/variants/available",
-            "sidebarTitle": "GET /products/{productId}/variants/available"
+            "sidebarTitle": "GET /products/{productId}/variants/available",
+            "title": "GET /products/{productId}/variants/available"
           }
         }
       }
@@ -58408,10 +58178,10 @@
           "Products"
         ],
         "x-mint": {
-          "href": "/api-reference/products-search/get",
+          "href": "/api-reference/admin-products-search/get",
           "metadata": {
-            "title": "GET /products/search",
-            "sidebarTitle": "GET /products/search"
+            "sidebarTitle": "GET /products/search",
+            "title": "GET /products/search"
           }
         }
       }
@@ -58778,10 +58548,10 @@
           "Distributions"
         ],
         "x-mint": {
-          "href": "/api-reference/queues/get",
+          "href": "/api-reference/admin-queues/get",
           "metadata": {
-            "title": "GET /queues",
-            "sidebarTitle": "GET /queues"
+            "sidebarTitle": "GET /queues",
+            "title": "GET /queues"
           }
         }
       },
@@ -59162,10 +58932,10 @@
           "Distributions"
         ],
         "x-mint": {
-          "href": "/api-reference/queues/post",
+          "href": "/api-reference/admin-queues/post",
           "metadata": {
-            "title": "POST /queues",
-            "sidebarTitle": "POST /queues"
+            "sidebarTitle": "POST /queues",
+            "title": "POST /queues"
           }
         }
       }
@@ -59501,10 +59271,10 @@
           "Distributions"
         ],
         "x-mint": {
-          "href": "/api-reference/queues-by-id/get",
+          "href": "/api-reference/admin-queues-by-id/get",
           "metadata": {
-            "title": "GET /queues/{id}",
-            "sidebarTitle": "GET /queues/{id}"
+            "sidebarTitle": "GET /queues/{id}",
+            "title": "GET /queues/{id}"
           }
         }
       },
@@ -59885,10 +59655,10 @@
           "Distributions"
         ],
         "x-mint": {
-          "href": "/api-reference/queues-by-id/put",
+          "href": "/api-reference/admin-queues-by-id/put",
           "metadata": {
-            "title": "PUT /queues/{id}",
-            "sidebarTitle": "PUT /queues/{id}"
+            "sidebarTitle": "PUT /queues/{id}",
+            "title": "PUT /queues/{id}"
           }
         }
       },
@@ -60222,10 +59992,10 @@
           "Distributions"
         ],
         "x-mint": {
-          "href": "/api-reference/queues-by-id/delete",
+          "href": "/api-reference/admin-queues-by-id/delete",
           "metadata": {
-            "title": "DELETE /queues/{id}",
-            "sidebarTitle": "DELETE /queues/{id}"
+            "sidebarTitle": "DELETE /queues/{id}",
+            "title": "DELETE /queues/{id}"
           }
         }
       }
@@ -60515,10 +60285,10 @@
           "Distributions"
         ],
         "x-mint": {
-          "href": "/api-reference/scheduled-events/get",
+          "href": "/api-reference/admin-scheduled-events/get",
           "metadata": {
-            "title": "GET /scheduled-events",
-            "sidebarTitle": "GET /scheduled-events"
+            "sidebarTitle": "GET /scheduled-events",
+            "title": "GET /scheduled-events"
           }
         }
       }
@@ -62396,10 +62166,10 @@
           "Distributions"
         ],
         "x-mint": {
-          "href": "/api-reference/sequences/get",
+          "href": "/api-reference/admin-sequences/get",
           "metadata": {
-            "title": "GET /sequences",
-            "sidebarTitle": "GET /sequences"
+            "sidebarTitle": "GET /sequences",
+            "title": "GET /sequences"
           }
         }
       },
@@ -62704,10 +62474,10 @@
           "Distributions"
         ],
         "x-mint": {
-          "href": "/api-reference/sequences/post",
+          "href": "/api-reference/admin-sequences/post",
           "metadata": {
-            "title": "POST /sequences",
-            "sidebarTitle": "POST /sequences"
+            "sidebarTitle": "POST /sequences",
+            "title": "POST /sequences"
           }
         }
       }
@@ -64554,10 +64324,10 @@
           "Distributions"
         ],
         "x-mint": {
-          "href": "/api-reference/sequences-by-sequence-id/get",
+          "href": "/api-reference/admin-sequences-by-sequence-id/get",
           "metadata": {
-            "title": "GET /sequences/{sequenceId}",
-            "sidebarTitle": "GET /sequences/{sequenceId}"
+            "sidebarTitle": "GET /sequences/{sequenceId}",
+            "title": "GET /sequences/{sequenceId}"
           }
         }
       },
@@ -64868,10 +64638,10 @@
           "Distributions"
         ],
         "x-mint": {
-          "href": "/api-reference/sequences-by-sequence-id/put",
+          "href": "/api-reference/admin-sequences-by-sequence-id/put",
           "metadata": {
-            "title": "PUT /sequences/{sequenceId}",
-            "sidebarTitle": "PUT /sequences/{sequenceId}"
+            "sidebarTitle": "PUT /sequences/{sequenceId}",
+            "title": "PUT /sequences/{sequenceId}"
           }
         }
       },
@@ -65139,10 +64909,10 @@
           "Distributions"
         ],
         "x-mint": {
-          "href": "/api-reference/sequences-by-sequence-id/delete",
+          "href": "/api-reference/admin-sequences-by-sequence-id/delete",
           "metadata": {
-            "title": "DELETE /sequences/{sequenceId}",
-            "sidebarTitle": "DELETE /sequences/{sequenceId}"
+            "sidebarTitle": "DELETE /sequences/{sequenceId}",
+            "title": "DELETE /sequences/{sequenceId}"
           }
         }
       }
@@ -65313,10 +65083,10 @@
           "Distributions"
         ],
         "x-mint": {
-          "href": "/api-reference/sequences-by-sequence-id-metrics/get",
+          "href": "/api-reference/admin-sequences-by-sequence-id-metrics/get",
           "metadata": {
-            "title": "GET /sequences/{sequenceId}/metrics",
-            "sidebarTitle": "GET /sequences/{sequenceId}/metrics"
+            "sidebarTitle": "GET /sequences/{sequenceId}/metrics",
+            "title": "GET /sequences/{sequenceId}/metrics"
           }
         }
       }
@@ -65581,10 +65351,10 @@
           "Distributions"
         ],
         "x-mint": {
-          "href": "/api-reference/sequences-by-sequence-id-order-limits/get",
+          "href": "/api-reference/admin-sequences-by-sequence-id-order-limits/get",
           "metadata": {
-            "title": "GET /sequences/{sequenceId}/order-limits",
-            "sidebarTitle": "GET /sequences/{sequenceId}/order-limits"
+            "sidebarTitle": "GET /sequences/{sequenceId}/order-limits",
+            "title": "GET /sequences/{sequenceId}/order-limits"
           }
         }
       },
@@ -65888,10 +65658,10 @@
           "Distributions"
         ],
         "x-mint": {
-          "href": "/api-reference/sequences-by-sequence-id-order-limits/post",
+          "href": "/api-reference/admin-sequences-by-sequence-id-order-limits/post",
           "metadata": {
-            "title": "POST /sequences/{sequenceId}/order-limits",
-            "sidebarTitle": "POST /sequences/{sequenceId}/order-limits"
+            "sidebarTitle": "POST /sequences/{sequenceId}/order-limits",
+            "title": "POST /sequences/{sequenceId}/order-limits"
           }
         }
       }
@@ -66161,10 +65931,10 @@
           "Distributions"
         ],
         "x-mint": {
-          "href": "/api-reference/sequences-by-sequence-id-order-limits-by-limit-id/get",
+          "href": "/api-reference/admin-sequences-by-sequence-id-order-limits-by-limit-id/get",
           "metadata": {
-            "title": "GET /sequences/{sequenceId}/order-limits/{limitId}",
-            "sidebarTitle": "GET /sequences/{sequenceId}/order-limits/{limitId}"
+            "sidebarTitle": "GET /sequences/{sequenceId}/order-limits/{limitId}",
+            "title": "GET /sequences/{sequenceId}/order-limits/{limitId}"
           }
         }
       },
@@ -66459,10 +66229,10 @@
           "Distributions"
         ],
         "x-mint": {
-          "href": "/api-reference/sequences-by-sequence-id-order-limits-by-limit-id/put",
+          "href": "/api-reference/admin-sequences-by-sequence-id-order-limits-by-limit-id/put",
           "metadata": {
-            "title": "PUT /sequences/{sequenceId}/order-limits/{limitId}",
-            "sidebarTitle": "PUT /sequences/{sequenceId}/order-limits/{limitId}"
+            "sidebarTitle": "PUT /sequences/{sequenceId}/order-limits/{limitId}",
+            "title": "PUT /sequences/{sequenceId}/order-limits/{limitId}"
           }
         }
       },
@@ -66730,10 +66500,10 @@
           "Distributions"
         ],
         "x-mint": {
-          "href": "/api-reference/sequences-by-sequence-id-order-limits-by-limit-id/delete",
+          "href": "/api-reference/admin-sequences-by-sequence-id-order-limits-by-limit-id/delete",
           "metadata": {
-            "title": "DELETE /sequences/{sequenceId}/order-limits/{limitId}",
-            "sidebarTitle": "DELETE /sequences/{sequenceId}/order-limits/{limitId}"
+            "sidebarTitle": "DELETE /sequences/{sequenceId}/order-limits/{limitId}",
+            "title": "DELETE /sequences/{sequenceId}/order-limits/{limitId}"
           }
         }
       }
@@ -66963,10 +66733,10 @@
           "Distributions"
         ],
         "x-mint": {
-          "href": "/api-reference/sequences-by-sequence-id-products/get",
+          "href": "/api-reference/admin-sequences-by-sequence-id-products/get",
           "metadata": {
-            "title": "GET /sequences/{sequenceId}/products",
-            "sidebarTitle": "GET /sequences/{sequenceId}/products"
+            "sidebarTitle": "GET /sequences/{sequenceId}/products",
+            "title": "GET /sequences/{sequenceId}/products"
           }
         }
       },
@@ -67213,10 +66983,10 @@
           "Distributions"
         ],
         "x-mint": {
-          "href": "/api-reference/sequences-by-sequence-id-products/post",
+          "href": "/api-reference/admin-sequences-by-sequence-id-products/post",
           "metadata": {
-            "title": "POST /sequences/{sequenceId}/products",
-            "sidebarTitle": "POST /sequences/{sequenceId}/products"
+            "sidebarTitle": "POST /sequences/{sequenceId}/products",
+            "title": "POST /sequences/{sequenceId}/products"
           }
         }
       },
@@ -67469,10 +67239,10 @@
           "Distributions"
         ],
         "x-mint": {
-          "href": "/api-reference/sequences-by-sequence-id-products/put",
+          "href": "/api-reference/admin-sequences-by-sequence-id-products/put",
           "metadata": {
-            "title": "PUT /sequences/{sequenceId}/products",
-            "sidebarTitle": "PUT /sequences/{sequenceId}/products"
+            "sidebarTitle": "PUT /sequences/{sequenceId}/products",
+            "title": "PUT /sequences/{sequenceId}/products"
           }
         }
       }
@@ -67707,10 +67477,10 @@
           "Distributions"
         ],
         "x-mint": {
-          "href": "/api-reference/sequences-by-sequence-id-products-by-product-id/get",
+          "href": "/api-reference/admin-sequences-by-sequence-id-products-by-product-id/get",
           "metadata": {
-            "title": "GET /sequences/{sequenceId}/products/{productId}",
-            "sidebarTitle": "GET /sequences/{sequenceId}/products/{productId}"
+            "sidebarTitle": "GET /sequences/{sequenceId}/products/{productId}",
+            "title": "GET /sequences/{sequenceId}/products/{productId}"
           }
         }
       },
@@ -67958,10 +67728,10 @@
           "Distributions"
         ],
         "x-mint": {
-          "href": "/api-reference/sequences-by-sequence-id-products-by-product-id/put",
+          "href": "/api-reference/admin-sequences-by-sequence-id-products-by-product-id/put",
           "metadata": {
-            "title": "PUT /sequences/{sequenceId}/products/{productId}",
-            "sidebarTitle": "PUT /sequences/{sequenceId}/products/{productId}"
+            "sidebarTitle": "PUT /sequences/{sequenceId}/products/{productId}",
+            "title": "PUT /sequences/{sequenceId}/products/{productId}"
           }
         }
       },
@@ -68194,10 +67964,10 @@
           "Distributions"
         ],
         "x-mint": {
-          "href": "/api-reference/sequences-by-sequence-id-products-by-product-id/delete",
+          "href": "/api-reference/admin-sequences-by-sequence-id-products-by-product-id/delete",
           "metadata": {
-            "title": "DELETE /sequences/{sequenceId}/products/{productId}",
-            "sidebarTitle": "DELETE /sequences/{sequenceId}/products/{productId}"
+            "sidebarTitle": "DELETE /sequences/{sequenceId}/products/{productId}",
+            "title": "DELETE /sequences/{sequenceId}/products/{productId}"
           }
         }
       }
@@ -68469,10 +68239,10 @@
           "Distributions"
         ],
         "x-mint": {
-          "href": "/api-reference/sequences-by-sequence-id-waitlist/get",
+          "href": "/api-reference/admin-sequences-by-sequence-id-waitlist/get",
           "metadata": {
-            "title": "GET /sequences/{sequenceId}/waitlist",
-            "sidebarTitle": "GET /sequences/{sequenceId}/waitlist"
+            "sidebarTitle": "GET /sequences/{sequenceId}/waitlist",
+            "title": "GET /sequences/{sequenceId}/waitlist"
           }
         }
       }
@@ -69257,10 +69027,10 @@
           "Distributions"
         ],
         "x-mint": {
-          "href": "/api-reference/sequences-by-sequence-id-waitlist-consumers/get",
+          "href": "/api-reference/admin-sequences-by-sequence-id-waitlist-consumers/get",
           "metadata": {
-            "title": "GET /sequences/{sequenceId}/waitlist/consumers",
-            "sidebarTitle": "GET /sequences/{sequenceId}/waitlist/consumers"
+            "sidebarTitle": "GET /sequences/{sequenceId}/waitlist/consumers",
+            "title": "GET /sequences/{sequenceId}/waitlist/consumers"
           }
         }
       }
@@ -69499,10 +69269,10 @@
           "Distributions"
         ],
         "x-mint": {
-          "href": "/api-reference/sequences-by-sequence-id-waitlist-enter/post",
+          "href": "/api-reference/admin-sequences-by-sequence-id-waitlist-enter/post",
           "metadata": {
-            "title": "POST /sequences/{sequenceId}/waitlist/enter",
-            "sidebarTitle": "POST /sequences/{sequenceId}/waitlist/enter"
+            "sidebarTitle": "POST /sequences/{sequenceId}/waitlist/enter",
+            "title": "POST /sequences/{sequenceId}/waitlist/enter"
           }
         }
       }
@@ -69836,10 +69606,10 @@
           "Distributions"
         ],
         "x-mint": {
-          "href": "/api-reference/timed-releases/get",
+          "href": "/api-reference/admin-timed-releases/get",
           "metadata": {
-            "title": "GET /timed-releases",
-            "sidebarTitle": "GET /timed-releases"
+            "sidebarTitle": "GET /timed-releases",
+            "title": "GET /timed-releases"
           }
         }
       },
@@ -70172,10 +69942,10 @@
           "Distributions"
         ],
         "x-mint": {
-          "href": "/api-reference/timed-releases/post",
+          "href": "/api-reference/admin-timed-releases/post",
           "metadata": {
-            "title": "POST /timed-releases",
-            "sidebarTitle": "POST /timed-releases"
+            "sidebarTitle": "POST /timed-releases",
+            "title": "POST /timed-releases"
           }
         }
       }
@@ -70478,10 +70248,10 @@
           "Distributions"
         ],
         "x-mint": {
-          "href": "/api-reference/timed-releases-by-id/get",
+          "href": "/api-reference/admin-timed-releases-by-id/get",
           "metadata": {
-            "title": "GET /timed-releases/{id}",
-            "sidebarTitle": "GET /timed-releases/{id}"
+            "sidebarTitle": "GET /timed-releases/{id}",
+            "title": "GET /timed-releases/{id}"
           }
         }
       },
@@ -70814,10 +70584,10 @@
           "Distributions"
         ],
         "x-mint": {
-          "href": "/api-reference/timed-releases-by-id/put",
+          "href": "/api-reference/admin-timed-releases-by-id/put",
           "metadata": {
-            "title": "PUT /timed-releases/{id}",
-            "sidebarTitle": "PUT /timed-releases/{id}"
+            "sidebarTitle": "PUT /timed-releases/{id}",
+            "title": "PUT /timed-releases/{id}"
           }
         }
       },
@@ -71118,10 +70888,10 @@
           "Distributions"
         ],
         "x-mint": {
-          "href": "/api-reference/timed-releases-by-id/delete",
+          "href": "/api-reference/admin-timed-releases-by-id/delete",
           "metadata": {
-            "title": "DELETE /timed-releases/{id}",
-            "sidebarTitle": "DELETE /timed-releases/{id}"
+            "sidebarTitle": "DELETE /timed-releases/{id}",
+            "title": "DELETE /timed-releases/{id}"
           }
         }
       }
@@ -71457,10 +71227,10 @@
           "Products"
         ],
         "x-mint": {
-          "href": "/api-reference/variant-options/get",
+          "href": "/api-reference/admin-variant-options/get",
           "metadata": {
-            "title": "GET /variant-options",
-            "sidebarTitle": "GET /variant-options"
+            "sidebarTitle": "GET /variant-options",
+            "title": "GET /variant-options"
           }
         }
       },
@@ -71735,10 +71505,10 @@
           "Products"
         ],
         "x-mint": {
-          "href": "/api-reference/variant-options/post",
+          "href": "/api-reference/admin-variant-options/post",
           "metadata": {
-            "title": "POST /variant-options",
-            "sidebarTitle": "POST /variant-options"
+            "sidebarTitle": "POST /variant-options",
+            "title": "POST /variant-options"
           }
         }
       }
@@ -72069,10 +71839,10 @@
           "Products"
         ],
         "x-mint": {
-          "href": "/api-reference/variant-options-by-option-id/get",
+          "href": "/api-reference/admin-variant-options-by-option-id/get",
           "metadata": {
-            "title": "GET /variant-options/{optionId}",
-            "sidebarTitle": "GET /variant-options/{optionId}"
+            "sidebarTitle": "GET /variant-options/{optionId}",
+            "title": "GET /variant-options/{optionId}"
           }
         }
       },
@@ -72330,10 +72100,10 @@
           "Products"
         ],
         "x-mint": {
-          "href": "/api-reference/variant-options-by-option-id/patch",
+          "href": "/api-reference/admin-variant-options-by-option-id/patch",
           "metadata": {
-            "title": "PATCH /variant-options/{optionId}",
-            "sidebarTitle": "PATCH /variant-options/{optionId}"
+            "sidebarTitle": "PATCH /variant-options/{optionId}",
+            "title": "PATCH /variant-options/{optionId}"
           }
         }
       },
@@ -72502,10 +72272,10 @@
           "Products"
         ],
         "x-mint": {
-          "href": "/api-reference/variant-options-by-option-id/delete",
+          "href": "/api-reference/admin-variant-options-by-option-id/delete",
           "metadata": {
-            "title": "DELETE /variant-options/{optionId}",
-            "sidebarTitle": "DELETE /variant-options/{optionId}"
+            "sidebarTitle": "DELETE /variant-options/{optionId}",
+            "title": "DELETE /variant-options/{optionId}"
           }
         }
       }
@@ -72778,10 +72548,10 @@
           "Products"
         ],
         "x-mint": {
-          "href": "/api-reference/variant-options-by-option-id-get-or-create-value/post",
+          "href": "/api-reference/admin-variant-options-by-option-id-get-or-create-value/post",
           "metadata": {
-            "title": "POST /variant-options/{optionId}/get-or-create-value",
-            "sidebarTitle": "POST /variant-options/{optionId}/get-or-create-value"
+            "sidebarTitle": "POST /variant-options/{optionId}/get-or-create-value",
+            "title": "POST /variant-options/{optionId}/get-or-create-value"
           }
         }
       }
@@ -73036,10 +72806,10 @@
           "Products"
         ],
         "x-mint": {
-          "href": "/api-reference/variant-options-by-option-id-values/get",
+          "href": "/api-reference/admin-variant-options-by-option-id-values/get",
           "metadata": {
-            "title": "GET /variant-options/{optionId}/values",
-            "sidebarTitle": "GET /variant-options/{optionId}/values"
+            "sidebarTitle": "GET /variant-options/{optionId}/values",
+            "title": "GET /variant-options/{optionId}/values"
           }
         }
       },
@@ -73330,10 +73100,10 @@
           "Products"
         ],
         "x-mint": {
-          "href": "/api-reference/variant-options-by-option-id-values/post",
+          "href": "/api-reference/admin-variant-options-by-option-id-values/post",
           "metadata": {
-            "title": "POST /variant-options/{optionId}/values",
-            "sidebarTitle": "POST /variant-options/{optionId}/values"
+            "sidebarTitle": "POST /variant-options/{optionId}/values",
+            "title": "POST /variant-options/{optionId}/values"
           }
         }
       }
@@ -73616,10 +73386,10 @@
           "Products"
         ],
         "x-mint": {
-          "href": "/api-reference/variant-options-by-option-id-values-by-value-id/patch",
+          "href": "/api-reference/admin-variant-options-by-option-id-values-by-value-id/patch",
           "metadata": {
-            "title": "PATCH /variant-options/{optionId}/values/{valueId}",
-            "sidebarTitle": "PATCH /variant-options/{optionId}/values/{valueId}"
+            "sidebarTitle": "PATCH /variant-options/{optionId}/values/{valueId}",
+            "title": "PATCH /variant-options/{optionId}/values/{valueId}"
           }
         }
       },
@@ -73796,10 +73566,10 @@
           "Products"
         ],
         "x-mint": {
-          "href": "/api-reference/variant-options-by-option-id-values-by-value-id/delete",
+          "href": "/api-reference/admin-variant-options-by-option-id-values-by-value-id/delete",
           "metadata": {
-            "title": "DELETE /variant-options/{optionId}/values/{valueId}",
-            "sidebarTitle": "DELETE /variant-options/{optionId}/values/{valueId}"
+            "sidebarTitle": "DELETE /variant-options/{optionId}/values/{valueId}",
+            "title": "DELETE /variant-options/{optionId}/values/{valueId}"
           }
         }
       }
@@ -74075,10 +73845,10 @@
           "Products"
         ],
         "x-mint": {
-          "href": "/api-reference/variant-options-by-option-id-values-reorder/put",
+          "href": "/api-reference/admin-variant-options-by-option-id-values-reorder/put",
           "metadata": {
-            "title": "PUT /variant-options/{optionId}/values/reorder",
-            "sidebarTitle": "PUT /variant-options/{optionId}/values/reorder"
+            "sidebarTitle": "PUT /variant-options/{optionId}/values/reorder",
+            "title": "PUT /variant-options/{optionId}/values/reorder"
           }
         }
       }
@@ -74461,10 +74231,10 @@
           "Products"
         ],
         "x-mint": {
-          "href": "/api-reference/variant-options-apply-templates/post",
+          "href": "/api-reference/admin-variant-options-apply-templates/post",
           "metadata": {
-            "title": "POST /variant-options/apply-templates",
-            "sidebarTitle": "POST /variant-options/apply-templates"
+            "sidebarTitle": "POST /variant-options/apply-templates",
+            "title": "POST /variant-options/apply-templates"
           }
         }
       }
@@ -74821,10 +74591,10 @@
           "Products"
         ],
         "x-mint": {
-          "href": "/api-reference/variant-options-reorder/put",
+          "href": "/api-reference/admin-variant-options-reorder/put",
           "metadata": {
-            "title": "PUT /variant-options/reorder",
-            "sidebarTitle": "PUT /variant-options/reorder"
+            "sidebarTitle": "PUT /variant-options/reorder",
+            "title": "PUT /variant-options/reorder"
           }
         }
       }
@@ -75127,10 +74897,10 @@
           "Distributions"
         ],
         "x-mint": {
-          "href": "/api-reference/waitlists/get",
+          "href": "/api-reference/admin-waitlists/get",
           "metadata": {
-            "title": "GET /waitlists",
-            "sidebarTitle": "GET /waitlists"
+            "sidebarTitle": "GET /waitlists",
+            "title": "GET /waitlists"
           }
         }
       },
@@ -75412,10 +75182,10 @@
           "Distributions"
         ],
         "x-mint": {
-          "href": "/api-reference/waitlists/post",
+          "href": "/api-reference/admin-waitlists/post",
           "metadata": {
-            "title": "POST /waitlists",
-            "sidebarTitle": "POST /waitlists"
+            "sidebarTitle": "POST /waitlists",
+            "title": "POST /waitlists"
           }
         }
       }
@@ -75687,10 +75457,10 @@
           "Distributions"
         ],
         "x-mint": {
-          "href": "/api-reference/waitlists-by-id/get",
+          "href": "/api-reference/admin-waitlists-by-id/get",
           "metadata": {
-            "title": "GET /waitlists/{id}",
-            "sidebarTitle": "GET /waitlists/{id}"
+            "sidebarTitle": "GET /waitlists/{id}",
+            "title": "GET /waitlists/{id}"
           }
         }
       },
@@ -75976,10 +75746,10 @@
           "Distributions"
         ],
         "x-mint": {
-          "href": "/api-reference/waitlists-by-id/put",
+          "href": "/api-reference/admin-waitlists-by-id/put",
           "metadata": {
-            "title": "PUT /waitlists/{id}",
-            "sidebarTitle": "PUT /waitlists/{id}"
+            "sidebarTitle": "PUT /waitlists/{id}",
+            "title": "PUT /waitlists/{id}"
           }
         }
       },
@@ -76249,10 +76019,10 @@
           "Distributions"
         ],
         "x-mint": {
-          "href": "/api-reference/waitlists-by-id/delete",
+          "href": "/api-reference/admin-waitlists-by-id/delete",
           "metadata": {
-            "title": "DELETE /waitlists/{id}",
-            "sidebarTitle": "DELETE /waitlists/{id}"
+            "sidebarTitle": "DELETE /waitlists/{id}",
+            "title": "DELETE /waitlists/{id}"
           }
         }
       }
@@ -76473,10 +76243,10 @@
           "Distributions"
         ],
         "x-mint": {
-          "href": "/api-reference/waitlists-by-id-consumers/get",
+          "href": "/api-reference/admin-waitlists-by-id-consumers/get",
           "metadata": {
-            "title": "GET /waitlists/{id}/consumers",
-            "sidebarTitle": "GET /waitlists/{id}/consumers"
+            "sidebarTitle": "GET /waitlists/{id}/consumers",
+            "title": "GET /waitlists/{id}/consumers"
           }
         }
       }
@@ -76729,10 +76499,10 @@
           "Distributions"
         ],
         "x-mint": {
-          "href": "/api-reference/waitlists-by-id-export/get",
+          "href": "/api-reference/admin-waitlists-by-id-export/get",
           "metadata": {
-            "title": "GET /waitlists/{id}/export",
-            "sidebarTitle": "GET /waitlists/{id}/export"
+            "sidebarTitle": "GET /waitlists/{id}/export",
+            "title": "GET /waitlists/{id}/export"
           }
         }
       },
@@ -76983,10 +76753,10 @@
           "Distributions"
         ],
         "x-mint": {
-          "href": "/api-reference/waitlists-by-id-export/post",
+          "href": "/api-reference/admin-waitlists-by-id-export/post",
           "metadata": {
-            "title": "POST /waitlists/{id}/export",
-            "sidebarTitle": "POST /waitlists/{id}/export"
+            "sidebarTitle": "POST /waitlists/{id}/export",
+            "title": "POST /waitlists/{id}/export"
           }
         }
       }
@@ -77157,15 +76927,20 @@
           "Distributions"
         ],
         "x-mint": {
-          "href": "/api-reference/waitlists-by-id-export-by-file-id/get",
+          "href": "/api-reference/admin-waitlists-by-id-export-by-file-id/get",
           "metadata": {
-            "title": "GET /waitlists/{id}/export/{fileId}",
-            "sidebarTitle": "GET /waitlists/{id}/export/{fileId}"
+            "sidebarTitle": "GET /waitlists/{id}/export/{fileId}",
+            "title": "GET /waitlists/{id}/export/{fileId}"
           }
         }
       }
     }
   },
+  "security": [
+    {
+      "SecretKeyAuth": []
+    }
+  ],
   "servers": [
     {
       "description": "Local development",

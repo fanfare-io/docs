@@ -2,9 +2,6 @@
 title: SSR Integration
 description: Integrate Fanfare in server-rendered applications with a browser-only SDK boundary.
 ---
-
-# SSR Integration
-
 Server-rendered apps should treat Fanfare as a browser SDK. Render the surrounding page on the server, then mount Fanfare inside a client component after hydration.
 
 The server can prepare product data, authenticated customer context, and checkout routes. The SDK should be initialized in the browser with a publishable key, and admitted customers should be handed to a trusted server or checkout boundary.

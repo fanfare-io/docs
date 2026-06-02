@@ -341,7 +341,6 @@
               {
                 "group": "Organizations",
                 "pages": [
-                  "api/openapi/admin-api.json POST /organizations",
                   "api/openapi/admin-api.json PUT /organizations",
                   "api/openapi/admin-api.json GET /organizations/current",
                   "api/openapi/admin-api.json GET /organizations/slug/availability"

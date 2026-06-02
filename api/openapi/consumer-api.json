@@ -1,5 +1,19 @@
 {
-  "components": {},
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "description": "Consumer access token or server-side secret key, depending on the endpoint.",
+        "scheme": "bearer",
+        "type": "http"
+      },
+      "PublishableKeyAuth": {
+        "description": "Browser-safe publishable key for client-side consumer requests.",
+        "in": "header",
+        "name": "X-Publishable-Key",
+        "type": "apiKey"
+      }
+    }
+  },
   "info": {
     "description": "Consumer API for Fanfare",
     "title": "Fanfare Consumer API",
@@ -293,10 +307,10 @@
           "Appointments"
         ],
         "x-mint": {
-          "href": "/api-reference/appointments-by-appointment-id/get",
+          "href": "/api-reference/consumer-appointments-by-appointment-id/get",
           "metadata": {
-            "title": "GET /appointments/{appointmentId}",
-            "sidebarTitle": "GET /appointments/{appointmentId}"
+            "sidebarTitle": "GET /appointments/{appointmentId}",
+            "title": "GET /appointments/{appointmentId}"
           }
         }
       }
@@ -540,10 +554,10 @@
           "Appointments"
         ],
         "x-mint": {
-          "href": "/api-reference/appointments-by-appointment-id-book/post",
+          "href": "/api-reference/consumer-appointments-by-appointment-id-book/post",
           "metadata": {
-            "title": "POST /appointments/{appointmentId}/book",
-            "sidebarTitle": "POST /appointments/{appointmentId}/book"
+            "sidebarTitle": "POST /appointments/{appointmentId}/book",
+            "title": "POST /appointments/{appointmentId}/book"
           }
         }
       }
@@ -743,10 +757,10 @@
           "Appointments"
         ],
         "x-mint": {
-          "href": "/api-reference/appointments-by-appointment-id-cancel/post",
+          "href": "/api-reference/consumer-appointments-by-appointment-id-cancel/post",
           "metadata": {
-            "title": "POST /appointments/{appointmentId}/cancel",
-            "sidebarTitle": "POST /appointments/{appointmentId}/cancel"
+            "sidebarTitle": "POST /appointments/{appointmentId}/cancel",
+            "title": "POST /appointments/{appointmentId}/cancel"
           }
         }
       }
@@ -974,10 +988,10 @@
           "Appointments"
         ],
         "x-mint": {
-          "href": "/api-reference/appointments-by-appointment-id-me/get",
+          "href": "/api-reference/consumer-appointments-by-appointment-id-me/get",
           "metadata": {
-            "title": "GET /appointments/{appointmentId}/me",
-            "sidebarTitle": "GET /appointments/{appointmentId}/me"
+            "sidebarTitle": "GET /appointments/{appointmentId}/me",
+            "title": "GET /appointments/{appointmentId}/me"
           }
         }
       }
@@ -1185,10 +1199,10 @@
           "Appointments"
         ],
         "x-mint": {
-          "href": "/api-reference/appointments-by-appointment-id-reschedule/post",
+          "href": "/api-reference/consumer-appointments-by-appointment-id-reschedule/post",
           "metadata": {
-            "title": "POST /appointments/{appointmentId}/reschedule",
-            "sidebarTitle": "POST /appointments/{appointmentId}/reschedule"
+            "sidebarTitle": "POST /appointments/{appointmentId}/reschedule",
+            "title": "POST /appointments/{appointmentId}/reschedule"
           }
         }
       }
@@ -1441,10 +1455,10 @@
           "Appointments"
         ],
         "x-mint": {
-          "href": "/api-reference/appointments-by-appointment-id-slots/get",
+          "href": "/api-reference/consumer-appointments-by-appointment-id-slots/get",
           "metadata": {
-            "title": "GET /appointments/{appointmentId}/slots",
-            "sidebarTitle": "GET /appointments/{appointmentId}/slots"
+            "sidebarTitle": "GET /appointments/{appointmentId}/slots",
+            "title": "GET /appointments/{appointmentId}/slots"
           }
         }
       }
@@ -1796,10 +1810,10 @@
           "Auctions"
         ],
         "x-mint": {
-          "href": "/api-reference/auctions-by-auction-id/get",
+          "href": "/api-reference/consumer-auctions-by-auction-id/get",
           "metadata": {
-            "title": "GET /auctions/{auctionId}",
-            "sidebarTitle": "GET /auctions/{auctionId}"
+            "sidebarTitle": "GET /auctions/{auctionId}",
+            "title": "GET /auctions/{auctionId}"
           }
         }
       }
@@ -2013,10 +2027,10 @@
           "Auctions"
         ],
         "x-mint": {
-          "href": "/api-reference/auctions-by-auction-id-bid/post",
+          "href": "/api-reference/consumer-auctions-by-auction-id-bid/post",
           "metadata": {
-            "title": "POST /auctions/{auctionId}/bid",
-            "sidebarTitle": "POST /auctions/{auctionId}/bid"
+            "sidebarTitle": "POST /auctions/{auctionId}/bid",
+            "title": "POST /auctions/{auctionId}/bid"
           }
         }
       }
@@ -2221,10 +2235,10 @@
           "Auctions"
         ],
         "x-mint": {
-          "href": "/api-reference/auctions-by-auction-id-bids/get",
+          "href": "/api-reference/consumer-auctions-by-auction-id-bids/get",
           "metadata": {
-            "title": "GET /auctions/{auctionId}/bids",
-            "sidebarTitle": "GET /auctions/{auctionId}/bids"
+            "sidebarTitle": "GET /auctions/{auctionId}/bids",
+            "title": "GET /auctions/{auctionId}/bids"
           }
         }
       }
@@ -2421,10 +2435,10 @@
           "Auctions"
         ],
         "x-mint": {
-          "href": "/api-reference/auctions-by-auction-id-bids-history/get",
+          "href": "/api-reference/consumer-auctions-by-auction-id-bids-history/get",
           "metadata": {
-            "title": "GET /auctions/{auctionId}/bids/history",
-            "sidebarTitle": "GET /auctions/{auctionId}/bids/history"
+            "sidebarTitle": "GET /auctions/{auctionId}/bids/history",
+            "title": "GET /auctions/{auctionId}/bids/history"
           }
         }
       }
@@ -2604,10 +2618,10 @@
           "Auctions"
         ],
         "x-mint": {
-          "href": "/api-reference/auctions-by-auction-id-current-price/get",
+          "href": "/api-reference/consumer-auctions-by-auction-id-current-price/get",
           "metadata": {
-            "title": "GET /auctions/{auctionId}/current-price",
-            "sidebarTitle": "GET /auctions/{auctionId}/current-price"
+            "sidebarTitle": "GET /auctions/{auctionId}/current-price",
+            "title": "GET /auctions/{auctionId}/current-price"
           }
         }
       }
@@ -2778,10 +2792,10 @@
           "Auctions"
         ],
         "x-mint": {
-          "href": "/api-reference/auctions-by-auction-id-enter/post",
+          "href": "/api-reference/consumer-auctions-by-auction-id-enter/post",
           "metadata": {
-            "title": "POST /auctions/{auctionId}/enter",
-            "sidebarTitle": "POST /auctions/{auctionId}/enter"
+            "sidebarTitle": "POST /auctions/{auctionId}/enter",
+            "title": "POST /auctions/{auctionId}/enter"
           }
         }
       }
@@ -2953,10 +2967,10 @@
           "Auctions"
         ],
         "x-mint": {
-          "href": "/api-reference/auctions-by-auction-id-highest-bid/get",
+          "href": "/api-reference/consumer-auctions-by-auction-id-highest-bid/get",
           "metadata": {
-            "title": "GET /auctions/{auctionId}/highest-bid",
-            "sidebarTitle": "GET /auctions/{auctionId}/highest-bid"
+            "sidebarTitle": "GET /auctions/{auctionId}/highest-bid",
+            "title": "GET /auctions/{auctionId}/highest-bid"
           }
         }
       }
@@ -3155,10 +3169,10 @@
           "Auctions"
         ],
         "x-mint": {
-          "href": "/api-reference/auctions-by-auction-id-status/get",
+          "href": "/api-reference/consumer-auctions-by-auction-id-status/get",
           "metadata": {
-            "title": "GET /auctions/{auctionId}/status",
-            "sidebarTitle": "GET /auctions/{auctionId}/status"
+            "sidebarTitle": "GET /auctions/{auctionId}/status",
+            "title": "GET /auctions/{auctionId}/status"
           }
         }
       }
@@ -3363,10 +3377,10 @@
           "Auth"
         ],
         "x-mint": {
-          "href": "/api-reference/auth-external-authorize/post",
+          "href": "/api-reference/consumer-auth-external-authorize/post",
           "metadata": {
-            "title": "POST /auth/external/authorize",
-            "sidebarTitle": "POST /auth/external/authorize"
+            "sidebarTitle": "POST /auth/external/authorize",
+            "title": "POST /auth/external/authorize"
           }
         }
       }
@@ -3583,10 +3597,10 @@
           "Auth"
         ],
         "x-mint": {
-          "href": "/api-reference/auth-external-exchange/post",
+          "href": "/api-reference/consumer-auth-external-exchange/post",
           "metadata": {
-            "title": "POST /auth/external/exchange",
-            "sidebarTitle": "POST /auth/external/exchange"
+            "sidebarTitle": "POST /auth/external/exchange",
+            "title": "POST /auth/external/exchange"
           }
         }
       }
@@ -3786,10 +3800,10 @@
           "Auth"
         ],
         "x-mint": {
-          "href": "/api-reference/auth-guest/post",
+          "href": "/api-reference/consumer-auth-guest/post",
           "metadata": {
-            "title": "POST /auth/guest",
-            "sidebarTitle": "POST /auth/guest"
+            "sidebarTitle": "POST /auth/guest",
+            "title": "POST /auth/guest"
           }
         }
       }
@@ -3935,10 +3949,10 @@
           "Auth"
         ],
         "x-mint": {
-          "href": "/api-reference/auth-logout/post",
+          "href": "/api-reference/consumer-auth-logout/post",
           "metadata": {
-            "title": "POST /auth/logout",
-            "sidebarTitle": "POST /auth/logout"
+            "sidebarTitle": "POST /auth/logout",
+            "title": "POST /auth/logout"
           }
         }
       }
@@ -4124,10 +4138,10 @@
           "Auth"
         ],
         "x-mint": {
-          "href": "/api-reference/auth-otp-request/post",
+          "href": "/api-reference/consumer-auth-otp-request/post",
           "metadata": {
-            "title": "POST /auth/otp/request",
-            "sidebarTitle": "POST /auth/otp/request"
+            "sidebarTitle": "POST /auth/otp/request",
+            "title": "POST /auth/otp/request"
           }
         }
       }
@@ -4354,10 +4368,10 @@
           "Auth"
         ],
         "x-mint": {
-          "href": "/api-reference/auth-otp-verify/post",
+          "href": "/api-reference/consumer-auth-otp-verify/post",
           "metadata": {
-            "title": "POST /auth/otp/verify",
-            "sidebarTitle": "POST /auth/otp/verify"
+            "sidebarTitle": "POST /auth/otp/verify",
+            "title": "POST /auth/otp/verify"
           }
         }
       }
@@ -4537,10 +4551,10 @@
           "Auth"
         ],
         "x-mint": {
-          "href": "/api-reference/auth-refresh/post",
+          "href": "/api-reference/consumer-auth-refresh/post",
           "metadata": {
-            "title": "POST /auth/refresh",
-            "sidebarTitle": "POST /auth/refresh"
+            "sidebarTitle": "POST /auth/refresh",
+            "title": "POST /auth/refresh"
           }
         }
       }
@@ -5025,10 +5039,10 @@
           "Consumers"
         ],
         "x-mint": {
-          "href": "/api-reference/consumers-by-id/get",
+          "href": "/api-reference/consumer-consumers-by-id/get",
           "metadata": {
-            "title": "GET /consumers/{id}",
-            "sidebarTitle": "GET /consumers/{id}"
+            "sidebarTitle": "GET /consumers/{id}",
+            "title": "GET /consumers/{id}"
           }
         }
       }
@@ -5659,10 +5673,10 @@
           "Consumers"
         ],
         "x-mint": {
-          "href": "/api-reference/consumers-me/get",
+          "href": "/api-reference/consumer-consumers-me/get",
           "metadata": {
-            "title": "GET /consumers/me",
-            "sidebarTitle": "GET /consumers/me"
+            "sidebarTitle": "GET /consumers/me",
+            "title": "GET /consumers/me"
           }
         }
       }
@@ -5935,10 +5949,10 @@
           "Draws"
         ],
         "x-mint": {
-          "href": "/api-reference/draws-by-draw-id/get",
+          "href": "/api-reference/consumer-draws-by-draw-id/get",
           "metadata": {
-            "title": "GET /draws/{drawId}",
-            "sidebarTitle": "GET /draws/{drawId}"
+            "sidebarTitle": "GET /draws/{drawId}",
+            "title": "GET /draws/{drawId}"
           }
         }
       }
@@ -6013,9 +6027,6 @@
                               "format": "date-time",
                               "type": "string"
                             },
-                            "fingerprint": {
-                              "type": "string"
-                            },
                             "selectedProductId": {
                               "type": "string"
                             },
@@ -6045,9 +6056,6 @@
                             },
                             "expiresAt": {
                               "format": "date-time",
-                              "type": "string"
-                            },
-                            "fingerprint": {
                               "type": "string"
                             },
                             "status": {
@@ -6222,10 +6230,10 @@
           "Draws"
         ],
         "x-mint": {
-          "href": "/api-reference/draws-by-draw-id-complete/post",
+          "href": "/api-reference/consumer-draws-by-draw-id-complete/post",
           "metadata": {
-            "title": "POST /draws/{drawId}/complete",
-            "sidebarTitle": "POST /draws/{drawId}/complete"
+            "sidebarTitle": "POST /draws/{drawId}/complete",
+            "title": "POST /draws/{drawId}/complete"
           }
         }
       }
@@ -6304,9 +6312,6 @@
                               "format": "date-time",
                               "type": "string"
                             },
-                            "fingerprint": {
-                              "type": "string"
-                            },
                             "selectedProductId": {
                               "type": "string"
                             },
@@ -6336,9 +6341,6 @@
                             },
                             "expiresAt": {
                               "format": "date-time",
-                              "type": "string"
-                            },
-                            "fingerprint": {
                               "type": "string"
                             },
                             "status": {
@@ -6513,10 +6515,10 @@
           "Draws"
         ],
         "x-mint": {
-          "href": "/api-reference/draws-by-draw-id-deny/post",
+          "href": "/api-reference/consumer-draws-by-draw-id-deny/post",
           "metadata": {
-            "title": "POST /draws/{drawId}/deny",
-            "sidebarTitle": "POST /draws/{drawId}/deny"
+            "sidebarTitle": "POST /draws/{drawId}/deny",
+            "title": "POST /draws/{drawId}/deny"
           }
         }
       }
@@ -6574,9 +6576,6 @@
                               "format": "date-time",
                               "type": "string"
                             },
-                            "fingerprint": {
-                              "type": "string"
-                            },
                             "selectedProductId": {
                               "type": "string"
                             },
@@ -6606,9 +6605,6 @@
                             },
                             "expiresAt": {
                               "format": "date-time",
-                              "type": "string"
-                            },
-                            "fingerprint": {
                               "type": "string"
                             },
                             "status": {
@@ -6783,10 +6779,10 @@
           "Draws"
         ],
         "x-mint": {
-          "href": "/api-reference/draws-by-draw-id-enter/post",
+          "href": "/api-reference/consumer-draws-by-draw-id-enter/post",
           "metadata": {
-            "title": "POST /draws/{drawId}/enter",
-            "sidebarTitle": "POST /draws/{drawId}/enter"
+            "sidebarTitle": "POST /draws/{drawId}/enter",
+            "title": "POST /draws/{drawId}/enter"
           }
         }
       }
@@ -6844,9 +6840,6 @@
                               "format": "date-time",
                               "type": "string"
                             },
-                            "fingerprint": {
-                              "type": "string"
-                            },
                             "selectedProductId": {
                               "type": "string"
                             },
@@ -6876,9 +6869,6 @@
                             },
                             "expiresAt": {
                               "format": "date-time",
-                              "type": "string"
-                            },
-                            "fingerprint": {
                               "type": "string"
                             },
                             "status": {
@@ -7053,10 +7043,10 @@
           "Draws"
         ],
         "x-mint": {
-          "href": "/api-reference/draws-by-draw-id-leave/post",
+          "href": "/api-reference/consumer-draws-by-draw-id-leave/post",
           "metadata": {
-            "title": "POST /draws/{drawId}/leave",
-            "sidebarTitle": "POST /draws/{drawId}/leave"
+            "sidebarTitle": "POST /draws/{drawId}/leave",
+            "title": "POST /draws/{drawId}/leave"
           }
         }
       }
@@ -7114,9 +7104,6 @@
                               "format": "date-time",
                               "type": "string"
                             },
-                            "fingerprint": {
-                              "type": "string"
-                            },
                             "selectedProductId": {
                               "type": "string"
                             },
@@ -7146,9 +7133,6 @@
                             },
                             "expiresAt": {
                               "format": "date-time",
-                              "type": "string"
-                            },
-                            "fingerprint": {
                               "type": "string"
                             },
                             "status": {
@@ -7323,10 +7307,10 @@
           "Draws"
         ],
         "x-mint": {
-          "href": "/api-reference/draws-by-draw-id-status/get",
+          "href": "/api-reference/consumer-draws-by-draw-id-status/get",
           "metadata": {
-            "title": "GET /draws/{drawId}/status",
-            "sidebarTitle": "GET /draws/{drawId}/status"
+            "sidebarTitle": "GET /draws/{drawId}/status",
+            "title": "GET /draws/{drawId}/status"
           }
         }
       }
@@ -7510,10 +7494,10 @@
           "Draws"
         ],
         "x-mint": {
-          "href": "/api-reference/draws-by-draw-id-validate/post",
+          "href": "/api-reference/consumer-draws-by-draw-id-validate/post",
           "metadata": {
-            "title": "POST /draws/{drawId}/validate",
-            "sidebarTitle": "POST /draws/{drawId}/validate"
+            "sidebarTitle": "POST /draws/{drawId}/validate",
+            "title": "POST /draws/{drawId}/validate"
           }
         }
       }
@@ -9978,10 +9962,10 @@
           "Experiences"
         ],
         "x-mint": {
-          "href": "/api-reference/experiences-by-experience-id/get",
+          "href": "/api-reference/consumer-experiences-by-experience-id/get",
           "metadata": {
-            "title": "GET /experiences/{experienceId}",
-            "sidebarTitle": "GET /experiences/{experienceId}"
+            "sidebarTitle": "GET /experiences/{experienceId}",
+            "title": "GET /experiences/{experienceId}"
           }
         }
       }
@@ -12462,10 +12446,10 @@
           "Experiences"
         ],
         "x-mint": {
-          "href": "/api-reference/experiences-by-experience-id-enter/post",
+          "href": "/api-reference/consumer-experiences-by-experience-id-enter/post",
           "metadata": {
-            "title": "POST /experiences/{experienceId}/enter",
-            "sidebarTitle": "POST /experiences/{experienceId}/enter"
+            "sidebarTitle": "POST /experiences/{experienceId}/enter",
+            "title": "POST /experiences/{experienceId}/enter"
           }
         }
       }
@@ -12636,10 +12620,10 @@
           "Experiences"
         ],
         "x-mint": {
-          "href": "/api-reference/experiences-by-experience-id-leave/delete",
+          "href": "/api-reference/consumer-experiences-by-experience-id-leave/delete",
           "metadata": {
-            "title": "DELETE /experiences/{experienceId}/leave",
-            "sidebarTitle": "DELETE /experiences/{experienceId}/leave"
+            "sidebarTitle": "DELETE /experiences/{experienceId}/leave",
+            "title": "DELETE /experiences/{experienceId}/leave"
           }
         }
       }
@@ -13748,10 +13732,10 @@
           "Experiences"
         ],
         "x-mint": {
-          "href": "/api-reference/experiences-by-experience-id-route/post",
+          "href": "/api-reference/consumer-experiences-by-experience-id-route/post",
           "metadata": {
-            "title": "POST /experiences/{experienceId}/route",
-            "sidebarTitle": "POST /experiences/{experienceId}/route"
+            "sidebarTitle": "POST /experiences/{experienceId}/route",
+            "title": "POST /experiences/{experienceId}/route"
           }
         }
       }
@@ -13916,10 +13900,10 @@
           "Loyalty"
         ],
         "x-mint": {
-          "href": "/api-reference/loyalty-balance/get",
+          "href": "/api-reference/consumer-loyalty-balance/get",
           "metadata": {
-            "title": "GET /loyalty/balance",
-            "sidebarTitle": "GET /loyalty/balance"
+            "sidebarTitle": "GET /loyalty/balance",
+            "title": "GET /loyalty/balance"
           }
         }
       }
@@ -14097,10 +14081,10 @@
           "Loyalty"
         ],
         "x-mint": {
-          "href": "/api-reference/loyalty-expirations/get",
+          "href": "/api-reference/consumer-loyalty-expirations/get",
           "metadata": {
-            "title": "GET /loyalty/expirations",
-            "sidebarTitle": "GET /loyalty/expirations"
+            "sidebarTitle": "GET /loyalty/expirations",
+            "title": "GET /loyalty/expirations"
           }
         }
       }
@@ -14331,10 +14315,10 @@
           "Loyalty"
         ],
         "x-mint": {
-          "href": "/api-reference/loyalty-history/get",
+          "href": "/api-reference/consumer-loyalty-history/get",
           "metadata": {
-            "title": "GET /loyalty/history",
-            "sidebarTitle": "GET /loyalty/history"
+            "sidebarTitle": "GET /loyalty/history",
+            "title": "GET /loyalty/history"
           }
         }
       }
@@ -14549,10 +14533,10 @@
           "Organizations"
         ],
         "x-mint": {
-          "href": "/api-reference/organizations-by-organization-id-settings/get",
+          "href": "/api-reference/consumer-organizations-by-organization-id-settings/get",
           "metadata": {
-            "title": "GET /organizations/{organizationId}/settings",
-            "sidebarTitle": "GET /organizations/{organizationId}/settings"
+            "sidebarTitle": "GET /organizations/{organizationId}/settings",
+            "title": "GET /organizations/{organizationId}/settings"
           }
         }
       }
@@ -14888,10 +14872,10 @@
           "Queues"
         ],
         "x-mint": {
-          "href": "/api-reference/queues-by-queue-id/get",
+          "href": "/api-reference/consumer-queues-by-queue-id/get",
           "metadata": {
-            "title": "GET /queues/{queueId}",
-            "sidebarTitle": "GET /queues/{queueId}"
+            "sidebarTitle": "GET /queues/{queueId}",
+            "title": "GET /queues/{queueId}"
           }
         }
       }
@@ -15044,9 +15028,6 @@
                               "format": "date-time",
                               "type": "string"
                             },
-                            "fingerprint": {
-                              "type": "string"
-                            },
                             "position": {
                               "anyOf": [
                                 {
@@ -15082,9 +15063,6 @@
                                   "type": "null"
                                 }
                               ]
-                            },
-                            "fingerprint": {
-                              "type": "string"
                             },
                             "position": {
                               "anyOf": [
@@ -15283,10 +15261,10 @@
           "Queues"
         ],
         "x-mint": {
-          "href": "/api-reference/queues-by-queue-id-admit/post",
+          "href": "/api-reference/consumer-queues-by-queue-id-admit/post",
           "metadata": {
-            "title": "POST /queues/{queueId}/admit",
-            "sidebarTitle": "POST /queues/{queueId}/admit"
+            "sidebarTitle": "POST /queues/{queueId}/admit",
+            "title": "POST /queues/{queueId}/admit"
           }
         }
       }
@@ -15439,9 +15417,6 @@
                               "format": "date-time",
                               "type": "string"
                             },
-                            "fingerprint": {
-                              "type": "string"
-                            },
                             "position": {
                               "anyOf": [
                                 {
@@ -15477,9 +15452,6 @@
                                   "type": "null"
                                 }
                               ]
-                            },
-                            "fingerprint": {
-                              "type": "string"
                             },
                             "position": {
                               "anyOf": [
@@ -15678,10 +15650,10 @@
           "Queues"
         ],
         "x-mint": {
-          "href": "/api-reference/queues-by-queue-id-complete/post",
+          "href": "/api-reference/consumer-queues-by-queue-id-complete/post",
           "metadata": {
-            "title": "POST /queues/{queueId}/complete",
-            "sidebarTitle": "POST /queues/{queueId}/complete"
+            "sidebarTitle": "POST /queues/{queueId}/complete",
+            "title": "POST /queues/{queueId}/complete"
           }
         }
       }
@@ -15845,9 +15817,6 @@
                               "format": "date-time",
                               "type": "string"
                             },
-                            "fingerprint": {
-                              "type": "string"
-                            },
                             "position": {
                               "anyOf": [
                                 {
@@ -15883,9 +15852,6 @@
                                   "type": "null"
                                 }
                               ]
-                            },
-                            "fingerprint": {
-                              "type": "string"
                             },
                             "position": {
                               "anyOf": [
@@ -16084,10 +16050,10 @@
           "Queues"
         ],
         "x-mint": {
-          "href": "/api-reference/queues-by-queue-id-deny/post",
+          "href": "/api-reference/consumer-queues-by-queue-id-deny/post",
           "metadata": {
-            "title": "POST /queues/{queueId}/deny",
-            "sidebarTitle": "POST /queues/{queueId}/deny"
+            "sidebarTitle": "POST /queues/{queueId}/deny",
+            "title": "POST /queues/{queueId}/deny"
           }
         }
       }
@@ -16223,9 +16189,6 @@
                               "format": "date-time",
                               "type": "string"
                             },
-                            "fingerprint": {
-                              "type": "string"
-                            },
                             "position": {
                               "anyOf": [
                                 {
@@ -16261,9 +16224,6 @@
                                   "type": "null"
                                 }
                               ]
-                            },
-                            "fingerprint": {
-                              "type": "string"
                             },
                             "position": {
                               "anyOf": [
@@ -16462,10 +16422,10 @@
           "Queues"
         ],
         "x-mint": {
-          "href": "/api-reference/queues-by-queue-id-enter/post",
+          "href": "/api-reference/consumer-queues-by-queue-id-enter/post",
           "metadata": {
-            "title": "POST /queues/{queueId}/enter",
-            "sidebarTitle": "POST /queues/{queueId}/enter"
+            "sidebarTitle": "POST /queues/{queueId}/enter",
+            "title": "POST /queues/{queueId}/enter"
           }
         }
       }
@@ -16601,9 +16561,6 @@
                               "format": "date-time",
                               "type": "string"
                             },
-                            "fingerprint": {
-                              "type": "string"
-                            },
                             "position": {
                               "anyOf": [
                                 {
@@ -16639,9 +16596,6 @@
                                   "type": "null"
                                 }
                               ]
-                            },
-                            "fingerprint": {
-                              "type": "string"
                             },
                             "position": {
                               "anyOf": [
@@ -16840,10 +16794,10 @@
           "Queues"
         ],
         "x-mint": {
-          "href": "/api-reference/queues-by-queue-id-leave/post",
+          "href": "/api-reference/consumer-queues-by-queue-id-leave/post",
           "metadata": {
-            "title": "POST /queues/{queueId}/leave",
-            "sidebarTitle": "POST /queues/{queueId}/leave"
+            "sidebarTitle": "POST /queues/{queueId}/leave",
+            "title": "POST /queues/{queueId}/leave"
           }
         }
       }
@@ -16979,9 +16933,6 @@
                               "format": "date-time",
                               "type": "string"
                             },
-                            "fingerprint": {
-                              "type": "string"
-                            },
                             "position": {
                               "anyOf": [
                                 {
@@ -17017,9 +16968,6 @@
                                   "type": "null"
                                 }
                               ]
-                            },
-                            "fingerprint": {
-                              "type": "string"
                             },
                             "position": {
                               "anyOf": [
@@ -17218,10 +17166,10 @@
           "Queues"
         ],
         "x-mint": {
-          "href": "/api-reference/queues-by-queue-id-status/get",
+          "href": "/api-reference/consumer-queues-by-queue-id-status/get",
           "metadata": {
-            "title": "GET /queues/{queueId}/status",
-            "sidebarTitle": "GET /queues/{queueId}/status"
+            "sidebarTitle": "GET /queues/{queueId}/status",
+            "title": "GET /queues/{queueId}/status"
           }
         }
       }
@@ -17405,10 +17353,10 @@
           "Queues"
         ],
         "x-mint": {
-          "href": "/api-reference/queues-by-queue-id-validate/post",
+          "href": "/api-reference/consumer-queues-by-queue-id-validate/post",
           "metadata": {
-            "title": "POST /queues/{queueId}/validate",
-            "sidebarTitle": "POST /queues/{queueId}/validate"
+            "sidebarTitle": "POST /queues/{queueId}/validate",
+            "title": "POST /queues/{queueId}/validate"
           }
         }
       }
@@ -17657,10 +17605,10 @@
           "Timed Releases"
         ],
         "x-mint": {
-          "href": "/api-reference/timed-releases-by-timed-release-id/get",
+          "href": "/api-reference/consumer-timed-releases-by-timed-release-id/get",
           "metadata": {
-            "title": "GET /timed-releases/{timedReleaseId}",
-            "sidebarTitle": "GET /timed-releases/{timedReleaseId}"
+            "sidebarTitle": "GET /timed-releases/{timedReleaseId}",
+            "title": "GET /timed-releases/{timedReleaseId}"
           }
         }
       }
@@ -17834,10 +17782,10 @@
           "Timed Releases"
         ],
         "x-mint": {
-          "href": "/api-reference/timed-releases-by-timed-release-id-complete/post",
+          "href": "/api-reference/consumer-timed-releases-by-timed-release-id-complete/post",
           "metadata": {
-            "title": "POST /timed-releases/{timedReleaseId}/complete",
-            "sidebarTitle": "POST /timed-releases/{timedReleaseId}/complete"
+            "sidebarTitle": "POST /timed-releases/{timedReleaseId}/complete",
+            "title": "POST /timed-releases/{timedReleaseId}/complete"
           }
         }
       }
@@ -18038,10 +17986,10 @@
           "Timed Releases"
         ],
         "x-mint": {
-          "href": "/api-reference/timed-releases-by-timed-release-id-enter/post",
+          "href": "/api-reference/consumer-timed-releases-by-timed-release-id-enter/post",
           "metadata": {
-            "title": "POST /timed-releases/{timedReleaseId}/enter",
-            "sidebarTitle": "POST /timed-releases/{timedReleaseId}/enter"
+            "sidebarTitle": "POST /timed-releases/{timedReleaseId}/enter",
+            "title": "POST /timed-releases/{timedReleaseId}/enter"
           }
         }
       }
@@ -18215,10 +18163,10 @@
           "Timed Releases"
         ],
         "x-mint": {
-          "href": "/api-reference/timed-releases-by-timed-release-id-leave/post",
+          "href": "/api-reference/consumer-timed-releases-by-timed-release-id-leave/post",
           "metadata": {
-            "title": "POST /timed-releases/{timedReleaseId}/leave",
-            "sidebarTitle": "POST /timed-releases/{timedReleaseId}/leave"
+            "sidebarTitle": "POST /timed-releases/{timedReleaseId}/leave",
+            "title": "POST /timed-releases/{timedReleaseId}/leave"
           }
         }
       }
@@ -18404,10 +18352,10 @@
           "Timed Releases"
         ],
         "x-mint": {
-          "href": "/api-reference/timed-releases-by-timed-release-id-status/get",
+          "href": "/api-reference/consumer-timed-releases-by-timed-release-id-status/get",
           "metadata": {
-            "title": "GET /timed-releases/{timedReleaseId}/status",
-            "sidebarTitle": "GET /timed-releases/{timedReleaseId}/status"
+            "sidebarTitle": "GET /timed-releases/{timedReleaseId}/status",
+            "title": "GET /timed-releases/{timedReleaseId}/status"
           }
         }
       }
@@ -18594,10 +18542,10 @@
           "Waitlists"
         ],
         "x-mint": {
-          "href": "/api-reference/waitlists-by-waitlist-id-enter/post",
+          "href": "/api-reference/consumer-waitlists-by-waitlist-id-enter/post",
           "metadata": {
-            "title": "POST /waitlists/{waitlistId}/enter",
-            "sidebarTitle": "POST /waitlists/{waitlistId}/enter"
+            "sidebarTitle": "POST /waitlists/{waitlistId}/enter",
+            "title": "POST /waitlists/{waitlistId}/enter"
           }
         }
       }
@@ -18768,10 +18716,10 @@
           "Waitlists"
         ],
         "x-mint": {
-          "href": "/api-reference/waitlists-by-waitlist-id-leave/delete",
+          "href": "/api-reference/consumer-waitlists-by-waitlist-id-leave/delete",
           "metadata": {
-            "title": "DELETE /waitlists/{waitlistId}/leave",
-            "sidebarTitle": "DELETE /waitlists/{waitlistId}/leave"
+            "sidebarTitle": "DELETE /waitlists/{waitlistId}/leave",
+            "title": "DELETE /waitlists/{waitlistId}/leave"
           }
         }
       }
@@ -18952,10 +18900,10 @@
           "Waitlists"
         ],
         "x-mint": {
-          "href": "/api-reference/waitlists-by-waitlist-id-status/get",
+          "href": "/api-reference/consumer-waitlists-by-waitlist-id-status/get",
           "metadata": {
-            "title": "GET /waitlists/{waitlistId}/status",
-            "sidebarTitle": "GET /waitlists/{waitlistId}/status"
+            "sidebarTitle": "GET /waitlists/{waitlistId}/status",
+            "title": "GET /waitlists/{waitlistId}/status"
           }
         }
       }

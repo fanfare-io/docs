@@ -6,6 +6,7 @@ const OUTPUT_DIR = "api/openapi";
 const DOCS_CONFIG_PATH = "docs.json";
 const METHODS = ["get", "post", "put", "patch", "delete", "options", "head"];
 const METHOD_ORDER = new Map(METHODS.map((method, index) => [method, index]));
+const PUBLIC_OMITTED_SCHEMA_FIELDS = new Set(["botScore", "fingerprint", "source"]);
 
 const genericJsonValueSchema = {
   anyOf: [
@@ -47,16 +48,31 @@ const services = {
     productionBaseUrl: "https://admin.fanfare.io/api",
     localBaseUrl: "http://localhost:4800",
     overviewPage: "api/admin-api/overview",
+    extraPages: ["api/admin-api/loyalty"],
     navGroup: "Admin API",
+    hiddenOperations: new Set(["post /organizations"]),
+    securitySchemes: {
+      SecretKeyAuth: {
+        type: "http",
+        scheme: "bearer",
+        description: "Fanfare secret key. Keep secret credentials on your server.",
+      },
+    },
+    security: [{ SecretKeyAuth: [] }],
     groups: [
       { group: "Analytics", match: pathStartsWith("/analytics") },
       { group: "Organizations", match: pathStartsWith("/organizations") },
-      { group: "Experiences", match: anyPathStartsWith("/experiences", "/experience-pages") },
+      {
+        group: "Experiences",
+        pages: ["api/admin-api/experiences"],
+        match: anyPathStartsWith("/experiences", "/experience-pages"),
+      },
       { group: "Consumers", match: pathStartsWith("/consumers") },
       { group: "Audiences", match: pathStartsWith("/audiences") },
       { group: "Products", match: anyPathStartsWith("/products", "/variant-options") },
       {
         group: "Distributions",
+        pages: ["api/admin-api/distributions"],
         match: anyPathStartsWith(
           "/sequences",
           "/waitlists",
@@ -77,7 +93,21 @@ const services = {
     productionBaseUrl: "https://consumer.fanfare.io/api",
     localBaseUrl: "http://localhost:4802",
     overviewPage: "api/consumer-api/overview",
+    extraPages: ["api/consumer-api/loyalty"],
     navGroup: "Consumer API",
+    securitySchemes: {
+      PublishableKeyAuth: {
+        type: "apiKey",
+        in: "header",
+        name: "X-Publishable-Key",
+        description: "Browser-safe publishable key for client-side consumer requests.",
+      },
+      BearerAuth: {
+        type: "http",
+        scheme: "bearer",
+        description: "Consumer access token or server-side secret key, depending on the endpoint.",
+      },
+    },
     groups: [
       { group: "Auth", match: pathStartsWith("/auth") },
       { group: "Consumers", match: pathStartsWith("/consumers") },
@@ -99,6 +129,14 @@ const services = {
     localBaseUrl: "http://localhost:4805",
     overviewPage: "api/checkout-api/overview",
     navGroup: "Checkout API",
+    securitySchemes: {
+      CheckoutSecretKeyAuth: {
+        type: "http",
+        scheme: "bearer",
+        description: "Fanfare secret key. Keep secret credentials on your server.",
+      },
+    },
+    security: [{ CheckoutSecretKeyAuth: [] }],
     groups: [
       { group: "Checkout", match: pathStartsWith("/checkout") },
       { group: "Payments", match: pathStartsWith("/payments") },
@@ -111,6 +149,15 @@ const services = {
     localBaseUrl: "http://localhost:4803",
     overviewPage: "api/beacon-api/overview",
     navGroup: "Beacon API",
+    securitySchemes: {
+      BeaconPublishableKeyAuth: {
+        type: "apiKey",
+        in: "header",
+        name: "X-Publishable-Key",
+        description: "Browser-safe publishable key for client-side event collection.",
+      },
+    },
+    security: [{ BeaconPublishableKeyAuth: [] }],
     groups: [{ group: "Events", match: pathStartsWith("/events") }],
   },
 };
@@ -221,6 +268,13 @@ function normalizeSpec(serviceName, service, spec, env) {
     title: `Fanfare ${service.title}`,
   };
   normalized.servers = buildServers(service, env);
+  normalized.components = {
+    ...(normalized.components ?? {}),
+    ...(service.securitySchemes ? { securitySchemes: service.securitySchemes } : {}),
+  };
+  if (service.security) {
+    normalized.security = service.security;
+  }
   normalized.paths = stripInternalFields(sanitizeLocalDefs(filteredPaths));
 
   return sortObject(normalized);
@@ -238,11 +292,16 @@ function filterPaths(serviceName, service, paths) {
     const operations = {};
     for (const method of METHODS) {
       const operation = pathItem[method];
-      if (!operation || operation.hide === true || operation["x-internal"] === true) {
+      if (
+        !operation ||
+        operation.hide === true ||
+        operation["x-internal"] === true ||
+        isHiddenPublicOperation(service, method, path)
+      ) {
         continue;
       }
 
-      operations[method] = withMintEndpointMetadata(method, path, {
+      operations[method] = withMintEndpointMetadata(serviceName, method, path, {
         ...operation,
         tags: [matchingGroup.group],
       });
@@ -260,13 +319,17 @@ function filterPaths(serviceName, service, paths) {
   return filtered;
 }
 
-function withMintEndpointMetadata(method, path, operation) {
+function isHiddenPublicOperation(service, method, path) {
+  return service.hiddenOperations?.has(`${method} ${path}`) ?? false;
+}
+
+function withMintEndpointMetadata(serviceName, method, path, operation) {
   const title = humanizeEndpoint(method, path);
   return {
     ...operation,
     "x-mint": {
       ...(operation["x-mint"] ?? {}),
-      href: endpointHref(method, path),
+      href: endpointHref(serviceName, method, path),
       metadata: {
         ...(operation["x-mint"]?.metadata ?? {}),
         title,
@@ -280,7 +343,7 @@ function humanizeEndpoint(method, path) {
   return method.toUpperCase() + " " + path;
 }
 
-function endpointHref(method, path) {
+function endpointHref(serviceName, method, path) {
   const slug = path
     .replace(/^\//, "")
     .replace(/\{([^}]+)\}/g, "by-$1")
@@ -289,7 +352,7 @@ function endpointHref(method, path) {
     .replace(/^-+|-+$/g, "")
     .toLowerCase();
 
-  return "/api-reference/" + slug + "/" + method.toLowerCase();
+  return "/api-reference/" + serviceName + "-" + slug + "/" + method.toLowerCase();
 }
 
 function buildServers(service, env) {
@@ -338,7 +401,11 @@ function stripInternalFields(value) {
   if (value && typeof value === "object") {
     const next = {};
     for (const [key, entry] of Object.entries(value)) {
-      if (key === "hide" || key === "x-internal") {
+      if (key === "hide" || key === "x-internal" || PUBLIC_OMITTED_SCHEMA_FIELDS.has(key)) {
+        continue;
+      }
+      if (key === "required" && Array.isArray(entry)) {
+        next[key] = entry.filter((field) => !PUBLIC_OMITTED_SCHEMA_FIELDS.has(field));
         continue;
       }
       next[key] = stripInternalFields(entry);
@@ -416,7 +483,7 @@ async function updateDocsConfig(generated) {
 
   const generatedGroups = generated.map(({ service, spec, outputPath }) => ({
     group: service.navGroup,
-    pages: [service.overviewPage, ...buildNavigationGroups(spec, outputPath)],
+    pages: [service.overviewPage, ...(service.extraPages ?? []), ...buildNavigationGroups(service, spec, outputPath)],
   }));
 
   apiReferenceTab.groups = [overviewGroup, ...generatedGroups];
@@ -427,7 +494,7 @@ async function updateDocsConfig(generated) {
   await writeFile(DOCS_CONFIG_PATH, `${JSON.stringify(config, null, 2)}\n`, "utf8");
 }
 
-function buildNavigationGroups(spec, outputPath) {
+function buildNavigationGroups(service, spec, outputPath) {
   const byTag = new Map();
 
   for (const [path, pathItem] of Object.entries(spec.paths ?? {})) {
@@ -446,7 +513,10 @@ function buildNavigationGroups(spec, outputPath) {
 
   return Array.from(byTag.entries())
     .sort(([left], [right]) => left.localeCompare(right))
-    .map(([group, pages]) => ({ group, pages: pages.sort(compareEndpointPages) }));
+    .map(([group, pages]) => {
+      const staticPages = service.groups.find((entry) => entry.group === group)?.pages ?? [];
+      return { group, pages: [...staticPages, ...pages.sort(compareEndpointPages)] };
+    });
 }
 
 function compareEndpointPages(left, right) {
