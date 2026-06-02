@@ -58,7 +58,6 @@ export function App() {
     <FanfareProvider
       organizationId="org_your_organization_id"
       publishableKey="pk_live_your_publishable_key"
-      environment="production"
     >
       <ExperiencePage />
     </FanfareProvider>
@@ -72,7 +71,6 @@ export function App() {
 | ------------------ | -------------------------------------------- | -------------- | ---------------------------------- |
 | `organizationId`   | `string`                                     | Required       | Your Fanfare organization ID       |
 | `publishableKey`   | `string`                                     | Required       | Your publishable API key           |
-| `environment`      | `"production" \| "staging" \| "development"` | `"production"` | API environment                    |
 | `autoRestore`      | `boolean`                                    | `true`         | Restore session on mount           |
 | `autoResume`       | `boolean`                                    | `true`         | Resume operations after restore    |
 | `loadingComponent` | `ReactNode`                                  | `null`         | Component shown while initializing |
@@ -362,7 +360,7 @@ export function App() {
 
 ## Testing Your Integration
 
-1. **Local testing**: Use your development environment configuration from the SDK setup or dashboard
+1. **Local testing**: Use test credentials from the dashboard and keep SDK environment/API URL overrides unset
 2. **Check authentication**: Verify the consumer session is created
 3. **Test queue flow**: Enter the queue and verify position updates
 4. **Verify admission**: Confirm admission tokens are generated correctly

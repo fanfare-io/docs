@@ -36,7 +36,6 @@ export function FanfareClientProvider({ children }: { children: React.ReactNode 
     <FanfareProvider
       organizationId={process.env.NEXT_PUBLIC_FANFARE_ORG_ID!}
       publishableKey={process.env.NEXT_PUBLIC_FANFARE_PUBLISHABLE_KEY!}
-      environment="production"
     >
       {children}
     </FanfareProvider>
@@ -138,7 +137,6 @@ For static or CMS-rendered islands, register the web component once:
   registerWebComponents({
     organizationId: "org_123",
     publishableKey: "pk_live_123",
-    environment: "production",
   });
 </script>
 

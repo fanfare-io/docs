@@ -44,7 +44,6 @@ export function App() {
     <FanfareProvider
       organizationId="org_123"
       publishableKey="pk_live_123"
-      environment="production"
     >
       <ExperienceWidget experienceId="exp_123" autoStart checkoutUrl="/checkout" />
     </FanfareProvider>
@@ -75,7 +74,6 @@ import type { JourneyView } from "@fanfare-io/fanfare-sdk-core/experiences";
 const sdk = await initFanfare({
   organizationId: "org_123",
   publishableKey: "pk_live_123",
-  environment: "production",
 });
 
 const journey = sdk.journeys.get("exp_123");
@@ -104,7 +102,6 @@ Register the custom elements once:
   registerWebComponents({
     organizationId: "org_123",
     publishableKey: "pk_live_123",
-    environment: "production",
   });
 </script>
 ```
@@ -159,5 +156,5 @@ If the provider mounts and the widget renders a ready, loading, gated, participa
 ## Next Steps
 
 - [Quickstart](/getting-started/quickstart) - Build the first React integration.
-- [Configuration](/getting-started/configuration) - Set credentials, environment, copy, and theme.
+- [Configuration](/getting-started/configuration) - Set credentials, copy, and theme.
 - [Choose Your Path](/sdk/choose-your-path) - Compare core, React, and web component paths.

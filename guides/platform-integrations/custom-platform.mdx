@@ -62,7 +62,7 @@ export const fanfareConfig = {
   organizationId: process.env.FANFARE_ORGANIZATION_ID!,
   secretKey: process.env.FANFARE_SECRET_KEY!,
   publicKey: process.env.FANFARE_PUBLIC_KEY!,
-  apiUrl: process.env.FANFARE_API_URL || "https://api.fanfare.io",
+  baseUrl: "https://api.fanfare.io",
   webhookSecret: process.env.FANFARE_WEBHOOK_SECRET!,
 };
 
@@ -96,7 +96,7 @@ export class FanfareAPI {
   private secretKey: string;
 
   constructor() {
-    this.baseUrl = fanfareConfig.apiUrl;
+    this.baseUrl = fanfareConfig.baseUrl;
     this.organizationId = fanfareConfig.organizationId;
     this.secretKey = fanfareConfig.secretKey;
   }
@@ -1208,7 +1208,7 @@ async function completeAdmissionIdempotent(orderId: string, params: CompleteAdmi
 // Health check endpoint
 router.get("/health/fanfare", async (req, res) => {
   try {
-    const response = await fetch(`${fanfareConfig.apiUrl}/health`, {
+    const response = await fetch(`${fanfareConfig.baseUrl}/health`, {
       headers: { "X-Organization-Id": fanfareConfig.organizationId },
       timeout: 5000,
     });

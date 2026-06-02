@@ -10,7 +10,7 @@ Before shipping Fanfare to production, verify that your browser SDK setup, admit
 | --- | --- |
 | Credentials | Production uses `pk_live_...` publishable keys and server-only secret keys. |
 | Experience | The production page points at the intended `experienceId`. |
-| Environment | Browser SDK config uses `environment="production"`. |
+| SDK defaults | Browser SDK config does not override the default environment or API URL. |
 | Handoff | Admitted customers pass through your trusted server or checkout flow. |
 | Logging | Debug logging is disabled in production. |
 | Copy | Gated, denied, and error states use generic customer-safe language. |
@@ -30,8 +30,6 @@ NEXT_PUBLIC_FANFARE_EXPERIENCE_ID=exp_123
 <FanfareProvider
   organizationId={process.env.NEXT_PUBLIC_FANFARE_ORG_ID!}
   publishableKey={process.env.NEXT_PUBLIC_FANFARE_PUBLISHABLE_KEY!}
-  environment="production"
-  debug={false}
 >
   <ExperienceWidget
     experienceId={process.env.NEXT_PUBLIC_FANFARE_EXPERIENCE_ID!}
@@ -78,22 +76,11 @@ if (view.sequence.stage === "admitted") {
 
 Your backend should validate admitted customers before completing protected actions such as checkout, booking, or fulfillment.
 
-## Disable Development Settings
+## Avoid Development Overrides
 
-Use debug logging only during development or guided troubleshooting.
+Use the SDK defaults for environment and API URL. Do not ship customer-facing code that overrides them unless your Fanfare contact has directed you to do so.
 
-```tsx
-const isProduction = process.env.NODE_ENV === "production";
-
-<FanfareProvider
-  organizationId={process.env.NEXT_PUBLIC_FANFARE_ORG_ID!}
-  publishableKey={process.env.NEXT_PUBLIC_FANFARE_PUBLISHABLE_KEY!}
-  environment={isProduction ? "production" : "development"}
-  debug={!isProduction}
->
-  <ProductLaunchPage />
-</FanfareProvider>;
-```
+Use debug logging only during guided troubleshooting, and remove it before launch.
 
 Production logs and analytics should capture high-level outcomes, such as "admitted" or "checkout started", rather than raw grants, snapshots, or session values.
 
@@ -177,7 +164,7 @@ After deployment:
 
 1. Visit the production page in a clean browser profile.
 2. Confirm the widget or custom UI renders the expected public state.
-3. Confirm `environment="production"` and the production experience ID are configured.
+3. Confirm the SDK uses its default environment and the production experience ID is configured.
 4. Confirm admitted-state handoff reaches your backend or checkout flow.
 5. Confirm debug logging is off.
 6. Confirm analytics and error tracking do not include raw grants or snapshots.
