@@ -745,7 +745,7 @@
       "api/openapi/beacon-api.json"
     ],
     "playground": {
-      "display": "interactive"
+      "display": "simple"
     },
     "examples": {
       "languages": [

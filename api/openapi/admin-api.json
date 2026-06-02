@@ -389,7 +389,14 @@
         },
         "tags": [
           "Analytics"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/analytics-query/post",
+          "metadata": {
+            "title": "POST /analytics/query",
+            "sidebarTitle": "POST /analytics/query"
+          }
+        }
       }
     },
     "/announcements": {
@@ -1058,7 +1065,14 @@
         },
         "tags": [
           "Distributions"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/announcements/get",
+          "metadata": {
+            "title": "GET /announcements",
+            "sidebarTitle": "GET /announcements"
+          }
+        }
       },
       "post": {
         "description": "Create an announcement",
@@ -1915,7 +1929,14 @@
         },
         "tags": [
           "Distributions"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/announcements/post",
+          "metadata": {
+            "title": "POST /announcements",
+            "sidebarTitle": "POST /announcements"
+          }
+        }
       }
     },
     "/announcements/{id}": {
@@ -2553,7 +2574,14 @@
         },
         "tags": [
           "Distributions"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/announcements-by-id/get",
+          "metadata": {
+            "title": "GET /announcements/{id}",
+            "sidebarTitle": "GET /announcements/{id}"
+          }
+        }
       },
       "put": {
         "description": "Update an announcement",
@@ -3412,7 +3440,14 @@
         },
         "tags": [
           "Distributions"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/announcements-by-id/put",
+          "metadata": {
+            "title": "PUT /announcements/{id}",
+            "sidebarTitle": "PUT /announcements/{id}"
+          }
+        }
       },
       "delete": {
         "description": "Delete an announcement",
@@ -4048,7 +4083,14 @@
         },
         "tags": [
           "Distributions"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/announcements-by-id/delete",
+          "metadata": {
+            "title": "DELETE /announcements/{id}",
+            "sidebarTitle": "DELETE /announcements/{id}"
+          }
+        }
       }
     },
     "/appointments": {
@@ -4415,7 +4457,14 @@
         },
         "tags": [
           "Distributions"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/appointments/get",
+          "metadata": {
+            "title": "GET /appointments",
+            "sidebarTitle": "GET /appointments"
+          }
+        }
       },
       "post": {
         "description": "Create an appointment",
@@ -4794,7 +4843,14 @@
         },
         "tags": [
           "Distributions"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/appointments/post",
+          "metadata": {
+            "title": "POST /appointments",
+            "sidebarTitle": "POST /appointments"
+          }
+        }
       }
     },
     "/appointments/{appointmentId}/slots": {
@@ -5076,7 +5132,14 @@
         },
         "tags": [
           "Distributions"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/appointments-by-appointment-id-slots/get",
+          "metadata": {
+            "title": "GET /appointments/{appointmentId}/slots",
+            "sidebarTitle": "GET /appointments/{appointmentId}/slots"
+          }
+        }
       }
     },
     "/appointments/{appointmentId}/slots/{slotId}/attendees": {
@@ -5373,7 +5436,14 @@
         },
         "tags": [
           "Distributions"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/appointments-by-appointment-id-slots-by-slot-id-attendees/get",
+          "metadata": {
+            "title": "GET /appointments/{appointmentId}/slots/{slotId}/attendees",
+            "sidebarTitle": "GET /appointments/{appointmentId}/slots/{slotId}/attendees"
+          }
+        }
       }
     },
     "/appointments/{appointmentId}/slots/{slotId}/attendees/{consumerId}": {
@@ -5560,7 +5630,14 @@
         },
         "tags": [
           "Distributions"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/appointments-by-appointment-id-slots-by-slot-id-attendees-by-consumer-id/delete",
+          "metadata": {
+            "title": "DELETE /appointments/{appointmentId}/slots/{slotId}/attendees/{consumerId}",
+            "sidebarTitle": "DELETE /appointments/{appointmentId}/slots/{slotId}/attendees/{consumerId}"
+          }
+        }
       }
     },
     "/appointments/{id}": {
@@ -5896,7 +5973,14 @@
         },
         "tags": [
           "Distributions"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/appointments-by-id/get",
+          "metadata": {
+            "title": "GET /appointments/{id}",
+            "sidebarTitle": "GET /appointments/{id}"
+          }
+        }
       },
       "put": {
         "description": "Update an appointment",
@@ -6276,7 +6360,14 @@
         },
         "tags": [
           "Distributions"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/appointments-by-id/put",
+          "metadata": {
+            "title": "PUT /appointments/{id}",
+            "sidebarTitle": "PUT /appointments/{id}"
+          }
+        }
       },
       "delete": {
         "description": "Delete an appointment",
@@ -6610,7 +6701,14 @@
         },
         "tags": [
           "Distributions"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/appointments-by-id/delete",
+          "metadata": {
+            "title": "DELETE /appointments/{id}",
+            "sidebarTitle": "DELETE /appointments/{id}"
+          }
+        }
       }
     },
     "/auctions": {
@@ -7033,7 +7131,14 @@
         },
         "tags": [
           "Distributions"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/auctions/get",
+          "metadata": {
+            "title": "GET /auctions",
+            "sidebarTitle": "GET /auctions"
+          }
+        }
       },
       "post": {
         "description": "Create an auction",
@@ -7494,7 +7599,14 @@
         },
         "tags": [
           "Distributions"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/auctions/post",
+          "metadata": {
+            "title": "POST /auctions",
+            "sidebarTitle": "POST /auctions"
+          }
+        }
       }
     },
     "/auctions/{id}": {
@@ -7886,7 +7998,14 @@
         },
         "tags": [
           "Distributions"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/auctions-by-id/get",
+          "metadata": {
+            "title": "GET /auctions/{id}",
+            "sidebarTitle": "GET /auctions/{id}"
+          }
+        }
       },
       "put": {
         "description": "Update an auction",
@@ -8347,7 +8466,14 @@
         },
         "tags": [
           "Distributions"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/auctions-by-id/put",
+          "metadata": {
+            "title": "PUT /auctions/{id}",
+            "sidebarTitle": "PUT /auctions/{id}"
+          }
+        }
       },
       "delete": {
         "description": "Delete an auction",
@@ -8737,7 +8863,14 @@
         },
         "tags": [
           "Distributions"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/auctions-by-id/delete",
+          "metadata": {
+            "title": "DELETE /auctions/{id}",
+            "sidebarTitle": "DELETE /auctions/{id}"
+          }
+        }
       }
     },
     "/audiences": {
@@ -9435,7 +9568,14 @@
         },
         "tags": [
           "Audiences"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/audiences/get",
+          "metadata": {
+            "title": "GET /audiences",
+            "sidebarTitle": "GET /audiences"
+          }
+        }
       },
       "post": {
         "description": "Create an audience",
@@ -10251,7 +10391,14 @@
         },
         "tags": [
           "Audiences"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/audiences/post",
+          "metadata": {
+            "title": "POST /audiences",
+            "sidebarTitle": "POST /audiences"
+          }
+        }
       }
     },
     "/audiences/{audienceId}": {
@@ -10918,7 +11065,14 @@
         },
         "tags": [
           "Audiences"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/audiences-by-audience-id/get",
+          "metadata": {
+            "title": "GET /audiences/{audienceId}",
+            "sidebarTitle": "GET /audiences/{audienceId}"
+          }
+        }
       },
       "put": {
         "description": "Update an audience",
@@ -11327,7 +11481,14 @@
         },
         "tags": [
           "Audiences"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/audiences-by-audience-id/put",
+          "metadata": {
+            "title": "PUT /audiences/{audienceId}",
+            "sidebarTitle": "PUT /audiences/{audienceId}"
+          }
+        }
       },
       "delete": {
         "description": "Delete an audience",
@@ -11675,7 +11836,14 @@
         },
         "tags": [
           "Audiences"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/audiences-by-audience-id/delete",
+          "metadata": {
+            "title": "DELETE /audiences/{audienceId}",
+            "sidebarTitle": "DELETE /audiences/{audienceId}"
+          }
+        }
       }
     },
     "/audiences/{audienceId}/count": {
@@ -11856,7 +12024,14 @@
         },
         "tags": [
           "Audiences"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/audiences-by-audience-id-count/get",
+          "metadata": {
+            "title": "GET /audiences/{audienceId}/count",
+            "sidebarTitle": "GET /audiences/{audienceId}/count"
+          }
+        }
       }
     },
     "/audiences/{audienceId}/import": {
@@ -12129,7 +12304,14 @@
         },
         "tags": [
           "Audiences"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/audiences-by-audience-id-import/get",
+          "metadata": {
+            "title": "GET /audiences/{audienceId}/import",
+            "sidebarTitle": "GET /audiences/{audienceId}/import"
+          }
+        }
       },
       "post": {
         "description": "Create a new audience import",
@@ -12404,7 +12586,14 @@
         },
         "tags": [
           "Audiences"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/audiences-by-audience-id-import/post",
+          "metadata": {
+            "title": "POST /audiences/{audienceId}/import",
+            "sidebarTitle": "POST /audiences/{audienceId}/import"
+          }
+        }
       }
     },
     "/audiences/{audienceId}/members": {
@@ -13270,7 +13459,14 @@
         },
         "tags": [
           "Audiences"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/audiences-by-audience-id-members/get",
+          "metadata": {
+            "title": "GET /audiences/{audienceId}/members",
+            "sidebarTitle": "GET /audiences/{audienceId}/members"
+          }
+        }
       },
       "post": {
         "description": "Add members to a static-list audience",
@@ -13459,7 +13655,14 @@
         },
         "tags": [
           "Audiences"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/audiences-by-audience-id-members/post",
+          "metadata": {
+            "title": "POST /audiences/{audienceId}/members",
+            "sidebarTitle": "POST /audiences/{audienceId}/members"
+          }
+        }
       }
     },
     "/audiences/{audienceId}/rules": {
@@ -13704,7 +13907,14 @@
         },
         "tags": [
           "Audiences"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/audiences-by-audience-id-rules/get",
+          "metadata": {
+            "title": "GET /audiences/{audienceId}/rules",
+            "sidebarTitle": "GET /audiences/{audienceId}/rules"
+          }
+        }
       },
       "post": {
         "description": "Create a rule for an audience",
@@ -14014,7 +14224,14 @@
         },
         "tags": [
           "Audiences"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/audiences-by-audience-id-rules/post",
+          "metadata": {
+            "title": "POST /audiences/{audienceId}/rules",
+            "sidebarTitle": "POST /audiences/{audienceId}/rules"
+          }
+        }
       },
       "put": {
         "description": "Replace all rules for an audience. Deletes existing rules and creates new ones.",
@@ -14338,7 +14555,14 @@
         },
         "tags": [
           "Audiences"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/audiences-by-audience-id-rules/put",
+          "metadata": {
+            "title": "PUT /audiences/{audienceId}/rules",
+            "sidebarTitle": "PUT /audiences/{audienceId}/rules"
+          }
+        }
       }
     },
     "/audiences/{audienceId}/rules/{ruleId}": {
@@ -14588,7 +14812,14 @@
         },
         "tags": [
           "Audiences"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/audiences-by-audience-id-rules-by-rule-id/get",
+          "metadata": {
+            "title": "GET /audiences/{audienceId}/rules/{ruleId}",
+            "sidebarTitle": "GET /audiences/{audienceId}/rules/{ruleId}"
+          }
+        }
       },
       "put": {
         "description": "Update an audience rule",
@@ -14901,7 +15132,14 @@
         },
         "tags": [
           "Audiences"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/audiences-by-audience-id-rules-by-rule-id/put",
+          "metadata": {
+            "title": "PUT /audiences/{audienceId}/rules/{ruleId}",
+            "sidebarTitle": "PUT /audiences/{audienceId}/rules/{ruleId}"
+          }
+        }
       },
       "delete": {
         "description": "Delete an audience rule",
@@ -15149,7 +15387,14 @@
         },
         "tags": [
           "Audiences"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/audiences-by-audience-id-rules-by-rule-id/delete",
+          "metadata": {
+            "title": "DELETE /audiences/{audienceId}/rules/{ruleId}",
+            "sidebarTitle": "DELETE /audiences/{audienceId}/rules/{ruleId}"
+          }
+        }
       }
     },
     "/audiences/{audienceId}/status": {
@@ -15382,7 +15627,14 @@
         },
         "tags": [
           "Audiences"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/audiences-by-audience-id-status/get",
+          "metadata": {
+            "title": "GET /audiences/{audienceId}/status",
+            "sidebarTitle": "GET /audiences/{audienceId}/status"
+          }
+        }
       }
     },
     "/audiences/{audienceId}/sync": {
@@ -15557,7 +15809,14 @@
         },
         "tags": [
           "Audiences"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/audiences-by-audience-id-sync/post",
+          "metadata": {
+            "title": "POST /audiences/{audienceId}/sync",
+            "sidebarTitle": "POST /audiences/{audienceId}/sync"
+          }
+        }
       }
     },
     "/audiences/groups/{groupId}": {
@@ -16227,7 +16486,14 @@
         },
         "tags": [
           "Audiences"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/audiences-groups-by-group-id/get",
+          "metadata": {
+            "title": "GET /audiences/groups/{groupId}",
+            "sidebarTitle": "GET /audiences/groups/{groupId}"
+          }
+        }
       },
       "delete": {
         "description": "Delete all audiences in a group",
@@ -16578,7 +16844,14 @@
         },
         "tags": [
           "Audiences"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/audiences-groups-by-group-id/delete",
+          "metadata": {
+            "title": "DELETE /audiences/groups/{groupId}",
+            "sidebarTitle": "DELETE /audiences/groups/{groupId}"
+          }
+        }
       }
     },
     "/audiences/groups/{groupId}/members": {
@@ -17444,7 +17717,14 @@
         },
         "tags": [
           "Audiences"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/audiences-groups-by-group-id-members/get",
+          "metadata": {
+            "title": "GET /audiences/groups/{groupId}/members",
+            "sidebarTitle": "GET /audiences/groups/{groupId}/members"
+          }
+        }
       }
     },
     "/audiences/import/klaviyo": {
@@ -17669,7 +17949,14 @@
         },
         "tags": [
           "Audiences"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/audiences-import-klaviyo/post",
+          "metadata": {
+            "title": "POST /audiences/import/klaviyo",
+            "sidebarTitle": "POST /audiences/import/klaviyo"
+          }
+        }
       }
     },
     "/audiences/import/mailchimp": {
@@ -17894,7 +18181,14 @@
         },
         "tags": [
           "Audiences"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/audiences-import-mailchimp/post",
+          "metadata": {
+            "title": "POST /audiences/import/mailchimp",
+            "sidebarTitle": "POST /audiences/import/mailchimp"
+          }
+        }
       }
     },
     "/audiences/import/sendgrid": {
@@ -18119,7 +18413,14 @@
         },
         "tags": [
           "Audiences"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/audiences-import-sendgrid/post",
+          "metadata": {
+            "title": "POST /audiences/import/sendgrid",
+            "sidebarTitle": "POST /audiences/import/sendgrid"
+          }
+        }
       }
     },
     "/audiences/loyalty-tiers": {
@@ -18867,7 +19168,14 @@
         },
         "tags": [
           "Audiences"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/audiences-loyalty-tiers/post",
+          "metadata": {
+            "title": "POST /audiences/loyalty-tiers",
+            "sidebarTitle": "POST /audiences/loyalty-tiers"
+          }
+        }
       }
     },
     "/audiences/loyalty-tiers/{groupId}": {
@@ -19625,7 +19933,14 @@
         },
         "tags": [
           "Audiences"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/audiences-loyalty-tiers-by-group-id/put",
+          "metadata": {
+            "title": "PUT /audiences/loyalty-tiers/{groupId}",
+            "sidebarTitle": "PUT /audiences/loyalty-tiers/{groupId}"
+          }
+        }
       }
     },
     "/consumers": {
@@ -20481,7 +20796,14 @@
         },
         "tags": [
           "Consumers"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/consumers/get",
+          "metadata": {
+            "title": "GET /consumers",
+            "sidebarTitle": "GET /consumers"
+          }
+        }
       }
     },
     "/consumers/{id}": {
@@ -21306,7 +21628,14 @@
         },
         "tags": [
           "Consumers"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/consumers-by-id/get",
+          "metadata": {
+            "title": "GET /consumers/{id}",
+            "sidebarTitle": "GET /consumers/{id}"
+          }
+        }
       },
       "put": {
         "description": "Update a consumer",
@@ -22101,7 +22430,14 @@
         },
         "tags": [
           "Consumers"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/consumers-by-id/put",
+          "metadata": {
+            "title": "PUT /consumers/{id}",
+            "sidebarTitle": "PUT /consumers/{id}"
+          }
+        }
       },
       "delete": {
         "description": "Archive a consumer",
@@ -22818,7 +23154,14 @@
         },
         "tags": [
           "Consumers"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/consumers-by-id/delete",
+          "metadata": {
+            "title": "DELETE /consumers/{id}",
+            "sidebarTitle": "DELETE /consumers/{id}"
+          }
+        }
       }
     },
     "/consumers/{id}/audiences": {
@@ -23171,7 +23514,14 @@
         },
         "tags": [
           "Consumers"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/consumers-by-id-audiences/get",
+          "metadata": {
+            "title": "GET /consumers/{id}/audiences",
+            "sidebarTitle": "GET /consumers/{id}/audiences"
+          }
+        }
       }
     },
     "/consumers/{id}/loyalty-transactions": {
@@ -23450,7 +23800,14 @@
         },
         "tags": [
           "Consumers"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/consumers-by-id-loyalty-transactions/get",
+          "metadata": {
+            "title": "GET /consumers/{id}/loyalty-transactions",
+            "sidebarTitle": "GET /consumers/{id}/loyalty-transactions"
+          }
+        }
       }
     },
     "/consumers/{id}/timeline": {
@@ -24305,7 +24662,14 @@
         },
         "tags": [
           "Consumers"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/consumers-by-id-timeline/get",
+          "metadata": {
+            "title": "GET /consumers/{id}/timeline",
+            "sidebarTitle": "GET /consumers/{id}/timeline"
+          }
+        }
       }
     },
     "/consumers/batch": {
@@ -25293,7 +25657,14 @@
         },
         "tags": [
           "Consumers"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/consumers-batch/post",
+          "metadata": {
+            "title": "POST /consumers/batch",
+            "sidebarTitle": "POST /consumers/batch"
+          }
+        }
       }
     },
     "/consumers/distribution": {
@@ -25570,7 +25941,14 @@
         },
         "tags": [
           "Consumers"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/consumers-distribution/get",
+          "metadata": {
+            "title": "GET /consumers/distribution",
+            "sidebarTitle": "GET /consumers/distribution"
+          }
+        }
       }
     },
     "/draws": {
@@ -25938,7 +26316,14 @@
         },
         "tags": [
           "Distributions"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/draws/get",
+          "metadata": {
+            "title": "GET /draws",
+            "sidebarTitle": "GET /draws"
+          }
+        }
       },
       "post": {
         "description": "Create a draw",
@@ -26324,7 +26709,14 @@
         },
         "tags": [
           "Distributions"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/draws/post",
+          "metadata": {
+            "title": "POST /draws",
+            "sidebarTitle": "POST /draws"
+          }
+        }
       }
     },
     "/draws/{id}": {
@@ -26661,7 +27053,14 @@
         },
         "tags": [
           "Distributions"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/draws-by-id/get",
+          "metadata": {
+            "title": "GET /draws/{id}",
+            "sidebarTitle": "GET /draws/{id}"
+          }
+        }
       },
       "put": {
         "description": "Update a draw",
@@ -27046,7 +27445,14 @@
         },
         "tags": [
           "Distributions"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/draws-by-id/put",
+          "metadata": {
+            "title": "PUT /draws/{id}",
+            "sidebarTitle": "PUT /draws/{id}"
+          }
+        }
       },
       "delete": {
         "description": "Delete a draw",
@@ -27381,7 +27787,14 @@
         },
         "tags": [
           "Distributions"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/draws-by-id/delete",
+          "metadata": {
+            "title": "DELETE /draws/{id}",
+            "sidebarTitle": "DELETE /draws/{id}"
+          }
+        }
       }
     },
     "/experience-pages": {
@@ -28513,7 +28926,14 @@
         },
         "tags": [
           "Experiences"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/experience-pages/get",
+          "metadata": {
+            "title": "GET /experience-pages",
+            "sidebarTitle": "GET /experience-pages"
+          }
+        }
       },
       "post": {
         "description": "Create and publish a page",
@@ -29916,7 +30336,14 @@
         },
         "tags": [
           "Experiences"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/experience-pages/post",
+          "metadata": {
+            "title": "POST /experience-pages",
+            "sidebarTitle": "POST /experience-pages"
+          }
+        }
       }
     },
     "/experience-pages/{id}": {
@@ -31017,7 +31444,14 @@
         },
         "tags": [
           "Experiences"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/experience-pages-by-id/get",
+          "metadata": {
+            "title": "GET /experience-pages/{id}",
+            "sidebarTitle": "GET /experience-pages/{id}"
+          }
+        }
       },
       "put": {
         "description": "Update a published page",
@@ -32421,7 +32855,14 @@
         },
         "tags": [
           "Experiences"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/experience-pages-by-id/put",
+          "metadata": {
+            "title": "PUT /experience-pages/{id}",
+            "sidebarTitle": "PUT /experience-pages/{id}"
+          }
+        }
       },
       "delete": {
         "description": "Delete a page",
@@ -33520,7 +33961,14 @@
         },
         "tags": [
           "Experiences"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/experience-pages-by-id/delete",
+          "metadata": {
+            "title": "DELETE /experience-pages/{id}",
+            "sidebarTitle": "DELETE /experience-pages/{id}"
+          }
+        }
       }
     },
     "/experiences": {
@@ -37001,7 +37449,14 @@
         },
         "tags": [
           "Experiences"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/experiences/get",
+          "metadata": {
+            "title": "GET /experiences",
+            "sidebarTitle": "GET /experiences"
+          }
+        }
       },
       "post": {
         "description": "Create an experience with optional sequence and distribution",
@@ -40876,7 +41331,14 @@
         },
         "tags": [
           "Experiences"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/experiences/post",
+          "metadata": {
+            "title": "POST /experiences",
+            "sidebarTitle": "POST /experiences"
+          }
+        }
       }
     },
     "/experiences/{id}": {
@@ -42629,7 +43091,14 @@
         },
         "tags": [
           "Experiences"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/experiences-by-id/get",
+          "metadata": {
+            "title": "GET /experiences/{id}",
+            "sidebarTitle": "GET /experiences/{id}"
+          }
+        }
       },
       "put": {
         "description": "Update an experience",
@@ -44497,7 +44966,14 @@
         },
         "tags": [
           "Experiences"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/experiences-by-id/put",
+          "metadata": {
+            "title": "PUT /experiences/{id}",
+            "sidebarTitle": "PUT /experiences/{id}"
+          }
+        }
       },
       "delete": {
         "description": "Delete an experience",
@@ -46248,7 +46724,14 @@
         },
         "tags": [
           "Experiences"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/experiences-by-id/delete",
+          "metadata": {
+            "title": "DELETE /experiences/{id}",
+            "sidebarTitle": "DELETE /experiences/{id}"
+          }
+        }
       }
     },
     "/experiences/{id}/metrics": {
@@ -46467,7 +46950,14 @@
         },
         "tags": [
           "Experiences"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/experiences-by-id-metrics/get",
+          "metadata": {
+            "title": "GET /experiences/{id}/metrics",
+            "sidebarTitle": "GET /experiences/{id}/metrics"
+          }
+        }
       }
     },
     "/organizations": {
@@ -46690,7 +47180,14 @@
         },
         "tags": [
           "Organizations"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/organizations/post",
+          "metadata": {
+            "title": "POST /organizations",
+            "sidebarTitle": "POST /organizations"
+          }
+        }
       },
       "put": {
         "description": "Update organization details",
@@ -46988,7 +47485,14 @@
         },
         "tags": [
           "Organizations"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/organizations/put",
+          "metadata": {
+            "title": "PUT /organizations",
+            "sidebarTitle": "PUT /organizations"
+          }
+        }
       }
     },
     "/organizations/current": {
@@ -47229,7 +47733,14 @@
         },
         "tags": [
           "Organizations"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/organizations-current/get",
+          "metadata": {
+            "title": "GET /organizations/current",
+            "sidebarTitle": "GET /organizations/current"
+          }
+        }
       }
     },
     "/organizations/slug/availability": {
@@ -47403,7 +47914,14 @@
         },
         "tags": [
           "Organizations"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/organizations-slug-availability/get",
+          "metadata": {
+            "title": "GET /organizations/slug/availability",
+            "sidebarTitle": "GET /organizations/slug/availability"
+          }
+        }
       }
     },
     "/products": {
@@ -48195,7 +48713,14 @@
         },
         "tags": [
           "Products"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/products/get",
+          "metadata": {
+            "title": "GET /products",
+            "sidebarTitle": "GET /products"
+          }
+        }
       },
       "post": {
         "description": "Create or update a product (upsert when sync source provided)",
@@ -49161,7 +49686,14 @@
         },
         "tags": [
           "Products"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/products/post",
+          "metadata": {
+            "title": "POST /products",
+            "sidebarTitle": "POST /products"
+          }
+        }
       }
     },
     "/products/{productId}": {
@@ -49922,7 +50454,14 @@
         },
         "tags": [
           "Products"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/products-by-product-id/get",
+          "metadata": {
+            "title": "GET /products/{productId}",
+            "sidebarTitle": "GET /products/{productId}"
+          }
+        }
       },
       "put": {
         "description": "Update a product",
@@ -50243,7 +50782,14 @@
         },
         "tags": [
           "Products"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/products-by-product-id/put",
+          "metadata": {
+            "title": "PUT /products/{productId}",
+            "sidebarTitle": "PUT /products/{productId}"
+          }
+        }
       },
       "delete": {
         "description": "Archive a product",
@@ -50533,7 +51079,14 @@
         },
         "tags": [
           "Products"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/products-by-product-id/delete",
+          "metadata": {
+            "title": "DELETE /products/{productId}",
+            "sidebarTitle": "DELETE /products/{productId}"
+          }
+        }
       }
     },
     "/products/{productId}/media-assets": {
@@ -50862,7 +51415,14 @@
         },
         "tags": [
           "Products"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/products-by-product-id-media-assets/get",
+          "metadata": {
+            "title": "GET /products/{productId}/media-assets",
+            "sidebarTitle": "GET /products/{productId}/media-assets"
+          }
+        }
       },
       "post": {
         "description": "Create a media asset for a product",
@@ -51221,7 +51781,14 @@
         },
         "tags": [
           "Products"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/products-by-product-id-media-assets/post",
+          "metadata": {
+            "title": "POST /products/{productId}/media-assets",
+            "sidebarTitle": "POST /products/{productId}/media-assets"
+          }
+        }
       }
     },
     "/products/{productId}/media-assets/{assetId}": {
@@ -51434,7 +52001,14 @@
         },
         "tags": [
           "Products"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/products-by-product-id-media-assets-by-asset-id/put",
+          "metadata": {
+            "title": "PUT /products/{productId}/media-assets/{assetId}",
+            "sidebarTitle": "PUT /products/{productId}/media-assets/{assetId}"
+          }
+        }
       },
       "delete": {
         "description": "Remove media asset from product",
@@ -51607,7 +52181,14 @@
         },
         "tags": [
           "Products"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/products-by-product-id-media-assets-by-asset-id/delete",
+          "metadata": {
+            "title": "DELETE /products/{productId}/media-assets/{assetId}",
+            "sidebarTitle": "DELETE /products/{productId}/media-assets/{assetId}"
+          }
+        }
       }
     },
     "/products/{productId}/media-assets/reorder": {
@@ -51795,7 +52376,14 @@
         },
         "tags": [
           "Products"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/products-by-product-id-media-assets-reorder/put",
+          "metadata": {
+            "title": "PUT /products/{productId}/media-assets/reorder",
+            "sidebarTitle": "PUT /products/{productId}/media-assets/reorder"
+          }
+        }
       }
     },
     "/products/{productId}/metrics": {
@@ -51981,7 +52569,14 @@
         },
         "tags": [
           "Products"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/products-by-product-id-metrics/get",
+          "metadata": {
+            "title": "GET /products/{productId}/metrics",
+            "sidebarTitle": "GET /products/{productId}/metrics"
+          }
+        }
       }
     },
     "/products/{productId}/variant-options": {
@@ -52358,7 +52953,14 @@
         },
         "tags": [
           "Products"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/products-by-product-id-variant-options/get",
+          "metadata": {
+            "title": "GET /products/{productId}/variant-options",
+            "sidebarTitle": "GET /products/{productId}/variant-options"
+          }
+        }
       },
       "post": {
         "description": "Assign variant options to a product",
@@ -52768,7 +53370,14 @@
         },
         "tags": [
           "Products"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/products-by-product-id-variant-options/post",
+          "metadata": {
+            "title": "POST /products/{productId}/variant-options",
+            "sidebarTitle": "POST /products/{productId}/variant-options"
+          }
+        }
       }
     },
     "/products/{productId}/variant-options/{optionId}": {
@@ -52943,7 +53552,14 @@
         },
         "tags": [
           "Products"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/products-by-product-id-variant-options-by-option-id/delete",
+          "metadata": {
+            "title": "DELETE /products/{productId}/variant-options/{optionId}",
+            "sidebarTitle": "DELETE /products/{productId}/variant-options/{optionId}"
+          }
+        }
       }
     },
     "/products/{productId}/variants": {
@@ -53264,7 +53880,14 @@
         },
         "tags": [
           "Products"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/products-by-product-id-variants/get",
+          "metadata": {
+            "title": "GET /products/{productId}/variants",
+            "sidebarTitle": "GET /products/{productId}/variants"
+          }
+        }
       },
       "post": {
         "description": "Create a product variant (optionally with option/value assignments)",
@@ -53615,7 +54238,14 @@
         },
         "tags": [
           "Products"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/products-by-product-id-variants/post",
+          "metadata": {
+            "title": "POST /products/{productId}/variants",
+            "sidebarTitle": "POST /products/{productId}/variants"
+          }
+        }
       }
     },
     "/products/{productId}/variants/{variantId}": {
@@ -53941,7 +54571,14 @@
         },
         "tags": [
           "Products"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/products-by-product-id-variants-by-variant-id/get",
+          "metadata": {
+            "title": "GET /products/{productId}/variants/{variantId}",
+            "sidebarTitle": "GET /products/{productId}/variants/{variantId}"
+          }
+        }
       },
       "put": {
         "description": "Update a product variant",
@@ -54270,7 +54907,14 @@
         },
         "tags": [
           "Products"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/products-by-product-id-variants-by-variant-id/put",
+          "metadata": {
+            "title": "PUT /products/{productId}/variants/{variantId}",
+            "sidebarTitle": "PUT /products/{productId}/variants/{variantId}"
+          }
+        }
       },
       "delete": {
         "description": "Delete a product variant",
@@ -54565,7 +55209,14 @@
         },
         "tags": [
           "Products"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/products-by-product-id-variants-by-variant-id/delete",
+          "metadata": {
+            "title": "DELETE /products/{productId}/variants/{variantId}",
+            "sidebarTitle": "DELETE /products/{productId}/variants/{variantId}"
+          }
+        }
       }
     },
     "/products/{productId}/variants/{variantId}/inventory": {
@@ -54879,7 +55530,14 @@
         },
         "tags": [
           "Products"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/products-by-product-id-variants-by-variant-id-inventory/patch",
+          "metadata": {
+            "title": "PATCH /products/{productId}/variants/{variantId}/inventory",
+            "sidebarTitle": "PATCH /products/{productId}/variants/{variantId}/inventory"
+          }
+        }
       }
     },
     "/products/{productId}/variants/{variantId}/media-assets": {
@@ -55212,7 +55870,14 @@
         },
         "tags": [
           "Products"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/products-by-product-id-variants-by-variant-id-media-assets/get",
+          "metadata": {
+            "title": "GET /products/{productId}/variants/{variantId}/media-assets",
+            "sidebarTitle": "GET /products/{productId}/variants/{variantId}/media-assets"
+          }
+        }
       },
       "post": {
         "description": "Associate a product media asset with a variant",
@@ -55562,7 +56227,14 @@
         },
         "tags": [
           "Products"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/products-by-product-id-variants-by-variant-id-media-assets/post",
+          "metadata": {
+            "title": "POST /products/{productId}/variants/{variantId}/media-assets",
+            "sidebarTitle": "POST /products/{productId}/variants/{variantId}/media-assets"
+          }
+        }
       },
       "put": {
         "description": "Replace all media assets for a variant",
@@ -55914,7 +56586,14 @@
         },
         "tags": [
           "Products"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/products-by-product-id-variants-by-variant-id-media-assets/put",
+          "metadata": {
+            "title": "PUT /products/{productId}/variants/{variantId}/media-assets",
+            "sidebarTitle": "PUT /products/{productId}/variants/{variantId}/media-assets"
+          }
+        }
       }
     },
     "/products/{productId}/variants/{variantId}/media-assets/{mediaAssetId}": {
@@ -56097,7 +56776,14 @@
         },
         "tags": [
           "Products"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/products-by-product-id-variants-by-variant-id-media-assets-by-media-asset-id/delete",
+          "metadata": {
+            "title": "DELETE /products/{productId}/variants/{variantId}/media-assets/{mediaAssetId}",
+            "sidebarTitle": "DELETE /products/{productId}/variants/{variantId}/media-assets/{mediaAssetId}"
+          }
+        }
       }
     },
     "/products/{productId}/variants/{variantId}/media-assets/reorder": {
@@ -56293,7 +56979,14 @@
         },
         "tags": [
           "Products"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/products-by-product-id-variants-by-variant-id-media-assets-reorder/put",
+          "metadata": {
+            "title": "PUT /products/{productId}/variants/{variantId}/media-assets/reorder",
+            "sidebarTitle": "PUT /products/{productId}/variants/{variantId}/media-assets/reorder"
+          }
+        }
       }
     },
     "/products/{productId}/variants/{variantId}/option-assignments": {
@@ -56653,7 +57346,14 @@
         },
         "tags": [
           "Products"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/products-by-product-id-variants-by-variant-id-option-assignments/put",
+          "metadata": {
+            "title": "PUT /products/{productId}/variants/{variantId}/option-assignments",
+            "sidebarTitle": "PUT /products/{productId}/variants/{variantId}/option-assignments"
+          }
+        }
       }
     },
     "/products/{productId}/variants/available": {
@@ -56945,7 +57645,14 @@
         },
         "tags": [
           "Products"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/products-by-product-id-variants-available/get",
+          "metadata": {
+            "title": "GET /products/{productId}/variants/available",
+            "sidebarTitle": "GET /products/{productId}/variants/available"
+          }
+        }
       }
     },
     "/products/search": {
@@ -57699,7 +58406,14 @@
         },
         "tags": [
           "Products"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/products-search/get",
+          "metadata": {
+            "title": "GET /products/search",
+            "sidebarTitle": "GET /products/search"
+          }
+        }
       }
     },
     "/queues": {
@@ -58062,7 +58776,14 @@
         },
         "tags": [
           "Distributions"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/queues/get",
+          "metadata": {
+            "title": "GET /queues",
+            "sidebarTitle": "GET /queues"
+          }
+        }
       },
       "post": {
         "description": "Create a queue",
@@ -58439,7 +59160,14 @@
         },
         "tags": [
           "Distributions"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/queues/post",
+          "metadata": {
+            "title": "POST /queues",
+            "sidebarTitle": "POST /queues"
+          }
+        }
       }
     },
     "/queues/{id}": {
@@ -58771,7 +59499,14 @@
         },
         "tags": [
           "Distributions"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/queues-by-id/get",
+          "metadata": {
+            "title": "GET /queues/{id}",
+            "sidebarTitle": "GET /queues/{id}"
+          }
+        }
       },
       "put": {
         "description": "Update a queue",
@@ -59148,7 +59883,14 @@
         },
         "tags": [
           "Distributions"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/queues-by-id/put",
+          "metadata": {
+            "title": "PUT /queues/{id}",
+            "sidebarTitle": "PUT /queues/{id}"
+          }
+        }
       },
       "delete": {
         "description": "Delete a queue",
@@ -59478,7 +60220,14 @@
         },
         "tags": [
           "Distributions"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/queues-by-id/delete",
+          "metadata": {
+            "title": "DELETE /queues/{id}",
+            "sidebarTitle": "DELETE /queues/{id}"
+          }
+        }
       }
     },
     "/scheduled-events": {
@@ -59764,7 +60513,14 @@
         },
         "tags": [
           "Distributions"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/scheduled-events/get",
+          "metadata": {
+            "title": "GET /scheduled-events",
+            "sidebarTitle": "GET /scheduled-events"
+          }
+        }
       }
     },
     "/sequences": {
@@ -61638,7 +62394,14 @@
         },
         "tags": [
           "Distributions"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/sequences/get",
+          "metadata": {
+            "title": "GET /sequences",
+            "sidebarTitle": "GET /sequences"
+          }
+        }
       },
       "post": {
         "description": "Create a sequence",
@@ -61939,7 +62702,14 @@
         },
         "tags": [
           "Distributions"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/sequences/post",
+          "metadata": {
+            "title": "POST /sequences",
+            "sidebarTitle": "POST /sequences"
+          }
+        }
       }
     },
     "/sequences/{sequenceId}": {
@@ -63782,7 +64552,14 @@
         },
         "tags": [
           "Distributions"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/sequences-by-sequence-id/get",
+          "metadata": {
+            "title": "GET /sequences/{sequenceId}",
+            "sidebarTitle": "GET /sequences/{sequenceId}"
+          }
+        }
       },
       "put": {
         "description": "Update a sequence",
@@ -64089,7 +64866,14 @@
         },
         "tags": [
           "Distributions"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/sequences-by-sequence-id/put",
+          "metadata": {
+            "title": "PUT /sequences/{sequenceId}",
+            "sidebarTitle": "PUT /sequences/{sequenceId}"
+          }
+        }
       },
       "delete": {
         "description": "Delete a sequence",
@@ -64353,7 +65137,14 @@
         },
         "tags": [
           "Distributions"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/sequences-by-sequence-id/delete",
+          "metadata": {
+            "title": "DELETE /sequences/{sequenceId}",
+            "sidebarTitle": "DELETE /sequences/{sequenceId}"
+          }
+        }
       }
     },
     "/sequences/{sequenceId}/metrics": {
@@ -64520,7 +65311,14 @@
         },
         "tags": [
           "Distributions"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/sequences-by-sequence-id-metrics/get",
+          "metadata": {
+            "title": "GET /sequences/{sequenceId}/metrics",
+            "sidebarTitle": "GET /sequences/{sequenceId}/metrics"
+          }
+        }
       }
     },
     "/sequences/{sequenceId}/order-limits": {
@@ -64781,7 +65579,14 @@
         },
         "tags": [
           "Distributions"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/sequences-by-sequence-id-order-limits/get",
+          "metadata": {
+            "title": "GET /sequences/{sequenceId}/order-limits",
+            "sidebarTitle": "GET /sequences/{sequenceId}/order-limits"
+          }
+        }
       },
       "post": {
         "description": "Create an order limit for a sequence",
@@ -65081,7 +65886,14 @@
         },
         "tags": [
           "Distributions"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/sequences-by-sequence-id-order-limits/post",
+          "metadata": {
+            "title": "POST /sequences/{sequenceId}/order-limits",
+            "sidebarTitle": "POST /sequences/{sequenceId}/order-limits"
+          }
+        }
       }
     },
     "/sequences/{sequenceId}/order-limits/{limitId}": {
@@ -65347,7 +66159,14 @@
         },
         "tags": [
           "Distributions"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/sequences-by-sequence-id-order-limits-by-limit-id/get",
+          "metadata": {
+            "title": "GET /sequences/{sequenceId}/order-limits/{limitId}",
+            "sidebarTitle": "GET /sequences/{sequenceId}/order-limits/{limitId}"
+          }
+        }
       },
       "put": {
         "description": "Update a sequence order limit",
@@ -65638,7 +66457,14 @@
         },
         "tags": [
           "Distributions"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/sequences-by-sequence-id-order-limits-by-limit-id/put",
+          "metadata": {
+            "title": "PUT /sequences/{sequenceId}/order-limits/{limitId}",
+            "sidebarTitle": "PUT /sequences/{sequenceId}/order-limits/{limitId}"
+          }
+        }
       },
       "delete": {
         "description": "Delete a sequence order limit",
@@ -65902,7 +66728,14 @@
         },
         "tags": [
           "Distributions"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/sequences-by-sequence-id-order-limits-by-limit-id/delete",
+          "metadata": {
+            "title": "DELETE /sequences/{sequenceId}/order-limits/{limitId}",
+            "sidebarTitle": "DELETE /sequences/{sequenceId}/order-limits/{limitId}"
+          }
+        }
       }
     },
     "/sequences/{sequenceId}/products": {
@@ -66128,7 +66961,14 @@
         },
         "tags": [
           "Distributions"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/sequences-by-sequence-id-products/get",
+          "metadata": {
+            "title": "GET /sequences/{sequenceId}/products",
+            "sidebarTitle": "GET /sequences/{sequenceId}/products"
+          }
+        }
       },
       "post": {
         "description": "Add a weighted product to a sequence for mystery box selection",
@@ -66371,7 +67211,14 @@
         },
         "tags": [
           "Distributions"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/sequences-by-sequence-id-products/post",
+          "metadata": {
+            "title": "POST /sequences/{sequenceId}/products",
+            "sidebarTitle": "POST /sequences/{sequenceId}/products"
+          }
+        }
       },
       "put": {
         "description": "Replace all weighted products for a sequence (bulk upsert). An empty array removes all product mappings, meaning all experience products flow through without filtering.",
@@ -66620,7 +67467,14 @@
         },
         "tags": [
           "Distributions"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/sequences-by-sequence-id-products/put",
+          "metadata": {
+            "title": "PUT /sequences/{sequenceId}/products",
+            "sidebarTitle": "PUT /sequences/{sequenceId}/products"
+          }
+        }
       }
     },
     "/sequences/{sequenceId}/products/{productId}": {
@@ -66851,7 +67705,14 @@
         },
         "tags": [
           "Distributions"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/sequences-by-sequence-id-products-by-product-id/get",
+          "metadata": {
+            "title": "GET /sequences/{sequenceId}/products/{productId}",
+            "sidebarTitle": "GET /sequences/{sequenceId}/products/{productId}"
+          }
+        }
       },
       "put": {
         "description": "Update a sequence product's weight",
@@ -67095,7 +67956,14 @@
         },
         "tags": [
           "Distributions"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/sequences-by-sequence-id-products-by-product-id/put",
+          "metadata": {
+            "title": "PUT /sequences/{sequenceId}/products/{productId}",
+            "sidebarTitle": "PUT /sequences/{sequenceId}/products/{productId}"
+          }
+        }
       },
       "delete": {
         "description": "Remove a product from sequence's mystery box configuration",
@@ -67324,7 +68192,14 @@
         },
         "tags": [
           "Distributions"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/sequences-by-sequence-id-products-by-product-id/delete",
+          "metadata": {
+            "title": "DELETE /sequences/{sequenceId}/products/{productId}",
+            "sidebarTitle": "DELETE /sequences/{sequenceId}/products/{productId}"
+          }
+        }
       }
     },
     "/sequences/{sequenceId}/waitlist": {
@@ -67592,7 +68467,14 @@
         },
         "tags": [
           "Distributions"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/sequences-by-sequence-id-waitlist/get",
+          "metadata": {
+            "title": "GET /sequences/{sequenceId}/waitlist",
+            "sidebarTitle": "GET /sequences/{sequenceId}/waitlist"
+          }
+        }
       }
     },
     "/sequences/{sequenceId}/waitlist/consumers": {
@@ -68373,7 +69255,14 @@
         },
         "tags": [
           "Distributions"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/sequences-by-sequence-id-waitlist-consumers/get",
+          "metadata": {
+            "title": "GET /sequences/{sequenceId}/waitlist/consumers",
+            "sidebarTitle": "GET /sequences/{sequenceId}/waitlist/consumers"
+          }
+        }
       }
     },
     "/sequences/{sequenceId}/waitlist/enter": {
@@ -68608,7 +69497,14 @@
         },
         "tags": [
           "Distributions"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/sequences-by-sequence-id-waitlist-enter/post",
+          "metadata": {
+            "title": "POST /sequences/{sequenceId}/waitlist/enter",
+            "sidebarTitle": "POST /sequences/{sequenceId}/waitlist/enter"
+          }
+        }
       }
     },
     "/timed-releases": {
@@ -68938,7 +69834,14 @@
         },
         "tags": [
           "Distributions"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/timed-releases/get",
+          "metadata": {
+            "title": "GET /timed-releases",
+            "sidebarTitle": "GET /timed-releases"
+          }
+        }
       },
       "post": {
         "description": "Create a timed release",
@@ -69267,7 +70170,14 @@
         },
         "tags": [
           "Distributions"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/timed-releases/post",
+          "metadata": {
+            "title": "POST /timed-releases",
+            "sidebarTitle": "POST /timed-releases"
+          }
+        }
       }
     },
     "/timed-releases/{id}": {
@@ -69566,7 +70476,14 @@
         },
         "tags": [
           "Distributions"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/timed-releases-by-id/get",
+          "metadata": {
+            "title": "GET /timed-releases/{id}",
+            "sidebarTitle": "GET /timed-releases/{id}"
+          }
+        }
       },
       "put": {
         "description": "Update a timed release",
@@ -69895,7 +70812,14 @@
         },
         "tags": [
           "Distributions"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/timed-releases-by-id/put",
+          "metadata": {
+            "title": "PUT /timed-releases/{id}",
+            "sidebarTitle": "PUT /timed-releases/{id}"
+          }
+        }
       },
       "delete": {
         "description": "Delete a timed release",
@@ -70192,7 +71116,14 @@
         },
         "tags": [
           "Distributions"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/timed-releases-by-id/delete",
+          "metadata": {
+            "title": "DELETE /timed-releases/{id}",
+            "sidebarTitle": "DELETE /timed-releases/{id}"
+          }
+        }
       }
     },
     "/variant-options": {
@@ -70524,7 +71455,14 @@
         },
         "tags": [
           "Products"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/variant-options/get",
+          "metadata": {
+            "title": "GET /variant-options",
+            "sidebarTitle": "GET /variant-options"
+          }
+        }
       },
       "post": {
         "description": "Create a new variant option",
@@ -70795,7 +71733,14 @@
         },
         "tags": [
           "Products"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/variant-options/post",
+          "metadata": {
+            "title": "POST /variant-options",
+            "sidebarTitle": "POST /variant-options"
+          }
+        }
       }
     },
     "/variant-options/{optionId}": {
@@ -71122,7 +72067,14 @@
         },
         "tags": [
           "Products"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/variant-options-by-option-id/get",
+          "metadata": {
+            "title": "GET /variant-options/{optionId}",
+            "sidebarTitle": "GET /variant-options/{optionId}"
+          }
+        }
       },
       "patch": {
         "description": "Update a variant option",
@@ -71376,7 +72328,14 @@
         },
         "tags": [
           "Products"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/variant-options-by-option-id/patch",
+          "metadata": {
+            "title": "PATCH /variant-options/{optionId}",
+            "sidebarTitle": "PATCH /variant-options/{optionId}"
+          }
+        }
       },
       "delete": {
         "description": "Archive a variant option",
@@ -71541,7 +72500,14 @@
         },
         "tags": [
           "Products"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/variant-options-by-option-id/delete",
+          "metadata": {
+            "title": "DELETE /variant-options/{optionId}",
+            "sidebarTitle": "DELETE /variant-options/{optionId}"
+          }
+        }
       }
     },
     "/variant-options/{optionId}/get-or-create-value": {
@@ -71810,7 +72776,14 @@
         },
         "tags": [
           "Products"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/variant-options-by-option-id-get-or-create-value/post",
+          "metadata": {
+            "title": "POST /variant-options/{optionId}/get-or-create-value",
+            "sidebarTitle": "POST /variant-options/{optionId}/get-or-create-value"
+          }
+        }
       }
     },
     "/variant-options/{optionId}/values": {
@@ -72061,7 +73034,14 @@
         },
         "tags": [
           "Products"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/variant-options-by-option-id-values/get",
+          "metadata": {
+            "title": "GET /variant-options/{optionId}/values",
+            "sidebarTitle": "GET /variant-options/{optionId}/values"
+          }
+        }
       },
       "post": {
         "description": "Create values for a variant option",
@@ -72348,7 +73328,14 @@
         },
         "tags": [
           "Products"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/variant-options-by-option-id-values/post",
+          "metadata": {
+            "title": "POST /variant-options/{optionId}/values",
+            "sidebarTitle": "POST /variant-options/{optionId}/values"
+          }
+        }
       }
     },
     "/variant-options/{optionId}/values/{valueId}": {
@@ -72627,7 +73614,14 @@
         },
         "tags": [
           "Products"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/variant-options-by-option-id-values-by-value-id/patch",
+          "metadata": {
+            "title": "PATCH /variant-options/{optionId}/values/{valueId}",
+            "sidebarTitle": "PATCH /variant-options/{optionId}/values/{valueId}"
+          }
+        }
       },
       "delete": {
         "description": "Archive a variant option value",
@@ -72800,7 +73794,14 @@
         },
         "tags": [
           "Products"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/variant-options-by-option-id-values-by-value-id/delete",
+          "metadata": {
+            "title": "DELETE /variant-options/{optionId}/values/{valueId}",
+            "sidebarTitle": "DELETE /variant-options/{optionId}/values/{valueId}"
+          }
+        }
       }
     },
     "/variant-options/{optionId}/values/reorder": {
@@ -73072,7 +74073,14 @@
         },
         "tags": [
           "Products"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/variant-options-by-option-id-values-reorder/put",
+          "metadata": {
+            "title": "PUT /variant-options/{optionId}/values/reorder",
+            "sidebarTitle": "PUT /variant-options/{optionId}/values/reorder"
+          }
+        }
       }
     },
     "/variant-options/apply-templates": {
@@ -73451,7 +74459,14 @@
         },
         "tags": [
           "Products"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/variant-options-apply-templates/post",
+          "metadata": {
+            "title": "POST /variant-options/apply-templates",
+            "sidebarTitle": "POST /variant-options/apply-templates"
+          }
+        }
       }
     },
     "/variant-options/reorder": {
@@ -73804,7 +74819,14 @@
         },
         "tags": [
           "Products"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/variant-options-reorder/put",
+          "metadata": {
+            "title": "PUT /variant-options/reorder",
+            "sidebarTitle": "PUT /variant-options/reorder"
+          }
+        }
       }
     },
     "/waitlists": {
@@ -74103,7 +75125,14 @@
         },
         "tags": [
           "Distributions"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/waitlists/get",
+          "metadata": {
+            "title": "GET /waitlists",
+            "sidebarTitle": "GET /waitlists"
+          }
+        }
       },
       "post": {
         "description": "Create a waitlist",
@@ -74381,7 +75410,14 @@
         },
         "tags": [
           "Distributions"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/waitlists/post",
+          "metadata": {
+            "title": "POST /waitlists",
+            "sidebarTitle": "POST /waitlists"
+          }
+        }
       }
     },
     "/waitlists/{id}": {
@@ -74649,7 +75685,14 @@
         },
         "tags": [
           "Distributions"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/waitlists-by-id/get",
+          "metadata": {
+            "title": "GET /waitlists/{id}",
+            "sidebarTitle": "GET /waitlists/{id}"
+          }
+        }
       },
       "put": {
         "description": "Update a waitlist",
@@ -74931,7 +75974,14 @@
         },
         "tags": [
           "Distributions"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/waitlists-by-id/put",
+          "metadata": {
+            "title": "PUT /waitlists/{id}",
+            "sidebarTitle": "PUT /waitlists/{id}"
+          }
+        }
       },
       "delete": {
         "description": "Delete a waitlist",
@@ -75197,7 +76247,14 @@
         },
         "tags": [
           "Distributions"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/waitlists-by-id/delete",
+          "metadata": {
+            "title": "DELETE /waitlists/{id}",
+            "sidebarTitle": "DELETE /waitlists/{id}"
+          }
+        }
       }
     },
     "/waitlists/{id}/consumers": {
@@ -75414,7 +76471,14 @@
         },
         "tags": [
           "Distributions"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/waitlists-by-id-consumers/get",
+          "metadata": {
+            "title": "GET /waitlists/{id}/consumers",
+            "sidebarTitle": "GET /waitlists/{id}/consumers"
+          }
+        }
       }
     },
     "/waitlists/{id}/export": {
@@ -75663,7 +76727,14 @@
         },
         "tags": [
           "Distributions"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/waitlists-by-id-export/get",
+          "metadata": {
+            "title": "GET /waitlists/{id}/export",
+            "sidebarTitle": "GET /waitlists/{id}/export"
+          }
+        }
       },
       "post": {
         "description": "Export a waitlist",
@@ -75910,7 +76981,14 @@
         },
         "tags": [
           "Distributions"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/waitlists-by-id-export/post",
+          "metadata": {
+            "title": "POST /waitlists/{id}/export",
+            "sidebarTitle": "POST /waitlists/{id}/export"
+          }
+        }
       }
     },
     "/waitlists/{id}/export/{fileId}": {
@@ -76077,7 +77155,14 @@
         },
         "tags": [
           "Distributions"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/waitlists-by-id-export-by-file-id/get",
+          "metadata": {
+            "title": "GET /waitlists/{id}/export/{fileId}",
+            "sidebarTitle": "GET /waitlists/{id}/export/{fileId}"
+          }
+        }
       }
     }
   },

@@ -3603,7 +3603,14 @@
         },
         "tags": [
           "Events"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/events/post",
+          "metadata": {
+            "title": "POST /events",
+            "sidebarTitle": "POST /events"
+          }
+        }
       }
     },
     "/events/batch": {
@@ -7205,7 +7212,14 @@
         },
         "tags": [
           "Events"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/events-batch/post",
+          "metadata": {
+            "title": "POST /events/batch",
+            "sidebarTitle": "POST /events/batch"
+          }
+        }
       }
     }
   },

@@ -210,7 +210,14 @@
         },
         "tags": [
           "Checkout"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/checkout/post",
+          "metadata": {
+            "title": "POST /checkout",
+            "sidebarTitle": "POST /checkout"
+          }
+        }
       }
     },
     "/payments/cancellations": {
@@ -393,7 +400,14 @@
         },
         "tags": [
           "Payments"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/payments-cancellations/post",
+          "metadata": {
+            "title": "POST /payments/cancellations",
+            "sidebarTitle": "POST /payments/cancellations"
+          }
+        }
       }
     },
     "/payments/refunds": {
@@ -587,7 +601,14 @@
         },
         "tags": [
           "Payments"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/payments-refunds/post",
+          "metadata": {
+            "title": "POST /payments/refunds",
+            "sidebarTitle": "POST /payments/refunds"
+          }
+        }
       }
     }
   },

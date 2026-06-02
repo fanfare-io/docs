@@ -242,10 +242,10 @@ function filterPaths(serviceName, service, paths) {
         continue;
       }
 
-      operations[method] = {
+      operations[method] = withMintEndpointMetadata(method, path, {
         ...operation,
         tags: [matchingGroup.group],
-      };
+      });
     }
 
     if (Object.keys(operations).length > 0) {
@@ -258,6 +258,38 @@ function filterPaths(serviceName, service, paths) {
   }
 
   return filtered;
+}
+
+function withMintEndpointMetadata(method, path, operation) {
+  const title = humanizeEndpoint(method, path);
+  return {
+    ...operation,
+    "x-mint": {
+      ...(operation["x-mint"] ?? {}),
+      href: endpointHref(method, path),
+      metadata: {
+        ...(operation["x-mint"]?.metadata ?? {}),
+        title,
+        sidebarTitle: title,
+      },
+    },
+  };
+}
+
+function humanizeEndpoint(method, path) {
+  return method.toUpperCase() + " " + path;
+}
+
+function endpointHref(method, path) {
+  const slug = path
+    .replace(/^\//, "")
+    .replace(/\{([^}]+)\}/g, "by-$1")
+    .replace(/([a-z0-9])([A-Z])/g, "$1-$2")
+    .replace(/[^a-zA-Z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .toLowerCase();
+
+  return "/api-reference/" + slug + "/" + method.toLowerCase();
 }
 
 function buildServers(service, env) {
@@ -359,7 +391,7 @@ async function updateDocsConfig(generated) {
   config.api = {
     openapi: generated.map(({ outputPath }) => outputPath),
     playground: {
-      display: "interactive",
+      display: "simple",
     },
     examples: {
       languages: ["bash", "javascript", "python", "go"],

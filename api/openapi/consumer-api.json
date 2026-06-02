@@ -291,7 +291,14 @@
         },
         "tags": [
           "Appointments"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/appointments-by-appointment-id/get",
+          "metadata": {
+            "title": "GET /appointments/{appointmentId}",
+            "sidebarTitle": "GET /appointments/{appointmentId}"
+          }
+        }
       }
     },
     "/appointments/{appointmentId}/book": {
@@ -531,7 +538,14 @@
         },
         "tags": [
           "Appointments"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/appointments-by-appointment-id-book/post",
+          "metadata": {
+            "title": "POST /appointments/{appointmentId}/book",
+            "sidebarTitle": "POST /appointments/{appointmentId}/book"
+          }
+        }
       }
     },
     "/appointments/{appointmentId}/cancel": {
@@ -727,7 +741,14 @@
         },
         "tags": [
           "Appointments"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/appointments-by-appointment-id-cancel/post",
+          "metadata": {
+            "title": "POST /appointments/{appointmentId}/cancel",
+            "sidebarTitle": "POST /appointments/{appointmentId}/cancel"
+          }
+        }
       }
     },
     "/appointments/{appointmentId}/me": {
@@ -951,7 +972,14 @@
         },
         "tags": [
           "Appointments"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/appointments-by-appointment-id-me/get",
+          "metadata": {
+            "title": "GET /appointments/{appointmentId}/me",
+            "sidebarTitle": "GET /appointments/{appointmentId}/me"
+          }
+        }
       }
     },
     "/appointments/{appointmentId}/reschedule": {
@@ -1155,7 +1183,14 @@
         },
         "tags": [
           "Appointments"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/appointments-by-appointment-id-reschedule/post",
+          "metadata": {
+            "title": "POST /appointments/{appointmentId}/reschedule",
+            "sidebarTitle": "POST /appointments/{appointmentId}/reschedule"
+          }
+        }
       }
     },
     "/appointments/{appointmentId}/slots": {
@@ -1404,7 +1439,14 @@
         },
         "tags": [
           "Appointments"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/appointments-by-appointment-id-slots/get",
+          "metadata": {
+            "title": "GET /appointments/{appointmentId}/slots",
+            "sidebarTitle": "GET /appointments/{appointmentId}/slots"
+          }
+        }
       }
     },
     "/auctions/{auctionId}": {
@@ -1752,7 +1794,14 @@
         },
         "tags": [
           "Auctions"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/auctions-by-auction-id/get",
+          "metadata": {
+            "title": "GET /auctions/{auctionId}",
+            "sidebarTitle": "GET /auctions/{auctionId}"
+          }
+        }
       }
     },
     "/auctions/{auctionId}/bid": {
@@ -1962,7 +2011,14 @@
         },
         "tags": [
           "Auctions"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/auctions-by-auction-id-bid/post",
+          "metadata": {
+            "title": "POST /auctions/{auctionId}/bid",
+            "sidebarTitle": "POST /auctions/{auctionId}/bid"
+          }
+        }
       }
     },
     "/auctions/{auctionId}/bids": {
@@ -2163,7 +2219,14 @@
         },
         "tags": [
           "Auctions"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/auctions-by-auction-id-bids/get",
+          "metadata": {
+            "title": "GET /auctions/{auctionId}/bids",
+            "sidebarTitle": "GET /auctions/{auctionId}/bids"
+          }
+        }
       }
     },
     "/auctions/{auctionId}/bids/history": {
@@ -2356,7 +2419,14 @@
         },
         "tags": [
           "Auctions"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/auctions-by-auction-id-bids-history/get",
+          "metadata": {
+            "title": "GET /auctions/{auctionId}/bids/history",
+            "sidebarTitle": "GET /auctions/{auctionId}/bids/history"
+          }
+        }
       }
     },
     "/auctions/{auctionId}/current-price": {
@@ -2532,7 +2602,14 @@
         },
         "tags": [
           "Auctions"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/auctions-by-auction-id-current-price/get",
+          "metadata": {
+            "title": "GET /auctions/{auctionId}/current-price",
+            "sidebarTitle": "GET /auctions/{auctionId}/current-price"
+          }
+        }
       }
     },
     "/auctions/{auctionId}/enter": {
@@ -2699,7 +2776,14 @@
         },
         "tags": [
           "Auctions"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/auctions-by-auction-id-enter/post",
+          "metadata": {
+            "title": "POST /auctions/{auctionId}/enter",
+            "sidebarTitle": "POST /auctions/{auctionId}/enter"
+          }
+        }
       }
     },
     "/auctions/{auctionId}/highest-bid": {
@@ -2867,7 +2951,14 @@
         },
         "tags": [
           "Auctions"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/auctions-by-auction-id-highest-bid/get",
+          "metadata": {
+            "title": "GET /auctions/{auctionId}/highest-bid",
+            "sidebarTitle": "GET /auctions/{auctionId}/highest-bid"
+          }
+        }
       }
     },
     "/auctions/{auctionId}/status": {
@@ -3062,7 +3153,14 @@
         },
         "tags": [
           "Auctions"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/auctions-by-auction-id-status/get",
+          "metadata": {
+            "title": "GET /auctions/{auctionId}/status",
+            "sidebarTitle": "GET /auctions/{auctionId}/status"
+          }
+        }
       }
     },
     "/auth/external/authorize": {
@@ -3263,7 +3361,14 @@
         },
         "tags": [
           "Auth"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/auth-external-authorize/post",
+          "metadata": {
+            "title": "POST /auth/external/authorize",
+            "sidebarTitle": "POST /auth/external/authorize"
+          }
+        }
       }
     },
     "/auth/external/exchange": {
@@ -3476,7 +3581,14 @@
         },
         "tags": [
           "Auth"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/auth-external-exchange/post",
+          "metadata": {
+            "title": "POST /auth/external/exchange",
+            "sidebarTitle": "POST /auth/external/exchange"
+          }
+        }
       }
     },
     "/auth/guest": {
@@ -3672,7 +3784,14 @@
         },
         "tags": [
           "Auth"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/auth-guest/post",
+          "metadata": {
+            "title": "POST /auth/guest",
+            "sidebarTitle": "POST /auth/guest"
+          }
+        }
       }
     },
     "/auth/logout": {
@@ -3814,7 +3933,14 @@
         },
         "tags": [
           "Auth"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/auth-logout/post",
+          "metadata": {
+            "title": "POST /auth/logout",
+            "sidebarTitle": "POST /auth/logout"
+          }
+        }
       }
     },
     "/auth/otp/request": {
@@ -3996,7 +4122,14 @@
         },
         "tags": [
           "Auth"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/auth-otp-request/post",
+          "metadata": {
+            "title": "POST /auth/otp/request",
+            "sidebarTitle": "POST /auth/otp/request"
+          }
+        }
       }
     },
     "/auth/otp/verify": {
@@ -4219,7 +4352,14 @@
         },
         "tags": [
           "Auth"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/auth-otp-verify/post",
+          "metadata": {
+            "title": "POST /auth/otp/verify",
+            "sidebarTitle": "POST /auth/otp/verify"
+          }
+        }
       }
     },
     "/auth/refresh": {
@@ -4395,7 +4535,14 @@
         },
         "tags": [
           "Auth"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/auth-refresh/post",
+          "metadata": {
+            "title": "POST /auth/refresh",
+            "sidebarTitle": "POST /auth/refresh"
+          }
+        }
       }
     },
     "/consumers/{id}": {
@@ -4876,7 +5023,14 @@
         },
         "tags": [
           "Consumers"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/consumers-by-id/get",
+          "metadata": {
+            "title": "GET /consumers/{id}",
+            "sidebarTitle": "GET /consumers/{id}"
+          }
+        }
       }
     },
     "/consumers/me": {
@@ -5503,7 +5657,14 @@
         },
         "tags": [
           "Consumers"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/consumers-me/get",
+          "metadata": {
+            "title": "GET /consumers/me",
+            "sidebarTitle": "GET /consumers/me"
+          }
+        }
       }
     },
     "/draws/{drawId}": {
@@ -5772,7 +5933,14 @@
         },
         "tags": [
           "Draws"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/draws-by-draw-id/get",
+          "metadata": {
+            "title": "GET /draws/{drawId}",
+            "sidebarTitle": "GET /draws/{drawId}"
+          }
+        }
       }
     },
     "/draws/{drawId}/complete": {
@@ -6052,7 +6220,14 @@
         },
         "tags": [
           "Draws"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/draws-by-draw-id-complete/post",
+          "metadata": {
+            "title": "POST /draws/{drawId}/complete",
+            "sidebarTitle": "POST /draws/{drawId}/complete"
+          }
+        }
       }
     },
     "/draws/{drawId}/deny": {
@@ -6336,7 +6511,14 @@
         },
         "tags": [
           "Draws"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/draws-by-draw-id-deny/post",
+          "metadata": {
+            "title": "POST /draws/{drawId}/deny",
+            "sidebarTitle": "POST /draws/{drawId}/deny"
+          }
+        }
       }
     },
     "/draws/{drawId}/enter": {
@@ -6599,7 +6781,14 @@
         },
         "tags": [
           "Draws"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/draws-by-draw-id-enter/post",
+          "metadata": {
+            "title": "POST /draws/{drawId}/enter",
+            "sidebarTitle": "POST /draws/{drawId}/enter"
+          }
+        }
       }
     },
     "/draws/{drawId}/leave": {
@@ -6862,7 +7051,14 @@
         },
         "tags": [
           "Draws"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/draws-by-draw-id-leave/post",
+          "metadata": {
+            "title": "POST /draws/{drawId}/leave",
+            "sidebarTitle": "POST /draws/{drawId}/leave"
+          }
+        }
       }
     },
     "/draws/{drawId}/status": {
@@ -7125,7 +7321,14 @@
         },
         "tags": [
           "Draws"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/draws-by-draw-id-status/get",
+          "metadata": {
+            "title": "GET /draws/{drawId}/status",
+            "sidebarTitle": "GET /draws/{drawId}/status"
+          }
+        }
       }
     },
     "/draws/{drawId}/validate": {
@@ -7305,7 +7508,14 @@
         },
         "tags": [
           "Draws"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/draws-by-draw-id-validate/post",
+          "metadata": {
+            "title": "POST /draws/{drawId}/validate",
+            "sidebarTitle": "POST /draws/{drawId}/validate"
+          }
+        }
       }
     },
     "/experiences/{experienceId}": {
@@ -9766,7 +9976,14 @@
         },
         "tags": [
           "Experiences"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/experiences-by-experience-id/get",
+          "metadata": {
+            "title": "GET /experiences/{experienceId}",
+            "sidebarTitle": "GET /experiences/{experienceId}"
+          }
+        }
       }
     },
     "/experiences/{experienceId}/enter": {
@@ -12243,7 +12460,14 @@
         },
         "tags": [
           "Experiences"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/experiences-by-experience-id-enter/post",
+          "metadata": {
+            "title": "POST /experiences/{experienceId}/enter",
+            "sidebarTitle": "POST /experiences/{experienceId}/enter"
+          }
+        }
       }
     },
     "/experiences/{experienceId}/leave": {
@@ -12410,7 +12634,14 @@
         },
         "tags": [
           "Experiences"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/experiences-by-experience-id-leave/delete",
+          "metadata": {
+            "title": "DELETE /experiences/{experienceId}/leave",
+            "sidebarTitle": "DELETE /experiences/{experienceId}/leave"
+          }
+        }
       }
     },
     "/experiences/{experienceId}/route": {
@@ -13515,7 +13746,14 @@
         },
         "tags": [
           "Experiences"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/experiences-by-experience-id-route/post",
+          "metadata": {
+            "title": "POST /experiences/{experienceId}/route",
+            "sidebarTitle": "POST /experiences/{experienceId}/route"
+          }
+        }
       }
     },
     "/loyalty/balance": {
@@ -13676,7 +13914,14 @@
         },
         "tags": [
           "Loyalty"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/loyalty-balance/get",
+          "metadata": {
+            "title": "GET /loyalty/balance",
+            "sidebarTitle": "GET /loyalty/balance"
+          }
+        }
       }
     },
     "/loyalty/expirations": {
@@ -13850,7 +14095,14 @@
         },
         "tags": [
           "Loyalty"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/loyalty-expirations/get",
+          "metadata": {
+            "title": "GET /loyalty/expirations",
+            "sidebarTitle": "GET /loyalty/expirations"
+          }
+        }
       }
     },
     "/loyalty/history": {
@@ -14077,7 +14329,14 @@
         },
         "tags": [
           "Loyalty"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/loyalty-history/get",
+          "metadata": {
+            "title": "GET /loyalty/history",
+            "sidebarTitle": "GET /loyalty/history"
+          }
+        }
       }
     },
     "/organizations/{organizationId}/settings": {
@@ -14288,7 +14547,14 @@
         },
         "tags": [
           "Organizations"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/organizations-by-organization-id-settings/get",
+          "metadata": {
+            "title": "GET /organizations/{organizationId}/settings",
+            "sidebarTitle": "GET /organizations/{organizationId}/settings"
+          }
+        }
       }
     },
     "/queues/{queueId}": {
@@ -14620,7 +14886,14 @@
         },
         "tags": [
           "Queues"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/queues-by-queue-id/get",
+          "metadata": {
+            "title": "GET /queues/{queueId}",
+            "sidebarTitle": "GET /queues/{queueId}"
+          }
+        }
       }
     },
     "/queues/{queueId}/admit": {
@@ -15008,7 +15281,14 @@
         },
         "tags": [
           "Queues"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/queues-by-queue-id-admit/post",
+          "metadata": {
+            "title": "POST /queues/{queueId}/admit",
+            "sidebarTitle": "POST /queues/{queueId}/admit"
+          }
+        }
       }
     },
     "/queues/{queueId}/complete": {
@@ -15396,7 +15676,14 @@
         },
         "tags": [
           "Queues"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/queues-by-queue-id-complete/post",
+          "metadata": {
+            "title": "POST /queues/{queueId}/complete",
+            "sidebarTitle": "POST /queues/{queueId}/complete"
+          }
+        }
       }
     },
     "/queues/{queueId}/deny": {
@@ -15795,7 +16082,14 @@
         },
         "tags": [
           "Queues"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/queues-by-queue-id-deny/post",
+          "metadata": {
+            "title": "POST /queues/{queueId}/deny",
+            "sidebarTitle": "POST /queues/{queueId}/deny"
+          }
+        }
       }
     },
     "/queues/{queueId}/enter": {
@@ -16166,7 +16460,14 @@
         },
         "tags": [
           "Queues"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/queues-by-queue-id-enter/post",
+          "metadata": {
+            "title": "POST /queues/{queueId}/enter",
+            "sidebarTitle": "POST /queues/{queueId}/enter"
+          }
+        }
       }
     },
     "/queues/{queueId}/leave": {
@@ -16537,7 +16838,14 @@
         },
         "tags": [
           "Queues"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/queues-by-queue-id-leave/post",
+          "metadata": {
+            "title": "POST /queues/{queueId}/leave",
+            "sidebarTitle": "POST /queues/{queueId}/leave"
+          }
+        }
       }
     },
     "/queues/{queueId}/status": {
@@ -16908,7 +17216,14 @@
         },
         "tags": [
           "Queues"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/queues-by-queue-id-status/get",
+          "metadata": {
+            "title": "GET /queues/{queueId}/status",
+            "sidebarTitle": "GET /queues/{queueId}/status"
+          }
+        }
       }
     },
     "/queues/{queueId}/validate": {
@@ -17088,7 +17403,14 @@
         },
         "tags": [
           "Queues"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/queues-by-queue-id-validate/post",
+          "metadata": {
+            "title": "POST /queues/{queueId}/validate",
+            "sidebarTitle": "POST /queues/{queueId}/validate"
+          }
+        }
       }
     },
     "/timed-releases/{timedReleaseId}": {
@@ -17333,7 +17655,14 @@
         },
         "tags": [
           "Timed Releases"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/timed-releases-by-timed-release-id/get",
+          "metadata": {
+            "title": "GET /timed-releases/{timedReleaseId}",
+            "sidebarTitle": "GET /timed-releases/{timedReleaseId}"
+          }
+        }
       }
     },
     "/timed-releases/{timedReleaseId}/complete": {
@@ -17503,7 +17832,14 @@
         },
         "tags": [
           "Timed Releases"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/timed-releases-by-timed-release-id-complete/post",
+          "metadata": {
+            "title": "POST /timed-releases/{timedReleaseId}/complete",
+            "sidebarTitle": "POST /timed-releases/{timedReleaseId}/complete"
+          }
+        }
       }
     },
     "/timed-releases/{timedReleaseId}/enter": {
@@ -17700,7 +18036,14 @@
         },
         "tags": [
           "Timed Releases"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/timed-releases-by-timed-release-id-enter/post",
+          "metadata": {
+            "title": "POST /timed-releases/{timedReleaseId}/enter",
+            "sidebarTitle": "POST /timed-releases/{timedReleaseId}/enter"
+          }
+        }
       }
     },
     "/timed-releases/{timedReleaseId}/leave": {
@@ -17870,7 +18213,14 @@
         },
         "tags": [
           "Timed Releases"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/timed-releases-by-timed-release-id-leave/post",
+          "metadata": {
+            "title": "POST /timed-releases/{timedReleaseId}/leave",
+            "sidebarTitle": "POST /timed-releases/{timedReleaseId}/leave"
+          }
+        }
       }
     },
     "/timed-releases/{timedReleaseId}/status": {
@@ -18052,7 +18402,14 @@
         },
         "tags": [
           "Timed Releases"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/timed-releases-by-timed-release-id-status/get",
+          "metadata": {
+            "title": "GET /timed-releases/{timedReleaseId}/status",
+            "sidebarTitle": "GET /timed-releases/{timedReleaseId}/status"
+          }
+        }
       }
     },
     "/waitlists/{waitlistId}/enter": {
@@ -18235,7 +18592,14 @@
         },
         "tags": [
           "Waitlists"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/waitlists-by-waitlist-id-enter/post",
+          "metadata": {
+            "title": "POST /waitlists/{waitlistId}/enter",
+            "sidebarTitle": "POST /waitlists/{waitlistId}/enter"
+          }
+        }
       }
     },
     "/waitlists/{waitlistId}/leave": {
@@ -18402,7 +18766,14 @@
         },
         "tags": [
           "Waitlists"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/waitlists-by-waitlist-id-leave/delete",
+          "metadata": {
+            "title": "DELETE /waitlists/{waitlistId}/leave",
+            "sidebarTitle": "DELETE /waitlists/{waitlistId}/leave"
+          }
+        }
       }
     },
     "/waitlists/{waitlistId}/status": {
@@ -18579,7 +18950,14 @@
         },
         "tags": [
           "Waitlists"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/waitlists-by-waitlist-id-status/get",
+          "metadata": {
+            "title": "GET /waitlists/{waitlistId}/status",
+            "sidebarTitle": "GET /waitlists/{waitlistId}/status"
+          }
+        }
       }
     }
   },
