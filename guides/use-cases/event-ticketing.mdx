@@ -267,7 +267,6 @@ export default function TicketPage({ experienceId, event, salePhase, presaleCode
     <FanfareProvider
       organizationId={process.env.NEXT_PUBLIC_FANFARE_ORG_ID!}
       publishableKey={process.env.NEXT_PUBLIC_FANFARE_PUBLISHABLE_KEY!}
-      environment="production"
     >
       <div className="ticket-page">
         <EventInfo event={event} />

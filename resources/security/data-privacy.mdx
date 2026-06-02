@@ -2,9 +2,6 @@
 title: Data Privacy
 description: Data handling practices, GDPR compliance, and privacy controls in Fanfare.
 ---
-
-# Data Privacy
-
 Fanfare is committed to protecting consumer privacy and helping you comply with data protection regulations.
 
 ## Privacy by Design
@@ -24,8 +21,8 @@ Fanfare implements privacy by design principles:
 | ----------------------- | ----------------------------- | ------------------ |
 | Email address           | Authentication, notifications | Account lifetime   |
 | Phone number (optional) | OTP authentication            | Account lifetime   |
-| Device fingerprint hash | Fraud prevention              | Session + 30 days  |
-| Queue activity          | Service delivery              | 90 days            |
+| Session integrity data  | Fair access and abuse defense | Limited retention  |
+| Queue activity          | Service delivery              | Limited retention  |
 | Purchase history        | Order management              | As required by law |
 
 ### What We Don't Collect
@@ -41,12 +38,11 @@ Fanfare implements privacy by design principles:
 The Fanfare SDK collects minimal data:
 
 ```typescript
-// Data included in SDK requests
+// Example categories included in SDK requests
 {
   sessionId: "sess_...",        // Anonymous session
-  fingerprint: "hash...",       // Device hash (not specifications)
   timestamp: "2024-...",        // Request timing
-  userAgent: "Mozilla/...",     // Browser identification
+  sessionSignals: { ... },      // SDK-managed integrity signals
 }
 ```
 
@@ -56,8 +52,7 @@ To minimize collection further:
 const client = new FanfareClient({
   publishableKey: "pk_live_...",
   privacy: {
-    collectFingerprint: true, // Set to false if not needed
-    collectUserAgent: true, // Set to false if not needed
+    analyticsCollection: true,
   },
 });
 ```
@@ -169,8 +164,8 @@ const privacySettings = {
     deletedData: 30, // days before permanent deletion
   },
   collection: {
-    deviceFingerprint: true,
-    ipAddress: false, // Disable IP logging
+    sessionSignals: true,
+    analyticsCollection: false,
   },
   marketing: {
     requireExplicitConsent: true,

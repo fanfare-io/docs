@@ -111,7 +111,6 @@ export default function DropPage({ drawId, product, entryStart, entryEnd, drawTi
     <FanfareProvider
       organizationId={process.env.NEXT_PUBLIC_FANFARE_ORG_ID!}
       publishableKey={process.env.NEXT_PUBLIC_FANFARE_PUBLISHABLE_KEY!}
-      environment="production"
     >
       <div className="drop-page">
         <ProductShowcase product={product} />

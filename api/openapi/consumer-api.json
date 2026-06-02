@@ -1,5 +1,19 @@
 {
-  "components": {},
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "description": "Consumer access token or server-side secret key, depending on the endpoint.",
+        "scheme": "bearer",
+        "type": "http"
+      },
+      "PublishableKeyAuth": {
+        "description": "Browser-safe publishable key for client-side consumer requests.",
+        "in": "header",
+        "name": "X-Publishable-Key",
+        "type": "apiKey"
+      }
+    }
+  },
   "info": {
     "description": "Consumer API for Fanfare",
     "title": "Fanfare Consumer API",
@@ -60,10 +74,6 @@
                           "type": "null"
                         }
                       ]
-                    },
-                    "encryptionSeed": {
-                      "minLength": 1,
-                      "type": "string"
                     },
                     "id": {
                       "format": "uuid",
@@ -151,8 +161,7 @@
                   },
                   "required": [
                     "id",
-                    "timeZone",
-                    "encryptionSeed"
+                    "timeZone"
                   ],
                   "type": "object"
                 }
@@ -291,7 +300,14 @@
         },
         "tags": [
           "Appointments"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/consumer-appointments-by-appointment-id/get",
+          "metadata": {
+            "sidebarTitle": "GET /appointments/{appointmentId}",
+            "title": "GET /appointments/{appointmentId}"
+          }
+        }
       }
     },
     "/appointments/{appointmentId}/book": {
@@ -531,7 +547,14 @@
         },
         "tags": [
           "Appointments"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/consumer-appointments-by-appointment-id-book/post",
+          "metadata": {
+            "sidebarTitle": "POST /appointments/{appointmentId}/book",
+            "title": "POST /appointments/{appointmentId}/book"
+          }
+        }
       }
     },
     "/appointments/{appointmentId}/cancel": {
@@ -727,7 +750,14 @@
         },
         "tags": [
           "Appointments"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/consumer-appointments-by-appointment-id-cancel/post",
+          "metadata": {
+            "sidebarTitle": "POST /appointments/{appointmentId}/cancel",
+            "title": "POST /appointments/{appointmentId}/cancel"
+          }
+        }
       }
     },
     "/appointments/{appointmentId}/me": {
@@ -951,7 +981,14 @@
         },
         "tags": [
           "Appointments"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/consumer-appointments-by-appointment-id-me/get",
+          "metadata": {
+            "sidebarTitle": "GET /appointments/{appointmentId}/me",
+            "title": "GET /appointments/{appointmentId}/me"
+          }
+        }
       }
     },
     "/appointments/{appointmentId}/reschedule": {
@@ -1155,7 +1192,14 @@
         },
         "tags": [
           "Appointments"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/consumer-appointments-by-appointment-id-reschedule/post",
+          "metadata": {
+            "sidebarTitle": "POST /appointments/{appointmentId}/reschedule",
+            "title": "POST /appointments/{appointmentId}/reschedule"
+          }
+        }
       }
     },
     "/appointments/{appointmentId}/slots": {
@@ -1404,7 +1448,14 @@
         },
         "tags": [
           "Appointments"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/consumer-appointments-by-appointment-id-slots/get",
+          "metadata": {
+            "sidebarTitle": "GET /appointments/{appointmentId}/slots",
+            "title": "GET /appointments/{appointmentId}/slots"
+          }
+        }
       }
     },
     "/auctions/{auctionId}": {
@@ -1469,10 +1520,6 @@
                       ]
                     },
                     "currencyCode": {
-                      "minLength": 1,
-                      "type": "string"
-                    },
-                    "encryptionSeed": {
                       "minLength": 1,
                       "type": "string"
                     },
@@ -1611,7 +1658,6 @@
                   "required": [
                     "id",
                     "timeZone",
-                    "encryptionSeed",
                     "settleAt",
                     "currencyCode"
                   ],
@@ -1752,7 +1798,14 @@
         },
         "tags": [
           "Auctions"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/consumer-auctions-by-auction-id/get",
+          "metadata": {
+            "sidebarTitle": "GET /auctions/{auctionId}",
+            "title": "GET /auctions/{auctionId}"
+          }
+        }
       }
     },
     "/auctions/{auctionId}/bid": {
@@ -1962,7 +2015,14 @@
         },
         "tags": [
           "Auctions"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/consumer-auctions-by-auction-id-bid/post",
+          "metadata": {
+            "sidebarTitle": "POST /auctions/{auctionId}/bid",
+            "title": "POST /auctions/{auctionId}/bid"
+          }
+        }
       }
     },
     "/auctions/{auctionId}/bids": {
@@ -2163,7 +2223,14 @@
         },
         "tags": [
           "Auctions"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/consumer-auctions-by-auction-id-bids/get",
+          "metadata": {
+            "sidebarTitle": "GET /auctions/{auctionId}/bids",
+            "title": "GET /auctions/{auctionId}/bids"
+          }
+        }
       }
     },
     "/auctions/{auctionId}/bids/history": {
@@ -2356,7 +2423,14 @@
         },
         "tags": [
           "Auctions"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/consumer-auctions-by-auction-id-bids-history/get",
+          "metadata": {
+            "sidebarTitle": "GET /auctions/{auctionId}/bids/history",
+            "title": "GET /auctions/{auctionId}/bids/history"
+          }
+        }
       }
     },
     "/auctions/{auctionId}/current-price": {
@@ -2532,7 +2606,14 @@
         },
         "tags": [
           "Auctions"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/consumer-auctions-by-auction-id-current-price/get",
+          "metadata": {
+            "sidebarTitle": "GET /auctions/{auctionId}/current-price",
+            "title": "GET /auctions/{auctionId}/current-price"
+          }
+        }
       }
     },
     "/auctions/{auctionId}/enter": {
@@ -2699,7 +2780,14 @@
         },
         "tags": [
           "Auctions"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/consumer-auctions-by-auction-id-enter/post",
+          "metadata": {
+            "sidebarTitle": "POST /auctions/{auctionId}/enter",
+            "title": "POST /auctions/{auctionId}/enter"
+          }
+        }
       }
     },
     "/auctions/{auctionId}/highest-bid": {
@@ -2867,7 +2955,14 @@
         },
         "tags": [
           "Auctions"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/consumer-auctions-by-auction-id-highest-bid/get",
+          "metadata": {
+            "sidebarTitle": "GET /auctions/{auctionId}/highest-bid",
+            "title": "GET /auctions/{auctionId}/highest-bid"
+          }
+        }
       }
     },
     "/auctions/{auctionId}/status": {
@@ -3062,7 +3157,14 @@
         },
         "tags": [
           "Auctions"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/consumer-auctions-by-auction-id-status/get",
+          "metadata": {
+            "sidebarTitle": "GET /auctions/{auctionId}/status",
+            "title": "GET /auctions/{auctionId}/status"
+          }
+        }
       }
     },
     "/auth/external/authorize": {
@@ -3263,7 +3365,14 @@
         },
         "tags": [
           "Auth"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/consumer-auth-external-authorize/post",
+          "metadata": {
+            "sidebarTitle": "POST /auth/external/authorize",
+            "title": "POST /auth/external/authorize"
+          }
+        }
       }
     },
     "/auth/external/exchange": {
@@ -3302,9 +3411,6 @@
                     "session": {
                       "properties": {
                         "consumerId": {
-                          "type": "string"
-                        },
-                        "deviceFingerprint": {
                           "type": "string"
                         },
                         "email": {
@@ -3476,7 +3582,14 @@
         },
         "tags": [
           "Auth"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/consumer-auth-external-exchange/post",
+          "metadata": {
+            "sidebarTitle": "POST /auth/external/exchange",
+            "title": "POST /auth/external/exchange"
+          }
+        }
       }
     },
     "/auth/guest": {
@@ -3498,9 +3611,6 @@
                     "session": {
                       "properties": {
                         "consumerId": {
-                          "type": "string"
-                        },
-                        "deviceFingerprint": {
                           "type": "string"
                         },
                         "email": {
@@ -3672,7 +3782,14 @@
         },
         "tags": [
           "Auth"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/consumer-auth-guest/post",
+          "metadata": {
+            "sidebarTitle": "POST /auth/guest",
+            "title": "POST /auth/guest"
+          }
+        }
       }
     },
     "/auth/logout": {
@@ -3814,7 +3931,14 @@
         },
         "tags": [
           "Auth"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/consumer-auth-logout/post",
+          "metadata": {
+            "sidebarTitle": "POST /auth/logout",
+            "title": "POST /auth/logout"
+          }
+        }
       }
     },
     "/auth/otp/request": {
@@ -3996,7 +4120,14 @@
         },
         "tags": [
           "Auth"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/consumer-auth-otp-request/post",
+          "metadata": {
+            "sidebarTitle": "POST /auth/otp/request",
+            "title": "POST /auth/otp/request"
+          }
+        }
       }
     },
     "/auth/otp/verify": {
@@ -4045,9 +4176,6 @@
                     "session": {
                       "properties": {
                         "consumerId": {
-                          "type": "string"
-                        },
-                        "deviceFingerprint": {
                           "type": "string"
                         },
                         "email": {
@@ -4219,7 +4347,14 @@
         },
         "tags": [
           "Auth"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/consumer-auth-otp-verify/post",
+          "metadata": {
+            "sidebarTitle": "POST /auth/otp/verify",
+            "title": "POST /auth/otp/verify"
+          }
+        }
       }
     },
     "/auth/refresh": {
@@ -4395,7 +4530,14 @@
         },
         "tags": [
           "Auth"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/consumer-auth-refresh/post",
+          "metadata": {
+            "sidebarTitle": "POST /auth/refresh",
+            "title": "POST /auth/refresh"
+          }
+        }
       }
     },
     "/consumers/{id}": {
@@ -4599,17 +4741,6 @@
                         }
                       ]
                     },
-                    "lastRiskAssessmentAt": {
-                      "anyOf": [
-                        {
-                          "format": "date-time",
-                          "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
                     "loyaltyBalance": {
                       "default": 0,
                       "type": "number"
@@ -4711,9 +4842,6 @@
                           "type": "null"
                         }
                       ]
-                    },
-                    "riskScore": {
-                      "type": "number"
                     },
                     "smsOptOut": {
                       "default": false,
@@ -4876,7 +5004,14 @@
         },
         "tags": [
           "Consumers"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/consumer-consumers-by-id/get",
+          "metadata": {
+            "sidebarTitle": "GET /consumers/{id}",
+            "title": "GET /consumers/{id}"
+          }
+        }
       }
     },
     "/consumers/me": {
@@ -5225,17 +5360,6 @@
                         }
                       ]
                     },
-                    "lastRiskAssessmentAt": {
-                      "anyOf": [
-                        {
-                          "format": "date-time",
-                          "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
                     "loyaltyBalance": {
                       "default": 0,
                       "type": "number"
@@ -5337,9 +5461,6 @@
                           "type": "null"
                         }
                       ]
-                    },
-                    "riskScore": {
-                      "type": "number"
                     },
                     "smsOptOut": {
                       "default": false,
@@ -5503,7 +5624,14 @@
         },
         "tags": [
           "Consumers"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/consumer-consumers-me/get",
+          "metadata": {
+            "sidebarTitle": "GET /consumers/me",
+            "title": "GET /consumers/me"
+          }
+        }
       }
     },
     "/draws/{drawId}": {
@@ -5772,7 +5900,14 @@
         },
         "tags": [
           "Draws"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/consumer-draws-by-draw-id/get",
+          "metadata": {
+            "sidebarTitle": "GET /draws/{drawId}",
+            "title": "GET /draws/{drawId}"
+          }
+        }
       }
     },
     "/draws/{drawId}/complete": {
@@ -5845,9 +5980,6 @@
                               "format": "date-time",
                               "type": "string"
                             },
-                            "fingerprint": {
-                              "type": "string"
-                            },
                             "selectedProductId": {
                               "type": "string"
                             },
@@ -5877,9 +6009,6 @@
                             },
                             "expiresAt": {
                               "format": "date-time",
-                              "type": "string"
-                            },
-                            "fingerprint": {
                               "type": "string"
                             },
                             "status": {
@@ -6052,7 +6181,14 @@
         },
         "tags": [
           "Draws"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/consumer-draws-by-draw-id-complete/post",
+          "metadata": {
+            "sidebarTitle": "POST /draws/{drawId}/complete",
+            "title": "POST /draws/{drawId}/complete"
+          }
+        }
       }
     },
     "/draws/{drawId}/deny": {
@@ -6129,9 +6265,6 @@
                               "format": "date-time",
                               "type": "string"
                             },
-                            "fingerprint": {
-                              "type": "string"
-                            },
                             "selectedProductId": {
                               "type": "string"
                             },
@@ -6161,9 +6294,6 @@
                             },
                             "expiresAt": {
                               "format": "date-time",
-                              "type": "string"
-                            },
-                            "fingerprint": {
                               "type": "string"
                             },
                             "status": {
@@ -6336,7 +6466,14 @@
         },
         "tags": [
           "Draws"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/consumer-draws-by-draw-id-deny/post",
+          "metadata": {
+            "sidebarTitle": "POST /draws/{drawId}/deny",
+            "title": "POST /draws/{drawId}/deny"
+          }
+        }
       }
     },
     "/draws/{drawId}/enter": {
@@ -6392,9 +6529,6 @@
                               "format": "date-time",
                               "type": "string"
                             },
-                            "fingerprint": {
-                              "type": "string"
-                            },
                             "selectedProductId": {
                               "type": "string"
                             },
@@ -6424,9 +6558,6 @@
                             },
                             "expiresAt": {
                               "format": "date-time",
-                              "type": "string"
-                            },
-                            "fingerprint": {
                               "type": "string"
                             },
                             "status": {
@@ -6599,7 +6730,14 @@
         },
         "tags": [
           "Draws"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/consumer-draws-by-draw-id-enter/post",
+          "metadata": {
+            "sidebarTitle": "POST /draws/{drawId}/enter",
+            "title": "POST /draws/{drawId}/enter"
+          }
+        }
       }
     },
     "/draws/{drawId}/leave": {
@@ -6655,9 +6793,6 @@
                               "format": "date-time",
                               "type": "string"
                             },
-                            "fingerprint": {
-                              "type": "string"
-                            },
                             "selectedProductId": {
                               "type": "string"
                             },
@@ -6687,9 +6822,6 @@
                             },
                             "expiresAt": {
                               "format": "date-time",
-                              "type": "string"
-                            },
-                            "fingerprint": {
                               "type": "string"
                             },
                             "status": {
@@ -6862,7 +6994,14 @@
         },
         "tags": [
           "Draws"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/consumer-draws-by-draw-id-leave/post",
+          "metadata": {
+            "sidebarTitle": "POST /draws/{drawId}/leave",
+            "title": "POST /draws/{drawId}/leave"
+          }
+        }
       }
     },
     "/draws/{drawId}/status": {
@@ -6918,9 +7057,6 @@
                               "format": "date-time",
                               "type": "string"
                             },
-                            "fingerprint": {
-                              "type": "string"
-                            },
                             "selectedProductId": {
                               "type": "string"
                             },
@@ -6950,9 +7086,6 @@
                             },
                             "expiresAt": {
                               "format": "date-time",
-                              "type": "string"
-                            },
-                            "fingerprint": {
                               "type": "string"
                             },
                             "status": {
@@ -7125,7 +7258,14 @@
         },
         "tags": [
           "Draws"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/consumer-draws-by-draw-id-status/get",
+          "metadata": {
+            "sidebarTitle": "GET /draws/{drawId}/status",
+            "title": "GET /draws/{drawId}/status"
+          }
+        }
       }
     },
     "/draws/{drawId}/validate": {
@@ -7305,7 +7445,14 @@
         },
         "tags": [
           "Draws"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/consumer-draws-by-draw-id-validate/post",
+          "metadata": {
+            "sidebarTitle": "POST /draws/{drawId}/validate",
+            "title": "POST /draws/{drawId}/validate"
+          }
+        }
       }
     },
     "/experiences/{experienceId}": {
@@ -8861,10 +9008,6 @@
                                             }
                                           ]
                                         },
-                                        "encryptionSeed": {
-                                          "minLength": 1,
-                                          "type": "string"
-                                        },
                                         "id": {
                                           "format": "uuid",
                                           "type": "string"
@@ -8951,8 +9094,7 @@
                                       },
                                       "required": [
                                         "id",
-                                        "timeZone",
-                                        "encryptionSeed"
+                                        "timeZone"
                                       ],
                                       "type": "object"
                                     },
@@ -9010,10 +9152,6 @@
                                           ]
                                         },
                                         "currencyCode": {
-                                          "minLength": 1,
-                                          "type": "string"
-                                        },
-                                        "encryptionSeed": {
                                           "minLength": 1,
                                           "type": "string"
                                         },
@@ -9152,7 +9290,6 @@
                                       "required": [
                                         "id",
                                         "timeZone",
-                                        "encryptionSeed",
                                         "settleAt",
                                         "currencyCode"
                                       ],
@@ -9766,7 +9903,14 @@
         },
         "tags": [
           "Experiences"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/consumer-experiences-by-experience-id/get",
+          "metadata": {
+            "sidebarTitle": "GET /experiences/{experienceId}",
+            "title": "GET /experiences/{experienceId}"
+          }
+        }
       }
     },
     "/experiences/{experienceId}/enter": {
@@ -11327,10 +11471,6 @@
                                                 }
                                               ]
                                             },
-                                            "encryptionSeed": {
-                                              "minLength": 1,
-                                              "type": "string"
-                                            },
                                             "id": {
                                               "format": "uuid",
                                               "type": "string"
@@ -11417,8 +11557,7 @@
                                           },
                                           "required": [
                                             "id",
-                                            "timeZone",
-                                            "encryptionSeed"
+                                            "timeZone"
                                           ],
                                           "type": "object"
                                         },
@@ -11476,10 +11615,6 @@
                                               ]
                                             },
                                             "currencyCode": {
-                                              "minLength": 1,
-                                              "type": "string"
-                                            },
-                                            "encryptionSeed": {
                                               "minLength": 1,
                                               "type": "string"
                                             },
@@ -11618,7 +11753,6 @@
                                           "required": [
                                             "id",
                                             "timeZone",
-                                            "encryptionSeed",
                                             "settleAt",
                                             "currencyCode"
                                           ],
@@ -12243,7 +12377,14 @@
         },
         "tags": [
           "Experiences"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/consumer-experiences-by-experience-id-enter/post",
+          "metadata": {
+            "sidebarTitle": "POST /experiences/{experienceId}/enter",
+            "title": "POST /experiences/{experienceId}/enter"
+          }
+        }
       }
     },
     "/experiences/{experienceId}/leave": {
@@ -12410,7 +12551,14 @@
         },
         "tags": [
           "Experiences"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/consumer-experiences-by-experience-id-leave/delete",
+          "metadata": {
+            "sidebarTitle": "DELETE /experiences/{experienceId}/leave",
+            "title": "DELETE /experiences/{experienceId}/leave"
+          }
+        }
       }
     },
     "/experiences/{experienceId}/route": {
@@ -12720,29 +12868,6 @@
                           },
                           "type": "array"
                         },
-                        "riskAssessment": {
-                          "properties": {
-                            "blocked": {
-                              "type": "boolean"
-                            },
-                            "requiresChallenge": {
-                              "type": "boolean"
-                            },
-                            "riskLevel": {
-                              "enum": [
-                                "LOW",
-                                "MEDIUM",
-                                "HIGH"
-                              ]
-                            }
-                          },
-                          "required": [
-                            "riskLevel",
-                            "requiresChallenge",
-                            "blocked"
-                          ],
-                          "type": "object"
-                        },
                         "schemaVersion": {
                           "const": 1
                         },
@@ -13030,29 +13155,6 @@
                             "type": "object"
                           },
                           "type": "array"
-                        },
-                        "riskAssessment": {
-                          "properties": {
-                            "blocked": {
-                              "type": "boolean"
-                            },
-                            "requiresChallenge": {
-                              "type": "boolean"
-                            },
-                            "riskLevel": {
-                              "enum": [
-                                "LOW",
-                                "MEDIUM",
-                                "HIGH"
-                              ]
-                            }
-                          },
-                          "required": [
-                            "riskLevel",
-                            "requiresChallenge",
-                            "blocked"
-                          ],
-                          "type": "object"
                         },
                         "schemaVersion": {
                           "const": 1
@@ -13342,29 +13444,6 @@
                           },
                           "type": "array"
                         },
-                        "riskAssessment": {
-                          "properties": {
-                            "blocked": {
-                              "type": "boolean"
-                            },
-                            "requiresChallenge": {
-                              "type": "boolean"
-                            },
-                            "riskLevel": {
-                              "enum": [
-                                "LOW",
-                                "MEDIUM",
-                                "HIGH"
-                              ]
-                            }
-                          },
-                          "required": [
-                            "riskLevel",
-                            "requiresChallenge",
-                            "blocked"
-                          ],
-                          "type": "object"
-                        },
                         "schemaVersion": {
                           "const": 1
                         }
@@ -13515,7 +13594,14 @@
         },
         "tags": [
           "Experiences"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/consumer-experiences-by-experience-id-route/post",
+          "metadata": {
+            "sidebarTitle": "POST /experiences/{experienceId}/route",
+            "title": "POST /experiences/{experienceId}/route"
+          }
+        }
       }
     },
     "/loyalty/balance": {
@@ -13676,7 +13762,14 @@
         },
         "tags": [
           "Loyalty"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/consumer-loyalty-balance/get",
+          "metadata": {
+            "sidebarTitle": "GET /loyalty/balance",
+            "title": "GET /loyalty/balance"
+          }
+        }
       }
     },
     "/loyalty/expirations": {
@@ -13850,7 +13943,14 @@
         },
         "tags": [
           "Loyalty"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/consumer-loyalty-expirations/get",
+          "metadata": {
+            "sidebarTitle": "GET /loyalty/expirations",
+            "title": "GET /loyalty/expirations"
+          }
+        }
       }
     },
     "/loyalty/history": {
@@ -14077,7 +14177,14 @@
         },
         "tags": [
           "Loyalty"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/consumer-loyalty-history/get",
+          "metadata": {
+            "sidebarTitle": "GET /loyalty/history",
+            "title": "GET /loyalty/history"
+          }
+        }
       }
     },
     "/organizations/{organizationId}/settings": {
@@ -14288,7 +14395,14 @@
         },
         "tags": [
           "Organizations"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/consumer-organizations-by-organization-id-settings/get",
+          "metadata": {
+            "sidebarTitle": "GET /organizations/{organizationId}/settings",
+            "title": "GET /organizations/{organizationId}/settings"
+          }
+        }
       }
     },
     "/queues/{queueId}": {
@@ -14366,10 +14480,6 @@
                       "type": "string"
                     },
                     "createdBy": {
-                      "type": "string"
-                    },
-                    "encryptionSeed": {
-                      "minLength": 1,
                       "type": "string"
                     },
                     "id": {
@@ -14480,7 +14590,6 @@
                     "sequenceId",
                     "name",
                     "timeZone",
-                    "encryptionSeed",
                     "admitRate"
                   ],
                   "type": "object"
@@ -14620,7 +14729,14 @@
         },
         "tags": [
           "Queues"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/consumer-queues-by-queue-id/get",
+          "metadata": {
+            "sidebarTitle": "GET /queues/{queueId}",
+            "title": "GET /queues/{queueId}"
+          }
+        }
       }
     },
     "/queues/{queueId}/admit": {
@@ -14771,9 +14887,6 @@
                               "format": "date-time",
                               "type": "string"
                             },
-                            "fingerprint": {
-                              "type": "string"
-                            },
                             "position": {
                               "anyOf": [
                                 {
@@ -14809,9 +14922,6 @@
                                   "type": "null"
                                 }
                               ]
-                            },
-                            "fingerprint": {
-                              "type": "string"
                             },
                             "position": {
                               "anyOf": [
@@ -15008,7 +15118,14 @@
         },
         "tags": [
           "Queues"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/consumer-queues-by-queue-id-admit/post",
+          "metadata": {
+            "sidebarTitle": "POST /queues/{queueId}/admit",
+            "title": "POST /queues/{queueId}/admit"
+          }
+        }
       }
     },
     "/queues/{queueId}/complete": {
@@ -15159,9 +15276,6 @@
                               "format": "date-time",
                               "type": "string"
                             },
-                            "fingerprint": {
-                              "type": "string"
-                            },
                             "position": {
                               "anyOf": [
                                 {
@@ -15197,9 +15311,6 @@
                                   "type": "null"
                                 }
                               ]
-                            },
-                            "fingerprint": {
-                              "type": "string"
                             },
                             "position": {
                               "anyOf": [
@@ -15396,7 +15507,14 @@
         },
         "tags": [
           "Queues"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/consumer-queues-by-queue-id-complete/post",
+          "metadata": {
+            "sidebarTitle": "POST /queues/{queueId}/complete",
+            "title": "POST /queues/{queueId}/complete"
+          }
+        }
       }
     },
     "/queues/{queueId}/deny": {
@@ -15558,9 +15676,6 @@
                               "format": "date-time",
                               "type": "string"
                             },
-                            "fingerprint": {
-                              "type": "string"
-                            },
                             "position": {
                               "anyOf": [
                                 {
@@ -15596,9 +15711,6 @@
                                   "type": "null"
                                 }
                               ]
-                            },
-                            "fingerprint": {
-                              "type": "string"
                             },
                             "position": {
                               "anyOf": [
@@ -15795,7 +15907,14 @@
         },
         "tags": [
           "Queues"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/consumer-queues-by-queue-id-deny/post",
+          "metadata": {
+            "sidebarTitle": "POST /queues/{queueId}/deny",
+            "title": "POST /queues/{queueId}/deny"
+          }
+        }
       }
     },
     "/queues/{queueId}/enter": {
@@ -15929,9 +16048,6 @@
                               "format": "date-time",
                               "type": "string"
                             },
-                            "fingerprint": {
-                              "type": "string"
-                            },
                             "position": {
                               "anyOf": [
                                 {
@@ -15967,9 +16083,6 @@
                                   "type": "null"
                                 }
                               ]
-                            },
-                            "fingerprint": {
-                              "type": "string"
                             },
                             "position": {
                               "anyOf": [
@@ -16166,7 +16279,14 @@
         },
         "tags": [
           "Queues"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/consumer-queues-by-queue-id-enter/post",
+          "metadata": {
+            "sidebarTitle": "POST /queues/{queueId}/enter",
+            "title": "POST /queues/{queueId}/enter"
+          }
+        }
       }
     },
     "/queues/{queueId}/leave": {
@@ -16300,9 +16420,6 @@
                               "format": "date-time",
                               "type": "string"
                             },
-                            "fingerprint": {
-                              "type": "string"
-                            },
                             "position": {
                               "anyOf": [
                                 {
@@ -16338,9 +16455,6 @@
                                   "type": "null"
                                 }
                               ]
-                            },
-                            "fingerprint": {
-                              "type": "string"
                             },
                             "position": {
                               "anyOf": [
@@ -16537,7 +16651,14 @@
         },
         "tags": [
           "Queues"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/consumer-queues-by-queue-id-leave/post",
+          "metadata": {
+            "sidebarTitle": "POST /queues/{queueId}/leave",
+            "title": "POST /queues/{queueId}/leave"
+          }
+        }
       }
     },
     "/queues/{queueId}/status": {
@@ -16671,9 +16792,6 @@
                               "format": "date-time",
                               "type": "string"
                             },
-                            "fingerprint": {
-                              "type": "string"
-                            },
                             "position": {
                               "anyOf": [
                                 {
@@ -16709,9 +16827,6 @@
                                   "type": "null"
                                 }
                               ]
-                            },
-                            "fingerprint": {
-                              "type": "string"
                             },
                             "position": {
                               "anyOf": [
@@ -16908,7 +17023,14 @@
         },
         "tags": [
           "Queues"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/consumer-queues-by-queue-id-status/get",
+          "metadata": {
+            "sidebarTitle": "GET /queues/{queueId}/status",
+            "title": "GET /queues/{queueId}/status"
+          }
+        }
       }
     },
     "/queues/{queueId}/validate": {
@@ -17088,7 +17210,14 @@
         },
         "tags": [
           "Queues"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/consumer-queues-by-queue-id-validate/post",
+          "metadata": {
+            "sidebarTitle": "POST /queues/{queueId}/validate",
+            "title": "POST /queues/{queueId}/validate"
+          }
+        }
       }
     },
     "/timed-releases/{timedReleaseId}": {
@@ -17333,7 +17462,14 @@
         },
         "tags": [
           "Timed Releases"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/consumer-timed-releases-by-timed-release-id/get",
+          "metadata": {
+            "sidebarTitle": "GET /timed-releases/{timedReleaseId}",
+            "title": "GET /timed-releases/{timedReleaseId}"
+          }
+        }
       }
     },
     "/timed-releases/{timedReleaseId}/complete": {
@@ -17503,7 +17639,14 @@
         },
         "tags": [
           "Timed Releases"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/consumer-timed-releases-by-timed-release-id-complete/post",
+          "metadata": {
+            "sidebarTitle": "POST /timed-releases/{timedReleaseId}/complete",
+            "title": "POST /timed-releases/{timedReleaseId}/complete"
+          }
+        }
       }
     },
     "/timed-releases/{timedReleaseId}/enter": {
@@ -17700,7 +17843,14 @@
         },
         "tags": [
           "Timed Releases"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/consumer-timed-releases-by-timed-release-id-enter/post",
+          "metadata": {
+            "sidebarTitle": "POST /timed-releases/{timedReleaseId}/enter",
+            "title": "POST /timed-releases/{timedReleaseId}/enter"
+          }
+        }
       }
     },
     "/timed-releases/{timedReleaseId}/leave": {
@@ -17870,7 +18020,14 @@
         },
         "tags": [
           "Timed Releases"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/consumer-timed-releases-by-timed-release-id-leave/post",
+          "metadata": {
+            "sidebarTitle": "POST /timed-releases/{timedReleaseId}/leave",
+            "title": "POST /timed-releases/{timedReleaseId}/leave"
+          }
+        }
       }
     },
     "/timed-releases/{timedReleaseId}/status": {
@@ -18052,7 +18209,14 @@
         },
         "tags": [
           "Timed Releases"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/consumer-timed-releases-by-timed-release-id-status/get",
+          "metadata": {
+            "sidebarTitle": "GET /timed-releases/{timedReleaseId}/status",
+            "title": "GET /timed-releases/{timedReleaseId}/status"
+          }
+        }
       }
     },
     "/waitlists/{waitlistId}/enter": {
@@ -18235,7 +18399,14 @@
         },
         "tags": [
           "Waitlists"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/consumer-waitlists-by-waitlist-id-enter/post",
+          "metadata": {
+            "sidebarTitle": "POST /waitlists/{waitlistId}/enter",
+            "title": "POST /waitlists/{waitlistId}/enter"
+          }
+        }
       }
     },
     "/waitlists/{waitlistId}/leave": {
@@ -18402,7 +18573,14 @@
         },
         "tags": [
           "Waitlists"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/consumer-waitlists-by-waitlist-id-leave/delete",
+          "metadata": {
+            "sidebarTitle": "DELETE /waitlists/{waitlistId}/leave",
+            "title": "DELETE /waitlists/{waitlistId}/leave"
+          }
+        }
       }
     },
     "/waitlists/{waitlistId}/status": {
@@ -18579,18 +18757,25 @@
         },
         "tags": [
           "Waitlists"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/consumer-waitlists-by-waitlist-id-status/get",
+          "metadata": {
+            "sidebarTitle": "GET /waitlists/{waitlistId}/status",
+            "title": "GET /waitlists/{waitlistId}/status"
+          }
+        }
       }
     }
   },
   "servers": [
     {
-      "description": "Local development",
-      "url": "http://localhost:4802"
-    },
-    {
       "description": "Production",
       "url": "https://consumer.fanfare.io/api"
+    },
+    {
+      "description": "Local development",
+      "url": "http://localhost:4802"
     }
   ]
 }

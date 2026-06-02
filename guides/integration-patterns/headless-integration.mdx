@@ -2,9 +2,6 @@
 title: Headless Integration
 description: Build custom UI from the core SDK journey view.
 ---
-
-# Headless Integration
-
 Use a headless integration when your application owns the full UI and Fanfare supplies the public journey contract. This is the right path for custom storefronts, non-React frameworks, canvas experiences, or any app where the default widget is not the product experience you want to show.
 
 Headless integrations should render from `JourneyView`, call only actions exposed by the current view, and hand admitted customers to your trusted checkout flow without exposing grants in URLs, logs, or third-party analytics.
@@ -25,7 +22,6 @@ import initFanfare from "@fanfare-io/fanfare-sdk-core";
 const sdk = await initFanfare({
   organizationId: "org_123",
   publishableKey: "pk_live_123",
-  environment: "production",
 });
 
 const journey = sdk.journeys.get("exp_123");

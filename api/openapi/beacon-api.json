@@ -1,5 +1,14 @@
 {
-  "components": {},
+  "components": {
+    "securitySchemes": {
+      "BeaconPublishableKeyAuth": {
+        "description": "Browser-safe publishable key for client-side event collection.",
+        "in": "header",
+        "name": "X-Publishable-Key",
+        "type": "apiKey"
+      }
+    }
+  },
   "info": {
     "description": "Beacon API for Fanfare",
     "title": "Fanfare Beacon API",
@@ -47,9 +56,6 @@
                       },
                       "eventProperties": {
                         "properties": {
-                          "botScore": {
-                            "type": "number"
-                          },
                           "geoLat": {
                             "type": "number"
                           },
@@ -212,9 +218,6 @@
                       },
                       "eventProperties": {
                         "properties": {
-                          "botScore": {
-                            "type": "number"
-                          },
                           "geoLat": {
                             "type": "number"
                           },
@@ -383,9 +386,6 @@
                       },
                       "eventProperties": {
                         "properties": {
-                          "botScore": {
-                            "type": "number"
-                          },
                           "geoLat": {
                             "type": "number"
                           },
@@ -554,9 +554,6 @@
                       },
                       "eventProperties": {
                         "properties": {
-                          "botScore": {
-                            "type": "number"
-                          },
                           "brand": {
                             "type": "string"
                           },
@@ -740,9 +737,6 @@
                       },
                       "eventProperties": {
                         "properties": {
-                          "botScore": {
-                            "type": "number"
-                          },
                           "cartId": {
                             "type": "string"
                           },
@@ -929,9 +923,6 @@
                       },
                       "eventProperties": {
                         "properties": {
-                          "botScore": {
-                            "type": "number"
-                          },
                           "cartId": {
                             "type": "string"
                           },
@@ -1118,9 +1109,6 @@
                       },
                       "eventProperties": {
                         "properties": {
-                          "botScore": {
-                            "type": "number"
-                          },
                           "cartId": {
                             "type": "string"
                           },
@@ -1292,9 +1280,6 @@
                       },
                       "eventProperties": {
                         "properties": {
-                          "botScore": {
-                            "type": "number"
-                          },
                           "cartId": {
                             "type": "string"
                           },
@@ -1469,9 +1454,6 @@
                       },
                       "eventProperties": {
                         "properties": {
-                          "botScore": {
-                            "type": "number"
-                          },
                           "couponCodeUsed": {
                             "type": "string"
                           },
@@ -1688,9 +1670,6 @@
                       },
                       "eventProperties": {
                         "properties": {
-                          "botScore": {
-                            "type": "number"
-                          },
                           "geoLat": {
                             "type": "number"
                           },
@@ -1856,9 +1835,6 @@
                       },
                       "eventProperties": {
                         "properties": {
-                          "botScore": {
-                            "type": "number"
-                          },
                           "experienceId": {
                             "type": "string"
                           },
@@ -2030,9 +2006,6 @@
                       },
                       "eventProperties": {
                         "properties": {
-                          "botScore": {
-                            "type": "number"
-                          },
                           "channel": {
                             "enum": [
                               "email",
@@ -2211,9 +2184,6 @@
                       },
                       "eventProperties": {
                         "properties": {
-                          "botScore": {
-                            "type": "number"
-                          },
                           "channel": {
                             "enum": [
                               "email",
@@ -2392,9 +2362,6 @@
                       },
                       "eventProperties": {
                         "properties": {
-                          "botScore": {
-                            "type": "number"
-                          },
                           "bounceType": {
                             "type": "string"
                           },
@@ -2576,9 +2543,6 @@
                       },
                       "eventProperties": {
                         "properties": {
-                          "botScore": {
-                            "type": "number"
-                          },
                           "channel": {
                             "enum": [
                               "email",
@@ -2760,9 +2724,6 @@
                       },
                       "eventProperties": {
                         "properties": {
-                          "botScore": {
-                            "type": "number"
-                          },
                           "channel": {
                             "enum": [
                               "email",
@@ -2941,9 +2902,6 @@
                       },
                       "eventProperties": {
                         "properties": {
-                          "botScore": {
-                            "type": "number"
-                          },
                           "channel": {
                             "enum": [
                               "email",
@@ -3122,9 +3080,6 @@
                       },
                       "eventProperties": {
                         "properties": {
-                          "botScore": {
-                            "type": "number"
-                          },
                           "channel": {
                             "enum": [
                               "email",
@@ -3303,9 +3258,6 @@
                       },
                       "eventProperties": {
                         "properties": {
-                          "botScore": {
-                            "type": "number"
-                          },
                           "channel": {
                             "enum": [
                               "email",
@@ -3603,7 +3555,14 @@
         },
         "tags": [
           "Events"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/beacon-events/post",
+          "metadata": {
+            "sidebarTitle": "POST /events",
+            "title": "POST /events"
+          }
+        }
       }
     },
     "/events/batch": {
@@ -3647,9 +3606,6 @@
                         },
                         "eventProperties": {
                           "properties": {
-                            "botScore": {
-                              "type": "number"
-                            },
                             "geoLat": {
                               "type": "number"
                             },
@@ -3812,9 +3768,6 @@
                         },
                         "eventProperties": {
                           "properties": {
-                            "botScore": {
-                              "type": "number"
-                            },
                             "geoLat": {
                               "type": "number"
                             },
@@ -3983,9 +3936,6 @@
                         },
                         "eventProperties": {
                           "properties": {
-                            "botScore": {
-                              "type": "number"
-                            },
                             "geoLat": {
                               "type": "number"
                             },
@@ -4154,9 +4104,6 @@
                         },
                         "eventProperties": {
                           "properties": {
-                            "botScore": {
-                              "type": "number"
-                            },
                             "brand": {
                               "type": "string"
                             },
@@ -4340,9 +4287,6 @@
                         },
                         "eventProperties": {
                           "properties": {
-                            "botScore": {
-                              "type": "number"
-                            },
                             "cartId": {
                               "type": "string"
                             },
@@ -4529,9 +4473,6 @@
                         },
                         "eventProperties": {
                           "properties": {
-                            "botScore": {
-                              "type": "number"
-                            },
                             "cartId": {
                               "type": "string"
                             },
@@ -4718,9 +4659,6 @@
                         },
                         "eventProperties": {
                           "properties": {
-                            "botScore": {
-                              "type": "number"
-                            },
                             "cartId": {
                               "type": "string"
                             },
@@ -4892,9 +4830,6 @@
                         },
                         "eventProperties": {
                           "properties": {
-                            "botScore": {
-                              "type": "number"
-                            },
                             "cartId": {
                               "type": "string"
                             },
@@ -5069,9 +5004,6 @@
                         },
                         "eventProperties": {
                           "properties": {
-                            "botScore": {
-                              "type": "number"
-                            },
                             "couponCodeUsed": {
                               "type": "string"
                             },
@@ -5288,9 +5220,6 @@
                         },
                         "eventProperties": {
                           "properties": {
-                            "botScore": {
-                              "type": "number"
-                            },
                             "geoLat": {
                               "type": "number"
                             },
@@ -5456,9 +5385,6 @@
                         },
                         "eventProperties": {
                           "properties": {
-                            "botScore": {
-                              "type": "number"
-                            },
                             "experienceId": {
                               "type": "string"
                             },
@@ -5630,9 +5556,6 @@
                         },
                         "eventProperties": {
                           "properties": {
-                            "botScore": {
-                              "type": "number"
-                            },
                             "channel": {
                               "enum": [
                                 "email",
@@ -5811,9 +5734,6 @@
                         },
                         "eventProperties": {
                           "properties": {
-                            "botScore": {
-                              "type": "number"
-                            },
                             "channel": {
                               "enum": [
                                 "email",
@@ -5992,9 +5912,6 @@
                         },
                         "eventProperties": {
                           "properties": {
-                            "botScore": {
-                              "type": "number"
-                            },
                             "bounceType": {
                               "type": "string"
                             },
@@ -6176,9 +6093,6 @@
                         },
                         "eventProperties": {
                           "properties": {
-                            "botScore": {
-                              "type": "number"
-                            },
                             "channel": {
                               "enum": [
                                 "email",
@@ -6360,9 +6274,6 @@
                         },
                         "eventProperties": {
                           "properties": {
-                            "botScore": {
-                              "type": "number"
-                            },
                             "channel": {
                               "enum": [
                                 "email",
@@ -6541,9 +6452,6 @@
                         },
                         "eventProperties": {
                           "properties": {
-                            "botScore": {
-                              "type": "number"
-                            },
                             "channel": {
                               "enum": [
                                 "email",
@@ -6722,9 +6630,6 @@
                         },
                         "eventProperties": {
                           "properties": {
-                            "botScore": {
-                              "type": "number"
-                            },
                             "channel": {
                               "enum": [
                                 "email",
@@ -6903,9 +6808,6 @@
                         },
                         "eventProperties": {
                           "properties": {
-                            "botScore": {
-                              "type": "number"
-                            },
                             "channel": {
                               "enum": [
                                 "email",
@@ -7205,18 +7107,30 @@
         },
         "tags": [
           "Events"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/beacon-events-batch/post",
+          "metadata": {
+            "sidebarTitle": "POST /events/batch",
+            "title": "POST /events/batch"
+          }
+        }
       }
     }
   },
-  "servers": [
+  "security": [
     {
-      "description": "Local development",
-      "url": "http://localhost:4803"
-    },
+      "BeaconPublishableKeyAuth": []
+    }
+  ],
+  "servers": [
     {
       "description": "Production",
       "url": "https://beacon.fanfare.io/api"
+    },
+    {
+      "description": "Local development",
+      "url": "http://localhost:4803"
     }
   ]
 }

@@ -2,9 +2,6 @@
 title: Real-Time Updates
 description: Subscribe to public journey updates and coordinate app-owned live data.
 ---
-
-# Real-Time Updates
-
 Fanfare integrations receive live journey changes through SDK stores and component hooks. Your app should render those public updates directly, then layer in app-owned product, inventory, or checkout updates from your own systems when needed.
 
 Do not infer private routing mechanics from update timing. Treat each emitted view as the current public contract for UI and actions.
@@ -56,7 +53,6 @@ import initFanfare from "@fanfare-io/fanfare-sdk-core";
 const sdk = await initFanfare({
   organizationId: "org_123",
   publishableKey: "pk_live_123",
-  environment: "production",
 });
 
 const journey = sdk.journeys.get("exp_123");

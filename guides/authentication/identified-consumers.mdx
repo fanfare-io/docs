@@ -642,7 +642,7 @@ interface AuthenticatedSession {
   email?: string; // If authenticated with email
   phone?: string; // If authenticated with phone (E.164 format)
   expiresAt: string; // ISO 8601 timestamp
-  deviceFingerprint?: string;
+  sessionSignals?: Record<string, unknown>;
 }
 ```
 

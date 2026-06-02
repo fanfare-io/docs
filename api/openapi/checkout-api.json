@@ -1,5 +1,13 @@
 {
-  "components": {},
+  "components": {
+    "securitySchemes": {
+      "CheckoutSecretKeyAuth": {
+        "description": "Fanfare secret key. Keep secret credentials on your server.",
+        "scheme": "bearer",
+        "type": "http"
+      }
+    }
+  },
   "info": {
     "description": "Checkout API for Fanfare",
     "title": "Fanfare Checkout API",
@@ -210,7 +218,14 @@
         },
         "tags": [
           "Checkout"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/checkout-checkout/post",
+          "metadata": {
+            "sidebarTitle": "POST /checkout",
+            "title": "POST /checkout"
+          }
+        }
       }
     },
     "/payments/cancellations": {
@@ -393,7 +408,14 @@
         },
         "tags": [
           "Payments"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/checkout-payments-cancellations/post",
+          "metadata": {
+            "sidebarTitle": "POST /payments/cancellations",
+            "title": "POST /payments/cancellations"
+          }
+        }
       }
     },
     "/payments/refunds": {
@@ -587,18 +609,30 @@
         },
         "tags": [
           "Payments"
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/checkout-payments-refunds/post",
+          "metadata": {
+            "sidebarTitle": "POST /payments/refunds",
+            "title": "POST /payments/refunds"
+          }
+        }
       }
     }
   },
-  "servers": [
+  "security": [
     {
-      "description": "Local development",
-      "url": "http://localhost:4805"
-    },
+      "CheckoutSecretKeyAuth": []
+    }
+  ],
+  "servers": [
     {
       "description": "Production",
       "url": "https://checkout.fanfare.io/api"
+    },
+    {
+      "description": "Local development",
+      "url": "http://localhost:4805"
     }
   ]
 }

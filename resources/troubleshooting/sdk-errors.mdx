@@ -2,9 +2,6 @@
 title: SDK Error Reference
 description: Complete reference of Fanfare SDK error codes and their resolutions.
 ---
-
-# SDK Error Reference
-
 This reference documents all error codes returned by the Fanfare SDK, their meanings, and recommended resolutions.
 
 ## Error Structure
@@ -27,7 +24,7 @@ interface FanfareError {
 ## Handling Errors
 
 ```typescript
-import { FanfareError, ErrorCodes } from "@fanfare/sdk";
+import { FanfareError, ErrorCodes } from "@fanfare-io/fanfare-sdk-core";
 
 try {
   await client.experiences.enter(experienceId);
@@ -505,60 +502,17 @@ await client.experiences.enter(experienceId);
 
 **Retryable**: No
 
-## Fingerprint Errors
+## Session Integrity Errors
 
-### FP001 - FINGERPRINT_REQUIRED
+Some actions require a current, valid SDK session before the consumer can continue.
 
-**Description**: Device fingerprint is required but not provided.
-
-**HTTP Status**: 400
-
-**Resolution**: Ensure the SDK is properly initialized with fingerprinting enabled.
-
-```typescript
-const client = new FanfareClient({
-  publishableKey: "pk_live_...",
-  // Fingerprinting is enabled by default
-});
-```
-
-**User Message**: "Device verification is required for this action. Please ensure your browser is up to date and try again."
-
----
-
-### FP002 - DEVICE_MISMATCH
-
-**Description**: Current device fingerprint doesn't match the original device.
+**Description**: Session integrity validation failed.
 
 **HTTP Status**: 403
 
-**Common Causes**:
+**Resolution**: Confirm that the SDK is initialized once, the consumer session is current, and the request is retried from the active browser context.
 
-- Accessing from different device
-- Browser profile changed
-- Significant browser configuration changes
-
-**Resolution**: This is a security feature. User must complete the action from the original device.
-
-**User Message**: "This action must be completed from the same device that was originally used."
-
----
-
-### FP003 - FINGERPRINT_INVALID
-
-**Description**: Fingerprint format is invalid.
-
-**HTTP Status**: 400
-
-**Common Causes**:
-
-- SDK version mismatch
-- Browser fingerprinting blocked
-- Corrupted fingerprint data
-
-**Resolution**: Clear browser cache and refresh the page.
-
-**User Message**: "Device verification failed. Please refresh the page and try again."
+**User Message**: "We could not complete this action. Please refresh the page and try again."
 
 ## Best Practices
 

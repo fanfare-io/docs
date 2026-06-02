@@ -2,9 +2,6 @@
 title: Security Overview
 description: Understanding Fanfare's security architecture and practices.
 ---
-
-# Security Overview
-
 Fanfare is built with security as a core principle. This document outlines our security architecture and the measures we take to protect your data and your consumers.
 
 ## Security Architecture
@@ -77,34 +74,24 @@ Consumer sessions include multiple security layers:
 
 - **JWT tokens** with short expiration
 - **Session validation** against server state
-- **Device binding** via fingerprinting
+- **Session integrity checks** handled by Fanfare
 - **Automatic refresh** with secure token rotation
 
 ## Data Protection
 
 ### What We Store
 
-| Data Type       | Storage    | Encryption | Retention        |
-| --------------- | ---------- | ---------- | ---------------- |
-| Consumer email  | Encrypted  | AES-256    | Account lifetime |
-| Queue positions | Cache only | In-memory  | Session duration |
-| Access tokens   | Hashed     | bcrypt     | Until expiration |
-| Audit logs      | Encrypted  | AES-256    | 90 days          |
+Fanfare stores the data needed to operate experiences, authenticate consumers, and support customer reporting. Sensitive values are protected according to their data type and access path.
 
 ### What We Don't Store
 
-- Full payment card numbers (handled by payment processors)
-- Consumer passwords (we use passwordless auth)
-- Raw IP addresses (hashed for rate limiting)
-- Detailed device specifications (only fingerprint hash)
+- Full payment card numbers, which are handled by payment processors
+- Consumer passwords for passwordless authentication flows
+- Raw device specifications in public integration payloads
 
 ### Data Isolation
 
-Each organization's data is fully isolated:
-
-- **Database isolation**: Partitioned tables by organization
-- **Cache isolation**: Namespaced keys per organization
-- **API isolation**: Organization context required for all requests
+Each organization's data is isolated by organization context. Public APIs only return resources that belong to the authenticated organization or consumer session.
 
 ## Compliance
 
@@ -126,15 +113,7 @@ Each organization's data is fully isolated:
 
 ### Rate Limiting
 
-All API endpoints are rate-limited to prevent abuse:
-
-```http
-X-RateLimit-Limit: 100
-X-RateLimit-Remaining: 95
-Retry-After: 60
-```
-
-Rate limits vary by endpoint and authentication level.
+API endpoints are rate-limited to help protect platform availability and fairness. When a request is limited, the API returns a standard rate-limit response with retry guidance where available.
 
 ### Request Signing
 

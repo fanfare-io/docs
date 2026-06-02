@@ -2,9 +2,6 @@
 title: API Overview
 description: Introduction to the Fanfare REST API architecture, base URLs, and versioning
 ---
-
-# API Overview
-
 The Fanfare API provides programmatic access to the Fanfare platform, enabling you to build integrations for virtual waiting rooms, queues, auctions, draws, and appointment scheduling.
 
 ## Architecture
@@ -13,18 +10,18 @@ Fanfare exposes two primary APIs:
 
 | API              | Purpose                                                                     | Base URL                             |
 | ---------------- | --------------------------------------------------------------------------- | ------------------------------------ |
-| **Consumer API** | End-user facing operations (joining queues, placing bids, checking status)  | `https://consumer.fanfare.io/api/v1` |
-| **Admin API**    | Management operations (creating experiences, managing audiences, analytics) | `https://admin.fanfare.io/api/v1`    |
+| **Consumer API** | End-user facing operations (joining queues, placing bids, checking status)  | `https://consumer.fanfare.io/api` |
+| **Admin API**    | Management operations (creating experiences, managing audiences, analytics) | `https://admin.fanfare.io/api`    |
 
 Both APIs follow REST conventions and return JSON responses.
 
 ## API Versioning
 
-The current API version is **v1**. The version is included in the URL path:
+The current public API surface is **v1**. Public endpoints are served under the `/api` base path:
 
 ```
-https://consumer.fanfare.io/api/v1/experiences/{experienceId}
-https://admin.fanfare.io/api/v1/experiences
+https://consumer.fanfare.io/api/experiences/{experienceId}
+https://admin.fanfare.io/api/experiences
 ```
 
 ### Version Lifecycle
@@ -162,13 +159,13 @@ Example: `01HXYZ123456789ABCDEFGHIJ`
 
 Official SDKs are available for common platforms:
 
-- **JavaScript/TypeScript**: `@fanfare/sdk-core`, `@fanfare/sdk-react`
-- **SolidJS**: `@fanfare/sdk-solid`
+- **JavaScript/TypeScript**: `@fanfare-io/fanfare-sdk-core`, `@fanfare-io/fanfare-sdk-react`
+- **SolidJS**: `@fanfare-io/fanfare-sdk-solid`
 
 Install via npm:
 
 ```bash
-npm install @fanfare/sdk-react
+npm install @fanfare-io/fanfare-sdk-react
 ```
 
 ## Next Steps

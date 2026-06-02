@@ -2,9 +2,6 @@
 title: Ensuring Fair Distribution
 description: Best practices for creating fair and equitable access to your products and experiences.
 ---
-
-# Ensuring Fair Distribution
-
 Fairness is critical for maintaining consumer trust during high-demand events. This guide covers strategies for equitable distribution and common pitfalls to avoid.
 
 ## Why Fairness Matters
@@ -131,34 +128,31 @@ const orderLimits = {
 
 ### Enforcement Strategies
 
-| Strategy           | Description                  | Strength |
-| ------------------ | ---------------------------- | -------- |
-| Account-based      | Limit per authenticated user | Medium   |
-| Device fingerprint | Limit per device             | High     |
-| Combined           | Account + device + behavior  | Highest  |
+| Strategy      | Description                            | Strength |
+| ------------- | -------------------------------------- | -------- |
+| Account-based | Limit per authenticated user           | Medium   |
+| Session-aware | Limit repeated participation patterns  | High     |
+| Combined      | Account + session + behavioral signals | Highest  |
 
-## Device Verification
+## Session Integrity
 
-Device fingerprinting helps ensure one person doesn't gain unfair advantage with multiple accounts.
+Session integrity checks help prevent one person from gaining unfair advantage with repeated or automated participation.
 
 ### How It Works
 
-The SDK collects device characteristics to create a unique fingerprint:
+The SDK includes integrity signals with participation requests. Your integration should initialize the SDK normally and avoid trying to construct or inspect those signals directly:
 
 ```typescript
-// Fingerprint is automatically included in SDK requests
 const client = new FanfareClient({
   publishableKey: "pk_live_...",
-  // Fingerprinting is enabled by default
 });
 ```
 
 ### Privacy Considerations
 
-- Fingerprints are hashed and cannot identify individuals
-- No personal data is collected
-- Users can clear fingerprints by clearing browser data
-- Compliant with GDPR and privacy regulations
+- Integrity signals are designed to support fair access without exposing enforcement details
+- Customer integrations should disclose data collection and consent requirements appropriate to their implementation
+- Do not publish detection thresholds, bypass behavior, or enforcement rules in consumer-facing experiences
 
 ## Access Codes for Fair Distribution
 
@@ -232,7 +226,7 @@ Track these metrics to ensure fair distribution:
 Watch for patterns that indicate unfair advantage:
 
 - Many accounts from same IP address
-- Identical device fingerprints across accounts
+- Repeated session integrity signals across accounts
 - Unusually fast form completion
 - Automated request patterns
 
@@ -251,8 +245,8 @@ Watch for patterns that indicate unfair advantage:
   Without purchase limits, determined resellers can sweep inventory. Always set reasonable per-person limits.
 </Accordion>
 
-<Accordion title="No device verification">
-  Without fingerprinting, a single person can create multiple accounts to improve their chances unfairly.
+<Accordion title="No session integrity checks">
+  Without session integrity checks, repeated or automated participation can be harder to identify.
 </Accordion>
 
   <Accordion title="Ignoring geographic fairness">

@@ -2,9 +2,6 @@
 title: Authentication
 description: API authentication methods for the Fanfare platform
 ---
-
-# Authentication
-
 Fanfare uses different authentication methods depending on the API and use case.
 
 ## API Keys
@@ -20,7 +17,7 @@ Every organization has two types of API keys:
 
 ```javascript
 // Browser SDK initialization
-import { Fanfare } from "@fanfare/sdk-react";
+import { Fanfare } from "@fanfare-io/fanfare-sdk-react";
 
 const fanfare = new Fanfare({
   publishableKey: "pk_live_xxxxxxxxxxxx",
@@ -36,7 +33,7 @@ const fanfare = new Fanfare({
 
 ```bash
 # Server-side API call
-curl -X POST https://admin.fanfare.io/api/v1/experiences \
+curl -X POST https://admin.fanfare.io/api/experiences \
   -H "Authorization: Bearer sk_live_xxxxxxxxxxxx" \
   -H "Content-Type: application/json" \
   -d '{"name": "Holiday Sale"}'
@@ -49,7 +46,7 @@ curl -X POST https://admin.fanfare.io/api/v1/experiences \
 For browser-based consumer interactions, use the publishable key in the `X-Publishable-Key` header:
 
 ```http
-GET /api/v1/experiences/exp_01HXYZ123456789 HTTP/1.1
+GET /api/experiences/exp_01HXYZ123456789 HTTP/1.1
 Host: consumer.fanfare.io
 X-Publishable-Key: pk_live_xxxxxxxxxxxx
 ```
@@ -59,7 +56,7 @@ X-Publishable-Key: pk_live_xxxxxxxxxxxx
 After a consumer authenticates (via OTP, external auth, etc.), use the access token:
 
 ```http
-POST /api/v1/queues/queue_01HXYZ123456789/enter HTTP/1.1
+POST /api/queues/queue_01HXYZ123456789/enter HTTP/1.1
 Host: consumer.fanfare.io
 X-Publishable-Key: pk_live_xxxxxxxxxxxx
 Authorization: Bearer eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9...
@@ -70,7 +67,7 @@ Authorization: Bearer eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9...
 For server-to-server calls to the Consumer API, use the secret key:
 
 ```http
-POST /api/v1/auth/external/authorize HTTP/1.1
+POST /api/auth/external/authorize HTTP/1.1
 Host: consumer.fanfare.io
 Authorization: Bearer sk_live_xxxxxxxxxxxx
 Content-Type: application/json
@@ -87,7 +84,7 @@ Content-Type: application/json
 All Admin API calls require the secret key:
 
 ```http
-POST /api/v1/experiences HTTP/1.1
+POST /api/experiences HTTP/1.1
 Host: admin.fanfare.io
 Authorization: Bearer sk_live_xxxxxxxxxxxx
 Content-Type: application/json
@@ -105,7 +102,7 @@ Content-Type: application/json
 Create an anonymous session for tracking purposes:
 
 ```http
-POST /api/v1/auth/guest HTTP/1.1
+POST /api/auth/guest HTTP/1.1
 Host: consumer.fanfare.io
 X-Publishable-Key: pk_live_xxxxxxxxxxxx
 ```
@@ -130,7 +127,7 @@ X-Publishable-Key: pk_live_xxxxxxxxxxxx
 Request a one-time password:
 
 ```http
-POST /api/v1/auth/otp/request HTTP/1.1
+POST /api/auth/otp/request HTTP/1.1
 Host: consumer.fanfare.io
 X-Publishable-Key: pk_live_xxxxxxxxxxxx
 Content-Type: application/json
@@ -143,7 +140,7 @@ Content-Type: application/json
 Verify the OTP:
 
 ```http
-POST /api/v1/auth/otp/verify HTTP/1.1
+POST /api/auth/otp/verify HTTP/1.1
 Host: consumer.fanfare.io
 X-Publishable-Key: pk_live_xxxxxxxxxxxx
 Content-Type: application/json
@@ -159,7 +156,7 @@ Content-Type: application/json
 Request an SMS code:
 
 ```http
-POST /api/v1/auth/otp/request HTTP/1.1
+POST /api/auth/otp/request HTTP/1.1
 Host: consumer.fanfare.io
 X-Publishable-Key: pk_live_xxxxxxxxxxxx
 Content-Type: application/json
@@ -173,7 +170,7 @@ Content-Type: application/json
 Verify the code:
 
 ```http
-POST /api/v1/auth/otp/verify HTTP/1.1
+POST /api/auth/otp/verify HTTP/1.1
 Host: consumer.fanfare.io
 X-Publishable-Key: pk_live_xxxxxxxxxxxx
 Content-Type: application/json
@@ -192,7 +189,7 @@ For integrating with your existing authentication system:
 **Step 1: Create exchange code (server-side)**
 
 ```http
-POST /api/v1/auth/external/authorize HTTP/1.1
+POST /api/auth/external/authorize HTTP/1.1
 Host: consumer.fanfare.io
 Authorization: Bearer sk_live_xxxxxxxxxxxx
 Content-Type: application/json
@@ -220,7 +217,7 @@ Content-Type: application/json
 **Step 2: Exchange code for session (client-side)**
 
 ```http
-POST /api/v1/auth/external/exchange HTTP/1.1
+POST /api/auth/external/exchange HTTP/1.1
 Host: consumer.fanfare.io
 X-Publishable-Key: pk_live_xxxxxxxxxxxx
 Content-Type: application/json
@@ -235,7 +232,7 @@ Content-Type: application/json
 Refresh an expired access token:
 
 ```http
-POST /api/v1/auth/refresh HTTP/1.1
+POST /api/auth/refresh HTTP/1.1
 Host: consumer.fanfare.io
 X-Publishable-Key: pk_live_xxxxxxxxxxxx
 Content-Type: application/json
@@ -259,7 +256,7 @@ Content-Type: application/json
 Invalidate the current session:
 
 ```http
-POST /api/v1/auth/logout HTTP/1.1
+POST /api/auth/logout HTTP/1.1
 Host: consumer.fanfare.io
 Authorization: Bearer eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9...
 ```

@@ -2,9 +2,6 @@
 title: Webhooks Overview
 description: Overview of the Fanfare webhook system for real-time event notifications
 ---
-
-# Webhooks Overview
-
 Webhooks allow you to receive real-time notifications when events occur in your Fanfare organization. Instead of polling the API, webhooks push events to your server as they happen.
 
 ## How Webhooks Work
@@ -121,7 +118,7 @@ All webhook payloads follow a consistent structure:
 ### Via API
 
 ```bash
-curl -X POST https://admin.fanfare.io/api/v1/webhooks \
+curl -X POST https://admin.fanfare.io/api/webhooks \
   -H "Authorization: Bearer sk_live_xxxxxxxxxxxx" \
   -H "Content-Type: application/json" \
   -d '{
@@ -265,7 +262,7 @@ If your endpoint fails, Fanfare will retry. See [Retry Policy](/api/webhooks/ret
 
 ```bash
 # Send a test webhook
-curl -X POST https://admin.fanfare.io/api/v1/webhooks/test \
+curl -X POST https://admin.fanfare.io/api/webhooks/test \
   -H "Authorization: Bearer sk_live_xxxxxxxxxxxx" \
   -H "Content-Type: application/json" \
   -d '{

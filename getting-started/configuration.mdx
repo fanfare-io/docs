@@ -1,16 +1,13 @@
 ---
 title: Configuration
-description: Configure Fanfare SDK credentials, environments, widgets, and public customization surfaces.
+description: Configure Fanfare SDK credentials, widgets, and public customization surfaces.
 ---
-
-# Configuration
-
 Fanfare configuration starts with three values:
 
 | Value | Purpose |
 | --- | --- |
 | `organizationId` | Your Fanfare organization ID from the dashboard. |
-| `publishableKey` | A browser-safe publishable key for the current environment. |
+| `publishableKey` | A browser-safe publishable key for your integration. |
 | `experienceId` | The experience your page should render. |
 
 Keep secret keys on your server. Client SDK integrations should use publishable keys only.
@@ -28,7 +25,6 @@ export function App() {
     <FanfareProvider
       organizationId="org_123"
       publishableKey="pk_live_123"
-      environment="production"
       locale="en"
     >
       <ProductLaunchPage />
@@ -45,7 +41,6 @@ Common provider props:
 | --- | --- |
 | `organizationId` | Required organization ID. |
 | `publishableKey` | Required browser-safe key. |
-| `environment` | `production` or `development`. |
 | `autoRestore` | Restore local session on mount. Defaults to `true`. |
 | `autoResume` | Resume known journeys after restore. Defaults to `true`. |
 | `loadingComponent` | UI shown while the provider initializes. |
@@ -157,7 +152,6 @@ import type { JourneyView } from "@fanfare-io/fanfare-sdk-core/experiences";
 const sdk = await initFanfare({
   organizationId: "org_123",
   publishableKey: "pk_live_123",
-  environment: "production",
 });
 
 const journey = sdk.journeys.get("exp_123");
@@ -180,7 +174,6 @@ Register web components once before rendering custom elements.
   registerWebComponents({
     organizationId: "org_123",
     publishableKey: "pk_live_123",
-    environment: "production",
     locale: "en",
   });
 </script>
@@ -225,7 +218,6 @@ NEXT_PUBLIC_FANFARE_PUBLISHABLE_KEY=pk_live_123
 <FanfareProvider
   organizationId={process.env.NEXT_PUBLIC_FANFARE_ORG_ID!}
   publishableKey={process.env.NEXT_PUBLIC_FANFARE_PUBLISHABLE_KEY!}
-  environment="production"
 >
   <ProductLaunchPage />
 </FanfareProvider>
@@ -254,14 +246,12 @@ const isProduction = process.env.NODE_ENV === "production";
       ? process.env.NEXT_PUBLIC_FANFARE_LIVE_KEY!
       : process.env.NEXT_PUBLIC_FANFARE_TEST_KEY!
   }
-  environment={isProduction ? "production" : "development"}
-  debug={!isProduction}
 >
   <ProductLaunchPage />
 </FanfareProvider>;
 ```
 
-Only enable debug logging during development or guided troubleshooting.
+The SDK chooses its supported public environment by default. Do not set environment or API URL overrides unless your Fanfare contact explicitly asks you to. Only enable debug logging during guided troubleshooting.
 
 ## Next Steps
 

@@ -90,8 +90,7 @@ import express from "express";
 
 const router = express.Router();
 
-// Environment variables
-const FANFARE_API_URL = process.env.FANFARE_API_URL || "https://api.fanfare.io";
+const FANFARE_API_BASE_URL = "https://api.fanfare.io";
 const FANFARE_ORG_ID = process.env.FANFARE_ORG_ID!;
 const FANFARE_SECRET_KEY = process.env.FANFARE_SECRET_KEY!;
 
@@ -126,7 +125,7 @@ router.post("/authorize", async (req, res) => {
     };
 
     // 3. Request exchange code from Fanfare
-    const response = await fetch(`${FANFARE_API_URL}/auth/external/authorize`, {
+    const response = await fetch(`${FANFARE_API_BASE_URL}/auth/external/authorize`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -167,7 +166,7 @@ import os
 
 router = APIRouter()
 
-FANFARE_API_URL = os.getenv("FANFARE_API_URL", "https://api.fanfare.io")
+FANFARE_API_BASE_URL = "https://api.fanfare.io"
 FANFARE_ORG_ID = os.getenv("FANFARE_ORG_ID")
 FANFARE_SECRET_KEY = os.getenv("FANFARE_SECRET_KEY")
 
@@ -191,7 +190,7 @@ async def authorize_fanfare(user: User = Depends(get_current_user)):
 
     async with httpx.AsyncClient() as client:
         response = await client.post(
-            f"{FANFARE_API_URL}/auth/external/authorize",
+            f"{FANFARE_API_BASE_URL}/auth/external/authorize",
             json=payload,
             headers={
                 "Content-Type": "application/json",
@@ -539,13 +538,13 @@ function FanfareAuthSync({ user }: { user: User | null }) {
 
 - Verify key has `sk_` prefix (not `pk_`)
 - Check key permissions in dashboard
-- Ensure key is for correct environment
+- Ensure the key belongs to the correct Fanfare organization and account
 
 ### Token Validation Fails
 
 - Verify consumer ID matches
 - Check token hasn't expired
-- Ensure fingerprint matches (if enabled)
+- Ensure the request comes from the active session
 
 ## What's Next
 

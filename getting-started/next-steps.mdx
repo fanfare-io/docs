@@ -2,9 +2,6 @@
 title: Next Steps
 description: Where to go after completing the Fanfare getting started guide.
 ---
-
-# Next Steps
-
 Congratulations on completing the Getting Started guide. You now have a working Fanfare integration. Here is where to go from here to make the most of the platform.
 
 ## Explore Concepts
@@ -77,37 +74,23 @@ fanfare.on("auction:won", (data) => {
 });
 ```
 
-### Environment URLs
+### SDK Defaults
 
-| Environment | API URL                          |
-| ----------- | -------------------------------- |
-| Production  | `https://api.fanfare.io`         |
-| Staging     | `https://api-staging.fanfare.io` |
-| Development | `http://localhost:4802`          |
+The SDK uses the supported Fanfare environment and API URL by default. Configure the required organization ID, publishable key, and experience ID; leave environment and API URL overrides unset unless your Fanfare contact explicitly asks you to use them.
 
-## Example Projects
+## Example Paths
 
-Explore complete example implementations:
+Continue with the integration path that best matches your application:
 
-{/* TODO: MISSING_FUNCTIONALITY
-Feature: Example project repositories
-Expected behavior: Links to example repositories demonstrating common patterns
-Current state: Example repositories not yet created
-*/}
-
-<Callout type="info">Example projects are coming soon. Check the [changelog](/changelog) for updates.</Callout>
-
-- **Next.js E-commerce** - Queue integration for product launches
-- **Remix Sneaker Drop** - Draw-based allocation for limited releases
-- **Astro Auction Site** - Live auction integration
-- **SvelteKit + Solid** - Web components integration
+- [SDK overview](/sdk/overview) - Choose the core SDK, React components, or web components.
+- [Integration patterns](/guides/overview) - Pick a browser, server-rendered, headless, or mobile WebView pattern.
+- [Checkout integration](/guides/checkout-integration/checkout-overview) - Connect admitted consumers to your checkout flow.
+- [Changelog](/resources/support/changelog) - Review recent documentation and platform updates.
 
 ## Feedback
 
 We are constantly improving Fanfare. Let us know how we can help:
 
-- [Feature Requests](https://feedback.fanfare.io)
-- [Bug Reports](https://github.com/fanfare-io/sdk/issues)
-- [Documentation Feedback](mailto:docs@fanfare.io)
+- [Contact support](/resources/support/contact) for product questions, bug reports, and documentation feedback
 
 Thank you for choosing Fanfare!

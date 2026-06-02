@@ -341,7 +341,6 @@
               {
                 "group": "Organizations",
                 "pages": [
-                  "api/openapi/admin-api.json POST /organizations",
                   "api/openapi/admin-api.json PUT /organizations",
                   "api/openapi/admin-api.json GET /organizations/current",
                   "api/openapi/admin-api.json GET /organizations/slug/availability"
@@ -631,110 +630,6 @@
         ]
       },
       {
-        "tab": "Integrations",
-        "groups": [
-          {
-            "group": "Overview",
-            "pages": [
-              "integrations/overview"
-            ]
-          },
-          {
-            "group": "E-commerce",
-            "pages": [
-              "integrations/e-commerce/shopify",
-              "integrations/e-commerce/woocommerce",
-              "integrations/e-commerce/custom-api"
-            ]
-          },
-          {
-            "group": "Marketing",
-            "pages": [
-              "integrations/marketing/klaviyo",
-              "integrations/marketing/mailchimp",
-              "integrations/marketing/hubspot"
-            ]
-          },
-          {
-            "group": "Messaging",
-            "pages": [
-              "integrations/messaging/sendgrid",
-              "integrations/messaging/twilio",
-              "integrations/messaging/resend"
-            ]
-          },
-          {
-            "group": "Payments",
-            "pages": [
-              "integrations/payments/stripe",
-              "integrations/payments/paypal"
-            ]
-          },
-          {
-            "group": "Social",
-            "pages": [
-              "integrations/social/instagram",
-              "integrations/social/facebook"
-            ]
-          },
-          {
-            "group": "Analytics",
-            "pages": [
-              "integrations/analytics/google-analytics",
-              "integrations/analytics/segment",
-              "integrations/analytics/mixpanel"
-            ]
-          },
-          {
-            "group": "Webhooks",
-            "pages": [
-              "integrations/webhooks/zapier",
-              "integrations/webhooks/make",
-              "integrations/webhooks/custom-webhooks"
-            ]
-          }
-        ]
-      },
-      {
-        "tab": "Landing Pages",
-        "groups": [
-          {
-            "group": "Overview",
-            "pages": [
-              "landing-pages/overview",
-              "landing-pages/getting-started"
-            ]
-          },
-          {
-            "group": "Customization",
-            "pages": [
-              "landing-pages/customization/editor",
-              "landing-pages/customization/branding",
-              "landing-pages/customization/content-blocks",
-              "landing-pages/customization/forms",
-              "landing-pages/customization/countdown",
-              "landing-pages/customization/media"
-            ]
-          },
-          {
-            "group": "Publishing",
-            "pages": [
-              "landing-pages/publishing/preview",
-              "landing-pages/publishing/domains",
-              "landing-pages/publishing/seo",
-              "landing-pages/publishing/analytics"
-            ]
-          },
-          {
-            "group": "Templates",
-            "pages": [
-              "landing-pages/templates/gallery",
-              "landing-pages/templates/custom-templates"
-            ]
-          }
-        ]
-      },
-      {
         "tab": "Resources",
         "groups": [
           {
@@ -785,18 +680,8 @@
     "global": {
       "anchors": [
         {
-          "anchor": "API Status",
-          "href": "https://status.fanfare.io",
-          "icon": "signal"
-        },
-        {
-          "anchor": "GitHub",
-          "href": "https://github.com/waitify-io",
-          "icon": "github"
-        },
-        {
           "anchor": "Support",
-          "href": "mailto:support@fanfare.io",
+          "href": "/resources/support/contact",
           "icon": "envelope"
         }
       ]
@@ -818,7 +703,6 @@
   "contextual": {
     "options": [
       "copy",
-      "view",
       "chatgpt",
       "claude",
       "cursor"
@@ -827,13 +711,12 @@
   "footer": {
     "socials": {
       "x": "https://x.com/fanfare_io",
-      "github": "https://github.com/waitify-io",
       "linkedin": "https://linkedin.com/company/fanfare-io"
     }
   },
   "feedback": {
     "thumbsRating": true,
-    "suggestEdit": true
+    "suggestEdit": false
   },
   "seo": {
     "indexHiddenPages": false
@@ -849,7 +732,7 @@
       "api/openapi/beacon-api.json"
     ],
     "playground": {
-      "display": "interactive"
+      "display": "simple"
     },
     "examples": {
       "languages": [

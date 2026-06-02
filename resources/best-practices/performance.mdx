@@ -2,9 +2,6 @@
 title: Performance Optimization
 description: Best practices for optimizing Fanfare SDK performance and reducing latency.
 ---
-
-# Performance Optimization
-
 Optimize your Fanfare integration for fast load times and responsive user experiences.
 
 ## SDK Initialization
@@ -16,7 +13,7 @@ Initialize the SDK only when needed to reduce initial page load time.
 ```typescript
 // Lazy load the SDK when entering an experience
 async function initializeFanfare() {
-  const { FanfareClient } = await import("@fanfare/sdk");
+  const { FanfareClient } = await import("@fanfare-io/fanfare-sdk-core");
 
   const client = new FanfareClient({
     publishableKey: "pk_live_...",
@@ -161,10 +158,10 @@ Import only the modules you need.
 
 ```typescript
 // Good: Import specific hooks
-import { useExperienceJourney } from "@fanfare/sdk-react";
+import { useExperienceJourney } from "@fanfare-io/fanfare-sdk-react";
 
 // Avoid: Importing entire package if using only specific features
-import * as Fanfare from "@fanfare/sdk-react";
+import * as Fanfare from "@fanfare-io/fanfare-sdk-react";
 ```
 
 ### Code Splitting

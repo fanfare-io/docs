@@ -59,52 +59,44 @@ Fanfare Platform                    Your Server
 ### API Configuration
 
 ```typescript
-import { FanfareAdminClient } from "@waitify-io/fanfare-admin-sdk";
-
-const adminClient = new FanfareAdminClient({
-  apiKey: process.env.FANFARE_ADMIN_API_KEY!,
-  organizationId: process.env.FANFARE_ORGANIZATION_ID!,
-});
-
 async function createWebhookEndpoint() {
-  const endpoint = await adminClient.webhooks.create({
-    url: "https://your-server.com/webhooks/fanfare",
-    events: [
-      // Queue events
-      "queue.consumer_entered",
-      "queue.consumer_admitted",
-      "queue.consumer_left",
-      "queue.admission_completed",
-      "queue.admission_expired",
-
-      // Draw events
-      "draw.entry_created",
-      "draw.winners_selected",
-      "draw.prize_claimed",
-
-      // Auction events
-      "auction.bid_placed",
-      "auction.auction_ended",
-      "auction.winner_notified",
-
-      // Experience lifecycle
-      "experience.started",
-      "experience.ended",
-      "experience.paused",
-      "experience.resumed",
-
-      // Consumer events
-      "consumer.authenticated",
-      "consumer.linked",
-    ],
-    description: "Main production webhook endpoint",
-    enabled: true,
+  const response = await fetch("https://admin.fanfare.io/api/webhooks", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${process.env.FANFARE_SECRET_KEY}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      url: "https://your-server.com/webhooks/fanfare",
+      events: [
+        "queue.consumer_entered",
+        "queue.consumer_admitted",
+        "queue.consumer_left",
+        "queue.admission_completed",
+        "queue.admission_expired",
+        "draw.entry_created",
+        "draw.winners_selected",
+        "draw.prize_claimed",
+        "auction.bid_placed",
+        "auction.auction_ended",
+        "auction.winner_notified",
+        "experience.started",
+        "experience.ended",
+        "experience.paused",
+        "experience.resumed",
+        "consumer.authenticated",
+        "consumer.linked",
+      ],
+      description: "Main production webhook endpoint",
+      enabled: true,
+    }),
   });
 
-  console.log("Webhook secret:", endpoint.secret);
-  // Store this secret securely!
+  if (!response.ok) {
+    throw new Error("Unable to create webhook endpoint");
+  }
 
-  return endpoint;
+  return response.json();
 }
 ```
 
@@ -373,7 +365,7 @@ async function handleConsumerAdmitted(data: ConsumerAdmittedData) {
       template: "admission-granted",
       data: {
         expiresAt: new Date(expiresAt).toLocaleString(),
-        checkoutUrl: `https://your-store.com/checkout?token=${admissionToken}`,
+        checkoutUrl: "https://your-store.com/checkout",
       },
     });
   }

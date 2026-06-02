@@ -2,9 +2,6 @@
 title: Testing Strategies
 description: Testing approaches for validating your Fanfare integration before launch.
 ---
-
-# Testing Strategies
-
 Thorough testing is essential before high-stakes product launches. This guide covers testing approaches from development through production readiness.
 
 ## Testing Environments
@@ -46,7 +43,7 @@ const client = new FanfareClient({
 Mock the Fanfare SDK for isolated component tests.
 
 ```typescript
-// __mocks__/@fanfare/sdk.ts
+// __mocks__/@fanfare-io/fanfare-sdk-core.ts
 export class MockFanfareClient {
   experiences = {
     enter: jest.fn().mockResolvedValue({
@@ -79,7 +76,7 @@ export const FanfareClient = MockFanfareClient;
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { QueueWidget } from "./queue-widget";
 
-jest.mock("@fanfare/sdk");
+jest.mock("@fanfare-io/fanfare-sdk-core");
 
 describe("QueueWidget", () => {
   it("shows position after entering queue", async () => {
@@ -93,7 +90,7 @@ describe("QueueWidget", () => {
   });
 
   it("handles queue full error gracefully", async () => {
-    const { FanfareClient } = require("@fanfare/sdk");
+    const { FanfareClient } = require("@fanfare-io/fanfare-sdk-core");
     FanfareClient.prototype.queues.enter.mockRejectedValue(
       new Error("QUEUE_FULL")
     );
@@ -114,7 +111,7 @@ describe("QueueWidget", () => {
 ```typescript
 describe("Queue event handling", () => {
   it("updates UI on position change", () => {
-    const { FanfareClient } = require("@fanfare/sdk");
+    const { FanfareClient } = require("@fanfare-io/fanfare-sdk-core");
     let positionHandler: (data: { position: number }) => void;
 
     FanfareClient.prototype.on.mockImplementation((event, handler) => {
@@ -172,7 +169,7 @@ test.describe("Queue Experience", () => {
 Test direct API interactions.
 
 ```typescript
-import { FanfareClient, FanfareError } from "@fanfare/sdk";
+import { FanfareClient, FanfareError } from "@fanfare-io/fanfare-sdk-core";
 
 describe("API Integration", () => {
   let client: FanfareClient;

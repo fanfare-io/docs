@@ -58,7 +58,6 @@ export function App() {
     <FanfareProvider
       organizationId="org_your_organization_id"
       publishableKey="pk_live_your_publishable_key"
-      environment="production"
     >
       <ExperiencePage />
     </FanfareProvider>
@@ -72,7 +71,6 @@ export function App() {
 | ------------------ | -------------------------------------------- | -------------- | ---------------------------------- |
 | `organizationId`   | `string`                                     | Required       | Your Fanfare organization ID       |
 | `publishableKey`   | `string`                                     | Required       | Your publishable API key           |
-| `environment`      | `"production" \| "staging" \| "development"` | `"production"` | API environment                    |
 | `autoRestore`      | `boolean`                                    | `true`         | Restore session on mount           |
 | `autoResume`       | `boolean`                                    | `true`         | Resume operations after restore    |
 | `loadingComponent` | `ReactNode`                                  | `null`         | Component shown while initializing |
@@ -274,10 +272,14 @@ export function AdmittedView({ admissionToken, expiresAt }: AdmittedViewProps) {
   }, [expiresAt]);
 
   const handleCheckout = async () => {
-    // Create a handoff token for checkout
-    // This token proves the consumer was admitted
-    const checkoutUrl = `/checkout?token=${admissionToken}`;
-    window.location.href = checkoutUrl;
+    await fetch("/api/checkout/handoff", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${admissionToken}`,
+      },
+    });
+
+    window.location.href = "/checkout";
   };
 
   return (
@@ -311,6 +313,15 @@ import { useEffect } from "react";
 function ExperienceWidget() {
   const { isAuthenticated, guest } = useFanfareAuth();
   const { view, start } = useExperienceJourney("exp_xxx");
+  const handleCheckout = async (admissionGrant: string) => {
+    await fetch("/api/checkout/handoff", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${admissionGrant}`,
+      },
+    });
+    window.location.href = "/checkout";
+  };
 
   // Auto-authenticate as guest
   useEffect(() => {
@@ -332,7 +343,7 @@ function ExperienceWidget() {
       )}
 
       {view?.journeyStage === "routed" && view.sequence.stage === "admitted" && (
-        <a href={`/checkout?token=${view.sequence.admissionGrant}`}>Go to Checkout</a>
+        <button onClick={() => handleCheckout(view.sequence.admissionGrant)}>Go to Checkout</button>
       )}
     </div>
   );
@@ -349,7 +360,7 @@ export function App() {
 
 ## Testing Your Integration
 
-1. **Local testing**: Use `environment="development"` to connect to localhost:4802
+1. **Local testing**: Use test credentials from the dashboard and keep SDK environment/API URL overrides unset
 2. **Check authentication**: Verify the consumer session is created
 3. **Test queue flow**: Enter the queue and verify position updates
 4. **Verify admission**: Confirm admission tokens are generated correctly
@@ -378,7 +389,7 @@ export function App() {
 
 - Tokens expire after 10 minutes by default
 - Verify the token hasn't been used already
-- Check device fingerprint matches
+- Confirm the consumer is continuing from the active session
 
 ## What's Next
 

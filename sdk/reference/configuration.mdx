@@ -3,8 +3,6 @@ title: Configuration Reference
 description: Public configuration options for SDK, React, and web component integrations.
 ---
 
-# Configuration Reference
-
 ## Core SDK
 
 ```ts
@@ -13,7 +11,6 @@ import initFanfare from "@fanfare-io/fanfare-sdk-core";
 const sdk = await initFanfare({
   organizationId: "org_123",
   publishableKey: "pk_live_123",
-  environment: "production",
 });
 ```
 
@@ -21,16 +18,22 @@ const sdk = await initFanfare({
 | --- | --- | --- |
 | `organizationId` | `string` | Your Fanfare organization ID. |
 | `publishableKey` | `string` | Your browser-safe publishable key. |
-| `environment` | `production` or `development` | Selects the Fanfare environment. |
-| `apiUrl` | `string` | Overrides the API URL when directed by Fanfare. |
 | `credentials` | `RequestCredentials` | Controls browser credential behavior for SDK requests. |
-| `debug` | `boolean` | Enables SDK debug logging. Use only for development or guided troubleshooting. |
 | `auth.persistSession` | `boolean` | Controls local session persistence. |
 | `auth.sessionDuration` | `number` | Session duration in seconds when applicable. |
 | `sync` | `boolean` or configuration object | Enables or configures browser tab synchronization. |
 | `features` | `object` | Advanced feature flags. Use only with guidance from Fanfare. |
 
-Only use non-default values when your integration requires them or your Fanfare contact recommends them.
+The SDK default environment and API URL are the supported public integration path. Do not override them unless your Fanfare contact explicitly asks you to.
+
+### Guided troubleshooting options
+
+| Option | Purpose |
+| --- | --- |
+| `apiUrl` | Temporary API URL override when directed by Fanfare. |
+| `debug` | Temporary SDK debug logging for development or guided troubleshooting. |
+
+Only use guided troubleshooting options while investigating a specific issue.
 
 ## React provider
 
@@ -69,9 +72,6 @@ Only use non-default values when your integration requires them or your Fanfare 
 | --- | --- |
 | `organizationId` | Default organization ID for registered elements. |
 | `publishableKey` | Default publishable key for registered elements. |
-| `environment` | Default SDK environment. |
-| `apiUrl` | API URL override. |
-| `debug` | Enables debug logging. |
 | `autoRestore` | Restores local session on mount. |
 | `autoResume` | Resumes known journeys after restore. |
 | `locale` | Default locale. |

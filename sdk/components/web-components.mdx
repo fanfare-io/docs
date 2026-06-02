@@ -3,8 +3,6 @@ title: Web Components
 description: Embed Fanfare with a framework-agnostic custom element.
 ---
 
-# Web Components
-
 Use web components when you need to embed Fanfare into static HTML, a CMS, or a host framework where mounting React is not practical.
 
 ## Install
@@ -22,7 +20,6 @@ pnpm add @fanfare-io/fanfare-sdk-core @fanfare-io/fanfare-sdk-solid solid-js
   registerWebComponents({
     organizationId: "org_123",
     publishableKey: "pk_live_123",
-    environment: "production",
   });
 </script>
 ```
@@ -48,9 +45,6 @@ Call `registerWebComponents()` once before rendering Fanfare custom elements.
 | `experience-id` | Required experience ID. |
 | `organization-id` | Optional per-element organization override. |
 | `publishable-key` | Optional per-element publishable key override. |
-| `environment` | Optional SDK environment. |
-| `api-url` | Optional API URL override. |
-| `debug` | Enables debug logging for troubleshooting. |
 | `auto-start` | Starts the journey when the element is ready. |
 | `auto-enter-waitlist` | Enters the waitlist automatically when that action is available. |
 | `access-code` | Provides an access code when starting or rerouting. |

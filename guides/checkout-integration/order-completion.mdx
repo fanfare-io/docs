@@ -58,7 +58,7 @@ Call the Fanfare API to mark an admission as completed:
 
 ```typescript
 // services/fanfare.service.ts
-const FANFARE_API_URL = process.env.FANFARE_API_URL || "https://api.fanfare.io";
+const FANFARE_API_BASE_URL = "https://api.fanfare.io";
 const FANFARE_ORG_ID = process.env.FANFARE_ORG_ID!;
 const FANFARE_SECRET_KEY = process.env.FANFARE_SECRET_KEY!;
 
@@ -85,7 +85,7 @@ export async function completeAdmission(params: CompleteAdmissionParams) {
     throw new Error(`Unknown distribution type: ${distributionType}`);
   }
 
-  const response = await fetch(`${FANFARE_API_URL}${endpoint}`, {
+  const response = await fetch(`${FANFARE_API_BASE_URL}${endpoint}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
