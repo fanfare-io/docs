@@ -51,11 +51,12 @@ Alt text: "Entry period configuration for draw start and end times"
 
 _Caption: Set when consumers can enter the draw_
 
-| Field            | Required | Description                        |
-| ---------------- | -------- | ---------------------------------- |
-| **Entry Opens**  | Yes      | When consumers can start entering  |
-| **Entry Closes** | Yes      | Deadline for entries               |
-| **Draw Time**    | Yes      | When winners are randomly selected |
+| Field | API field | Required | Description |
+| --- | --- | --- | --- |
+| **Open At** | `openAt` | No | When consumers can start entering. |
+| **Close At** | `closeAt` | No | When entries stop. |
+| **Draw At** | `drawAt` | Yes | When winners are selected. |
+| **Time Zone** | `timeZone` | Yes | Time zone for scheduled fields. |
 
 <Tip>
 Allow at least 24-48 hours between entry close and draw time to build anticipation and give latecomers a chance to hear about the draw.
@@ -74,27 +75,29 @@ Alt text: "Draw configuration showing winner count and selection method"
 
 _Caption: Configure how winners are selected_
 
-| Field                 | Required | Description                    |
-| --------------------- | -------- | ------------------------------ |
-| **Number of Winners** | Yes      | How many winners to select     |
-| **Selection Method**  | Yes      | Random or weighted selection   |
-| **Backup Winners**    | No       | Number of alternates to select |
+| Field | API field | Required | Description |
+| --- | --- | --- | --- |
+| **Winner Count** | `winnerCount` | Yes | How many winners to select. |
+| **Entry Capacity** | `capacity` | No | Maximum draw entries. |
+| **Admission Window** | `admissionExpirationSeconds` | No | How long selected winners have to continue. |
+| **Continue Selecting** | `continueSelectingUntilCompleted` | No | Continue replacement selection until the configured winner count completes, when supported for the launch. |
+| **Loyalty-Biased Selection** | `loyaltyBiasEnabled` | No | Optionally gives loyal or engaged entrants improved opportunity. Off by default. |
 
-### Selection Methods
+Winner selection is separate from product allocation. Draw configuration decides which eligible consumers are selected as winners; product allocation decides what product a selected consumer receives.
 
-| Method                     | Description                    | Best For           |
-| -------------------------- | ------------------------------ | ------------------ |
-| **Pure Random**            | Equal chance for everyone      | Fair giveaways     |
-| **Weighted by Engagement** | Higher chance for active users | Rewarding loyalty  |
-| **Weighted by Tier**       | Based on loyalty tier          | VIP prioritization |
+### Loyalty-Biased Selection
 
-### Inventory Allocation
+Use loyalty-biased selection when loyalty or engagement should influence opportunity for a specific draw experience. This setting is optional and off by default.
 
-| Field                      | Required | Description                             |
-| -------------------------- | -------- | --------------------------------------- |
-| **Total Inventory**        | Yes      | Total items available                   |
-| **Per-Winner Allocation**  | No       | Items each winner receives (default: 1) |
-| **Reserve for Alternates** | No       | Inventory held for backup winners       |
+When enabled:
+
+- Selection remains non-guaranteed.
+- Customer copy should not promise a fixed chance or guaranteed outcome.
+- Promotion terms should be reviewed for legal and fairness requirements before launch.
+
+### Product Allocation
+
+For consumer-selected products, winners choose from the available products or variants configured for the experience. For system-assigned products, configure product allocation weights so Fanfare can assign from the product pool; higher weights make a product more likely to be assigned relative to the other products in that pool.
 
 ## Winner Handling
 
@@ -102,11 +105,10 @@ _Caption: Configure how winners are selected_
 
 When the draw time arrives:
 
-1. System validates all entries
-2. Random selection algorithm runs
-3. Winners are determined
-4. Backup winners selected (if configured)
-5. Notifications sent
+1. Entries close according to the configured timing.
+2. Winners are selected according to the configured `winnerCount`.
+3. Selected consumers see the appropriate next step in their journey state.
+4. Non-selected consumers see outcome messaging.
 
 {/* IMAGE_PLACEHOLDER
 Type: screenshot
@@ -119,25 +121,6 @@ Alt text: "Draw results showing selected winners and backup list"
 
 _Caption: View draw results after selection_
 
-### Winner Confirmation
-
-Winners typically need to confirm their win within a timeframe:
-
-| Setting                 | Description                                       |
-| ----------------------- | ------------------------------------------------- |
-| **Confirmation Window** | Time winners have to accept (e.g., 24 hours)      |
-| **Auto-forfeit**        | Automatically pass to alternates if not confirmed |
-| **Manual Override**     | Allow admin to manually confirm/reject            |
-
-### Alternate Promotion
-
-If a winner doesn't confirm:
-
-1. Winner is marked as forfeited
-2. First alternate is notified
-3. Alternate gets same confirmation window
-4. Process continues until inventory is allocated
-
 ## Notifications
 
 ### Entrant Notifications
@@ -148,7 +131,6 @@ If a winner doesn't confirm:
 | **Entry Reminder**               | Draw happening soon          |
 | **You Won**                      | Congratulations + next steps |
 | **You Didn't Win**               | Better luck next time        |
-| **Winner Confirmation Reminder** | Reminder to confirm your win |
 
 ### Non-Winner Options
 
@@ -160,23 +142,22 @@ Configure what non-winners see:
 | **Related Products** | Show similar available products      |
 | **Next Draw**        | Info about upcoming draws            |
 
-## Draw States
+## Draw Timing
 
 ```
-Draft → Scheduled → Entry Open → Entry Closed → Drawing → Confirmation → Completed
-                                                   ↓
-                                               Cancelled
+upcoming → active → ended
+              ↓
+            killed
 ```
 
-| State            | Description                         |
-| ---------------- | ----------------------------------- |
-| **Draft**        | Not published                       |
-| **Scheduled**    | Published, waiting for entry window |
-| **Entry Open**   | Accepting entries                   |
-| **Entry Closed** | No more entries, waiting for draw   |
-| **Drawing**      | Selection in progress               |
-| **Confirmation** | Winners confirming                  |
-| **Completed**    | All inventory allocated or expired  |
+Draw visibility and entry actions are derived from the distribution timing state:
+
+| State | Description |
+| --- | --- |
+| **upcoming** | The draw is scheduled but entries have not opened |
+| **active** | Entries are open |
+| **ended** | Entries have closed and winner confirmation can proceed |
+| **killed** | The draw was manually stopped |
 
 ## Example: Product Launch Draw
 
@@ -194,23 +175,18 @@ Product: Jordan Retro 2024
 Audience: Loyalty Members
 
 Entry Period:
-  Entry Opens: Monday 9 AM
-  Entry Closes: Wednesday 9 PM
-  Draw Time: Thursday 12 PM
+  Open At: Monday 9 AM
+  Close At: Wednesday 9 PM
+  Draw At: Thursday 12 PM
 
 Draw Settings:
-  Number of Winners: 200
-  Selection Method: Pure Random
-  Backup Winners: 50
-
-Winner Handling:
-  Confirmation Window: 24 hours
-  Auto-forfeit: Enabled
+  Winner Count: 200
+  Entry Capacity: 10000
+  Continue Selecting: Enabled
 
 Per-Winner:
-  Allocation: 1 pair
   Purchase Required: Yes
-  Payment Window: 48 hours
+  Admission Window: 48 hours
 
 Notifications:
   - Entry confirmed
@@ -241,8 +217,8 @@ _Caption: A fully configured product launch draw_
 
 ### Fair Selection
 
-1. **Use pure random for giveaways** - Ensures fairness
-2. **Document your method** - Be transparent about selection
+1. **Choose the right selection mode** - Use standard random selection when every entrant should have the same opportunity, and loyalty-biased selection only when loyalty should be part of the promotion
+2. **Document your terms** - Be transparent about eligibility and customer-facing rules
 3. **Exclude duplicates** - Verify one entry per person
 4. **Audit trail** - Keep records of selection process
 
@@ -255,12 +231,12 @@ _Caption: A fully configured product launch draw_
 
 ### Common Configurations
 
-| Use Case       | Winners | Entry Period | Confirmation |
-| -------------- | ------- | ------------ | ------------ |
-| Small giveaway | 10      | 1 week       | 48 hours     |
-| Product launch | 100-500 | 2-3 days     | 24 hours     |
-| VIP access     | 50      | 1 week       | 72 hours     |
-| Large raffle   | 1,000+  | 2 weeks      | 48 hours     |
+| Use Case       | Winners | Entry Period | Admission Window |
+| -------------- | ------- | ------------ | ---------------- |
+| Small giveaway | 10      | 1 week       | 48 hours         |
+| Product launch | 100-500 | 2-3 days     | 24 hours         |
+| VIP access     | 50      | 1 week       | 72 hours         |
+| Large raffle   | 1,000+  | 2 weeks      | 48 hours         |
 
 ## Handling Issues
 
@@ -291,14 +267,14 @@ If a winner disputes results:
 3. Verify their eligibility
 4. Escalate to support if needed
 
-### Mass Forfeit
+### Low Completion
 
-If many winners don't confirm:
+If many selected winners do not continue:
 
-1. Extend confirmation window
+1. Review the admission window
 2. Send additional reminders
 3. Verify notification delivery
-4. Consider re-drawing if needed
+4. Consider enabling continued selection for future draws
 
 ## Compliance Considerations
 
@@ -320,6 +296,6 @@ For promotional draws:
 
 ## Related Guides
 
-- [Experience Lifecycle](/dashboard/experiences/experience-lifecycle) - Managing draws
+- [Experience Schedule](/dashboard/experiences/experience-lifecycle) - Understanding draw timing
 - [Experience Analytics](/dashboard/experiences/experience-analytics) - Draw metrics
 - [Audience Management](/dashboard/audiences/overview) - Targeting entries

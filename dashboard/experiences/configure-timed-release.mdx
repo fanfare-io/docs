@@ -1,0 +1,54 @@
+---
+title: Configure Timed Release
+description: Set up scheduled instant-access releases for flash sales and drops
+---
+
+# Configure Timed Release
+
+Timed releases give consumers access when a configured release window becomes active. They are useful for flash sales, member drops, and simple launch windows where you do not need queueing, drawing, bidding, or appointment booking.
+
+## Creating a Timed Release
+
+1. Navigate to **Experiences > Create Experience**
+2. Select **Timed Release** when the option is available for your account
+3. Configure the access path, timing, and guest support
+
+Timed releases can also be added to an existing sequence from the experience detail workflow when your account has access to that distribution type.
+
+## Timed-Release Settings
+
+| Setting | API field | Required | Description |
+| --- | --- | --- | --- |
+| **Open At** | `openAt` | No | When access becomes active. |
+| **Close At** | `closeAt` | No | When the release window ends. |
+| **Time Zone** | `timeZone` | Yes | Time zone for scheduled fields. |
+| **Guest Support** | `supportsGuest` | Yes | Whether guest participants can use the release. |
+
+## Timing
+
+```
+upcoming -> active -> ended
+              ↓
+            killed
+```
+
+| State | Consumer experience |
+| --- | --- |
+| **upcoming** | Countdown or launch timing. |
+| **active** | Consumer can continue through the timed-release action. |
+| **ended** | Release window has closed. |
+| **killed** | Release is unavailable. |
+
+## Common Patterns
+
+| Pattern | Configuration |
+| --- | --- |
+| Flash sale | Short `openAt` to `closeAt` window with guest support when appropriate. |
+| Member drop | Audience-restricted sequence with timed release distribution. |
+| Countdown launch | Future `openAt`, optional `closeAt`, and clear launch messaging. |
+
+## Related Guides
+
+- [Create Experience](/dashboard/experiences/create-experience) - General creation guide
+- [Experience Schedule](/dashboard/experiences/experience-lifecycle) - Derived timing and distribution states
+- [Timed Release Distribution](/concepts/distributions/instant) - Concept overview

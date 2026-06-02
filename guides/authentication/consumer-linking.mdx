@@ -37,7 +37,7 @@ Consumer linking connects an anonymous session to a verified identity. This is e
 Show a linking prompt to guest users:
 
 ```tsx
-import { useFanfareAuth } from "@waitify-io/fanfare-sdk-react";
+import { useFanfareAuth } from "@fanfare-io/fanfare-sdk-react";
 import { useState } from "react";
 
 function LinkAccountPrompt() {
@@ -72,7 +72,7 @@ function LinkAccountPrompt() {
 Link a guest session to an email:
 
 ```tsx
-import { useFanfareAuth } from "@waitify-io/fanfare-sdk-react";
+import { useFanfareAuth } from "@fanfare-io/fanfare-sdk-react";
 import { useState } from "react";
 
 function LinkAccountButton() {
@@ -205,7 +205,7 @@ Identified Session (email: user@example.com)
 
 ### What Gets Preserved
 
-- Queue positions and admission tokens
+- Queue positions and admission grants
 - Draw entries and results
 - Auction bids
 - Waitlist signups
@@ -291,7 +291,7 @@ export async function POST(request: Request) {
 ### Frontend Implementation
 
 ```tsx
-import { useFanfare, useFanfareAuth } from "@waitify-io/fanfare-sdk-react";
+import { useFanfare, useFanfareAuth } from "@fanfare-io/fanfare-sdk-react";
 import { useEffect } from "react";
 
 interface User {
@@ -426,7 +426,7 @@ function ConflictResolutionModal({
 After successful linking, consider these actions:
 
 ```tsx
-import { useFanfare, useFanfareAuth } from "@waitify-io/fanfare-sdk-react";
+import { useFanfare, useFanfareAuth } from "@fanfare-io/fanfare-sdk-react";
 import { useEffect, useRef } from "react";
 
 function PostLinkActions() {

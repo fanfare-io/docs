@@ -1,15 +1,17 @@
 ---
 title: Queue Distribution
-description: First-come, first-served virtual waiting lines for high-demand launches
+description: Virtual waiting lines for high-demand launches
 ---
 
 # Queue Distribution
 
-A **Queue** is a first-come, first-served waiting line that manages high demand by giving access to consumers in the order they joined. Queues are ideal for product launches where fairness means "first in line gets access first."
+A **Queue** is a virtual waiting line that manages high demand by giving consumers controlled access over time. By default, queues are first-come, first-served and work well for launches where fairness means "first in line gets access first."
+
+Queues can also optionally use loyalty-biased admission. When enabled for a specific experience, Fanfare can give more loyal or engaged consumers improved opportunity to be admitted while still preserving non-guaranteed outcomes. The setting is off by default.
 
 ## How Queues Work
 
-When consumers join a queue, they're assigned a position and wait for their turn:
+When consumers join a standard queue, they're assigned a position and wait for their turn:
 
 ```
 ┌────────────────────────────────────────────────────────────────────┐
@@ -38,8 +40,8 @@ When consumers join a queue, they're assigned a position and wait for their turn
 
 ## The Consumer Experience
 
-1. **Join** — Consumer enters the queue and receives a position number
-2. **Wait** — Position updates in real time as the line moves forward
+1. **Join** — Consumer enters the queue and receives either a position number or qualitative progress messaging
+2. **Wait** — Progress updates in real time as the line moves forward
 3. **Get access** — When they reach the front, they're notified they can checkout
 4. **Complete purchase** — Limited time window to finish their purchase
 
@@ -56,7 +58,7 @@ When consumers join a queue, they're assigned a position and wait for their turn
 │         │ Join queue                                           │
 │         ▼                                                      │
 │  ┌─────────────┐                                               │
-│  │  In Queue   │  (watching position)                          │
+│  │  In Queue   │  (watching progress)                          │
 │  └──────┬──────┘                                               │
 │         │ Reach the front                                      │
 │         ▼                                                      │
@@ -125,11 +127,21 @@ How long consumers have to complete checkout after receiving access.
 | 15-20 minutes | Multiple items, entering payment details |
 | 30 minutes    | Complex purchases, high-value items      |
 
+### Loyalty-Biased Admission
+
+Enable loyalty-biased admission only when your launch should recognize loyalty or engagement as part of the queue experience. It does not guarantee access and should not be described as a fixed place in line.
+
+When this setting is enabled:
+
+- Use qualitative progress messaging instead of precise numeric queue positions.
+- Avoid copy that promises a loyal consumer will be admitted.
+- Review promotion, fairness, and eligibility language before launch.
+
 ## What Consumers See
 
 ### While Waiting
 
-- Their current position in line
+- Their current position in line, or qualitative progress language when loyalty-biased admission is enabled
 - Estimated wait time
 - Real-time updates as the line moves
 
@@ -210,7 +222,8 @@ Balance urgency with fairness:
 
 Show consumers:
 
-- Their position and estimated wait
+- Their position and estimated wait for first-come, first-served queues
+- Qualitative progress or status messaging for queues with loyalty-biased admission enabled
 - What happens when it's their turn
 - How long they'll have to complete
 

@@ -1,0 +1,62 @@
+---
+title: Loyalty Overview
+description: Manage loyalty program status, earning rules, and customer point activity from the dashboard.
+---
+
+# Loyalty Overview
+
+The Loyalty area in the dashboard is where you turn the program on or off, choose expiration behavior, configure earning values, and review loyalty distribution across customers.
+
+Navigate to **Loyalty** in the sidebar. The base route redirects to **Settings** at `/app/loyalty/settings`.
+
+## Dashboard Sections
+
+| Section | Route | Use it for |
+| --- | --- | --- |
+| Settings | `/app/loyalty/settings` | Program status, expiration policy, and point limits. |
+| Event points | `/app/loyalty/event-points` | Earning values by event category and balance distribution. |
+| Customer details | `/app/customers/{customerId}` | Individual balances, point history, and manual adjustments. |
+| Audiences | `/app/audiences` | Loyalty tier audiences and loyalty-based segmentation. |
+
+## What Admins Can Manage
+
+- Enable or pause the loyalty program.
+- Choose whether points expire.
+- Configure optional maximum balance, daily earn cap, and monthly earn cap.
+- Adjust point values for visible event categories.
+- Add or deduct points for a specific customer when support or correction workflows require it.
+- Use loyalty fields to create audiences for access, messaging, or reporting.
+- Enable loyalty bias on individual queue or draw experiences when the launch should recognize loyal or engaged consumers without guaranteeing access or selection.
+
+## Experience-Level Bias
+
+Loyalty bias is configured per queue or draw experience, not as a global loyalty program setting. It is off by default. When enabled, Fanfare can probabilistically improve opportunity for more loyal or engaged consumers while preserving uncertainty for the customer journey.
+
+Use this setting for launches where loyalty should be a factor, not a promise. For queues, prefer qualitative progress messaging instead of precise numeric queue positions. For draws, avoid copy that implies a guaranteed outcome or a fixed chance. Review your legal and fairness requirements before enabling it for promotions with regulatory obligations.
+
+## Customer-Facing Data
+
+Customers can be shown:
+
+- Current balance.
+- Lifetime points.
+- Upcoming expirations.
+- Point history.
+
+App-owned UI can read those values from the [Consumer Loyalty API](/api/consumer-api/loyalty). The current SDK packages do not expose a public loyalty hook or loyalty widget; build loyalty display UI around your application's components and the Consumer API contract.
+
+## Recommended Setup Flow
+
+1. Configure the program status, expiration policy, and limits in [Loyalty configuration](/dashboard/loyalty/configuration).
+2. Review earning categories and adjust point values in [Points management](/dashboard/loyalty/points-management).
+3. Create loyalty audiences if you need tiers or early-access groups.
+4. Add app-owned display surfaces using [Consumer Loyalty API](/api/consumer-api/loyalty).
+
+## Related Pages
+
+- [Loyalty programs concept](/concepts/loyalty)
+- [Loyalty configuration](/dashboard/loyalty/configuration)
+- [Points management](/dashboard/loyalty/points-management)
+- [Configure queue experiences](/dashboard/experiences/configure-queue)
+- [Configure draw experiences](/dashboard/experiences/configure-lottery)
+- [Loyalty program use case](/guides/use-cases/loyalty-program)

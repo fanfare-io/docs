@@ -1,6 +1,6 @@
 ---
 title: Experiences Overview
-description: Manage queues, auctions, draws, and appointments from the experiences dashboard
+description: Manage distribution-based experiences from the dashboard
 ---
 
 # Experiences Overview
@@ -14,17 +14,17 @@ Navigate to **Experiences** in the sidebar to view all your experiences. The rou
 {/* IMAGE_PLACEHOLDER
 Type: screenshot
 Page: /app/experiences
-Shows: Experiences list with multiple experiences in different states (draft, active, completed)
+Shows: Experiences list with upcoming, active, ended, and killed timing badges
 Annotations: Highlight the Create Experience button and status indicators
-Alt text: "Experiences list showing multiple experiences with different statuses"
+Alt text: "Experiences list showing multiple experiences with derived timing statuses"
 */}
 
 
-_Caption: The experiences list shows all your queues, auctions, draws, and appointments_
+_Caption: The experiences list shows distribution-based experiences_
 
 ## Experience Types
 
-Fanfare supports four types of experiences:
+Fanfare supports these primary distribution types:
 
 | Type            | Icon     | Description                     | Best For                            |
 | --------------- | -------- | ------------------------------- | ----------------------------------- |
@@ -32,17 +32,20 @@ Fanfare supports four types of experiences:
 | **Draw**        | Sparkles | Random selection from entries   | Fair allocation, giveaways          |
 | **Auction**     | Trophy   | Competitive bidding             | High-value items, price discovery   |
 | **Appointment** | Calendar | Scheduled time slots            | Services, events, reservations      |
+| **Timed Release** | Clock | Scheduled instant access | Flash sales, member drops |
+
+Waitlists are an access-path capability for capturing interest before, around, or after a primary distribution.
 
 {/* IMAGE_PLACEHOLDER
 Type: screenshot
 Page: /app/experiences
-Shows: Empty state with four experience type cards
+Shows: Empty state with distribution type cards
 Annotations: Label each card with the experience type
-Alt text: "Four experience type options: Queue, Draw, Auction, and Appointment"
+Alt text: "Distribution type options including Queue, Draw, Auction, Appointment, and Timed Release"
 */}
 
 
-_Caption: Choose from four experience types based on your use case_
+_Caption: Choose a distribution type based on your use case_
 
 ## Experiences Table
 
@@ -53,12 +56,12 @@ When you have experiences, they're displayed in a sortable, searchable table.
 | Column         | Description                                      |
 | -------------- | ------------------------------------------------ |
 | **Name**       | Experience name (click to view details)          |
-| **Type**       | Queue, Draw, Auction, or Appointment             |
+| **Type**       | Queue, Draw, Auction, Appointment, or Timed Release |
 | **Product**    | Associated product                               |
-| **Status**     | Current state (Draft, Active, Paused, Completed) |
+| **Status**     | Derived timing state from the attached distributions |
 | **Entries**    | Number of consumer entries                       |
-| **Start Date** | When the experience begins                       |
-| **End Date**   | When the experience ends                         |
+| **Open At** | Derived from attached distributions |
+| **Close At** | Derived from attached distributions |
 
 ### Filtering and Sorting
 
@@ -77,26 +80,23 @@ Alt text: "Experiences table with search and sort functionality"
 
 _Caption: Search and sort experiences to find what you need_
 
-## Experience Statuses
+## Experience Timing
 
-Experiences progress through several statuses:
+Experience timing is derived from the distributions attached to the experience. Use the distribution status to understand what consumers can do.
 
-| Status         | Description                       | Actions Available     |
-| -------------- | --------------------------------- | --------------------- |
-| **Draft**      | Not yet published                 | Edit, Publish, Delete |
-| **Scheduled**  | Published, waiting for start date | Edit, Pause, Delete   |
-| **Active**     | Currently accepting entries       | Pause, End Early      |
-| **Paused**     | Temporarily stopped               | Resume, End           |
-| **Processing** | Draw/auction in progress          | View Progress         |
-| **Completed**  | Finished, no more entries         | View Results, Delete  |
-| **Cancelled**  | Manually cancelled                | Delete                |
+| State | Description | Typical operator focus |
+| --- | --- | --- |
+| **upcoming** | The next distribution has not opened yet | Confirm schedule, products, and eligibility |
+| **active** | A distribution is open for consumer action | Monitor entries, bids, bookings, or admits |
+| **ended** | The distribution window has closed | Review outcomes and completion state |
+| **killed** | A distribution has been manually stopped | Communicate status and review impact |
 
 {/* IMAGE_PLACEHOLDER
 Type: screenshot
 Page: /app/experiences
 Shows: Experiences with different status badges visible
 Annotations: Circle different status badges
-Alt text: "Experience status badges showing Draft, Active, and Completed states"
+Alt text: "Experience status badges showing upcoming, active, ended, and killed timing states"
 */}
 
 
@@ -106,7 +106,7 @@ _Caption: Status badges indicate the current state of each experience_
 
 Click the **Create Experience** button to launch the creation wizard.
 
-1. Select an experience type (Queue, Draw, Auction, or Appointment)
+1. Select a distribution type or access path template
 2. Complete the configuration form
 3. Review and create
 
@@ -116,6 +116,8 @@ See the dedicated guides for each experience type:
 - [Create Draw Experience](/dashboard/experiences/configure-lottery)
 - [Create Auction Experience](/dashboard/experiences/configure-auction)
 - [Create Appointment Experience](/dashboard/experiences/configure-appointment)
+- [Create Timed Release Experience](/dashboard/experiences/configure-timed-release)
+- [Configure Waitlist](/dashboard/experiences/configure-waitlist)
 
 ## Quick Actions
 
@@ -209,8 +211,8 @@ _Caption: Access SDK integration code and technical settings_
 
 Sequences allow you to create multiple distribution phases within a single experience. For example:
 
-- **VIP Access** (Priority 1) - Early access for VIP customers
-- **General Access** (Priority 2) - Open to all audiences
+- **VIP Access** (Priority 100) - Early access for VIP customers
+- **General Access** (Priority 10) - Open to all eligible consumers
 
 {/* IMAGE_PLACEHOLDER
 Type: screenshot
@@ -226,7 +228,7 @@ _Caption: Create multiple distribution sequences for phased access_
 ### Adding a Sequence
 
 1. Click **Add Sequence** below the sequences table
-2. Set the priority (lower numbers run first)
+2. Set the priority (higher numbers are evaluated first)
 3. Choose a color for visual identification
 4. Configure the sequence's distributions
 
@@ -284,5 +286,5 @@ During active experiences:
 ## Related Guides
 
 - [Create Experience](/dashboard/experiences/create-experience) - Step-by-step creation guide
-- [Experience Lifecycle](/dashboard/experiences/experience-lifecycle) - Managing active experiences
+- [Experience Schedule](/dashboard/experiences/experience-lifecycle) - Understanding derived timing
 - [Experience Analytics](/dashboard/experiences/experience-analytics) - Understanding metrics

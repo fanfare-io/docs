@@ -5,7 +5,7 @@ description: Managing your product catalog for experiences
 
 # Products
 
-**Products** are the items consumers can purchase through your experiences. Fanfare supports products with variants, inventory tracking, and images — everything you need for launches and sales.
+**Products** are the items consumers can purchase through your experiences. Fanfare supports products with variants, inventory policy, and images - everything you need for launches and sales.
 
 ## Product Basics
 
@@ -13,7 +13,7 @@ Each product includes:
 
 - **Name** — What consumers see
 - **Description** — Product details
-- **Price** — Base price for the product
+- **Variant prices** — Prices on the sellable units consumers can buy
 - **URL** — Link to the product page on your store
 - **Images** — Product photos
 
@@ -23,47 +23,48 @@ Variants represent different options like size and color:
 
 ```
 Product: "Classic Sneaker"
-├── Variant: White / Size 9  — $129.99
-├── Variant: White / Size 10 — $129.99
-├── Variant: Black / Size 9  — $129.99
-└── Variant: Black / Size 10 — $139.99 (premium color)
+├── Variant: White / Size 9  - "129.99"
+├── Variant: White / Size 10 - "129.99"
+├── Variant: Black / Size 9  - "129.99"
+└── Variant: Black / Size 10 - variant price override
 ```
 
 ### Variant Properties
 
-| Property      | Description                         |
-| ------------- | ----------------------------------- |
-| **SKU**       | Unique identifier for inventory     |
-| **Price**     | Can override the base product price |
-| **Inventory** | Stock count (if tracked)            |
-| **Options**   | Size, color, or other attributes    |
+| Property             | Description                                           |
+| -------------------- | ----------------------------------------------------- |
+| **SKU**              | Required identifier for the sellable unit             |
+| **Price**            | Decimal string such as `"139.99"`                     |
+| **Inventory policy** | Whether Fanfare treats quantity as limited or open    |
+| **Inventory**        | Stock count used when inventory is limited            |
+| **Options**          | Size, color, or other attributes                      |
 
-### Variant-Specific Pricing
+### Variant Pricing
 
-Variants can have different prices from the base product:
+Variants are the sellable units, so their prices are the values to keep synced with checkout. In API and event payloads, monetary values are decimal strings, not JSON numbers:
 
-- **Base price:** $129.99
-- **Premium variant:** $139.99 (rare color)
-- **Standard variants:** Use base price
+- **Premium variant:** `"139.99"` (rare color)
+- **Standard variants:** `"129.99"`
 
 ## Inventory Tracking
 
-You can choose whether to track inventory for each variant:
+You can choose how inventory behaves for each variant:
 
-### Tracked Inventory
+### Limited Inventory
 
-When inventory is tracked:
+Use a limited inventory policy when a variant should sell out:
 
 - Stock count decreases with each purchase
 - Consumers see "sold out" when quantity reaches zero
 - Helps prevent overselling
 
-### Untracked Inventory
+### Open Inventory
 
-When inventory is not tracked:
+Use an open inventory policy when quantity should not block purchase:
 
 - Always shows as available
-- Useful for digital products or made-to-order items
+- Useful for digital products, made-to-order items, or backorders
+- Can continue accepting purchases even after a stored quantity reaches zero
 
 ## Product Images
 
@@ -111,12 +112,14 @@ Experience: "Exclusive Red Edition"
 
 ## Product Selection Modes
 
-Control how consumers choose products:
+Control how products are selected:
 
-| Mode                  | Description                          | Best For      |
-| --------------------- | ------------------------------------ | ------------- |
-| **Consumer chooses**  | Consumers pick their product/variant | Most launches |
-| **Random assignment** | System assigns randomly              | Mystery boxes |
+| Mode                    | Description                                      | Best For      |
+| ----------------------- | ------------------------------------------------ | ------------- |
+| **Consumer-selected**   | Consumers pick their product and variant         | Most launches |
+| **System-assigned**     | Fanfare assigns from the configured product pool | Mystery boxes |
+
+For system-assigned products, allocation weights control the relative probability that each product is assigned. These weights apply to product assignment only; draw winner selection methods decide which consumers are selected.
 
 ## Syncing Products
 
@@ -159,17 +162,19 @@ For tracked inventory:
 
 ## Pricing Best Practices
 
-### Enter Prices With Cents
+### Use Decimal Strings
 
-Enter prices as you'd see them in your store:
+When sending prices through APIs, SDK actions, events, or webhooks, use decimal strings:
 
-- **Example:** 129.99 for $129.99
-- Prices display in your configured currency
+- **Example:** `"129.99"` for USD 129.99
+- **Example:** `"129"` for zero-decimal currencies such as JPY
+- Include the currency code wherever the endpoint asks for one
+- Do not send cents or provider-specific minor units unless an endpoint explicitly asks for them
 
 ### Consider Variant Pricing
 
-- Set a base price for standard variants
-- Use price overrides for premium variants
+- Use the same price string on variants that share a price
+- Use different variant prices for premium variants
 - Keep pricing consistent across your store
 
 ## Managing Products
@@ -178,8 +183,8 @@ Enter prices as you'd see them in your store:
 
 Add products directly in Fanfare:
 
-1. Enter product details (name, description, price)
-2. Add variants if needed
+1. Enter product details (name, description, URL)
+2. Add at least one variant with SKU, price, inventory policy, and quantity
 3. Upload images
 4. Link to experiences
 

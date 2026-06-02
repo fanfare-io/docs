@@ -1,567 +1,82 @@
 ---
-title: Distributions API
-description: Admin API endpoints for managing queues, draws, and auctions
+title: "Admin Distribution Contracts"
+description: "Current public field names for Admin API distribution creation and updates."
 ---
 
-# Distributions API
+# Admin Distribution Contracts
 
-Distributions are the mechanisms for allocating access to products within an experience. Fanfare supports three distribution types: Queues (first-come, first-served), Draws (lottery/raffle), and Auctions (competitive bidding).
+Distributions define consumer timing and participation inside a sequence. Use these field names with standalone distribution endpoints or nested under `POST /experiences` sequence creation.
 
-## Distribution Types Overview
+## Shared Timing Fields
 
-| Type    | Mechanism        | Use Case                                    |
-| ------- | ---------------- | ------------------------------------------- |
-| Queue   | First-come       | Product launches, limited releases          |
-| Draw    | Random selection | Raffles, fair allocation, high-demand items |
-| Auction | Highest bidder   | Collectibles, unique items, premium access  |
+| Field | Required | Description |
+| --- | --- | --- |
+| `sequenceId` | Standalone create only | Parent sequence. Omit this field when creating distributions nested under `POST /experiences`. |
+| `name` | Yes | Distribution name. |
+| `openAt` | No | When the distribution becomes active. |
+| `closeAt` | No | When the active window ends. |
+| `timeZone` | No | Time zone for scheduled fields. If omitted during nested experience creation, the organization or experience default is used. |
 
----
+The public timing states are `upcoming`, `active`, `ended`, and `killed`. Customer-facing docs should use those distribution timing concepts instead of a separate experience-level state machine.
 
 ## Queues
 
-Queues provide first-come, first-served access to products.
-
-### Create Queue
-
-`POST /api/v1/queues`
-
-#### Authentication
-
-- Secret key required
-
-#### Request Body
-
-```typescript
-interface CreateQueueRequest {
-  sequenceId: string;
-  name?: string;
-  timeZone?: string;
-  openAt?: string; // ISO 8601 datetime
-  closeAt?: string; // ISO 8601 datetime
-  encryptionSeed?: string;
-  maxCapacity?: number;
-  admissionRate?: number; // Consumers admitted per minute
-  sessionDurationSeconds?: number;
-  metadata?: Record<string, unknown>;
-}
-```
-
-#### Response
-
-```typescript
-interface Queue {
-  id: string;
-  organizationId: string;
-  sequenceId: string;
-  name: string | null;
-  timeZone: string;
-  status: "DRAFT" | "SCHEDULED" | "OPEN" | "CLOSED" | "COMPLETED";
-  openAt: string | null;
-  closeAt: string | null;
-  encryptionSeed: string;
-  maxCapacity: number | null;
-  admissionRate: number | null;
-  sessionDurationSeconds: number | null;
-  metadata: Record<string, unknown> | null;
-  createdAt: string;
-  updatedAt: string;
-}
-```
-
-#### Example
-
-```bash
-curl -X POST https://admin.fanfare.io/api/v1/queues \
-  -H "Authorization: Bearer sk_live_xxxxxxxxxxxx" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "sequenceId": "seq_01HXYZ123456789",
-    "name": "Launch Day Queue",
-    "timeZone": "America/New_York",
-    "openAt": "2024-12-15T09:00:00-05:00",
-    "closeAt": "2024-12-15T18:00:00-05:00",
-    "maxCapacity": 10000,
-    "admissionRate": 100,
-    "sessionDurationSeconds": 900
-  }'
-```
-
-**Response:**
-
-```json
-{
-  "id": "queue_01HXYZ123456789",
-  "organizationId": "org_01HXYZ123456789",
-  "sequenceId": "seq_01HXYZ123456789",
-  "name": "Launch Day Queue",
-  "timeZone": "America/New_York",
-  "status": "SCHEDULED",
-  "openAt": "2024-12-15T14:00:00Z",
-  "closeAt": "2024-12-15T23:00:00Z",
-  "encryptionSeed": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
-  "maxCapacity": 10000,
-  "admissionRate": 100,
-  "sessionDurationSeconds": 900,
-  "metadata": null,
-  "createdAt": "2024-12-01T10:00:00Z",
-  "updatedAt": "2024-12-01T10:00:00Z"
-}
-```
-
-### List Queues
-
-`GET /api/v1/queues`
-
-```bash
-curl -X GET https://admin.fanfare.io/api/v1/queues \
-  -H "Authorization: Bearer sk_live_xxxxxxxxxxxx"
-```
-
-### Get Queue
-
-`GET /api/v1/queues/:id`
-
-```bash
-curl -X GET https://admin.fanfare.io/api/v1/queues/queue_01HXYZ123456789 \
-  -H "Authorization: Bearer sk_live_xxxxxxxxxxxx"
-```
-
-### Update Queue
-
-`PUT /api/v1/queues/:id`
-
-```typescript
-interface UpdateQueueRequest {
-  name?: string;
-  timeZone?: string;
-  openAt?: string;
-  closeAt?: string;
-  maxCapacity?: number | null;
-  admissionRate?: number | null;
-  sessionDurationSeconds?: number | null;
-  metadata?: Record<string, unknown> | null;
-}
-```
-
-```bash
-curl -X PUT https://admin.fanfare.io/api/v1/queues/queue_01HXYZ123456789 \
-  -H "Authorization: Bearer sk_live_xxxxxxxxxxxx" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "admissionRate": 150,
-    "closeAt": "2024-12-15T20:00:00-05:00"
-  }'
-```
-
-### Delete Queue
-
-`DELETE /api/v1/queues/:id`
-
-```bash
-curl -X DELETE https://admin.fanfare.io/api/v1/queues/queue_01HXYZ123456789 \
-  -H "Authorization: Bearer sk_live_xxxxxxxxxxxx"
-```
-
----
+| Field | Required | Description |
+| --- | --- | --- |
+| `admitRate` | Yes | Rate at which consumers are admitted. |
+| `capacity` | No | Maximum consumers allowed in the queue. |
+| `maxAdmissions` | No | Maximum consumers who can be admitted. |
+| `admissionExpirationSeconds` | No | Checkout/access window after admission. |
 
 ## Draws
 
-Draws (lotteries) provide random selection from a pool of entrants.
-
-### Create Draw
-
-`POST /api/v1/draws`
-
-#### Request Body
-
-```typescript
-interface CreateDrawRequest {
-  sequenceId: string;
-  name?: string;
-  timeZone?: string;
-  openAt?: string; // Entry period starts
-  closeAt?: string; // Entry period ends
-  drawAt: string; // Required: When winners are selected
-  winnerCount: number; // Required: Number of winners
-  encryptionSeed?: string;
-  maxEntries?: number;
-  metadata?: Record<string, unknown>;
-}
-```
-
-#### Response
-
-```typescript
-interface Draw {
-  id: string;
-  organizationId: string;
-  sequenceId: string;
-  name: string | null;
-  timeZone: string;
-  status: "DRAFT" | "SCHEDULED" | "OPEN" | "CLOSED" | "DRAWN" | "COMPLETED";
-  openAt: string | null;
-  closeAt: string | null;
-  drawAt: string;
-  winnerCount: number;
-  encryptionSeed: string;
-  maxEntries: number | null;
-  metadata: Record<string, unknown> | null;
-  createdAt: string;
-  updatedAt: string;
-}
-```
-
-#### Example
-
-```bash
-curl -X POST https://admin.fanfare.io/api/v1/draws \
-  -H "Authorization: Bearer sk_live_xxxxxxxxxxxx" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "sequenceId": "seq_01HXYZ123456789",
-    "name": "Holiday Raffle",
-    "timeZone": "America/New_York",
-    "openAt": "2024-12-01T00:00:00-05:00",
-    "closeAt": "2024-12-14T23:59:59-05:00",
-    "drawAt": "2024-12-15T12:00:00-05:00",
-    "winnerCount": 100,
-    "maxEntries": 50000
-  }'
-```
-
-**Response:**
-
-```json
-{
-  "id": "draw_01HXYZ123456789",
-  "organizationId": "org_01HXYZ123456789",
-  "sequenceId": "seq_01HXYZ123456789",
-  "name": "Holiday Raffle",
-  "timeZone": "America/New_York",
-  "status": "SCHEDULED",
-  "openAt": "2024-12-01T05:00:00Z",
-  "closeAt": "2024-12-15T04:59:59Z",
-  "drawAt": "2024-12-15T17:00:00Z",
-  "winnerCount": 100,
-  "encryptionSeed": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
-  "maxEntries": 50000,
-  "metadata": null,
-  "createdAt": "2024-12-01T10:00:00Z",
-  "updatedAt": "2024-12-01T10:00:00Z"
-}
-```
-
-### List Draws
-
-`GET /api/v1/draws`
-
-### Get Draw
-
-`GET /api/v1/draws/:id`
-
-### Update Draw
-
-`PUT /api/v1/draws/:id`
-
-```typescript
-interface UpdateDrawRequest {
-  name?: string;
-  timeZone?: string;
-  openAt?: string;
-  closeAt?: string;
-  drawAt?: string;
-  winnerCount?: number;
-  maxEntries?: number | null;
-  metadata?: Record<string, unknown> | null;
-}
-```
-
-### Delete Draw
-
-`DELETE /api/v1/draws/:id`
-
----
+| Field | Required | Description |
+| --- | --- | --- |
+| `drawAt` | Yes | When winner selection runs. |
+| `winnerCount` | Yes | Number of winners to select. |
+| `capacity` | No | Maximum draw entries. |
+| `admissionExpirationSeconds` | No | Checkout/access window for winners. |
+| `continueSelectingUntilCompleted` | No | Continue selecting replacements until the configured winner count completes, when supported for the launch. |
 
 ## Auctions
 
-Auctions allow competitive bidding for products.
+| Field | Required | Description |
+| --- | --- | --- |
+| `settleAt` | Yes | Settlement deadline/time used in the distribution schedule. |
+| `auctionType` | No | `english` or `dutch`; defaults to `english`. |
+| `reservePrice` | No | Minimum successful price. Money fields are strings. |
+| `minBidIncrement` | No | Minimum increment for English auctions. Money fields are strings. |
+| `autoExtendSeconds` | No | Extension duration for late bidding. |
+| `startPrice` | No | Starting price for Dutch auctions. Money fields are strings. |
+| `floorPrice` | No | Floor price for Dutch auctions. Money fields are strings. |
+| `priceDropAmount` | No | Dutch price drop amount. Money fields are strings. |
+| `priceDropIntervalSeconds` | No | Dutch price drop interval. |
+| `quantity` | No | Quantity available for the auction. |
 
-### Create Auction
+Send money values as decimal strings such as `"25"` or `"25.00"`, never numbers.
 
-`POST /api/v1/auctions`
+## Timed Releases
 
-#### Request Body
+| Field | Required | Description |
+| --- | --- | --- |
+| `supportsGuest` | Yes | Whether guest participants can use the timed release. |
+| `openAt` | No | Release start. |
+| `closeAt` | No | Release end, if any. |
 
-```typescript
-interface CreateAuctionRequest {
-  sequenceId: string;
-  name?: string;
-  timeZone?: string;
-  openAt?: string; // Bidding starts
-  closeAt?: string; // Bidding ends
-  settleAt: string; // Required: When auction settles
-  startingBid?: number;
-  minimumIncrement?: number;
-  reservePrice?: number;
-  buyNowPrice?: number;
-  encryptionSeed?: string;
-  metadata?: Record<string, unknown>;
-}
-```
+## Waitlists
 
-#### Response
+| Field | Required | Description |
+| --- | --- | --- |
+| `sequenceId` | Yes | Parent sequence for standalone create. |
+| `capacity` | No | Maximum waitlist entries. |
 
-```typescript
-interface Auction {
-  id: string;
-  organizationId: string;
-  sequenceId: string;
-  name: string | null;
-  timeZone: string;
-  status: "DRAFT" | "SCHEDULED" | "OPEN" | "CLOSED" | "SETTLED";
-  openAt: string | null;
-  closeAt: string | null;
-  settleAt: string;
-  startingBid: number | null;
-  minimumIncrement: number | null;
-  reservePrice: number | null;
-  buyNowPrice: number | null;
-  encryptionSeed: string;
-  metadata: Record<string, unknown> | null;
-  createdAt: string;
-  updatedAt: string;
-}
-```
+Waitlists capture interest and do not grant checkout access by themselves. They are created and updated through the waitlist surfaces, not through the nested distribution arrays on `POST /experiences`.
 
-#### Example
+## Appointments
 
-```bash
-curl -X POST https://admin.fanfare.io/api/v1/auctions \
-  -H "Authorization: Bearer sk_live_xxxxxxxxxxxx" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "sequenceId": "seq_01HXYZ123456789",
-    "name": "Rare Collectible Auction",
-    "timeZone": "America/New_York",
-    "openAt": "2024-12-10T09:00:00-05:00",
-    "closeAt": "2024-12-15T21:00:00-05:00",
-    "settleAt": "2024-12-15T21:30:00-05:00",
-    "startingBid": 100,
-    "minimumIncrement": 10,
-    "reservePrice": 500,
-    "buyNowPrice": 2000
-  }'
-```
-
-**Response:**
-
-```json
-{
-  "id": "auction_01HXYZ123456789",
-  "organizationId": "org_01HXYZ123456789",
-  "sequenceId": "seq_01HXYZ123456789",
-  "name": "Rare Collectible Auction",
-  "timeZone": "America/New_York",
-  "status": "SCHEDULED",
-  "openAt": "2024-12-10T14:00:00Z",
-  "closeAt": "2024-12-16T02:00:00Z",
-  "settleAt": "2024-12-16T02:30:00Z",
-  "startingBid": 100,
-  "minimumIncrement": 10,
-  "reservePrice": 500,
-  "buyNowPrice": 2000,
-  "encryptionSeed": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
-  "metadata": null,
-  "createdAt": "2024-12-01T10:00:00Z",
-  "updatedAt": "2024-12-01T10:00:00Z"
-}
-```
-
-### List Auctions
-
-`GET /api/v1/auctions`
-
-### Get Auction
-
-`GET /api/v1/auctions/:id`
-
-### Update Auction
-
-`PUT /api/v1/auctions/:id`
-
-```typescript
-interface UpdateAuctionRequest {
-  name?: string;
-  timeZone?: string;
-  openAt?: string;
-  closeAt?: string;
-  settleAt?: string;
-  startingBid?: number | null;
-  minimumIncrement?: number | null;
-  reservePrice?: number | null;
-  buyNowPrice?: number | null;
-  metadata?: Record<string, unknown> | null;
-}
-```
-
-### Delete Auction
-
-`DELETE /api/v1/auctions/:id`
-
----
-
-## Distribution Status
-
-Distributions go through the following status lifecycle:
-
-### Queue Status
-
-```
-DRAFT → SCHEDULED → OPEN → CLOSED → COMPLETED
-```
-
-| Status    | Description                            |
-| --------- | -------------------------------------- |
-| DRAFT     | Queue created but no times set         |
-| SCHEDULED | Open/close times set, waiting to open  |
-| OPEN      | Accepting entries, admitting consumers |
-| CLOSED    | No longer accepting entries            |
-| COMPLETED | All admitted consumers completed       |
-
-### Draw Status
-
-```
-DRAFT → SCHEDULED → OPEN → CLOSED → DRAWN → COMPLETED
-```
-
-| Status    | Description                         |
-| --------- | ----------------------------------- |
-| DRAFT     | Draw created but no times set       |
-| SCHEDULED | Times set, waiting for entry period |
-| OPEN      | Accepting entries                   |
-| CLOSED    | Entry period ended, awaiting draw   |
-| DRAWN     | Winners selected                    |
-| COMPLETED | All winners have claimed or expired |
-
-### Auction Status
-
-```
-DRAFT → SCHEDULED → OPEN → CLOSED → SETTLED
-```
-
-| Status    | Description                             |
-| --------- | --------------------------------------- |
-| DRAFT     | Auction created but no times set        |
-| SCHEDULED | Times set, waiting for bidding to start |
-| OPEN      | Accepting bids                          |
-| CLOSED    | Bidding ended, awaiting settlement      |
-| SETTLED   | Winner confirmed, payment processed     |
-
----
-
-## Timing Configuration
-
-### Time Zones
-
-All distributions support time zone configuration:
-
-```typescript
-{
-  "timeZone": "America/New_York",
-  "openAt": "2024-12-15T09:00:00", // Interpreted as 9 AM Eastern
-  "closeAt": "2024-12-15T18:00:00" // Interpreted as 6 PM Eastern
-}
-```
-
-If no time zone is specified, the organization's default time zone is used.
-
-### Scheduling Events
-
-When timing fields (`openAt`, `closeAt`, `drawAt`, `settleAt`) are updated, distribution update events are automatically published for processing.
-
----
-
-## Common Fields
-
-All distribution types share these common fields:
-
-| Field            | Type              | Description                         |
-| ---------------- | ----------------- | ----------------------------------- |
-| `id`             | string            | Unique distribution ID              |
-| `organizationId` | string            | Owning organization                 |
-| `sequenceId`     | string            | Parent sequence/experience          |
-| `name`           | string            | Display name                        |
-| `timeZone`       | string            | IANA time zone                      |
-| `status`         | string            | Current status                      |
-| `openAt`         | string (ISO 8601) | When participation opens            |
-| `closeAt`        | string (ISO 8601) | When participation closes           |
-| `encryptionSeed` | string            | Seed for consumer position encoding |
-| `metadata`       | object            | Custom metadata                     |
-| `createdAt`      | string (ISO 8601) | Creation timestamp                  |
-| `updatedAt`      | string (ISO 8601) | Last update timestamp               |
-
----
-
-## Error Responses
-
-| Status | Error                               | Description                    |
-| ------ | ----------------------------------- | ------------------------------ |
-| 400    | `Validation failed`                 | Invalid request data           |
-| 401    | `Authentication required`           | Missing or invalid credentials |
-| 404    | `Queue/Draw/Auction not found`      | Distribution does not exist    |
-| 409    | `Cannot update closed distribution` | Distribution already closed    |
-
----
-
-## SDK Usage
-
-```typescript
-import { FanfareAdmin } from "@fanfare/admin-sdk";
-
-const admin = new FanfareAdmin({
-  secretKey: process.env.FANFARE_SECRET_KEY,
-});
-
-// Create queue
-const queue = await admin.queues.create({
-  sequenceId: "seq_01HXYZ",
-  name: "Product Launch",
-  openAt: "2024-12-15T09:00:00-05:00",
-  closeAt: "2024-12-15T18:00:00-05:00",
-  admissionRate: 100,
-});
-
-// List queues
-const queues = await admin.queues.list();
-
-// Update queue
-await admin.queues.update(queue.id, {
-  admissionRate: 150,
-});
-
-// Create draw
-const draw = await admin.draws.create({
-  sequenceId: "seq_01HXYZ",
-  name: "Holiday Raffle",
-  openAt: "2024-12-01T00:00:00Z",
-  closeAt: "2024-12-14T23:59:59Z",
-  drawAt: "2024-12-15T12:00:00Z",
-  winnerCount: 100,
-});
-
-// Create auction
-const auction = await admin.auctions.create({
-  sequenceId: "seq_01HXYZ",
-  name: "Rare Item Auction",
-  openAt: "2024-12-10T09:00:00Z",
-  closeAt: "2024-12-15T21:00:00Z",
-  settleAt: "2024-12-15T21:30:00Z",
-  startingBid: 100,
-  minimumIncrement: 10,
-});
-
-// Delete distribution
-await admin.queues.delete(queue.id);
-await admin.draws.delete(draw.id);
-await admin.auctions.delete(auction.id);
-```
+| Field | Required | Description |
+| --- | --- | --- |
+| `locationId` | No | Location associated with the appointment distribution. |
+| `slotDurationMinutes` | No | Slot length. |
+| `bufferMinutes` | No | Gap between slots. |
+| `maxCapacityPerSlot` | No | Maximum bookings per slot. |

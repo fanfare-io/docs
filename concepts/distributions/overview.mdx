@@ -78,24 +78,21 @@ When it's their turn, consumers receive access to checkout. This includes:
 
 Consumers complete their purchase within the access window. If they don't complete in time, their access expires.
 
-## Distribution Lifecycle
+## Distribution Timing
 
-Each distribution goes through three phases:
+Each distribution has customer-facing timing derived from its configured window:
 
 ```
-┌────────────────────────────────────────────────────────────────┐
-│                                                                │
-│  ╔═══════════════╗    ╔═══════════════╗    ╔═══════════════╗  │
-│  ║   SCHEDULED   ║───►║     OPEN      ║───►║    CLOSED     ║  │
-│  ║               ║    ║               ║    ║               ║  │
-│  ║  Countdown    ║    ║  Consumers    ║    ║  No new       ║  │
-│  ║  displayed    ║    ║  can join     ║    ║  entries      ║  │
-│  ╚═══════════════╝    ╚═══════════════╝    ╚═══════════════╝  │
-│        │                    │                    │             │
-│     Opens at            Active               Closes at         │
-│                                                                │
-└────────────────────────────────────────────────────────────────┘
+upcoming -> active -> ended
 ```
+
+| State | Meaning |
+| --- | --- |
+| **upcoming** | The distribution is scheduled but not active yet. |
+| **active** | Consumers can take the supported action for that distribution. |
+| **ended** | The distribution window or outcome timing has ended. |
+
+Some distributions add outcome timing. Draws use `drawAt` for winner selection, and auctions use `settleAt` for settlement timing.
 
 ## Access Windows
 
@@ -121,7 +118,7 @@ You can control whether consumers need to verify their identity:
 | **Allow guests**         | Low-friction entry, maximize participation              |
 | **Require verification** | Higher-value items, prevent abuse, enable notifications |
 
-**Typical settings by distribution type:**
+**Guest support depends on the distribution type and launch configuration:**
 
 | Distribution  | Guests Usually Allowed? | Why                          |
 | ------------- | ----------------------- | ---------------------------- |
@@ -129,7 +126,7 @@ You can control whether consumers need to verify their identity:
 | Draw          | Yes                     | Maximize entries             |
 | Auction       | No                      | Need payment capability      |
 | Appointment   | No                      | Booking accountability       |
-| Timed Release | Yes                     | Quick access                 |
+| Timed Release | Configurable            | Controlled by `supportsGuest` |
 | Waitlist      | Yes                     | Lead capture                 |
 
 ## Capacity Controls

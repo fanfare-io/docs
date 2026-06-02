@@ -67,7 +67,7 @@ interface CompleteAdmissionParams {
   distributionType: "queue" | "draw" | "auction" | "timed_release";
   consumerId: string;
   orderId?: string;
-  orderAmount?: number;
+  orderAmount?: string;
 }
 
 export async function completeAdmission(params: CompleteAdmissionParams) {
@@ -126,11 +126,13 @@ interface CreateOrderParams {
   distributionType: "queue" | "draw" | "auction" | "timed_release";
   items: OrderItem[];
   paymentId: string;
-  totalAmount: number;
+  totalAmount: string;
+  currencyCode: string;
 }
 
 export async function createOrder(params: CreateOrderParams) {
-  const { consumerId, admissionToken, distributionId, distributionType, items, paymentId, totalAmount } = params;
+  const { consumerId, admissionToken, distributionId, distributionType, items, paymentId, totalAmount, currencyCode } =
+    params;
 
   // 1. Create order in database
   const order = await db
@@ -143,6 +145,7 @@ export async function createOrder(params: CreateOrderParams) {
       items,
       paymentId,
       totalAmount,
+      currencyCode,
       status: "pending",
       createdAt: new Date(),
     })
@@ -300,7 +303,7 @@ router.post("/orders/paid", express.raw({ type: "application/json" }), async (re
         distributionType: fanfareData.distributionType,
         consumerId: fanfareData.consumerId,
         orderId: order.id.toString(),
-        orderAmount: parseFloat(order.total_price),
+        orderAmount: order.total_price,
       });
 
       console.log(`Completed admission for Shopify order ${order.id}`);
@@ -370,7 +373,7 @@ router.post("/orders/completed", express.json(), async (req, res) => {
     await completeAdmission({
       ...fanfareData,
       orderId: order.id.toString(),
-      orderAmount: parseFloat(order.total),
+      orderAmount: order.total,
     });
   }
 
@@ -539,7 +542,7 @@ await completeAdmission({
   metadata: {
     platform: "your-platform",
     itemCount: order.items.length,
-    currency: order.currency,
+    currencyCode: order.currencyCode,
   },
 });
 ```

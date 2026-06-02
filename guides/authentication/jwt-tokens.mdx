@@ -10,7 +10,7 @@ JWT (JSON Web Token) authentication allows your backend to securely authenticate
 
 - Understanding Fanfare's JWT authentication flow
 - Implementing server-side token exchange
-- Validating admission tokens
+- Validating admission grants
 - Securing your integration
 
 **Complexity:** Advanced
@@ -28,7 +28,7 @@ Use JWT authentication when:
 
 - Your application has existing user accounts
 - You need server-to-server authentication
-- You want to validate admission tokens before checkout
+- You want to validate admission grants before checkout
 - You require enhanced security for high-value transactions
 
 ## Authentication Architecture
@@ -65,12 +65,12 @@ Use JWT authentication when:
           │───────────────────────────────────────│─────┐
           │                   │                   │     │ Experience
           │◄──────────────────────────────────────│◄────┘
-          │   (Admission Token)                   │
+          │   (Admission Grant)                   │
           │                   │                   │
-          │  6. Checkout with Token               │
+          │  6. Checkout with Grant               │
           │───────────────────┼──────────────────►│
           │                   │                   │
-          │                   │ 7. Validate Token │
+          │                   │ 7. Validate Grant │
           │                   │◄──────────────────│
           │                   │                   │─────┐
           │                   │──────────────────►│     │ Fanfare API
@@ -211,7 +211,7 @@ async def authorize_fanfare(user: User = Depends(get_current_user)):
 Exchange the code in the browser:
 
 ```tsx
-import { useFanfare, useFanfareAuth } from "@waitify-io/fanfare-sdk-react";
+import { useFanfare, useFanfareAuth } from "@fanfare-io/fanfare-sdk-react";
 import { useEffect } from "react";
 
 interface User {
@@ -256,9 +256,9 @@ function useFanfareExternalAuth(user: User | null) {
 }
 ```
 
-## Step 3: Token Validation Endpoint
+## Step 3: Grant Validation Endpoint
 
-Validate admission tokens during checkout:
+Validate admission grants during checkout:
 
 ### Node.js/Express
 
@@ -269,56 +269,23 @@ import express from "express";
 const router = express.Router();
 
 interface ValidationRequest {
-  queueId?: string;
-  drawId?: string;
-  consumerId: string;
-  token: string;
+  admissionGrant: string;
 }
 
 // POST /api/validate-admission
 router.post("/validate-admission", async (req, res) => {
   try {
-    const { queueId, drawId, consumerId, token } = req.body as ValidationRequest;
-
-    // Determine endpoint based on distribution type
-    let endpoint: string;
-    if (queueId) {
-      endpoint = `${FANFARE_API_URL}/queues/${queueId}/validate`;
-    } else if (drawId) {
-      endpoint = `${FANFARE_API_URL}/draws/${drawId}/validate`;
-    } else {
-      return res.status(400).json({ error: "queueId or drawId required" });
-    }
-
-    // Validate with Fanfare
-    const response = await fetch(endpoint, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-Organization-Id": FANFARE_ORG_ID,
-        "X-Secret-Key": FANFARE_SECRET_KEY,
-      },
-      body: JSON.stringify({ consumerId, token }),
-    });
-
-    if (!response.ok) {
-      const error = await response.json();
-      return res.status(403).json({
-        valid: false,
-        error: error.error || "Token validation failed",
-      });
-    }
-
-    const isValid = await response.json();
+    const { admissionGrant } = req.body as ValidationRequest;
+    const isValid = await validateAdmissionGrant({ admissionGrant });
 
     if (!isValid) {
       return res.status(403).json({
         valid: false,
-        error: "Invalid or expired admission token",
+        error: "Invalid or expired admission grant",
       });
     }
 
-    // Token is valid - allow checkout to proceed
+    // Grant is valid - allow checkout to proceed
     res.json({ valid: true });
   } catch (error) {
     console.error("Validation error:", error);
@@ -340,26 +307,18 @@ import express from "express";
 const router = express.Router();
 
 interface CheckoutRequest {
-  admissionToken: string;
-  consumerId: string;
+  admissionGrant: string;
   experienceId: string;
-  experienceType: "queue" | "draw" | "auction";
-  distributionId: string;
   cart: CartItem[];
 }
 
 router.post("/checkout", async (req, res) => {
-  const { admissionToken, consumerId, experienceType, distributionId, cart } = req.body as CheckoutRequest;
+  const { admissionGrant, cart } = req.body as CheckoutRequest;
 
-  // 1. Validate admission token with Fanfare
-  const validationResult = await validateAdmission({
-    type: experienceType,
-    distributionId,
-    consumerId,
-    token: admissionToken,
-  });
+  // 1. Validate admission grant with Fanfare
+  const validationResult = await validateAdmissionGrant({ admissionGrant });
 
-  if (!validationResult.valid) {
+  if (!validationResult) {
     return res.status(403).json({
       error: "Invalid admission",
       message: "Your access has expired or is invalid",
@@ -370,17 +329,12 @@ router.post("/checkout", async (req, res) => {
   // 2. Process the order
   try {
     const order = await processOrder({
-      consumerId,
       cart,
-      admissionToken,
+      admissionGrant,
     });
 
-    // 3. Complete the admission (marks it as used)
-    await completeAdmission({
-      type: experienceType,
-      distributionId,
-      consumerId,
-    });
+    // 3. Record the successful checkout against the admission
+    await recordAdmissionCheckout({ admissionGrant, orderId: order.id });
 
     res.json({
       success: true,
@@ -393,55 +347,6 @@ router.post("/checkout", async (req, res) => {
     });
   }
 });
-
-async function validateAdmission(params: { type: string; distributionId: string; consumerId: string; token: string }) {
-  const endpoint =
-    params.type === "queue"
-      ? `/queues/${params.distributionId}/validate`
-      : params.type === "draw"
-        ? `/draws/${params.distributionId}/validate`
-        : `/auctions/${params.distributionId}/validate`;
-
-  const response = await fetch(`${FANFARE_API_URL}${endpoint}`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "X-Organization-Id": FANFARE_ORG_ID,
-      "X-Secret-Key": FANFARE_SECRET_KEY,
-    },
-    body: JSON.stringify({
-      consumerId: params.consumerId,
-      token: params.token,
-    }),
-  });
-
-  if (!response.ok) {
-    return { valid: false };
-  }
-
-  return { valid: await response.json() };
-}
-
-async function completeAdmission(params: { type: string; distributionId: string; consumerId: string }) {
-  const endpoint =
-    params.type === "queue"
-      ? `/queues/${params.distributionId}/complete`
-      : params.type === "draw"
-        ? `/draws/${params.distributionId}/complete`
-        : `/auctions/${params.distributionId}/complete`;
-
-  await fetch(`${FANFARE_API_URL}${endpoint}`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "X-Organization-Id": FANFARE_ORG_ID,
-      "X-Secret-Key": FANFARE_SECRET_KEY,
-    },
-    body: JSON.stringify({
-      consumerId: params.consumerId,
-    }),
-  });
-}
 
 export default router;
 ```
@@ -466,17 +371,12 @@ interface AccessTokenPayload {
 }
 ```
 
-### Admission Token Payload
+### Admission Grant Context
 
 ```typescript
-interface AdmissionTokenPayload {
-  consumerId: string;
-  distributionId: string;
-  distributionType: "queue" | "draw" | "auction";
-  position?: number; // For queues
-  admittedAt: string;
-  expiresAt: string;
-  fingerprint?: string;
+interface AdmissionGrantContext {
+  admissionGrant: string;
+  expiresAt?: number;
 }
 ```
 

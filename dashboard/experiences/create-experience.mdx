@@ -5,20 +5,20 @@ description: Step-by-step guide to creating new experiences in Fanfare
 
 # Creating Experiences
 
-This guide walks you through the experience creation process, covering all the configuration options available for queues, draws, auctions, and appointments.
+This guide walks you through the experience creation process, covering the shared configuration used for queues, draws, auctions, appointments, and timed releases. Waitlists are configured on access paths when you want to capture interest before or around another distribution.
 
 ## Starting the Creation Process
 
 1. Navigate to **Experiences** in the sidebar
 2. Click the **Create Experience** button
-3. Choose your experience type
+3. Choose your distribution type or access path template
 
 {/* IMAGE_PLACEHOLDER
 Type: screenshot
 Page: /app/experiences/create
 Shows: Experience creation page with type selection
-Annotations: Highlight the four type options
-Alt text: "Experience creation page showing Queue, Draw, Auction, and Appointment options"
+Annotations: Highlight the distribution type options
+Alt text: "Experience creation page showing distribution type options"
 */}
 
 
@@ -32,6 +32,8 @@ For type-specific configuration details, see:
 - [Draw Configuration](/dashboard/experiences/configure-lottery)
 - [Auction Configuration](/dashboard/experiences/configure-auction)
 - [Appointment Configuration](/dashboard/experiences/configure-appointment)
+- [Timed Release Configuration](/dashboard/experiences/configure-timed-release)
+- [Waitlist Configuration](/dashboard/experiences/configure-waitlist)
 
 ## Common Configuration Fields
 
@@ -53,12 +55,11 @@ _Caption: Enter basic information about your experience_
 | Field               | Required | Description                                   |
 | ------------------- | -------- | --------------------------------------------- |
 | **Name**            | Yes      | Display name for the experience               |
-| **Description**     | No       | Internal description (not shown to consumers) |
-| **Experience Type** | Yes      | Queue, Draw, Auction, or Appointment          |
+| **Distribution Type** | Yes      | Queue, Draw, Auction, Appointment, or Timed Release |
 
 ### Product Selection
 
-Select the product that consumers will access through this experience.
+Select the product or product pool that consumers will access through this experience.
 
 {/* IMAGE_PLACEHOLDER
 Type: screenshot
@@ -69,12 +70,13 @@ Alt text: "Product selection dropdown showing available products"
 */}
 
 
-_Caption: Select a product from your catalog_
+_Caption: Select products from your catalog_
 
-| Field               | Required | Description                                            |
-| ------------------- | -------- | ------------------------------------------------------ |
-| **Product**         | Yes      | The product to offer                                   |
-| **Variant Options** | No       | Specific variants to include (if product has variants) |
+| Field               | Required | Description                                                                    |
+| ------------------- | -------- | ------------------------------------------------------------------------------ |
+| **Product**         | Yes      | The product or product pool to offer                                           |
+| **Variant Options** | No       | Specific variants to include (if product has variants)                         |
+| **Selection Mode**  | Varies   | Consumer-selected products let consumers choose; system-assigned products use allocation settings  |
 
 <Tip>
 Create products before experiences. Navigate to **Products** to add items to your catalog.
@@ -82,7 +84,7 @@ Create products before experiences. Navigate to **Products** to add items to you
 
 ### Audience Selection
 
-Control who can access the experience by selecting an audience.
+Control who is eligible for an access path by selecting one or more audiences.
 
 {/* IMAGE_PLACEHOLDER
 Type: screenshot
@@ -93,21 +95,22 @@ Alt text: "Audience selection dropdown showing available audiences"
 */}
 
 
-_Caption: Select which audience can access this experience_
+_Caption: Select which audiences are eligible for this access path_
 
-| Field        | Required | Description                       |
-| ------------ | -------- | --------------------------------- |
-| **Audience** | Yes      | The audience that can participate |
+| Field        | Required | Description                                    |
+| ------------ | -------- | ---------------------------------------------- |
+| **Audience** | Varies   | Audiences whose members are eligible to participate |
 
 **Options:**
 
 - Select a specific audience
-- Select multiple audiences (consumers in any selected audience can participate)
+- Select multiple audiences for the same access path when those segments share eligibility
+- Use separate sequences when different eligible groups need different ordering or treatment
 - Leave empty for public access (no restrictions)
 
 ### Schedule Configuration
 
-Set when the experience starts and ends.
+Set the distribution window. Experience `openAt` and `closeAt` are derived from the distributions attached to its access paths.
 
 {/* IMAGE_PLACEHOLDER
 Type: screenshot
@@ -122,31 +125,36 @@ _Caption: Configure when your experience runs_
 
 | Field          | Required | Description                                                          |
 | -------------- | -------- | -------------------------------------------------------------------- |
-| **Start Date** | Yes      | When the experience opens for entries                                |
-| **Start Time** | Yes      | Time of day the experience starts                                    |
-| **End Date**   | Varies   | When the experience closes (not required for all types)              |
-| **End Time**   | Varies   | Time of day the experience ends                                      |
+| **Open Date**  | Varies   | When the distribution becomes active                                 |
+| **Open Time**  | Varies   | Time of day the distribution becomes active                          |
+| **Close Date** | Varies   | When the distribution window ends                                    |
+| **Close Time** | Varies   | Time of day the distribution window ends                             |
 | **Time Zone**  | Yes      | Time zone for all scheduled times (defaults to organization setting) |
 
-### Inventory Settings
+### Capacity Settings
 
-Configure how many consumers can successfully complete the experience.
+Configure distribution-specific capacity and outcome limits.
 
 {/* IMAGE_PLACEHOLDER
 Type: screenshot
 Page: /app/experiences/create
-Shows: Inventory configuration fields
+Shows: Capacity configuration fields
 Annotations: Label quantity and limit fields
-Alt text: "Inventory settings showing quantity limits"
+Alt text: "Capacity settings showing distribution limits"
 */}
 
 
-_Caption: Set inventory limits for your experience_
+_Caption: Set capacity limits for your distribution_
 
-| Field                  | Required | Description                          |
-| ---------------------- | -------- | ------------------------------------ |
-| **Total Quantity**     | Varies   | Maximum successful entries/purchases |
-| **Per-Consumer Limit** | No       | Maximum entries per consumer         |
+| Field | Required | Description |
+| --- | --- | --- |
+| **Queue Capacity** | Queue only | Maximum consumers waiting at once |
+| **Admit Rate** | Queue only | Rate at which consumers are admitted |
+| **Max Admissions** | Queue only | Maximum consumers who can be admitted |
+| **Winner Count** | Draw only | Number of winners selected at draw time |
+| **Slot Capacity** | Appointment only | Maximum bookings per slot |
+| **Guest Support** | Timed Release only | Whether guest participants can claim the release |
+| **Waitlist Capacity** | Waitlist access path | Maximum waitlist entries when a waitlist is configured |
 
 ## Form Progress Saving
 
@@ -162,7 +170,7 @@ The form validates your input as you type:
 
 - **Required fields** - Highlighted if empty when submitting
 - **Date validation** - End date must be after start date
-- **Inventory validation** - Quantities must be positive numbers
+- **Capacity validation** - Numeric limits must be positive numbers where required
 
 {/* IMAGE_PLACEHOLDER
 Type: screenshot
@@ -200,18 +208,18 @@ After successful creation:
 
 - You'll see a success notification
 - You'll be redirected to the experience detail page
-- The experience will be in **Draft** status
+- The experience is saved with its configured access path, distributions, and derived schedule
 
-## Canceling Creation
+## Discarding Creation
 
-To cancel and discard your progress:
+To discard your progress:
 
-1. Click the **Cancel** button
+1. Click the discard action
 2. Confirm you want to discard changes
 3. You'll return to the experiences list
 
 <Warning>
-Canceling clears your saved form progress. This cannot be undone.
+Discarding clears your saved form progress. This cannot be undone.
 </Warning>
 
 ## URL Parameters
@@ -220,7 +228,7 @@ You can pre-fill certain fields using URL parameters when linking to the creatio
 
 | Parameter    | Description         | Example               |
 | ------------ | ------------------- | --------------------- |
-| `type`       | Experience type     | `?type=QUEUE`         |
+| `type`       | Distribution type   | `?type=QUEUE`         |
 | `name`       | Experience name     | `?name=Summer%20Sale` |
 | `productId`  | Pre-select product  | `?productId=prod_123` |
 | `audienceId` | Pre-select audience | `?audienceId=aud_456` |
@@ -249,13 +257,13 @@ This is useful for:
 
 1. **Use descriptive names** - Include product and date for easy identification
 2. **Double-check time zones** - Verify the time zone matches your intended schedule
-3. **Review inventory limits** - Ensure quantities match your available stock
+3. **Review capacity limits** - Ensure limits match your launch plan and available stock
 
 ### After Creation
 
 1. **Preview the experience** - Check how it appears to consumers
 2. **Test with a sample entry** - Verify the flow works correctly
-3. **Set up notifications** - Configure alerts for key events
+3. **Set up notifications** - Configure alerts for key distribution events
 
 ## Troubleshooting
 
@@ -284,4 +292,6 @@ After creating your experience:
 - [Configure Draw Settings](/dashboard/experiences/configure-lottery) - For draw experiences
 - [Configure Auction Settings](/dashboard/experiences/configure-auction) - For auction experiences
 - [Configure Appointment Settings](/dashboard/experiences/configure-appointment) - For appointment experiences
-- [Experience Lifecycle](/dashboard/experiences/experience-lifecycle) - Publish and manage your experience
+- [Configure Timed Release Settings](/dashboard/experiences/configure-timed-release) - For timed release experiences
+- [Configure Waitlist Settings](/dashboard/experiences/configure-waitlist) - For waitlist experiences
+- [Experience Schedule](/dashboard/experiences/experience-lifecycle) - Understand derived timing and distribution states

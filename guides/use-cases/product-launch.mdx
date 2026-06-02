@@ -103,15 +103,8 @@ console.log(settings);
 ### Admin API Configuration
 
 ```typescript
-import { FanfareAdminClient } from "@waitify-io/fanfare-admin-sdk";
-
-const adminClient = new FanfareAdminClient({
-  apiKey: process.env.FANFARE_ADMIN_API_KEY!,
-  organizationId: process.env.FANFARE_ORGANIZATION_ID!,
-});
-
 async function createProductLaunchQueue() {
-  const queue = await adminClient.queues.create({
+  const queue = await createFanfareExperience({
     name: "Summer Sneaker Drop 2024",
     slug: "summer-sneaker-drop-2024",
 
@@ -159,7 +152,7 @@ async function createProductLaunchQueue() {
 
 ```typescript
 async function enablePreQueue(queueId: string) {
-  await adminClient.queues.update(queueId, {
+  await updateLaunchExperience(queueId, {
     config: {
       preQueueEnabled: true,
       preQueueStartTime: new Date("2024-06-15T09:30:00Z"),
@@ -175,7 +168,7 @@ async function enablePreQueue(queueId: string) {
 
 ```tsx
 // pages/launch/[slug].tsx
-import { FanfareProvider } from "@waitify-io/fanfare-sdk-react";
+import { FanfareProvider } from "@fanfare-io/fanfare-sdk-react";
 import { ProductLaunchExperience } from "@/components/ProductLaunchExperience";
 import { ProductInfo } from "@/components/ProductInfo";
 import { LaunchCountdown } from "@/components/LaunchCountdown";
@@ -188,7 +181,11 @@ interface LaunchPageProps {
 
 export default function LaunchPage({ queueId, product, launchTime }: LaunchPageProps) {
   return (
-    <FanfareProvider organizationId={process.env.NEXT_PUBLIC_FANFARE_ORG_ID!} options={{ environment: "production" }}>
+    <FanfareProvider
+      organizationId={process.env.NEXT_PUBLIC_FANFARE_ORG_ID!}
+      publishableKey={process.env.NEXT_PUBLIC_FANFARE_PUBLISHABLE_KEY!}
+      environment="production"
+    >
       <div className="launch-page">
         <header className="launch-header">
           <h1>{product.name}</h1>
@@ -226,7 +223,8 @@ export async function getServerSideProps({ params }: { params: { slug: string } 
 
 ```tsx
 // components/ProductLaunchExperience.tsx
-import { useExperienceJourney, useFanfare } from "@waitify-io/fanfare-sdk-react";
+import { useExperienceJourney } from "@fanfare-io/fanfare-sdk-react";
+import type { SequenceView } from "@fanfare-io/fanfare-sdk-core/experiences";
 import { useState, useEffect } from "react";
 
 interface ProductLaunchExperienceProps {
@@ -235,10 +233,9 @@ interface ProductLaunchExperienceProps {
 }
 
 export function ProductLaunchExperience({ queueId, product }: ProductLaunchExperienceProps) {
-  const { journey, state, start } = useExperienceJourney(queueId, { autoStart: true });
+  const { view, start } = useExperienceJourney(queueId, { autoStart: true });
 
-  const snapshot = state?.snapshot;
-  const stage = snapshot?.sequenceStage;
+  const stage = view?.journeyStage === "routed" ? view.sequence.stage : (view?.journeyStage ?? "loading");
 
   // Track analytics
   useEffect(() => {
@@ -253,33 +250,34 @@ export function ProductLaunchExperience({ queueId, product }: ProductLaunchExper
 
   return (
     <div className="launch-experience">
-      {stage === "not_started" && <PreLaunchState snapshot={snapshot} />}
+      {view?.journeyStage === "ready" && <PreLaunchState onStart={start} />}
 
-      {stage === "entering" && <EnteringState />}
+      {view?.journeyStage === "routing" && <EnteringState />}
 
-      {stage === "waiting" && <QueueState snapshot={snapshot} product={product} />}
+      {view?.journeyStage === "routed" && view.sequence.stage === "participating" && (
+        <QueueState sequence={view.sequence} product={product} />
+      )}
 
-      {stage === "admitted" && <AdmittedState snapshot={snapshot} product={product} />}
+      {view?.journeyStage === "routed" && view.sequence.stage === "admitted" && (
+        <AdmittedState sequence={view.sequence} product={product} />
+      )}
 
-      {stage === "completed" && <CompletedState />}
+      {view?.journeyStage === "routed" && view.sequence.stage === "denied" && <CompletedState />}
 
-      {stage === "error" && <ErrorState error={state?.error} onRetry={start} />}
+      {!view && <LoadingState message="Loading launch..." />}
     </div>
   );
 }
 
-function PreLaunchState({ snapshot }: { snapshot: JourneySnapshot }) {
-  const startsAt = snapshot?.context?.startsAt;
-  const preQueueMessage = snapshot?.context?.preQueueMessage;
-
+function PreLaunchState({ onStart }: { onStart: () => Promise<unknown> }) {
   return (
     <div className="pre-launch-state">
       <div className="countdown-container">
         <h2>Launch Countdown</h2>
-        <CountdownTimer targetTime={startsAt} />
+        <p>When the launch opens, start the journey to join the queue.</p>
       </div>
 
-      {preQueueMessage && <p className="pre-queue-message">{preQueueMessage}</p>}
+      <button onClick={() => void onStart()}>Join when available</button>
 
       <div className="launch-tips">
         <h3>Tips for Launch Day</h3>
@@ -294,10 +292,7 @@ function PreLaunchState({ snapshot }: { snapshot: JourneySnapshot }) {
   );
 }
 
-function QueueState({ snapshot, product }: { snapshot: JourneySnapshot; product: Product }) {
-  const position = snapshot?.context?.position;
-  const estimatedWait = snapshot?.context?.estimatedWaitSeconds;
-
+function QueueState({ sequence, product }: { sequence: SequenceView; product: Product }) {
   return (
     <div className="queue-state">
       <div className="queue-header">
@@ -307,17 +302,15 @@ function QueueState({ snapshot, product }: { snapshot: JourneySnapshot; product:
 
       <div className="queue-stats">
         <div className="stat position">
-          <span className="label">Your Position</span>
-          <span className="value">{position?.toLocaleString() || "Calculating..."}</span>
+          <span className="label">Status</span>
+          <span className="value">{sequence.stage}</span>
         </div>
 
         <div className="stat wait-time">
-          <span className="label">Estimated Wait</span>
-          <span className="value">{formatWaitTime(estimatedWait)}</span>
+          <span className="label">Next step</span>
+          <span className="value">Watch for admission</span>
         </div>
       </div>
-
-      <QueueProgress position={position} />
 
       <div className="product-reminder">
         <img src={product.imageUrl} alt={product.name} />
@@ -339,8 +332,14 @@ function QueueState({ snapshot, product }: { snapshot: JourneySnapshot; product:
   );
 }
 
-function AdmittedState({ snapshot, product }: { snapshot: JourneySnapshot; product: Product }) {
-  const expiresAt = snapshot?.context?.admittanceExpiresAt;
+function AdmittedState({
+  sequence,
+  product,
+}: {
+  sequence: Extract<JourneyView, { journeyStage: "routed" }>["sequence"] & { stage: "admitted" };
+  product: Product;
+}) {
+  const expiresAt = sequence.admissionGrantExpiresAt;
   const [timeRemaining, setTimeRemaining] = useState(0);
 
   useEffect(() => {
@@ -361,11 +360,8 @@ function AdmittedState({ snapshot, product }: { snapshot: JourneySnapshot; produ
   const handleCheckout = () => {
     // Navigate to checkout with admission context
     const admissionData = {
-      token: snapshot?.context?.admittanceToken,
-      consumerId: snapshot?.context?.consumerId,
-      experienceId: snapshot?.context?.experienceId,
-      distributionId: snapshot?.context?.distributionId,
-      distributionType: "queue",
+      admissionGrant: sequence.admissionGrant,
+      productId: product.id,
     };
 
     sessionStorage.setItem("fanfare_admission", JSON.stringify(admissionData));
@@ -459,7 +455,7 @@ interface QueueMetrics {
 }
 
 async function getQueueMetrics(queueId: string): Promise<QueueMetrics> {
-  const response = await adminClient.queues.getMetrics(queueId);
+  const response = await getLaunchMetrics(queueId);
   return response;
 }
 
@@ -497,21 +493,21 @@ function MonitoringDashboard({ queueId }: { queueId: string }) {
 ```typescript
 // Pause queue if issues arise
 async function pauseQueue(queueId: string) {
-  await adminClient.queues.update(queueId, {
+  await updateLaunchExperience(queueId, {
     status: "paused",
   });
 }
 
 // Resume queue
 async function resumeQueue(queueId: string) {
-  await adminClient.queues.update(queueId, {
+  await updateLaunchExperience(queueId, {
     status: "active",
   });
 }
 
 // Adjust admission rate dynamically
 async function adjustAdmissionRate(queueId: string, newRate: number) {
-  await adminClient.queues.update(queueId, {
+  await updateLaunchExperience(queueId, {
     config: {
       admissionRatePerMinute: newRate,
     },
@@ -520,13 +516,13 @@ async function adjustAdmissionRate(queueId: string, newRate: number) {
 
 // End queue early (e.g., sold out)
 async function endQueueEarly(queueId: string, reason: string) {
-  await adminClient.queues.update(queueId, {
+  await updateLaunchExperience(queueId, {
     status: "ended",
     endReason: reason,
   });
 
   // Notify remaining users
-  await adminClient.queues.notifyWaiting(queueId, {
+  await notifyWaitingConsumers(queueId, {
     type: "experience_ended",
     message: "This product has sold out. Thank you for your interest.",
   });
@@ -549,7 +545,7 @@ async function handleOrderCompleted(orderId: string, queueId: string) {
   }
 
   // Update queue display if showing remaining stock
-  await adminClient.queues.updateMetadata(queueId, {
+  await updateLaunchMetadata(queueId, {
     inventoryRemaining: remainingInventory,
   });
 }
@@ -557,10 +553,10 @@ async function handleOrderCompleted(orderId: string, queueId: string) {
 // Sync inventory periodically
 async function syncInventoryWithQueue(queueId: string) {
   const actualInventory = await getActualInventoryCount();
-  const queueMetadata = await adminClient.queues.get(queueId);
+  const queueMetadata = await getLaunchExperience(queueId);
 
   if (actualInventory !== queueMetadata.metadata.inventoryRemaining) {
-    await adminClient.queues.updateMetadata(queueId, {
+    await updateLaunchMetadata(queueId, {
       inventoryRemaining: actualInventory,
     });
 
@@ -601,7 +597,7 @@ interface LaunchReport {
 }
 
 async function generateLaunchReport(queueId: string): Promise<LaunchReport> {
-  const analytics = await adminClient.analytics.getQueueReport(queueId);
+  const analytics = await getLaunchReport(queueId);
 
   return {
     summary: {
@@ -680,27 +676,29 @@ const stageMessages = {
 // Handle page visibility changes
 useEffect(() => {
   const handleVisibilityChange = () => {
-    if (document.visibilityState === "visible" && stage === "waiting") {
+    if (document.visibilityState === "visible" && stage === "participating") {
       // Refresh position when returning to page
-      journey.refreshState();
+      if (view?.journeyStage === "routed") {
+        void view.reroute();
+      }
     }
   };
 
   document.addEventListener("visibilitychange", handleVisibilityChange);
   return () => document.removeEventListener("visibilitychange", handleVisibilityChange);
-}, [journey, stage]);
+}, [view, stage]);
 
 // Handle network reconnection
 useEffect(() => {
   const handleOnline = () => {
-    if (stage === "waiting" || stage === "admitted") {
-      journey.refreshState();
+    if ((stage === "participating" || stage === "admitted") && view?.journeyStage === "routed") {
+      void view.reroute();
     }
   };
 
   window.addEventListener("online", handleOnline);
   return () => window.removeEventListener("online", handleOnline);
-}, [journey, stage]);
+}, [view, stage]);
 ```
 
 ## Troubleshooting

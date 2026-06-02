@@ -1,510 +1,202 @@
 ---
 title: Deployment
-description: Production deployment checklist for your Fanfare integration.
+description: Production checklist for a public Fanfare SDK integration.
 ---
 
 # Deployment
 
-This guide covers everything you need to deploy your Fanfare integration to production, including environment configuration, security considerations, and monitoring.
+Before shipping Fanfare to production, verify that your browser SDK setup, admitted-state handoff, and fallback behavior are ready for real customers.
 
-## Pre-Deployment Checklist
+## Production Checklist
 
-Before deploying to production, verify the following:
+| Area | Verify |
+| --- | --- |
+| Credentials | Production uses `pk_live_...` publishable keys and server-only secret keys. |
+| Experience | The production page points at the intended `experienceId`. |
+| Environment | Browser SDK config uses `environment="production"`. |
+| Handoff | Admitted customers pass through your trusted server or checkout flow. |
+| Logging | Debug logging is disabled in production. |
+| Copy | Gated, denied, and error states use generic customer-safe language. |
+| Fallback | Your app has a plan if the launch experience cannot be rendered. |
 
-### 1. Use Production Credentials
+## Use Production Credentials
 
-Ensure you are using production API keys, not test keys:
+Configure browser-safe production values through your platform's public environment variable mechanism.
+
+```bash
+NEXT_PUBLIC_FANFARE_ORG_ID=org_123
+NEXT_PUBLIC_FANFARE_PUBLISHABLE_KEY=pk_live_123
+NEXT_PUBLIC_FANFARE_EXPERIENCE_ID=exp_123
+```
 
 ```tsx
-// Production
 <FanfareProvider
-  organizationId={process.env.NEXT_PUBLIC_FANFARE_ORG_ID}
-  publishableKey={process.env.NEXT_PUBLIC_FANFARE_PUBLISHABLE_KEY} // pk_live_...
+  organizationId={process.env.NEXT_PUBLIC_FANFARE_ORG_ID!}
+  publishableKey={process.env.NEXT_PUBLIC_FANFARE_PUBLISHABLE_KEY!}
   environment="production"
+  debug={false}
 >
+  <ExperienceWidget
+    experienceId={process.env.NEXT_PUBLIC_FANFARE_EXPERIENCE_ID!}
+    autoStart
+    checkoutUrl="/checkout"
+  />
+</FanfareProvider>
 ```
 
-Production keys:
+Never expose secret API keys in frontend code, static HTML, client logs, or browser-visible environment variables.
 
-- Start with `pk_live_`
-- Connect to `https://api.fanfare.io`
-- Use your production organization data
+## Handle Admission Safely
 
-### 2. Remove Debug Mode
-
-Disable debug logging in production:
+When a customer is admitted, send the admission grant to the next trusted step. Avoid placing grants in URLs or third-party telemetry.
 
 ```tsx
+<ExperienceWidget
+  experienceId="exp_123"
+  autoStart
+  onAdmitted={async (admissionGrant) => {
+    await fetch("/api/fanfare/admission", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ admissionGrant }),
+    });
+
+    window.location.assign("/checkout");
+  }}
+/>
+```
+
+If your custom UI renders directly from `JourneyView`, read the admitted fields from the public sequence view:
+
+```tsx
+if (view.sequence.stage === "admitted") {
+  return (
+    <CheckoutPanel
+      admissionGrant={view.sequence.admissionGrant}
+      admissionGrantExpiresAt={view.sequence.admissionGrantExpiresAt}
+    />
+  );
+}
+```
+
+Your backend should validate admitted customers before completing protected actions such as checkout, booking, or fulfillment.
+
+## Disable Development Settings
+
+Use debug logging only during development or guided troubleshooting.
+
+```tsx
+const isProduction = process.env.NODE_ENV === "production";
+
 <FanfareProvider
-  organizationId={process.env.NEXT_PUBLIC_FANFARE_ORG_ID}
-  publishableKey={process.env.NEXT_PUBLIC_FANFARE_PUBLISHABLE_KEY}
-  debug={false}  // Always false in production
-  logging={{ level: "error" }}  // Only log errors
+  organizationId={process.env.NEXT_PUBLIC_FANFARE_ORG_ID!}
+  publishableKey={process.env.NEXT_PUBLIC_FANFARE_PUBLISHABLE_KEY!}
+  environment={isProduction ? "production" : "development"}
+  debug={!isProduction}
 >
+  <ProductLaunchPage />
+</FanfareProvider>;
 ```
 
-### 3. Verify Environment Variables
+Production logs and analytics should capture high-level outcomes, such as "admitted" or "checkout started", rather than raw grants, snapshots, or session values.
 
-Ensure all required environment variables are set in your production environment:
+## Content Security Policy
 
-```bash
-# Required
-NEXT_PUBLIC_FANFARE_ORG_ID=org_your_production_id
-NEXT_PUBLIC_FANFARE_PUBLISHABLE_KEY=pk_live_your_production_key
+If your site uses a Content Security Policy, allow browser connections to Fanfare.
 
-# Optional
-NEXT_PUBLIC_FANFARE_ENVIRONMENT=production
+```txt
+connect-src 'self' https://api.fanfare.io https://beacon.fanfare.io;
 ```
 
-### 4. Test Production Configuration Locally
+Keep the rest of your policy aligned with your application framework and security requirements.
 
-Before deploying, test with production credentials locally:
+## Fallback Behavior
 
-```bash
-# Create a .env.production.local file (gitignored)
-NEXT_PUBLIC_FANFARE_ORG_ID=org_production_123
-NEXT_PUBLIC_FANFARE_PUBLISHABLE_KEY=pk_live_xyz789
-
-# Run with production config
-npm run build && npm run start
-```
-
-## Backend Integration
-
-### Validating Admission Tokens
-
-When customers are admitted, they receive an admission token. Your backend must validate this token before completing the transaction.
-
-```typescript
-// Your backend API
-import { createHmac } from "crypto";
-
-interface AdmissionValidation {
-  valid: boolean;
-  experienceId?: string;
-  consumerId?: string;
-  admittedAt?: string;
-  expiresAt?: string;
-}
-
-async function validateAdmissionToken(token: string): Promise<AdmissionValidation> {
-  const response = await fetch("https://api.fanfare.io/v1/admissions/validate", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${process.env.FANFARE_SECRET_KEY}`,
-      "X-Organization-Id": process.env.FANFARE_ORG_ID!,
-    },
-    body: JSON.stringify({ token }),
-  });
-
-  if (!response.ok) {
-    return { valid: false };
-  }
-
-  return response.json();
-}
-```
-
-{/* TODO: MISSING_FUNCTIONALITY
-Feature: Server-side SDK for admission validation
-Expected behavior: Official Node.js/server SDK with typed admission validation
-Current state: Direct HTTP calls to API required
-*/}
-
-<Callout type="warning">
-  **Security Note**: Never expose your secret API key (`sk_live_...`) in client-side code. Only use it in your backend.
-</Callout>
-
-### Webhook Integration
-
-Set up webhooks to receive real-time notifications about experience events:
-
-{/* IMAGE_PLACEHOLDER
-Type: screenshot
-Page/Component: Fanfare Dashboard - Webhook Configuration
-Shows: The webhook setup page with endpoint URL and event selection
-Alt text: "Fanfare dashboard webhook configuration page"
-*/}
-
-Common webhook events:
-
-| Event               | Description                      |
-| ------------------- | -------------------------------- |
-| `queue.admitted`    | Consumer was admitted from queue |
-| `draw.completed`    | Draw finished, winners selected  |
-| `auction.ended`     | Auction ended                    |
-| `admission.expired` | Admission token expired          |
-
-Example webhook handler:
-
-```typescript
-// pages/api/webhooks/fanfare.ts (Next.js)
-import { NextApiRequest, NextApiResponse } from "next";
-import { createHmac } from "crypto";
-
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method !== "POST") {
-    return res.status(405).end();
-  }
-
-  // Verify webhook signature
-  const signature = req.headers["x-fanfare-signature"] as string;
-  const payload = JSON.stringify(req.body);
-  const expectedSignature = createHmac("sha256", process.env.FANFARE_WEBHOOK_SECRET!).update(payload).digest("hex");
-
-  if (signature !== expectedSignature) {
-    return res.status(401).json({ error: "Invalid signature" });
-  }
-
-  // Handle the event
-  const event = req.body;
-
-  switch (event.type) {
-    case "queue.admitted":
-      // Handle queue admission
-      await handleQueueAdmission(event.data);
-      break;
-    case "draw.completed":
-      // Handle draw completion
-      await handleDrawCompletion(event.data);
-      break;
-    default:
-      console.log("Unhandled event type:", event.type);
-  }
-
-  res.status(200).json({ received: true });
-}
-```
-
-## Security Considerations
-
-### Content Security Policy (CSP)
-
-Allow connections to Fanfare APIs in your CSP:
-
-```typescript
-// next.config.js
-const securityHeaders = [
-  {
-    key: "Content-Security-Policy",
-    value: `
-      default-src 'self';
-      connect-src 'self' https://api.fanfare.io https://beacon.fanfare.io;
-      script-src 'self' 'unsafe-inline' 'unsafe-eval';
-      style-src 'self' 'unsafe-inline';
-    `.replace(/\n/g, ""),
-  },
-];
-
-module.exports = {
-  async headers() {
-    return [
-      {
-        source: "/(.*)",
-        headers: securityHeaders,
-      },
-    ];
-  },
-};
-```
-
-### CORS Configuration
-
-The Fanfare API handles CORS automatically. Ensure your domain is registered in your Fanfare dashboard.
-
-{/* IMAGE_PLACEHOLDER
-Type: screenshot
-Page/Component: Fanfare Dashboard - Domain Settings
-Shows: The domain allowlist configuration
-Alt text: "Fanfare dashboard showing domain allowlist settings"
-*/}
-
-### Rate Limiting
-
-The Fanfare API has rate limits to protect against abuse:
-
-| Endpoint        | Limit                            |
-| --------------- | -------------------------------- |
-| Queue entry     | 100 requests/minute per IP       |
-| Draw entry      | 100 requests/minute per IP       |
-| Auction bidding | 60 requests/minute per consumer  |
-| Status polling  | 120 requests/minute per consumer |
-
-The SDK handles rate limit errors gracefully with exponential backoff.
-
-## Performance Optimization
-
-### Bundle Size
-
-Verify your bundle size includes only what you need:
-
-```bash
-# Analyze bundle
-npm run build -- --analyze
-```
-
-The SDK supports tree-shaking. If you only use queues, draw/auction code is not included.
-
-### Lazy Loading
-
-Load Fanfare components lazily if they are not needed on initial page load:
+Decide what the product page should do if the SDK cannot initialize or the experience is unavailable.
 
 ```tsx
-import { lazy, Suspense } from "react";
+function LaunchExperience() {
+  const fanfareEnabled = useFeatureFlag("fanfare-launch");
 
-const QueueWidget = lazy(() => import("@fanfare/react").then((m) => ({ default: m.QueueWidget })));
+  if (!fanfareEnabled) {
+    return <FallbackLaunchPanel />;
+  }
 
-function ProductPage() {
   return (
-    <div>
-      <h1>Product Details</h1>
-      {/* QueueWidget loads only when rendered */}
-      <Suspense fallback={<div>Loading queue...</div>}>
-        <QueueWidget experienceId="exp_123" />
-      </Suspense>
-    </div>
+    <ExperienceWidget
+      experienceId="exp_123"
+      autoStart
+      onError={(error) => {
+        reportLaunchExperienceError(error);
+      }}
+    />
   );
 }
 ```
 
-### Preconnect to API
+Fallback copy should be clear without exposing private enforcement or operational details.
 
-Add preconnect hints to reduce connection latency:
-
-```html
-<head>
-  <link rel="preconnect" href="https://api.fanfare.io" />
-  <link rel="preconnect" href="https://beacon.fanfare.io" />
-</head>
-```
-
-## Monitoring and Observability
-
-### Error Tracking
-
-Integrate with your error tracking service:
-
-```tsx
-import * as Sentry from "@sentry/react";
-import { FanfareProvider } from "@fanfare/react";
-
-function App() {
-  return (
-    <Sentry.ErrorBoundary fallback={<ErrorFallback />}>
-      <FanfareProvider
-        organizationId={process.env.NEXT_PUBLIC_FANFARE_ORG_ID!}
-        publishableKey={process.env.NEXT_PUBLIC_FANFARE_PUBLISHABLE_KEY!}
-      >
-        <YourApp />
-      </FanfareProvider>
-    </Sentry.ErrorBoundary>
-  );
-}
-```
-
-### Analytics Events
-
-Track Fanfare events in your analytics:
-
-```tsx
-import { useFanfare } from "@fanfare/react";
-import { useEffect } from "react";
-
-function AnalyticsTracker() {
-  const fanfare = useFanfare();
-
-  useEffect(() => {
-    const unsubscribeAdmitted = fanfare.on("queue:admitted", (data) => {
-      // Track in your analytics
-      analytics.track("Queue Admitted", {
-        queueId: data.queueId,
-      });
-    });
-
-    const unsubscribeDrawWon = fanfare.on("draw:won", (data) => {
-      analytics.track("Draw Won", {
-        drawId: data.drawId,
-      });
-    });
-
-    return () => {
-      unsubscribeAdmitted();
-      unsubscribeDrawWon();
-    };
-  }, [fanfare]);
-
-  return null;
-}
-```
-
-### Health Checks
-
-Monitor Fanfare API availability:
-
-```typescript
-// health-check.ts
-async function checkFanfareHealth(): Promise<boolean> {
-  try {
-    const response = await fetch("https://api.fanfare.io/health", {
-      timeout: 5000,
-    });
-    return response.ok;
-  } catch {
-    return false;
-  }
-}
-```
-
-## Deployment Platforms
+## Platform Notes
 
 ### Vercel
 
+Set public browser values in Vercel project settings or with the CLI:
+
 ```bash
-# Set environment variables in Vercel dashboard or CLI
 vercel env add NEXT_PUBLIC_FANFARE_ORG_ID
 vercel env add NEXT_PUBLIC_FANFARE_PUBLISHABLE_KEY
-
-# Deploy
-vercel --prod
+vercel env add NEXT_PUBLIC_FANFARE_EXPERIENCE_ID
 ```
 
 ### Netlify
 
+Set public values in site environment settings:
+
 ```toml
-# netlify.toml
-[build]
-  command = "npm run build"
-  publish = ".next"
-
 [build.environment]
-  NEXT_PUBLIC_FANFARE_ORG_ID = "org_your_id"
-  NEXT_PUBLIC_FANFARE_PUBLISHABLE_KEY = "pk_live_your_key"
+  NEXT_PUBLIC_FANFARE_ORG_ID = "org_123"
+  NEXT_PUBLIC_FANFARE_PUBLISHABLE_KEY = "pk_live_123"
+  NEXT_PUBLIC_FANFARE_EXPERIENCE_ID = "exp_123"
 ```
-
-### AWS Amplify
-
-```yaml
-# amplify.yml
-version: 1
-frontend:
-  phases:
-    preBuild:
-      commands:
-        - npm ci
-    build:
-      commands:
-        - npm run build
-  artifacts:
-    baseDirectory: .next
-    files:
-      - "**/*"
-  cache:
-    paths:
-      - node_modules/**/*
-```
-
-Set environment variables in the Amplify console.
 
 ### Docker
 
+Pass public browser values at build time only if your framework embeds them into the client bundle.
+
 ```dockerfile
-# Dockerfile
-FROM node:20-alpine AS builder
-WORKDIR /app
-COPY package*.json ./
-RUN npm ci
-COPY . .
 ARG NEXT_PUBLIC_FANFARE_ORG_ID
 ARG NEXT_PUBLIC_FANFARE_PUBLISHABLE_KEY
+ARG NEXT_PUBLIC_FANFARE_EXPERIENCE_ID
 ENV NEXT_PUBLIC_FANFARE_ORG_ID=$NEXT_PUBLIC_FANFARE_ORG_ID
 ENV NEXT_PUBLIC_FANFARE_PUBLISHABLE_KEY=$NEXT_PUBLIC_FANFARE_PUBLISHABLE_KEY
-RUN npm run build
-
-FROM node:20-alpine AS runner
-WORKDIR /app
-COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package.json ./package.json
-
-EXPOSE 3000
-CMD ["npm", "start"]
+ENV NEXT_PUBLIC_FANFARE_EXPERIENCE_ID=$NEXT_PUBLIC_FANFARE_EXPERIENCE_ID
 ```
+
+Keep server secrets in runtime-only secret storage.
 
 ## Post-Deployment Verification
 
-After deploying, verify your integration:
+After deployment:
 
-### 1. Test the Full Flow
-
-1. Visit your production site
-2. Join a queue/draw/auction
-3. Verify you are admitted (use a test experience if needed)
-4. Complete a test transaction
-5. Verify the admission token was validated
-
-### 2. Check Logging
-
-Monitor your application logs for any Fanfare-related errors:
-
-```bash
-# Vercel
-vercel logs --follow
-
-# Docker
-docker logs -f your-container
-```
-
-### 3. Verify Webhooks
-
-Trigger a test event and verify your webhook endpoint receives it:
-
-1. Go to Fanfare Dashboard > Webhooks
-2. Click "Send Test Event"
-3. Verify your endpoint returns 200 OK
-
-### 4. Monitor Metrics
-
-Check your Fanfare dashboard for:
-
-- Request volume
-- Error rates
-- Average queue times
-- Conversion rates
-
-{/* IMAGE_PLACEHOLDER
-Type: screenshot
-Page/Component: Fanfare Dashboard - Analytics Overview
-Shows: The main analytics dashboard with key metrics
-Alt text: "Fanfare analytics dashboard showing queue metrics and conversion rates"
-*/}
+1. Visit the production page in a clean browser profile.
+2. Confirm the widget or custom UI renders the expected public state.
+3. Confirm `environment="production"` and the production experience ID are configured.
+4. Confirm admitted-state handoff reaches your backend or checkout flow.
+5. Confirm debug logging is off.
+6. Confirm analytics and error tracking do not include raw grants or snapshots.
+7. Repeat with an existing session and a second browser tab.
 
 ## Rollback Plan
 
-Have a rollback plan ready:
+Use your normal release controls so you can pause or bypass the integration quickly if needed:
 
-1. **Feature Flag**: Use a feature flag to disable Fanfare integration quickly
-2. **Fallback UI**: Show a fallback message if Fanfare is unavailable
-3. **Previous Version**: Keep the previous deployment available for quick rollback
-
-```tsx
-function ProductPage() {
-  const fanfareEnabled = useFeatureFlag("fanfare_enabled");
-
-  if (!fanfareEnabled) {
-    return <FallbackProductPage />;
-  }
-
-  return (
-    <FanfareProvider {...config}>
-      <ProductWithQueue />
-    </FanfareProvider>
-  );
-}
-```
+- Feature flag the launch experience.
+- Keep fallback product-page copy ready.
+- Keep the previous deployment available.
+- Route support messaging through your normal customer support path.
 
 ## Next Steps
 
-- [Next Steps](/getting-started/next-steps) - Explore advanced features
-- [SDK Reference](/sdk/components/react) - Complete API documentation
-- [Troubleshooting](/resources/troubleshooting/common-issues) - Common issues and solutions
+- [Testing](/getting-started/testing) - Review test coverage before launch.
+- [React Components](/sdk/components/react) - Check widget props and callbacks.
+- [Public Integration Model](/sdk/security-and-public-model) - Keep public docs and customer copy contract-first.

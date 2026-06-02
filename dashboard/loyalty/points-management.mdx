@@ -1,0 +1,51 @@
+---
+title: Loyalty Points Management
+description: Configure event-based earning and adjust individual customer balances.
+---
+
+# Loyalty Points Management
+
+Use **Loyalty > Event points** to manage how many points customer actions earn. Use the customer detail page when you need to adjust one customer's balance.
+
+## Event Points
+
+Event points are organized into categories so teams can review earning behavior without scanning every underlying event name.
+
+| Category | Common examples |
+| --- | --- |
+| Engagement | Page views, product views, product clicks, searches. |
+| Conversion | Add to cart, view cart, begin checkout, purchase. |
+| Social/message | QR scans, message opens, message reads, message clicks. |
+| Queue | Queue entry, admission, completion. |
+| Draw | Draw entry, win, completion. |
+| Auction | Bid placed, bid won. |
+| Appointment | Booking, confirmation, check-in, completion. |
+| Waitlist | Waitlist entry. |
+
+Set an event to `0` when that action should not award points. The dashboard stores only values you customize and uses the program defaults for the rest.
+
+## Balance Distribution
+
+The event-points page can show how customer balances are distributed across your organization. Use this to understand whether your earning values create useful spread for tiers and rewards.
+
+For tier setup, create loyalty audiences from the Audiences area. The event-points page configures earning values; audiences turn loyalty fields into access and segmentation groups.
+
+## Manual Adjustments
+
+Admins can add or deduct points for a customer from support workflows. Manual adjustments are useful for:
+
+- Support compensation.
+- Correcting a known customer issue.
+- Removing points that should not remain available.
+
+A manual adjustment changes the customer's balance and appears in loyalty history. Deductions cannot take the balance below zero.
+
+## What Customers Can See
+
+App-owned customer UI can show:
+
+- Current balance and lifetime points.
+- Recent point history.
+- Upcoming expiration groups, when the program policy creates expiring points.
+
+Use the [Consumer Loyalty API](/api/consumer-api/loyalty) for customer-facing display. Use the [Admin Loyalty API](/api/admin-api/loyalty) for server-side management workflows.

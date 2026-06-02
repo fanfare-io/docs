@@ -165,20 +165,20 @@ _Caption: The audience detail page provides comprehensive management options_
 
 ## Using Audiences in Experiences
 
-When creating or editing an experience, select which audiences can participate:
+When creating or editing an experience, select which audiences are eligible for an access path:
 
 1. Navigate to the experience
 2. Find the Audience selection field
 3. Choose one or more audiences
-4. Consumers in selected audiences can access the experience
+4. Consumers who match the configured audience rules are eligible for that path
 
 ### Multiple Audiences
 
 When multiple audiences are selected:
 
-- A consumer in **any** selected audience can participate
-- This creates a union of all selected audiences
-- Great for combining different customer segments
+- Treat the selection as membership and eligibility criteria for that access path
+- Use experience sequences to define ordering when multiple access paths are available
+- Keep audience names clear so overlapping segments are easy to reason about
 
 {/* IMAGE_PLACEHOLDER
 Type: screenshot
@@ -189,7 +189,7 @@ Alt text: "Experience form showing multiple audiences selected"
 */}
 
 
-_Caption: Select multiple audiences for combined access_
+_Caption: Select multiple audiences for shared eligibility_
 
 ## Audience Analytics
 

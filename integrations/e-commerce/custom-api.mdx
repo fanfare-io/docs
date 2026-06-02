@@ -16,19 +16,28 @@ For e-commerce platforms not directly supported, Fanfare provides a comprehensiv
 
 ### Product Management
 
-Create and manage products programmatically:
+Create and manage products programmatically. Product variants are the sellable units, so send variant prices as decimal strings:
 
 ```bash
 # Create a product
-POST /api/products
+POST /products
 Content-Type: application/json
 
 {
   "name": "Limited Edition Sneakers",
   "description": "Exclusive release",
-  "price": 199.99,
-  "sku": "SNKR-001",
-  "inventory": 100
+  "url": "https://store.example/products/limited-edition-sneakers",
+  "variants": [
+    {
+      "sku": "SNKR-001-9",
+      "price": "199.99",
+      "inventoryQuantity": 100,
+      "inventoryPolicy": "deny",
+      "optionValues": [
+        { "optionName": "Size", "value": "9" }
+      ]
+    }
+  ]
 }
 ```
 
@@ -38,7 +47,7 @@ Import consumers from your e-commerce platform:
 
 ```bash
 # Create a consumer
-POST /api/consumers
+POST /consumers
 Content-Type: application/json
 
 {
@@ -50,18 +59,26 @@ Content-Type: application/json
 
 ### Order Integration
 
-Report orders back to Fanfare:
+Report completed orders back to Fanfare through the Checkout API or the generated endpoint for your integration path. Keep authoritative money values as decimal strings:
 
 ```bash
-# Create an order
-POST /api/orders
+# Example order completion payload shape
 Content-Type: application/json
 
 {
   "consumerId": "con_123",
   "distributionId": "dist_456",
   "externalOrderId": "YOUR-ORDER-123",
-  "totalAmount": 199.99
+  "totalAmount": "199.99",
+  "currencyCode": "USD",
+  "items": [
+    {
+      "productId": "prod_123",
+      "variantId": "var_456",
+      "quantity": 1,
+      "unitAmount": "199.99"
+    }
+  ]
 }
 ```
 
@@ -80,7 +97,7 @@ Content-Type: application/json
 
 1. Export products from your platform
 2. Transform to Fanfare format
-3. POST to `/api/products`
+3. POST to the generated Admin API product endpoint
 4. Store the mapping of IDs
 
 ### Checkout Flow
@@ -101,7 +118,7 @@ Content-Type: application/json
 1. Configure checkout URL in experience settings
 2. Fanfare redirects winners with consumer/product data
 3. Process payment on your platform
-4. Callback to Fanfare with order confirmation
+4. Callback to Fanfare with order confirmation using decimal-string money fields
 
 ## Authentication
 
@@ -148,7 +165,7 @@ Handle common error responses:
 List endpoints support cursor pagination:
 
 ```bash
-GET /api/products?cursor=abc123&limit=50
+GET /products?cursor=abc123&limit=50
 ```
 
 ## Example Integrations
@@ -156,17 +173,24 @@ GET /api/products?cursor=abc123&limit=50
 ### Node.js
 
 ```typescript
-import { FanfareClient } from "@fanfare/sdk";
-
-const client = new FanfareClient({
-  apiKey: process.env.FANFARE_API_KEY,
-});
-
-// Sync a product
-await client.products.create({
-  name: "Product Name",
-  price: 99.99,
-  sku: "SKU-123",
+await fetch("https://admin.fanfare.io/api/products", {
+  method: "POST",
+  headers: {
+    Authorization: `Bearer ${process.env.FANFARE_API_KEY}`,
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    name: "Product Name",
+    url: "https://store.example/products/product-name",
+    variants: [
+      {
+        sku: "SKU-123",
+        price: "99.99",
+        inventoryQuantity: 25,
+        inventoryPolicy: "deny",
+      },
+    ],
+  }),
 });
 ```
 
@@ -181,12 +205,17 @@ headers = {
 }
 
 response = requests.post(
-    "https://api.fanfare.io/products",
+    "https://admin.fanfare.io/api/products",
     headers=headers,
     json={
         "name": "Product Name",
-        "price": 99.99,
-        "sku": "SKU-123"
+        "url": "https://store.example/products/product-name",
+        "variants": [{
+            "sku": "SKU-123",
+            "price": "99.99",
+            "inventoryQuantity": 25,
+            "inventoryPolicy": "deny"
+        }]
     }
 )
 ```

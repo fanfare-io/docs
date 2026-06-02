@@ -1,1166 +1,152 @@
-# Error Handling Guide
+---
+title: Error Handling
+description: Handle SDK, journey, and handoff errors from the public integration contract.
+---
 
-Learn how to handle errors gracefully in your Fanfare integration, from SDK errors to network failures.
+# Error Handling
 
-## Overview
+Good error handling keeps customers oriented without exposing private routing or enforcement details. Treat the SDK view as the public source of truth, show customer-safe recovery copy, and keep sensitive values out of logs.
 
-Robust error handling ensures a good user experience even when things go wrong. This guide covers error types, handling strategies, and recovery patterns for Fanfare integrations.
+## Error Surfaces
 
-**What you'll learn:**
+| Surface | Where it appears | Recommended response |
+| --- | --- | --- |
+| Setup error | Provider, hook, or SDK initialization | Show a fallback panel and report a sanitized app log. |
+| Action error | Start, reroute, enter, book, leave, or reenter action | Keep the current UI visible, disable duplicate submits, and offer retry when appropriate. |
+| Gated state | `JourneyView` with `journeyStage === "gated"` | Render the required customer input with generic copy. |
+| Denied or unavailable state | Routed sequence view | Explain the outcome without inferring private reasons. |
+| Handoff error | Your admission or checkout endpoint | Keep the customer on a recoverable page and retry through your own app boundary. |
 
-- Understanding Fanfare error types
-- Implementing client-side error handling
-- Server-side error management
-- User-friendly error messages
-- Retry and recovery strategies
+## React Widget Errors
 
-**Complexity:** Advanced
-**Time to complete:** 35 minutes
-
-## Prerequisites
-
-- Working Fanfare integration
-- Understanding of async/await and Promises
-- Basic error handling concepts
-- Logging infrastructure (recommended)
-
-## Error Categories
-
-| Category       | Examples                        | Recovery             |
-| -------------- | ------------------------------- | -------------------- |
-| Network Errors | Timeout, connection refused     | Retry with backoff   |
-| Authentication | Invalid token, expired session  | Re-authenticate      |
-| Validation     | Invalid input, missing fields   | Show user feedback   |
-| Business Logic | Admission expired, sold out     | Show clear message   |
-| Server Errors  | 500 errors, service unavailable | Retry or show status |
-
-## Step 1: SDK Error Types
-
-### Error Class Hierarchy
-
-```typescript
-// Fanfare SDK error types
-import {
-  FanfareError,
-  AuthenticationError,
-  ValidationError,
-  NetworkError,
-  APIError,
-} from "@waitify-io/fanfare-sdk-core";
-
-// Base error class
-class FanfareError extends Error {
-  code: string;
-  details?: Record<string, unknown>;
-
-  constructor(message: string, code: string, details?: Record<string, unknown>) {
-    super(message);
-    this.name = "FanfareError";
-    this.code = code;
-    this.details = details;
-  }
-}
-
-// Specific error types
-class AuthenticationError extends FanfareError {
-  constructor(message: string, code: string = "AUTH_ERROR") {
-    super(message, code);
-    this.name = "AuthenticationError";
-  }
-}
-
-class ValidationError extends FanfareError {
-  constructor(message: string, code: string = "VALIDATION_ERROR", details?: Record<string, unknown>) {
-    super(message, code, details);
-    this.name = "ValidationError";
-  }
-}
-
-class NetworkError extends FanfareError {
-  constructor(message: string, code: string = "NETWORK_ERROR") {
-    super(message, code);
-    this.name = "NetworkError";
-  }
-}
-
-class APIError extends FanfareError {
-  status: number;
-
-  constructor(message: string, status: number, code: string) {
-    super(message, code);
-    this.name = "APIError";
-    this.status = status;
-  }
-}
-```
-
-### Common Error Codes
-
-| Code                   | Meaning                  | User Action      |
-| ---------------------- | ------------------------ | ---------------- |
-| `AUTH_REQUIRED`        | Not authenticated        | Sign in          |
-| `AUTH_EXPIRED`         | Session expired          | Re-authenticate  |
-| `ADMISSION_EXPIRED`    | Checkout window closed   | Return to queue  |
-| `ADMISSION_INVALID`    | Token invalid/used       | Return to queue  |
-| `EXPERIENCE_NOT_FOUND` | Experience doesn't exist | Check URL        |
-| `EXPERIENCE_ENDED`     | Experience concluded     | Show ended state |
-| `RATE_LIMITED`         | Too many requests        | Wait and retry   |
-| `SOLD_OUT`             | No inventory             | Show sold out    |
-| `CONSUMER_LIMIT`       | Max purchases reached    | Explain limit    |
-
-## Step 2: Client-Side Error Handling
-
-### React Error Boundary
+`ExperienceWidget` exposes `onError` for adapter and action errors. Use it for app-owned logging and customer support signals.
 
 ```tsx
-// components/ErrorBoundary.tsx
-import React, { Component, ReactNode } from "react";
+import { ExperienceWidget } from "@fanfare-io/fanfare-sdk-react";
 
-interface Props {
-  children: ReactNode;
-  fallback?: ReactNode;
-  onError?: (error: Error, errorInfo: React.ErrorInfo) => void;
-}
-
-interface State {
-  hasError: boolean;
-  error: Error | null;
-}
-
-export class FanfareErrorBoundary extends Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-    this.state = { hasError: false, error: null };
-  }
-
-  static getDerivedStateFromError(error: Error): State {
-    return { hasError: true, error };
-  }
-
-  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    // Log to error tracking service
-    console.error("Fanfare error:", error, errorInfo);
-    this.props.onError?.(error, errorInfo);
-  }
-
-  render() {
-    if (this.state.hasError) {
-      return (
-        this.props.fallback || (
-          <div className="error-boundary">
-            <h2>Something went wrong</h2>
-            <p>We're having trouble loading this experience.</p>
-            <button onClick={() => window.location.reload()}>Try Again</button>
-          </div>
-        )
-      );
-    }
-
-    return this.props.children;
-  }
-}
-
-// Usage
-function App() {
-  return (
-    <FanfareErrorBoundary
-      fallback={<ExperienceErrorFallback />}
-      onError={(error) => {
-        analytics.trackError("fanfare_error", { error: error.message });
-      }}
-    >
-      <FanfareProvider organizationId="your-org-id">
-        <YourApp />
-      </FanfareProvider>
-    </FanfareErrorBoundary>
-  );
-}
+<ExperienceWidget
+  experienceId="exp_123"
+  autoStart
+  onError={(error) => {
+    reportClientError({
+      name: error.name,
+      message: error.message,
+    });
+  }}
+  slots={{
+    error: ({ error, onRetry }) => (
+      <ErrorPanel message={error} onRetry={onRetry} />
+    ),
+  }}
+/>;
 ```
 
-### Hook-Level Error Handling
+Do not attach admission grants or raw journey snapshots to third-party error reports.
+
+## Custom React UI
+
+When you use `useExperienceJourney`, branch on the hook error and on the current public view.
 
 ```tsx
-// hooks/useFanfareWithErrorHandling.ts
-import { useExperienceJourney } from "@waitify-io/fanfare-sdk-react";
-import { useState, useCallback } from "react";
+import { useExperienceJourney } from "@fanfare-io/fanfare-sdk-react";
 
-interface ErrorState {
-  error: Error | null;
-  isRetrying: boolean;
-  retryCount: number;
-}
+export function CustomExperience({ experienceId }: { experienceId: string }) {
+  const { view, start, error } = useExperienceJourney(experienceId);
 
-export function useFanfareWithErrorHandling(experienceId: string) {
-  const { journey, state, start, status } = useExperienceJourney(experienceId);
-  const [errorState, setErrorState] = useState<ErrorState>({
-    error: null,
-    isRetrying: false,
-    retryCount: 0,
-  });
+  if (error) return <ErrorPanel message={error} />;
+  if (!view) return <LoadingPanel />;
 
-  const handleError = useCallback(
-    (error: Error) => {
-      setErrorState((prev) => ({
-        ...prev,
-        error,
-        isRetrying: false,
-      }));
-
-      // Categorize and log error
-      logError(error);
-
-      // Check if recoverable
-      if (isRecoverableError(error)) {
-        // Auto-retry for certain errors
-        if (errorState.retryCount < 3) {
-          setTimeout(() => retry(), getRetryDelay(errorState.retryCount));
-        }
-      }
-    },
-    [errorState.retryCount]
-  );
-
-  const retry = useCallback(async () => {
-    setErrorState((prev) => ({
-      ...prev,
-      isRetrying: true,
-      retryCount: prev.retryCount + 1,
-    }));
-
-    try {
-      await start();
-      setErrorState({ error: null, isRetrying: false, retryCount: 0 });
-    } catch (error) {
-      handleError(error instanceof Error ? error : new Error("Unknown error"));
-    }
-  }, [start, handleError]);
-
-  const clearError = useCallback(() => {
-    setErrorState({ error: null, isRetrying: false, retryCount: 0 });
-  }, []);
-
-  return {
-    journey,
-    state,
-    status,
-    error: errorState.error,
-    isRetrying: errorState.isRetrying,
-    retry,
-    clearError,
-  };
-}
-
-function isRecoverableError(error: Error): boolean {
-  if (error instanceof NetworkError) return true;
-  if (error instanceof APIError && error.status >= 500) return true;
-  if (error.message.includes("timeout")) return true;
-  return false;
-}
-
-function getRetryDelay(retryCount: number): number {
-  // Exponential backoff: 1s, 2s, 4s
-  return Math.min(1000 * Math.pow(2, retryCount), 10000);
-}
-
-function logError(error: Error) {
-  const errorData = {
-    name: error.name,
-    message: error.message,
-    code: (error as FanfareError).code,
-    stack: error.stack,
-    timestamp: new Date().toISOString(),
-  };
-
-  console.error("Fanfare error:", errorData);
-
-  // Send to error tracking service
-  if (typeof window !== "undefined" && window.Sentry) {
-    window.Sentry.captureException(error);
+  if (view.journeyStage === "ready") {
+    return <button onClick={() => void start()}>Start</button>;
   }
+
+  if (view.journeyStage === "routing") return <LoadingPanel />;
+  if (view.journeyStage === "gated") return <GatePanel view={view} />;
+
+  return <SequencePanel sequence={view.sequence} />;
 }
 ```
 
-### Error Display Components
+For action handlers, disable the submitted control while the promise is pending and keep the last known view rendered if the action fails.
 
-```tsx
-// components/ErrorDisplay.tsx
-import { FanfareError, AuthenticationError, NetworkError, APIError } from "@waitify-io/fanfare-sdk-core";
+## Core SDK Actions
 
-interface ErrorDisplayProps {
-  error: Error;
-  onRetry?: () => void;
-  onDismiss?: () => void;
-}
+Headless integrations should catch errors at the action boundary.
 
-export function ErrorDisplay({ error, onRetry, onDismiss }: ErrorDisplayProps) {
-  const errorInfo = getErrorInfo(error);
+```ts
+async function runAction(action: () => Promise<unknown>) {
+  setPending(true);
+  setError(null);
 
-  return (
-    <div className={`error-display ${errorInfo.severity}`} role="alert">
-      <div className="error-icon">{errorInfo.icon}</div>
-
-      <div className="error-content">
-        <h3 className="error-title">{errorInfo.title}</h3>
-        <p className="error-message">{errorInfo.message}</p>
-
-        {errorInfo.suggestion && <p className="error-suggestion">{errorInfo.suggestion}</p>}
-      </div>
-
-      <div className="error-actions">
-        {errorInfo.canRetry && onRetry && <button onClick={onRetry}>Try Again</button>}
-
-        {errorInfo.action && <button onClick={errorInfo.action.handler}>{errorInfo.action.label}</button>}
-
-        {onDismiss && (
-          <button onClick={onDismiss} className="dismiss">
-            Dismiss
-          </button>
-        )}
-      </div>
-    </div>
-  );
-}
-
-interface ErrorInfo {
-  title: string;
-  message: string;
-  suggestion?: string;
-  severity: "error" | "warning" | "info";
-  icon: string;
-  canRetry: boolean;
-  action?: {
-    label: string;
-    handler: () => void;
-  };
-}
-
-function getErrorInfo(error: Error): ErrorInfo {
-  // Authentication errors
-  if (error instanceof AuthenticationError) {
-    return {
-      title: "Session Expired",
-      message: "Your session has expired. Please sign in again.",
-      severity: "warning",
-      icon: "🔐",
-      canRetry: false,
-      action: {
-        label: "Sign In",
-        handler: () => (window.location.href = "/login"),
-      },
-    };
-  }
-
-  // Network errors
-  if (error instanceof NetworkError) {
-    return {
-      title: "Connection Problem",
-      message: "We're having trouble connecting. Please check your internet connection.",
-      severity: "warning",
-      icon: "📡",
-      canRetry: true,
-    };
-  }
-
-  // API errors
-  if (error instanceof APIError) {
-    return getAPIErrorInfo(error);
-  }
-
-  // Fanfare-specific errors
-  if (error instanceof FanfareError) {
-    return getFanfareErrorInfo(error);
-  }
-
-  // Generic error
-  return {
-    title: "Something Went Wrong",
-    message: "An unexpected error occurred. Please try again.",
-    severity: "error",
-    icon: "⚠️",
-    canRetry: true,
-  };
-}
-
-function getAPIErrorInfo(error: APIError): ErrorInfo {
-  switch (error.status) {
-    case 401:
-      return {
-        title: "Not Authorized",
-        message: "You need to sign in to continue.",
-        severity: "warning",
-        icon: "🔒",
-        canRetry: false,
-        action: {
-          label: "Sign In",
-          handler: () => (window.location.href = "/login"),
-        },
-      };
-
-    case 403:
-      return {
-        title: "Access Denied",
-        message: "You don't have permission to access this resource.",
-        severity: "error",
-        icon: "🚫",
-        canRetry: false,
-      };
-
-    case 404:
-      return {
-        title: "Not Found",
-        message: "The requested resource could not be found.",
-        severity: "warning",
-        icon: "🔍",
-        canRetry: false,
-      };
-
-    case 429:
-      return {
-        title: "Too Many Requests",
-        message: "Please wait a moment before trying again.",
-        suggestion: "We're processing a lot of requests right now.",
-        severity: "warning",
-        icon: "⏳",
-        canRetry: true,
-      };
-
-    case 500:
-    case 502:
-    case 503:
-      return {
-        title: "Server Error",
-        message: "We're experiencing technical difficulties. Please try again shortly.",
-        severity: "error",
-        icon: "🔧",
-        canRetry: true,
-      };
-
-    default:
-      return {
-        title: "Request Failed",
-        message: error.message || "An error occurred while processing your request.",
-        severity: "error",
-        icon: "❌",
-        canRetry: true,
-      };
-  }
-}
-
-function getFanfareErrorInfo(error: FanfareError): ErrorInfo {
-  switch (error.code) {
-    case "ADMISSION_EXPIRED":
-      return {
-        title: "Session Expired",
-        message: "Your checkout window has expired.",
-        suggestion: "Return to the experience to try again.",
-        severity: "warning",
-        icon: "⏱️",
-        canRetry: false,
-        action: {
-          label: "Return to Experience",
-          handler: () => window.history.back(),
-        },
-      };
-
-    case "ADMISSION_INVALID":
-      return {
-        title: "Invalid Access",
-        message: "Your admission is no longer valid.",
-        suggestion: "This may happen if you've already completed a purchase.",
-        severity: "warning",
-        icon: "🎫",
-        canRetry: false,
-      };
-
-    case "EXPERIENCE_ENDED":
-      return {
-        title: "Experience Ended",
-        message: "This experience has concluded.",
-        severity: "info",
-        icon: "🏁",
-        canRetry: false,
-      };
-
-    case "SOLD_OUT":
-      return {
-        title: "Sold Out",
-        message: "This item is no longer available.",
-        suggestion: "Join the waitlist to be notified if more become available.",
-        severity: "info",
-        icon: "😔",
-        canRetry: false,
-      };
-
-    case "CONSUMER_LIMIT":
-      return {
-        title: "Limit Reached",
-        message: "You've reached the maximum allowed purchases for this experience.",
-        severity: "info",
-        icon: "📊",
-        canRetry: false,
-      };
-
-    default:
-      return {
-        title: "Error",
-        message: error.message,
-        severity: "error",
-        icon: "⚠️",
-        canRetry: true,
-      };
-  }
-}
-```
-
-## Step 3: Server-Side Error Handling
-
-### Express Error Middleware
-
-```typescript
-// middleware/error-handler.ts
-import { Request, Response, NextFunction } from "express";
-import { FanfareAPIError } from "../services/fanfare-api";
-
-interface ErrorResponse {
-  error: {
-    code: string;
-    message: string;
-    details?: Record<string, unknown>;
-  };
-  requestId: string;
-}
-
-export function errorHandler(err: Error, req: Request, res: Response, next: NextFunction) {
-  const requestId = req.headers["x-request-id"] || generateRequestId();
-
-  // Log error
-  console.error("Error:", {
-    requestId,
-    error: err.message,
-    stack: err.stack,
-    path: req.path,
-    method: req.method,
-  });
-
-  // Determine response
-  const response = getErrorResponse(err, requestId);
-
-  res.status(response.status).json(response.body);
-}
-
-function getErrorResponse(err: Error, requestId: string): { status: number; body: ErrorResponse } {
-  // Fanfare API errors
-  if (err instanceof FanfareAPIError) {
-    return {
-      status: err.status,
-      body: {
-        error: {
-          code: err.code,
-          message: getPublicMessage(err),
-        },
-        requestId,
-      },
-    };
-  }
-
-  // Validation errors
-  if (err.name === "ValidationError") {
-    return {
-      status: 400,
-      body: {
-        error: {
-          code: "VALIDATION_ERROR",
-          message: err.message,
-          details: (err as ValidationError).details,
-        },
-        requestId,
-      },
-    };
-  }
-
-  // Default to 500
-  return {
-    status: 500,
-    body: {
-      error: {
-        code: "INTERNAL_ERROR",
-        message: "An unexpected error occurred",
-      },
-      requestId,
-    },
-  };
-}
-
-function getPublicMessage(err: FanfareAPIError): string {
-  // Map internal errors to user-friendly messages
-  const publicMessages: Record<string, string> = {
-    ADMISSION_EXPIRED: "Your checkout session has expired",
-    ADMISSION_INVALID: "Your access is no longer valid",
-    EXPERIENCE_ENDED: "This experience has ended",
-    SOLD_OUT: "This item is sold out",
-    RATE_LIMITED: "Please wait a moment and try again",
-  };
-
-  return publicMessages[err.code] || err.message;
-}
-
-function generateRequestId(): string {
-  return `req_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-}
-```
-
-### Retry Middleware
-
-```typescript
-// middleware/retry.ts
-import { Request, Response, NextFunction } from "express";
-
-interface RetryOptions {
-  maxRetries: number;
-  retryableStatuses: number[];
-  baseDelay: number;
-}
-
-export function withRetry(
-  handler: (req: Request, res: Response) => Promise<void>,
-  options: RetryOptions = {
-    maxRetries: 3,
-    retryableStatuses: [502, 503, 504],
-    baseDelay: 1000,
-  }
-) {
-  return async (req: Request, res: Response, next: NextFunction) => {
-    let lastError: Error | null = null;
-
-    for (let attempt = 0; attempt <= options.maxRetries; attempt++) {
-      try {
-        await handler(req, res);
-        return;
-      } catch (error) {
-        lastError = error instanceof Error ? error : new Error(String(error));
-
-        const isRetryable = isRetryableError(error, options.retryableStatuses);
-        const hasMoreRetries = attempt < options.maxRetries;
-
-        if (isRetryable && hasMoreRetries) {
-          const delay = options.baseDelay * Math.pow(2, attempt);
-          await sleep(delay);
-          continue;
-        }
-
-        break;
-      }
-    }
-
-    next(lastError);
-  };
-}
-
-function isRetryableError(error: unknown, retryableStatuses: number[]): boolean {
-  if (error instanceof FanfareAPIError) {
-    return retryableStatuses.includes(error.status);
-  }
-  if (error instanceof Error && error.message.includes("ECONNRESET")) {
-    return true;
-  }
-  return false;
-}
-
-function sleep(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-```
-
-## Step 4: Error Recovery Strategies
-
-### Automatic Retry with Backoff
-
-```typescript
-// utils/retry.ts
-interface RetryConfig {
-  maxAttempts: number;
-  baseDelay: number;
-  maxDelay: number;
-  shouldRetry?: (error: Error, attempt: number) => boolean;
-  onRetry?: (error: Error, attempt: number) => void;
-}
-
-export async function withRetry<T>(fn: () => Promise<T>, config: RetryConfig): Promise<T> {
-  const { maxAttempts, baseDelay, maxDelay, shouldRetry, onRetry } = config;
-
-  let lastError: Error;
-
-  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-    try {
-      return await fn();
-    } catch (error) {
-      lastError = error instanceof Error ? error : new Error(String(error));
-
-      const canRetry = shouldRetry?.(lastError, attempt) ?? isDefaultRetryable(lastError);
-
-      if (!canRetry || attempt === maxAttempts) {
-        throw lastError;
-      }
-
-      onRetry?.(lastError, attempt);
-
-      // Calculate delay with jitter
-      const delay = Math.min(baseDelay * Math.pow(2, attempt - 1), maxDelay);
-      const jitter = delay * 0.1 * Math.random();
-      await sleep(delay + jitter);
-    }
-  }
-
-  throw lastError!;
-}
-
-function isDefaultRetryable(error: Error): boolean {
-  // Network errors
-  if (error instanceof NetworkError) return true;
-
-  // Server errors (5xx)
-  if (error instanceof APIError && error.status >= 500) return true;
-
-  // Specific error codes
-  if (error instanceof FanfareError) {
-    return ["RATE_LIMITED", "TIMEOUT", "SERVICE_UNAVAILABLE"].includes(error.code);
-  }
-
-  return false;
-}
-
-// Usage
-const result = await withRetry(() => fanfareAPI.completeAdmission(params), {
-  maxAttempts: 3,
-  baseDelay: 1000,
-  maxDelay: 10000,
-  shouldRetry: (error) => !(error instanceof ValidationError),
-  onRetry: (error, attempt) => {
-    console.log(`Retry attempt ${attempt}:`, error.message);
-  },
-});
-```
-
-### Graceful Degradation
-
-```tsx
-// components/ExperienceWithFallback.tsx
-import { useState, useEffect } from "react";
-
-function ExperienceWithFallback({ experienceId }: { experienceId: string }) {
-  const [mode, setMode] = useState<"full" | "degraded" | "offline">("full");
-  const { state, error, retry } = useFanfareWithErrorHandling(experienceId);
-
-  useEffect(() => {
-    if (error) {
-      if (error instanceof NetworkError) {
-        setMode("offline");
-      } else if (error instanceof APIError && error.status >= 500) {
-        setMode("degraded");
-      }
-    } else {
-      setMode("full");
-    }
-  }, [error]);
-
-  switch (mode) {
-    case "full":
-      return <FullExperience state={state} />;
-
-    case "degraded":
-      return <DegradedExperience message="Some features may be limited" onRetry={retry} />;
-
-    case "offline":
-      return (
-        <OfflineMode
-          onReconnect={() => {
-            retry();
-            setMode("full");
-          }}
-        />
-      );
-  }
-}
-
-function DegradedExperience({ message, onRetry }: { message: string; onRetry: () => void }) {
-  return (
-    <div className="degraded-experience">
-      <div className="warning-banner">{message}</div>
-
-      {/* Show cached/static content */}
-      <StaticExperienceInfo />
-
-      <button onClick={onRetry}>Check Connection</button>
-    </div>
-  );
-}
-
-function OfflineMode({ onReconnect }: { onReconnect: () => void }) {
-  return (
-    <div className="offline-mode">
-      <div className="offline-icon">📡</div>
-      <h2>You're Offline</h2>
-      <p>Check your internet connection and try again.</p>
-      <button onClick={onReconnect}>Reconnect</button>
-    </div>
-  );
-}
-```
-
-### Circuit Breaker Pattern
-
-```typescript
-// utils/circuit-breaker.ts
-type CircuitState = "closed" | "open" | "half-open";
-
-interface CircuitBreakerConfig {
-  failureThreshold: number;
-  resetTimeout: number;
-  halfOpenRequests: number;
-}
-
-export class CircuitBreaker {
-  private state: CircuitState = "closed";
-  private failures = 0;
-  private lastFailure: number | null = null;
-  private halfOpenAttempts = 0;
-
-  constructor(private config: CircuitBreakerConfig) {}
-
-  async execute<T>(fn: () => Promise<T>): Promise<T> {
-    if (this.state === "open") {
-      if (this.shouldAttemptReset()) {
-        this.state = "half-open";
-        this.halfOpenAttempts = 0;
-      } else {
-        throw new CircuitOpenError("Circuit breaker is open");
-      }
-    }
-
-    if (this.state === "half-open") {
-      if (this.halfOpenAttempts >= this.config.halfOpenRequests) {
-        throw new CircuitOpenError("Circuit breaker is half-open, waiting for reset");
-      }
-      this.halfOpenAttempts++;
-    }
-
-    try {
-      const result = await fn();
-      this.onSuccess();
-      return result;
-    } catch (error) {
-      this.onFailure();
-      throw error;
-    }
-  }
-
-  private onSuccess() {
-    this.failures = 0;
-    this.state = "closed";
-  }
-
-  private onFailure() {
-    this.failures++;
-    this.lastFailure = Date.now();
-
-    if (this.failures >= this.config.failureThreshold) {
-      this.state = "open";
-    }
-  }
-
-  private shouldAttemptReset(): boolean {
-    if (!this.lastFailure) return true;
-    return Date.now() - this.lastFailure >= this.config.resetTimeout;
-  }
-
-  getState(): CircuitState {
-    return this.state;
-  }
-}
-
-class CircuitOpenError extends Error {
-  constructor(message: string) {
-    super(message);
-    this.name = "CircuitOpenError";
-  }
-}
-
-// Usage
-const fanfareCircuit = new CircuitBreaker({
-  failureThreshold: 5,
-  resetTimeout: 30000, // 30 seconds
-  halfOpenRequests: 3,
-});
-
-async function safeFanfareCall<T>(fn: () => Promise<T>): Promise<T> {
   try {
-    return await fanfareCircuit.execute(fn);
+    await action();
   } catch (error) {
-    if (error instanceof CircuitOpenError) {
-      // Show degraded experience
-      throw new Error("Service temporarily unavailable");
-    }
-    throw error;
+    setError(error instanceof Error ? error.message : "Something went wrong.");
+  } finally {
+    setPending(false);
   }
 }
 ```
 
-## Step 5: Logging and Monitoring
+Only show controls for actions on the current `JourneyView` or `SequenceView`. If the action is not present, the UI should not offer it.
 
-### Error Logging Service
+## Admission Handoff Failures
 
-```typescript
-// services/error-logger.ts
-interface ErrorLog {
-  timestamp: string;
-  level: "error" | "warn" | "info";
-  error: {
-    name: string;
-    message: string;
-    code?: string;
-    stack?: string;
-  };
-  context: {
-    experienceId?: string;
-    consumerId?: string;
-    stage?: string;
-    action?: string;
-  };
-  metadata: Record<string, unknown>;
-}
+When an admitted customer moves to checkout, your app owns the handoff error path.
 
-export class ErrorLogger {
-  private static instance: ErrorLogger;
-  private queue: ErrorLog[] = [];
-  private flushInterval: NodeJS.Timeout | null = null;
-
-  private constructor() {
-    // Flush queue periodically
-    this.flushInterval = setInterval(() => this.flush(), 10000);
-
-    // Flush on page unload
-    if (typeof window !== "undefined") {
-      window.addEventListener("beforeunload", () => this.flush());
-    }
-  }
-
-  static getInstance(): ErrorLogger {
-    if (!ErrorLogger.instance) {
-      ErrorLogger.instance = new ErrorLogger();
-    }
-    return ErrorLogger.instance;
-  }
-
-  log(
-    level: ErrorLog["level"],
-    error: Error,
-    context: ErrorLog["context"] = {},
-    metadata: Record<string, unknown> = {}
-  ) {
-    const logEntry: ErrorLog = {
-      timestamp: new Date().toISOString(),
-      level,
-      error: {
-        name: error.name,
-        message: error.message,
-        code: (error as FanfareError).code,
-        stack: error.stack,
-      },
-      context,
-      metadata: {
-        ...metadata,
-        userAgent: typeof navigator !== "undefined" ? navigator.userAgent : undefined,
-        url: typeof window !== "undefined" ? window.location.href : undefined,
-      },
-    };
-
-    this.queue.push(logEntry);
-
-    // Immediate flush for errors
-    if (level === "error") {
-      this.flush();
-    }
-  }
-
-  private async flush() {
-    if (this.queue.length === 0) return;
-
-    const entries = [...this.queue];
-    this.queue = [];
-
-    try {
-      await fetch("/api/logs", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ entries }),
-      });
-    } catch (error) {
-      // Re-queue on failure (with limit)
-      if (this.queue.length < 100) {
-        this.queue.unshift(...entries);
-      }
-    }
-  }
-}
-
-// Usage
-const logger = ErrorLogger.getInstance();
-
-try {
-  await journey.start();
-} catch (error) {
-  logger.log(
-    "error",
-    error,
-    {
-      experienceId: "exp_123",
-      action: "journey_start",
-    },
-    {
-      attemptNumber: 1,
-    }
-  );
-}
-```
-
-### Monitoring Dashboard Metrics
-
-```typescript
-// utils/metrics.ts
-interface Metric {
-  name: string;
-  value: number;
-  tags: Record<string, string>;
-  timestamp: number;
-}
-
-export class MetricsCollector {
-  private metrics: Metric[] = [];
-
-  increment(name: string, tags: Record<string, string> = {}) {
-    this.record(name, 1, tags);
-  }
-
-  record(name: string, value: number, tags: Record<string, string> = {}) {
-    this.metrics.push({
-      name,
-      value,
-      tags,
-      timestamp: Date.now(),
-    });
-  }
-
-  timing(name: string, duration: number, tags: Record<string, string> = {}) {
-    this.record(`${name}_duration_ms`, duration, tags);
-  }
-
-  async flush() {
-    if (this.metrics.length === 0) return;
-
-    const data = [...this.metrics];
-    this.metrics = [];
-
-    await fetch("/api/metrics", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ metrics: data }),
-    });
-  }
-}
-
-// Track errors
-const metrics = new MetricsCollector();
-
-function trackError(error: Error, context: Record<string, string>) {
-  metrics.increment("fanfare_error", {
-    error_type: error.name,
-    error_code: (error as FanfareError).code || "unknown",
-    ...context,
+```ts
+async function sendAdmission(admissionGrant: string) {
+  const response = await fetch("/api/fanfare/admission", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ admissionGrant }),
   });
-}
-```
 
-## Best Practices
-
-### 1. Never Show Raw Errors
-
-```typescript
-// Bad
-catch (error) {
-  alert(error.message); // "TypeError: Cannot read property 'x' of undefined"
-}
-
-// Good
-catch (error) {
-  const friendlyMessage = getErrorMessage(error);
-  showNotification(friendlyMessage); // "Something went wrong. Please try again."
-}
-```
-
-### 2. Preserve Error Context
-
-```typescript
-// Wrap errors with context
-class ContextualError extends Error {
-  constructor(
-    message: string,
-    public readonly cause: Error,
-    public readonly context: Record<string, unknown>
-  ) {
-    super(message);
-    this.name = "ContextualError";
+  if (!response.ok) {
+    throw new Error("Checkout is not ready yet. Please try again.");
   }
 }
-
-try {
-  await processAdmission(token);
-} catch (error) {
-  throw new ContextualError("Failed to process admission", error as Error, {
-    token,
-    consumerId,
-    experienceId,
-  });
-}
 ```
 
-### 3. Fail Fast for Unrecoverable Errors
+Keep server responses contract-focused. Return a customer-safe status or retry instruction rather than private routing details.
 
-```typescript
-function validateAdmissionToken(token: string) {
-  if (!token) {
-    throw new ValidationError("Admission token is required");
-  }
+## Logging Guidelines
 
-  if (token.length !== 32) {
-    throw new ValidationError("Invalid admission token format");
-  }
+Log enough to diagnose your application boundary:
 
-  // Continue with valid token
-}
-```
+- Experience ID.
+- High-level public state name.
+- Your route, release, and request ID.
+- Sanitized error name and message.
+- Whether the handoff was attempted.
 
-## Troubleshooting
+Avoid logging:
 
-### Error Not Being Caught
+- Admission grants.
+- Raw journey snapshots.
+- Customer verification inputs.
+- Private assumptions about routing or enforcement.
 
-1. Check for unhandled promise rejections
-2. Verify error boundary placement
-3. Review async/await usage
+## Customer Copy
 
-### Retry Loop
+Prefer copy that explains what the customer can do next:
 
-1. Implement max retry limit
-2. Use circuit breaker pattern
-3. Add jitter to prevent thundering herd
+| Situation | Good copy |
+| --- | --- |
+| Network failure | "We could not update your status. Please try again." |
+| Gated state | "Complete this step to continue." |
+| Denied state | "This experience is not available for this session." |
+| Handoff failure | "Checkout is not ready yet. Please try again." |
+| Ended or unavailable | "This experience is no longer available." |
 
-### User Sees Technical Errors
+Avoid copy that claims why a customer was routed or denied unless that reason is part of your public customer experience.
 
-1. Implement error message mapping
-2. Review error boundary fallbacks
-3. Test error scenarios in QA
+## Testing
 
-## What's Next
+- Render every public state your UI handles.
+- Force action promises to reject in app-boundary tests.
+- Confirm retry controls call the current view action.
+- Confirm telemetry redacts grants and snapshots.
+- Confirm server handoff failures keep the customer in a recoverable flow.
 
-- [Webhooks Guide](/guides/advanced/webhooks-guide) - Handle server-side errors
-- [Real-time Updates](/guides/advanced/real-time-updates) - Connection error handling
-- [Custom Platform](/guides/platform-integrations/custom-platform) - End-to-end error handling
+For examples of controlled app-boundary tests, see [Testing Your Integration](/getting-started/testing).

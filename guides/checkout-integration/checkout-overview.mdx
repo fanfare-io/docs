@@ -4,12 +4,12 @@ Learn how to connect Fanfare experiences to your checkout flow, from admission t
 
 ## Overview
 
-When a consumer is admitted through a Fanfare experience (queue, draw, or auction), they receive an admission token. This guide explains how to securely transition consumers from admission to checkout and complete their purchase.
+When a consumer is admitted through a Fanfare experience, the public SDK surfaces an `admissionGrant`. This guide explains how to hand that grant to your checkout boundary and complete the purchase.
 
 **What you'll learn:**
 
 - Understanding the admission-to-checkout flow
-- Working with admission tokens
+- Working with admission grants
 - Handoff patterns for different platforms
 - Completing the checkout cycle
 
@@ -31,14 +31,14 @@ When a consumer is admitted through a Fanfare experience (queue, draw, or auctio
 
    ┌──────────┐     ┌──────────┐     ┌──────────┐     ┌──────────┐
    │  Enter   │     │  Wait/   │     │ Admitted │     │ Complete │
-   │Experience│────▶│Participate│────▶│(Token)   │────▶│ Checkout │
+   │Experience│────▶│Participate│────▶│(Grant)   │────▶│ Checkout │
    └──────────┘     └──────────┘     └──────────┘     └──────────┘
                                            │
-                                           │ Admission Token
+                                           │ Admission Grant
                                            ▼
                                     ┌──────────┐
                                     │ Validate │
-                                    │  Token   │
+                                    │  Grant   │
                                     └──────────┘
                                            │
                                            ▼
@@ -54,235 +54,112 @@ When a consumer is admitted through a Fanfare experience (queue, draw, or auctio
                                     └──────────┘
 ```
 
-## Understanding Admission Tokens
+## Understanding Admission Grants
 
-When a consumer is admitted (reaches the front of a queue, wins a draw, wins an auction), they receive an admission token. This token:
+When a consumer is admitted, the public SDK surfaces an admission grant. This grant:
 
 - Proves they were legitimately admitted
-- Has an expiration time (typically 10-30 minutes)
+- May include an expiration field on the admitted view or slot props
 - Can be validated server-side
 - Should only be used once
 
-### Token Lifecycle
+### Grant Lifecycle
 
 ```
 Created ──▶ Valid ──▶ Used/Expired ──▶ Invalid
    │          │            │              │
    │          │            │              │
-10 min    Checkout      Complete      Rejected
-expiry     window        order
+window    Checkout      Complete      Rejected
+opens      window        order
 ```
 
 ## Step 1: Detect Admission
 
-When a consumer is admitted, the journey state changes:
+Use `ExperienceWidget` when you only need to hand admitted consumers to checkout:
 
 ```tsx
-import { useExperienceJourney } from "@waitify-io/fanfare-sdk-react";
-import { useEffect } from "react";
+import { ExperienceWidget } from "@fanfare-io/fanfare-sdk-react";
 
 function ExperienceWithCheckout({ experienceId }: { experienceId: string }) {
-  const { state, journey } = useExperienceJourney(experienceId, { autoStart: true });
+  return (
+    <ExperienceWidget
+      experienceId={experienceId}
+      autoStart
+      onAdmitted={async (admissionGrant) => {
+        await fetch("/api/fanfare/admission", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ admissionGrant }),
+        });
 
-  useEffect(() => {
-    const snapshot = state?.snapshot;
-    if (!snapshot) return;
-
-    // Detect admission
-    if (snapshot.sequenceStage === "admitted") {
-      const { admittanceToken, admittanceExpiresAt } = snapshot.context;
-
-      console.log("Consumer admitted!", {
-        token: admittanceToken,
-        expiresAt: new Date(admittanceExpiresAt!),
-      });
-
-      // Optionally auto-redirect to checkout
-      // navigateToCheckout(admittanceToken);
-    }
-  }, [state?.snapshot.sequenceStage]);
-
-  return <YourExperienceUI state={state} journey={journey} />;
+        window.location.assign("/checkout");
+      }}
+    />
+  );
 }
 ```
 
 ## Step 2: Show Checkout Call-to-Action
 
-Display a clear checkout action when admitted:
+For custom React UI, branch on the public `JourneyView` and read the grant from the admitted sequence:
 
 ```tsx
-function AdmittedState({ admissionToken, expiresAt }: { admissionToken: string; expiresAt: number }) {
-  const [timeRemaining, setTimeRemaining] = useState(Math.max(0, Math.floor((expiresAt - Date.now()) / 1000)));
+import { useExperienceJourney } from "@fanfare-io/fanfare-sdk-react";
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const remaining = Math.max(0, Math.floor((expiresAt - Date.now()) / 1000));
-      setTimeRemaining(remaining);
+function CustomCheckoutCTA({ experienceId }: { experienceId: string }) {
+  const { view, start, error } = useExperienceJourney(experienceId, { autoStart: true });
 
-      if (remaining <= 0) {
-        clearInterval(interval);
-      }
-    }, 1000);
+  if (error) return <ErrorPanel message={error} />;
+  if (!view || view.journeyStage === "routing") return <LoadingPanel />;
+  if (view.journeyStage === "ready") return <button onClick={() => void start()}>Enter</button>;
+  if (view.journeyStage === "gated") return <GatePanel view={view} />;
 
-    return () => clearInterval(interval);
-  }, [expiresAt]);
-
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins}:${secs.toString().padStart(2, "0")}`;
-  };
-
-  const handleCheckout = () => {
-    // Navigate to checkout with token
-    window.location.href = `/checkout?admission_token=${admissionToken}`;
-  };
-
-  if (timeRemaining <= 0) {
+  if (view.sequence.stage === "admitted") {
     return (
-      <div className="admission-expired">
-        <h2>Access Expired</h2>
-        <p>Your checkout window has expired. Please rejoin the experience.</p>
-      </div>
+      <CheckoutButton
+        expiresAt={view.sequence.admissionGrantExpiresAt}
+        onClick={() => sendAdmissionGrant(view.sequence.admissionGrant)}
+      />
     );
   }
 
-  return (
-    <div className="admitted-state">
-      <div className="success-icon">✓</div>
-      <h2>You're In!</h2>
-      <p>You have access to complete your purchase.</p>
-
-      <div className="timer">
-        <span className="time">{formatTime(timeRemaining)}</span>
-        <span className="label">remaining</span>
-      </div>
-
-      <button onClick={handleCheckout} className="checkout-button">
-        Continue to Checkout
-      </button>
-
-      <p className="warning">Don't close this page until you complete your purchase.</p>
-    </div>
-  );
+  return <ExperienceState sequence={view.sequence} />;
 }
 ```
 
-## Step 3: Pass Token to Checkout
+## Step 3: Pass the Grant to Checkout
 
-Several patterns for passing the admission token to your checkout:
+Send the grant to a trusted server or checkout boundary. Keep the grant out of URLs, screenshots, debug logs, and third-party analytics.
 
-### URL Parameter (Simple)
+### Server Handoff
 
 ```typescript
-// From experience page
-function navigateToCheckout(token: string) {
-  window.location.href = `/checkout?admission_token=${token}`;
-}
+async function sendAdmissionGrant(admissionGrant: string) {
+  const response = await fetch("/api/fanfare/admission", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ admissionGrant }),
+  });
 
-// In checkout page
-function CheckoutPage() {
-  const params = new URLSearchParams(window.location.search);
-  const admissionToken = params.get("admission_token");
-
-  if (!admissionToken) {
-    return <NoAccessMessage />;
+  if (!response.ok) {
+    throw new Error("Unable to prepare checkout");
   }
 
-  return <CheckoutForm admissionToken={admissionToken} />;
-}
-```
-
-### Session Storage (Recommended)
-
-```typescript
-// Store token before navigation
-function navigateToCheckout(token: string, context: AdmissionContext) {
-  sessionStorage.setItem(
-    "fanfare_admission",
-    JSON.stringify({
-      token,
-      context,
-      storedAt: Date.now(),
-    })
-  );
-  window.location.href = "/checkout";
-}
-
-// Retrieve in checkout
-function useAdmissionToken() {
-  const [admission, setAdmission] = useState<StoredAdmission | null>(null);
-
-  useEffect(() => {
-    const stored = sessionStorage.getItem("fanfare_admission");
-    if (stored) {
-      const data = JSON.parse(stored);
-      // Validate it's not too old
-      if (Date.now() - data.storedAt < 30 * 60 * 1000) {
-        // 30 minutes
-        setAdmission(data);
-      } else {
-        sessionStorage.removeItem("fanfare_admission");
-      }
-    }
-  }, []);
-
-  return admission;
-}
-```
-
-### SDK Handoff Module (Full Featured)
-
-Use the built-in handoff module for secure token handling:
-
-```typescript
-import { HandoffModule } from "@waitify-io/fanfare-sdk-core";
-
-const handoff = new HandoffModule();
-
-// Create handoff token (includes security features)
-async function createCheckoutHandoff(
-  admissionToken: string,
-  consumerId: string,
-  organizationId: string,
-  experienceId: string,
-  experienceType: "queue" | "draw" | "auction"
-) {
-  const token = await handoff.createHandoffToken({
-    admissionToken,
-    consumerId,
-    organizationId,
-    experienceId,
-    experienceType,
-    expiresIn: 600, // 10 minutes
-  });
-
-  // Build URL with token
-  const checkoutUrl = handoff.buildHandoffUrl({
-    baseUrl: "https://your-store.com/checkout",
-    token,
-  });
-
-  return checkoutUrl;
+  window.location.assign("/checkout");
 }
 ```
 
 ## Step 4: Validate Admission Server-Side
 
-Before allowing checkout, validate the token with Fanfare:
+Before allowing checkout actions, validate the admission grant with Fanfare from your server:
 
 ```typescript
 // Your checkout API endpoint
 app.post("/api/checkout", async (req, res) => {
-  const { admissionToken, consumerId, distributionId, distributionType, cart } = req.body;
+  const { admissionGrant, cart } = req.body;
 
   // 1. Validate admission with Fanfare
-  const isValid = await validateAdmissionToken({
-    token: admissionToken,
-    consumerId,
-    distributionId,
-    distributionType,
-  });
+  const isValid = await validateAdmissionGrant({ admissionGrant });
 
   if (!isValid) {
     return res.status(403).json({
@@ -293,10 +170,10 @@ app.post("/api/checkout", async (req, res) => {
   }
 
   // 2. Process the order
-  const order = await createOrder(cart, consumerId);
+  const order = await createOrder(cart);
 
-  // 3. Mark admission as completed
-  await completeAdmission(distributionId, distributionType, consumerId);
+  // 3. Record the successful checkout against the admission
+  await recordAdmissionCheckout({ admissionGrant, orderId: order.id });
 
   res.json({ orderId: order.id });
 });
@@ -304,29 +181,11 @@ app.post("/api/checkout", async (req, res) => {
 
 ## Step 5: Complete the Admission
 
-After a successful order, mark the admission as complete:
+After a successful order, record completion through your Fanfare checkout integration:
 
 ```typescript
-async function completeAdmission(
-  distributionId: string,
-  distributionType: "queue" | "draw" | "auction",
-  consumerId: string
-) {
-  const endpoints = {
-    queue: `/queues/${distributionId}/complete`,
-    draw: `/draws/${distributionId}/complete`,
-    auction: `/auctions/${distributionId}/complete`,
-  };
-
-  await fetch(`${FANFARE_API_URL}${endpoints[distributionType]}`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "X-Organization-Id": FANFARE_ORG_ID,
-      "X-Secret-Key": FANFARE_SECRET_KEY,
-    },
-    body: JSON.stringify({ consumerId }),
-  });
+async function recordAdmissionCheckout(params: { admissionGrant: string; orderId: string }) {
+  await notifyFanfareCheckoutComplete(params);
 }
 ```
 
@@ -337,9 +196,8 @@ async function completeAdmission(
 When checkout is on the same domain:
 
 ```tsx
-// Simple navigation with URL params
-function handleAdmitted(token: string) {
-  window.location.href = `/checkout?token=${token}`;
+function handleAdmitted(admissionGrant: string) {
+  return sendAdmissionGrant(admissionGrant);
 }
 ```
 
@@ -348,30 +206,13 @@ function handleAdmitted(token: string) {
 When checkout is on a different domain:
 
 ```tsx
-import { HandoffModule } from "@waitify-io/fanfare-sdk-core";
-
-async function handleAdmitted(admissionContext: AdmissionContext) {
-  const handoff = new HandoffModule();
-
-  // Create secure handoff token
-  const token = await handoff.createHandoffToken({
-    admissionToken: admissionContext.token,
-    consumerId: admissionContext.consumerId,
-    organizationId: admissionContext.organizationId,
-    experienceId: admissionContext.experienceId,
-    experienceType: admissionContext.type,
+async function handleAdmitted(admissionGrant: string) {
+  const { checkoutUrl } = await createExternalCheckoutSession({
+    admissionGrant,
+    cartId: getCurrentCartId(),
   });
 
-  // Redirect to external checkout
-  const checkoutUrl = handoff.buildHandoffUrl({
-    baseUrl: "https://your-store.myshopify.com/checkout",
-    token,
-    additionalParams: {
-      cart: encodeURIComponent(JSON.stringify(cart)),
-    },
-  });
-
-  window.location.href = checkoutUrl;
+  window.location.assign(checkoutUrl);
 }
 ```
 
@@ -380,7 +221,7 @@ async function handleAdmitted(admissionContext: AdmissionContext) {
 When checkout happens in an iframe/modal:
 
 ```tsx
-function EmbeddedCheckout({ admissionToken, onComplete }: Props) {
+function EmbeddedCheckout({ checkoutSessionId, onComplete }: Props) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
   useEffect(() => {
@@ -395,16 +236,16 @@ function EmbeddedCheckout({ admissionToken, onComplete }: Props) {
     return () => window.removeEventListener("message", handleMessage);
   }, [onComplete]);
 
-  return <iframe ref={iframeRef} src={`/checkout/embedded?token=${admissionToken}`} className="checkout-iframe" />;
+  return <iframe ref={iframeRef} src={`/checkout/embedded/${checkoutSessionId}`} className="checkout-iframe" />;
 }
 ```
 
 ## Handling Edge Cases
 
-### Token Expiration During Checkout
+### Grant Expiration During Checkout
 
 ```tsx
-function CheckoutForm({ admissionToken, expiresAt }: Props) {
+function CheckoutForm({ expiresAt }: Props) {
   const [isExpired, setIsExpired] = useState(Date.now() > expiresAt);
 
   useEffect(() => {
@@ -445,7 +286,7 @@ async function submitOrder(orderData: OrderData) {
       const error = await response.json();
 
       if (error.code === "ADMISSION_INVALID") {
-        // Token is invalid or expired
+        // Grant is invalid or expired
         showError("Your access has expired. Please rejoin the experience.");
         redirectToExperience();
         return;
@@ -466,24 +307,25 @@ async function submitOrder(orderData: OrderData) {
 
 ```tsx
 function CheckoutPage() {
-  const [admission, setAdmission] = useState<StoredAdmission | null>(null);
+  const [checkoutSession, setCheckoutSession] = useState<CheckoutSession | null>(null);
 
   useEffect(() => {
-    // Try to restore admission from session storage
-    const stored = sessionStorage.getItem("fanfare_admission");
-    if (stored) {
-      setAdmission(JSON.parse(stored));
-    } else {
-      // No admission found - redirect to experience
-      window.location.href = "/experience";
+    async function loadCheckoutSession() {
+      const session = await getCheckoutSession();
+      if (!session) {
+        window.location.assign("/experience");
+        return;
+      }
+      setCheckoutSession(session);
     }
+    loadCheckoutSession();
   }, []);
 
-  if (!admission) {
+  if (!checkoutSession) {
     return <LoadingSpinner />;
   }
 
-  return <CheckoutForm admission={admission} />;
+  return <CheckoutForm checkoutSession={checkoutSession} />;
 }
 ```
 
@@ -492,17 +334,14 @@ function CheckoutPage() {
 ### Success Flow
 
 ```typescript
-async function handleCheckoutSuccess(orderId: string) {
-  // 1. Clear admission data
-  sessionStorage.removeItem("fanfare_admission");
+async function handleCheckoutSuccess(orderId: string, admissionGrant: string) {
+  // 1. Record admission completion
+  await recordAdmissionCheckout({ orderId, admissionGrant });
 
-  // 2. Complete admission (mark as used)
-  await completeAdmission();
-
-  // 3. Track success
+  // 2. Track success
   analytics.track("checkout_complete", { orderId });
 
-  // 4. Show confirmation
+  // 3. Show confirmation
   navigate(`/order-confirmation/${orderId}`);
 }
 ```
@@ -540,7 +379,7 @@ Always display remaining time prominently:
 ```typescript
 useEffect(() => {
   const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-    if (hasAdmissionToken && !orderComplete) {
+    if (hasCheckoutSession && !orderComplete) {
       e.preventDefault();
       e.returnValue = "You have an active checkout session. Are you sure you want to leave?";
     }
@@ -548,23 +387,23 @@ useEffect(() => {
 
   window.addEventListener("beforeunload", handleBeforeUnload);
   return () => window.removeEventListener("beforeunload", handleBeforeUnload);
-}, [hasAdmissionToken, orderComplete]);
+}, [hasCheckoutSession, orderComplete]);
 ```
 
 ### 3. Validate Early
 
-Validate the admission token as soon as the checkout page loads, not just on submit:
+Validate the admission grant as soon as the checkout page loads, not just on submit:
 
 ```typescript
 useEffect(() => {
   async function validateOnLoad() {
-    const isValid = await validateAdmission(admissionToken);
+    const isValid = await validateAdmissionGrant({ admissionGrant });
     if (!isValid) {
       redirectToExperience();
     }
   }
   validateOnLoad();
-}, [admissionToken]);
+}, []);
 ```
 
 ## What's Next

@@ -80,7 +80,7 @@ Use identified authentication when you need:
 ### Request OTP
 
 ```tsx
-import { useFanfareAuth } from "@waitify-io/fanfare-sdk-react";
+import { useFanfareAuth } from "@fanfare-io/fanfare-sdk-react";
 import { useState } from "react";
 
 function EmailAuthForm() {
@@ -188,7 +188,7 @@ function EmailAuthForm() {
 ## Step 2: Phone OTP Authentication
 
 ```tsx
-import { useFanfareAuth } from "@waitify-io/fanfare-sdk-react";
+import { useFanfareAuth } from "@fanfare-io/fanfare-sdk-react";
 import { useState } from "react";
 
 function PhoneAuthForm() {
@@ -306,7 +306,7 @@ function PhoneAuthForm() {
 Offer both email and phone authentication:
 
 ```tsx
-import { useFanfareAuth } from "@waitify-io/fanfare-sdk-react";
+import { useFanfareAuth } from "@fanfare-io/fanfare-sdk-react";
 import { useState } from "react";
 
 type AuthMethod = "email" | "phone";
@@ -453,9 +453,9 @@ function CombinedAuthForm() {
 Using the core SDK directly:
 
 ```typescript
-import Fanfare from "@waitify-io/fanfare-sdk-core";
+import initFanfare from "@fanfare-io/fanfare-sdk-core";
 
-const sdk = await Fanfare.init({
+const sdk = await initFanfare({
   organizationId: "org_xxx",
   publishableKey: "pk_live_xxx",
 });

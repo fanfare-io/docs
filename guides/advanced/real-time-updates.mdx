@@ -1,1020 +1,149 @@
-# Real-Time Updates Guide
+---
+title: Real-Time Updates
+description: Subscribe to public journey updates and coordinate app-owned live data.
+---
 
-Learn how to implement real-time updates in your Fanfare integration for live queue positions, stock levels, and experience state changes.
+# Real-Time Updates
 
-## Overview
+Fanfare integrations receive live journey changes through SDK stores and component hooks. Your app should render those public updates directly, then layer in app-owned product, inventory, or checkout updates from your own systems when needed.
 
-Real-time updates keep your users informed about their queue position, remaining stock, and experience status. This guide covers the different approaches to implementing real-time updates.
+Do not infer private routing mechanics from update timing. Treat each emitted view as the current public contract for UI and actions.
 
-**What you'll learn:**
+## SDK Update Sources
 
-- SDK built-in real-time updates
-- Server-Sent Events (SSE) implementation
-- WebSocket integration
-- Optimistic UI updates
-- Performance optimization
+| Source | Use for |
+| --- | --- |
+| `journey.view$` | Normal headless rendering and valid actions. |
+| `journey.latestEvent$` | Toasts, announcements, and high-level analytics triggers. |
+| `useExperienceJourney` | React UI that wants the current view and lifecycle handling. |
+| `fanfare-journey-change` | Web component hosts that need to observe widget state changes. |
 
-**Complexity:** Advanced
-**Time to complete:** 40 minutes
+## React Updates
 
-## Prerequisites
-
-- Working Fanfare integration
-- Understanding of asynchronous JavaScript
-- Backend capable of SSE or WebSocket connections
-- Basic understanding of state management
-
-## Update Strategies
-
-| Strategy          | Best For              | Latency   | Server Load |
-| ----------------- | --------------------- | --------- | ----------- |
-| SDK Subscriptions | Journey state         | Immediate | Low         |
-| Polling           | Non-critical data     | 5-30s     | Medium      |
-| SSE               | Server-to-client only | Immediate | Medium      |
-| WebSockets        | Bidirectional         | Immediate | Higher      |
-
-## Step 1: SDK Built-in Updates
-
-### React Hook Subscriptions
-
-The Fanfare React SDK provides automatic real-time updates through hooks:
+The React hook updates when the public journey view changes.
 
 ```tsx
-import { useExperienceJourney, useFanfare } from "@waitify-io/fanfare-sdk-react";
+import { useExperienceJourney } from "@fanfare-io/fanfare-sdk-react";
 
-function QueueExperience({ experienceId }: { experienceId: string }) {
-  const { state, journey } = useExperienceJourney(experienceId, {
+export function LiveExperience({ experienceId }: { experienceId: string }) {
+  const { view, start, error } = useExperienceJourney(experienceId, {
     autoStart: true,
-    // Configure update behavior
-    options: {
-      pollInterval: 5000, // Fallback polling interval
-      enableLongPoll: true, // Use long polling when available
-    },
   });
 
-  // State updates automatically when:
-  // - Position changes
-  // - Admission status changes
-  // - Experience status changes
-  // - Estimated wait time changes
+  if (error) return <ErrorPanel message={error} />;
+  if (!view) return <LoadingPanel />;
 
-  const snapshot = state?.snapshot;
+  if (view.journeyStage === "ready") {
+    return <button onClick={() => void start()}>Start</button>;
+  }
 
-  return (
-    <div className="queue-display">
-      <PositionDisplay position={snapshot?.context?.position} lastUpdate={state?.lastUpdate} />
-      <EstimatedWait seconds={snapshot?.context?.estimatedWaitSeconds} />
-      <QueueStatus stage={snapshot?.sequenceStage} />
-    </div>
-  );
-}
+  if (view.journeyStage === "routing") return <LoadingPanel />;
+  if (view.journeyStage === "gated") return <GatePanel view={view} />;
 
-function PositionDisplay({ position, lastUpdate }: { position?: number; lastUpdate?: number }) {
-  const [isUpdating, setIsUpdating] = useState(false);
-
-  // Show update animation when position changes
-  useEffect(() => {
-    setIsUpdating(true);
-    const timeout = setTimeout(() => setIsUpdating(false), 500);
-    return () => clearTimeout(timeout);
-  }, [position]);
-
-  return (
-    <div className={`position-display ${isUpdating ? "updating" : ""}`}>
-      <span className="position">{position ?? "--"}</span>
-      <span className="label">Your position</span>
-      {lastUpdate && <span className="last-update">Updated {formatTimeAgo(lastUpdate)}</span>}
-    </div>
-  );
+  return <SequencePanel sequence={view.sequence} />;
 }
 ```
 
-### Core SDK Subscriptions
+If you need animation, derive it from public view changes in your component state rather than reading private SDK internals.
 
-```typescript
-import { FanfareClient, ExperienceJourney } from "@waitify-io/fanfare-sdk-core";
+## Core SDK Stores
 
-const client = new FanfareClient({
-  organizationId: "your-org-id",
+Headless integrations can subscribe directly to the journey handle.
+
+```ts
+import initFanfare from "@fanfare-io/fanfare-sdk-core";
+
+const sdk = await initFanfare({
+  organizationId: "org_123",
+  publishableKey: "pk_live_123",
   environment: "production",
 });
 
-const journey = new ExperienceJourney(client, experienceId);
+const journey = sdk.journeys.get("exp_123");
 
-// Subscribe to state changes
-const unsubscribe = journey.subscribe((state) => {
-  console.log("State updated:", state);
-
-  if (state.snapshot?.sequenceStage === "admitted") {
-    handleAdmission(state.snapshot.context);
-  }
+const stopViewUpdates = journey.view$.listen((view) => {
+  renderJourney(view);
 });
 
-// Start the journey
-await journey.start();
-
-// Clean up when done
-unsubscribe();
-```
-
-## Step 2: Custom Polling
-
-### Smart Polling with Adaptive Intervals
-
-```typescript
-// hooks/useAdaptivePolling.ts
-import { useEffect, useRef, useState, useCallback } from "react";
-
-interface AdaptivePollingOptions {
-  minInterval: number;
-  maxInterval: number;
-  backoffMultiplier: number;
-  resetOnChange: boolean;
-}
-
-export function useAdaptivePolling<T>(
-  fetchFn: () => Promise<T>,
-  options: AdaptivePollingOptions = {
-    minInterval: 2000,
-    maxInterval: 30000,
-    backoffMultiplier: 1.5,
-    resetOnChange: true,
+const stopEventUpdates = journey.latestEvent$.listen((event) => {
+  if (event) {
+    announceJourneyEvent(event);
   }
-) {
-  const [data, setData] = useState<T | null>(null);
-  const [error, setError] = useState<Error | null>(null);
-  const [isPolling, setIsPolling] = useState(true);
-
-  const currentIntervalRef = useRef(options.minInterval);
-  const previousDataRef = useRef<T | null>(null);
-
-  const poll = useCallback(async () => {
-    try {
-      const result = await fetchFn();
-
-      // Check if data changed
-      const hasChanged = JSON.stringify(result) !== JSON.stringify(previousDataRef.current);
-
-      if (hasChanged) {
-        setData(result);
-        previousDataRef.current = result;
-
-        if (options.resetOnChange) {
-          // Reset to minimum interval when data changes
-          currentIntervalRef.current = options.minInterval;
-        }
-      } else {
-        // Increase interval when data is stable
-        currentIntervalRef.current = Math.min(
-          currentIntervalRef.current * options.backoffMultiplier,
-          options.maxInterval
-        );
-      }
-
-      setError(null);
-    } catch (err) {
-      setError(err instanceof Error ? err : new Error("Polling failed"));
-    }
-  }, [fetchFn, options]);
-
-  useEffect(() => {
-    if (!isPolling) return;
-
-    let timeoutId: NodeJS.Timeout;
-
-    const scheduleNext = () => {
-      timeoutId = setTimeout(async () => {
-        await poll();
-        scheduleNext();
-      }, currentIntervalRef.current);
-    };
-
-    // Initial fetch
-    poll().then(scheduleNext);
-
-    return () => clearTimeout(timeoutId);
-  }, [isPolling, poll]);
-
-  const pause = () => setIsPolling(false);
-  const resume = () => setIsPolling(true);
-
-  return { data, error, isPolling, pause, resume };
-}
-
-// Usage
-function StockDisplay({ productId }: { productId: string }) {
-  const { data: stock, error } = useAdaptivePolling(
-    () => fetchStockLevel(productId),
-    {
-      minInterval: 3000,
-      maxInterval: 30000,
-      backoffMultiplier: 1.5,
-      resetOnChange: true,
-    }
-  );
-
-  return (
-    <div className="stock-display">
-      {stock && <span>{stock.available} remaining</span>}
-    </div>
-  );
-}
+});
 ```
 
-## Step 3: Server-Sent Events (SSE)
+Call the unsubscribe functions when the page, route, or embedded surface unmounts.
 
-### Backend SSE Endpoint
+## Web Component Events
 
-```typescript
-// routes/sse/queue-updates.ts
-import express from "express";
-import { redis } from "../cache";
+For framework-agnostic hosts, listen to custom element events.
 
-const router = express.Router();
+```html
+<fanfare-experience-widget experience-id="exp_123" auto-start></fanfare-experience-widget>
 
-// SSE endpoint for queue updates
-router.get("/queue/:experienceId", async (req, res) => {
-  const { experienceId } = req.params;
-  const consumerId = req.query.consumerId as string;
+<script>
+  const widget = document.querySelector("fanfare-experience-widget");
 
-  // Set SSE headers
-  res.setHeader("Content-Type", "text/event-stream");
-  res.setHeader("Cache-Control", "no-cache");
-  res.setHeader("Connection", "keep-alive");
-  res.setHeader("X-Accel-Buffering", "no");
-
-  // Send initial state
-  const initialState = await getQueueState(experienceId, consumerId);
-  res.write(`data: ${JSON.stringify(initialState)}\n\n`);
-
-  // Subscribe to Redis pub/sub for updates
-  const subscriber = redis.duplicate();
-  await subscriber.subscribe(`queue:${experienceId}:updates`);
-
-  subscriber.on("message", (channel, message) => {
-    const update = JSON.parse(message);
-
-    // Filter updates for this consumer or broadcast updates
-    if (!update.consumerId || update.consumerId === consumerId) {
-      res.write(`event: ${update.type}\n`);
-      res.write(`data: ${JSON.stringify(update.data)}\n\n`);
-    }
+  widget.addEventListener("fanfare-journey-change", (event) => {
+    updateHostChrome({ experienceId: event.detail.experienceId });
   });
 
-  // Heartbeat to keep connection alive
-  const heartbeat = setInterval(() => {
-    res.write(": heartbeat\n\n");
-  }, 30000);
-
-  // Cleanup on disconnect
-  req.on("close", () => {
-    clearInterval(heartbeat);
-    subscriber.unsubscribe();
-    subscriber.quit();
+  widget.addEventListener("fanfare-admitted", (event) => {
+    sendAdmissionToServer(event.detail.grant);
   });
+
+  widget.addEventListener("fanfare-error", (event) => {
+    showHostError(event.detail.error.message);
+  });
+</script>
+```
+
+The event detail can include SDK state for widget coordination. Keep raw state out of analytics and logs unless your policy explicitly sanitizes it.
+
+## App-Owned Live Data
+
+Use your own polling, SSE, or WebSocket channel for data outside the Fanfare journey contract, such as product copy, merchandising, or checkout preparation.
+
+```ts
+const productUpdates = new EventSource("/api/product-updates");
+
+productUpdates.addEventListener("message", (event) => {
+  updateProductPanel(JSON.parse(event.data));
 });
 
-// Publish updates from your application
-export async function publishQueueUpdate(experienceId: string, update: QueueUpdate) {
-  await redis.publish(`queue:${experienceId}:updates`, JSON.stringify(update));
-}
-
-export default router;
+window.addEventListener("beforeunload", () => {
+  productUpdates.close();
+});
 ```
 
-### Frontend SSE Client
+Keep these channels separate from Fanfare actions. The current journey view still decides which Fanfare action can be shown.
 
-```typescript
-// hooks/useSSE.ts
-import { useEffect, useState, useCallback, useRef } from "react";
+## Optimistic UI
 
-interface SSEOptions {
-  onOpen?: () => void;
-  onError?: (error: Event) => void;
-  reconnectInterval?: number;
-  maxReconnectAttempts?: number;
-}
+Optimistic UI is useful for app-owned controls, but avoid pretending a Fanfare state transition has happened before the SDK view updates.
 
-export function useSSE<T>(url: string, options: SSEOptions = {}) {
-  const [data, setData] = useState<T | null>(null);
-  const [isConnected, setIsConnected] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
+Recommended pattern:
 
-  const eventSourceRef = useRef<EventSource | null>(null);
-  const reconnectAttemptsRef = useRef(0);
+- Disable the submitted control while the action promise is pending.
+- Keep rendering the last known public view.
+- Show a local spinner or progress affordance.
+- Replace the UI when the next view arrives.
+- Roll back local pending state if the action rejects.
 
-  const connect = useCallback(() => {
-    const eventSource = new EventSource(url);
-    eventSourceRef.current = eventSource;
+## Performance
 
-    eventSource.onopen = () => {
-      setIsConnected(true);
-      setError(null);
-      reconnectAttemptsRef.current = 0;
-      options.onOpen?.();
-    };
+- Subscribe once per mounted experience surface.
+- Unsubscribe on unmount.
+- Avoid duplicating SDK providers for the same page area.
+- Debounce app-owned visual effects, not SDK state handling.
+- Keep analytics high-level and sanitized.
 
-    eventSource.onmessage = (event) => {
-      const parsed = JSON.parse(event.data);
-      setData(parsed);
-    };
+## Testing
 
-    // Handle specific event types
-    eventSource.addEventListener("position_update", (event) => {
-      const update = JSON.parse((event as MessageEvent).data);
-      setData((prev) => (prev ? { ...prev, position: update.position } : null));
-    });
+- Verify view updates change visible UI.
+- Verify pending action state does not expose invalid controls.
+- Verify unmount cleanup stops app-owned listeners.
+- Verify admitted events call your server handoff once.
+- Verify telemetry records public outcomes, not raw snapshots or grants.
 
-    eventSource.addEventListener("admission", (event) => {
-      const update = JSON.parse((event as MessageEvent).data);
-      setData((prev) => (prev ? { ...prev, stage: "admitted", ...update } : null));
-    });
-
-    eventSource.addEventListener("stock_update", (event) => {
-      const update = JSON.parse((event as MessageEvent).data);
-      setData((prev) => (prev ? { ...prev, stock: update } : null));
-    });
-
-    eventSource.onerror = (event) => {
-      setIsConnected(false);
-      options.onError?.(event);
-
-      // Attempt reconnection
-      const maxAttempts = options.maxReconnectAttempts ?? 5;
-      if (reconnectAttemptsRef.current < maxAttempts) {
-        const delay = options.reconnectInterval ?? 5000;
-        setTimeout(() => {
-          reconnectAttemptsRef.current++;
-          connect();
-        }, delay * reconnectAttemptsRef.current);
-      } else {
-        setError(new Error("Max reconnection attempts reached"));
-      }
-    };
-  }, [url, options]);
-
-  useEffect(() => {
-    connect();
-
-    return () => {
-      eventSourceRef.current?.close();
-    };
-  }, [connect]);
-
-  const reconnect = useCallback(() => {
-    eventSourceRef.current?.close();
-    reconnectAttemptsRef.current = 0;
-    connect();
-  }, [connect]);
-
-  return { data, isConnected, error, reconnect };
-}
-
-// Usage
-function LiveQueueStatus({ experienceId, consumerId }: Props) {
-  const { data, isConnected, error, reconnect } = useSSE<QueueState>(
-    `/api/sse/queue/${experienceId}?consumerId=${consumerId}`,
-    {
-      reconnectInterval: 5000,
-      maxReconnectAttempts: 10,
-    }
-  );
-
-  if (error) {
-    return (
-      <div className="connection-error">
-        <p>Connection lost</p>
-        <button onClick={reconnect}>Reconnect</button>
-      </div>
-    );
-  }
-
-  return (
-    <div className="queue-status">
-      <ConnectionIndicator isConnected={isConnected} />
-      {data && (
-        <>
-          <Position value={data.position} />
-          <EstimatedWait value={data.estimatedWait} />
-        </>
-      )}
-    </div>
-  );
-}
-```
-
-## Step 4: WebSocket Integration
-
-### WebSocket Server
-
-```typescript
-// websocket/queue-server.ts
-import { WebSocketServer, WebSocket } from "ws";
-import { redis } from "../cache";
-
-interface ClientConnection {
-  ws: WebSocket;
-  consumerId: string;
-  experienceId: string;
-}
-
-const connections = new Map<string, ClientConnection>();
-
-export function setupWebSocketServer(server: http.Server) {
-  const wss = new WebSocketServer({ server, path: "/ws/queue" });
-
-  wss.on("connection", (ws, req) => {
-    const params = new URLSearchParams(req.url?.split("?")[1] || "");
-    const consumerId = params.get("consumerId");
-    const experienceId = params.get("experienceId");
-
-    if (!consumerId || !experienceId) {
-      ws.close(4000, "Missing required parameters");
-      return;
-    }
-
-    const connectionId = `${consumerId}:${experienceId}`;
-    connections.set(connectionId, { ws, consumerId, experienceId });
-
-    // Send initial state
-    getQueueState(experienceId, consumerId).then((state) => {
-      ws.send(JSON.stringify({ type: "initial_state", data: state }));
-    });
-
-    // Handle incoming messages
-    ws.on("message", async (message) => {
-      try {
-        const parsed = JSON.parse(message.toString());
-        await handleClientMessage(connectionId, parsed);
-      } catch (error) {
-        ws.send(JSON.stringify({ type: "error", message: "Invalid message format" }));
-      }
-    });
-
-    ws.on("close", () => {
-      connections.delete(connectionId);
-    });
-
-    // Heartbeat
-    const heartbeatInterval = setInterval(() => {
-      if (ws.readyState === WebSocket.OPEN) {
-        ws.ping();
-      }
-    }, 30000);
-
-    ws.on("close", () => {
-      clearInterval(heartbeatInterval);
-    });
-  });
-
-  // Subscribe to Redis for broadcast updates
-  subscribeToUpdates();
-
-  return wss;
-}
-
-async function handleClientMessage(connectionId: string, message: { type: string; data?: Record<string, unknown> }) {
-  const connection = connections.get(connectionId);
-  if (!connection) return;
-
-  switch (message.type) {
-    case "ping":
-      connection.ws.send(JSON.stringify({ type: "pong" }));
-      break;
-
-    case "refresh":
-      const state = await getQueueState(connection.experienceId, connection.consumerId);
-      connection.ws.send(JSON.stringify({ type: "state_refresh", data: state }));
-      break;
-  }
-}
-
-function subscribeToUpdates() {
-  const subscriber = redis.duplicate();
-
-  subscriber.psubscribe("queue:*:updates");
-
-  subscriber.on("pmessage", (pattern, channel, message) => {
-    const experienceId = channel.split(":")[1];
-    const update = JSON.parse(message);
-
-    // Broadcast to relevant connections
-    connections.forEach((connection, id) => {
-      if (connection.experienceId === experienceId) {
-        if (!update.consumerId || update.consumerId === connection.consumerId) {
-          if (connection.ws.readyState === WebSocket.OPEN) {
-            connection.ws.send(JSON.stringify(update));
-          }
-        }
-      }
-    });
-  });
-}
-
-// Publish updates
-export function broadcastQueueUpdate(experienceId: string, update: Record<string, unknown>) {
-  redis.publish(`queue:${experienceId}:updates`, JSON.stringify(update));
-}
-
-export function sendToConsumer(experienceId: string, consumerId: string, update: Record<string, unknown>) {
-  const connectionId = `${consumerId}:${experienceId}`;
-  const connection = connections.get(connectionId);
-
-  if (connection && connection.ws.readyState === WebSocket.OPEN) {
-    connection.ws.send(JSON.stringify(update));
-  }
-}
-```
-
-### WebSocket Client Hook
-
-```typescript
-// hooks/useWebSocket.ts
-import { useEffect, useRef, useState, useCallback } from "react";
-
-interface WebSocketOptions {
-  onMessage?: (data: unknown) => void;
-  onOpen?: () => void;
-  onClose?: () => void;
-  onError?: (error: Event) => void;
-  reconnect?: boolean;
-  reconnectInterval?: number;
-  heartbeatInterval?: number;
-}
-
-export function useWebSocket(url: string, options: WebSocketOptions = {}) {
-  const [isConnected, setIsConnected] = useState(false);
-  const [lastMessage, setLastMessage] = useState<unknown>(null);
-  const wsRef = useRef<WebSocket | null>(null);
-  const reconnectTimeoutRef = useRef<NodeJS.Timeout>();
-  const heartbeatRef = useRef<NodeJS.Timeout>();
-
-  const connect = useCallback(() => {
-    const ws = new WebSocket(url);
-    wsRef.current = ws;
-
-    ws.onopen = () => {
-      setIsConnected(true);
-      options.onOpen?.();
-
-      // Start heartbeat
-      if (options.heartbeatInterval) {
-        heartbeatRef.current = setInterval(() => {
-          if (ws.readyState === WebSocket.OPEN) {
-            ws.send(JSON.stringify({ type: "ping" }));
-          }
-        }, options.heartbeatInterval);
-      }
-    };
-
-    ws.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      setLastMessage(data);
-      options.onMessage?.(data);
-    };
-
-    ws.onclose = () => {
-      setIsConnected(false);
-      clearInterval(heartbeatRef.current);
-      options.onClose?.();
-
-      // Attempt reconnection
-      if (options.reconnect !== false) {
-        reconnectTimeoutRef.current = setTimeout(() => {
-          connect();
-        }, options.reconnectInterval ?? 5000);
-      }
-    };
-
-    ws.onerror = (error) => {
-      options.onError?.(error);
-    };
-  }, [url, options]);
-
-  useEffect(() => {
-    connect();
-
-    return () => {
-      clearTimeout(reconnectTimeoutRef.current);
-      clearInterval(heartbeatRef.current);
-      wsRef.current?.close();
-    };
-  }, [connect]);
-
-  const send = useCallback((data: unknown) => {
-    if (wsRef.current?.readyState === WebSocket.OPEN) {
-      wsRef.current.send(JSON.stringify(data));
-    }
-  }, []);
-
-  const refresh = useCallback(() => {
-    send({ type: "refresh" });
-  }, [send]);
-
-  return { isConnected, lastMessage, send, refresh };
-}
-
-// Usage
-function LiveQueue({ experienceId, consumerId }: Props) {
-  const [queueState, setQueueState] = useState<QueueState | null>(null);
-
-  const { isConnected, send, refresh } = useWebSocket(
-    `wss://api.fanfare.io/ws/queue?experienceId=${experienceId}&consumerId=${consumerId}`,
-    {
-      onMessage: (data) => {
-        const message = data as WebSocketMessage;
-
-        switch (message.type) {
-          case "initial_state":
-          case "state_refresh":
-            setQueueState(message.data);
-            break;
-
-          case "position_update":
-            setQueueState((prev) => (prev ? { ...prev, position: message.data.position } : null));
-            break;
-
-          case "admission":
-            setQueueState((prev) => (prev ? { ...prev, stage: "admitted", admission: message.data } : null));
-            break;
-        }
-      },
-      heartbeatInterval: 30000,
-      reconnectInterval: 5000,
-    }
-  );
-
-  return (
-    <div className="live-queue">
-      <ConnectionStatus isConnected={isConnected} onRefresh={refresh} />
-      {queueState && <QueueDisplay state={queueState} />}
-    </div>
-  );
-}
-```
-
-## Step 5: Optimistic UI Updates
-
-### Implementing Optimistic Updates
-
-```tsx
-// hooks/useOptimisticUpdate.ts
-import { useState, useCallback } from "react";
-
-interface OptimisticState<T> {
-  current: T;
-  pending: T | null;
-  error: Error | null;
-}
-
-export function useOptimisticUpdate<T>(initialValue: T) {
-  const [state, setState] = useState<OptimisticState<T>>({
-    current: initialValue,
-    pending: null,
-    error: null,
-  });
-
-  const update = useCallback(async (optimisticValue: T, updateFn: () => Promise<T>) => {
-    // Set optimistic value immediately
-    setState((prev) => ({
-      ...prev,
-      pending: optimisticValue,
-      error: null,
-    }));
-
-    try {
-      // Perform actual update
-      const result = await updateFn();
-
-      // Confirm with server response
-      setState({
-        current: result,
-        pending: null,
-        error: null,
-      });
-
-      return result;
-    } catch (error) {
-      // Rollback on error
-      setState((prev) => ({
-        current: prev.current,
-        pending: null,
-        error: error instanceof Error ? error : new Error("Update failed"),
-      }));
-
-      throw error;
-    }
-  }, []);
-
-  // Return the optimistic value if pending, otherwise current
-  const value = state.pending ?? state.current;
-
-  return {
-    value,
-    isPending: state.pending !== null,
-    error: state.error,
-    update,
-    reset: () => setState({ current: state.current, pending: null, error: null }),
-  };
-}
-
-// Usage: Optimistic cart update
-function AddToCartButton({ productId }: { productId: string }) {
-  const { value: cartCount, isPending, update } = useOptimisticUpdate(0);
-
-  const handleAddToCart = async () => {
-    await update(
-      cartCount + 1, // Optimistic value
-      () => addToCartAPI(productId) // Actual API call
-    );
-  };
-
-  return (
-    <button onClick={handleAddToCart} disabled={isPending}>
-      Add to Cart
-      {cartCount > 0 && <span className="count">{cartCount}</span>}
-      {isPending && <span className="spinner" />}
-    </button>
-  );
-}
-```
-
-### Animation for Updates
-
-```tsx
-// components/AnimatedValue.tsx
-import { useEffect, useState, useRef } from "react";
-
-interface AnimatedValueProps {
-  value: number;
-  duration?: number;
-  formatFn?: (value: number) => string;
-}
-
-export function AnimatedValue({ value, duration = 500, formatFn = String }: AnimatedValueProps) {
-  const [displayValue, setDisplayValue] = useState(value);
-  const previousValueRef = useRef(value);
-
-  useEffect(() => {
-    const startValue = previousValueRef.current;
-    const endValue = value;
-    const startTime = Date.now();
-
-    const animate = () => {
-      const elapsed = Date.now() - startTime;
-      const progress = Math.min(elapsed / duration, 1);
-
-      // Ease-out cubic
-      const eased = 1 - Math.pow(1 - progress, 3);
-
-      const current = Math.round(startValue + (endValue - startValue) * eased);
-      setDisplayValue(current);
-
-      if (progress < 1) {
-        requestAnimationFrame(animate);
-      }
-    };
-
-    animate();
-    previousValueRef.current = value;
-  }, [value, duration]);
-
-  return <span className="animated-value">{formatFn(displayValue)}</span>;
-}
-
-// Usage
-function QueuePosition({ position }: { position: number }) {
-  return (
-    <div className="queue-position">
-      <AnimatedValue value={position} duration={800} formatFn={(v) => v.toLocaleString()} />
-    </div>
-  );
-}
-```
-
-## Step 6: Performance Optimization
-
-### Debouncing Updates
-
-```typescript
-// utils/debounce.ts
-export function debounce<T extends (...args: Parameters<T>) => void>(fn: T, delay: number): T {
-  let timeoutId: NodeJS.Timeout;
-
-  return ((...args: Parameters<T>) => {
-    clearTimeout(timeoutId);
-    timeoutId = setTimeout(() => fn(...args), delay);
-  }) as T;
-}
-
-// Usage for rapidly updating values
-function StockCounter({ productId }: { productId: string }) {
-  const [stock, setStock] = useState<number | null>(null);
-
-  // Debounce display updates to avoid excessive re-renders
-  const debouncedSetStock = useMemo(() => debounce(setStock, 100), []);
-
-  useEffect(() => {
-    const unsubscribe = subscribeToStockUpdates(productId, (newStock) => {
-      debouncedSetStock(newStock);
-    });
-
-    return unsubscribe;
-  }, [productId, debouncedSetStock]);
-
-  return <span>{stock ?? "--"}</span>;
-}
-```
-
-### Batching Updates
-
-```typescript
-// hooks/useBatchedUpdates.ts
-import { useState, useCallback, useRef, useEffect } from "react";
-
-export function useBatchedUpdates<T>(initialValue: T, batchInterval: number = 100) {
-  const [value, setValue] = useState(initialValue);
-  const pendingUpdateRef = useRef<T | null>(null);
-  const timeoutRef = useRef<NodeJS.Timeout>();
-
-  const batchedUpdate = useCallback(
-    (newValue: T) => {
-      pendingUpdateRef.current = newValue;
-
-      if (!timeoutRef.current) {
-        timeoutRef.current = setTimeout(() => {
-          if (pendingUpdateRef.current !== null) {
-            setValue(pendingUpdateRef.current);
-            pendingUpdateRef.current = null;
-          }
-          timeoutRef.current = undefined;
-        }, batchInterval);
-      }
-    },
-    [batchInterval]
-  );
-
-  useEffect(() => {
-    return () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-    };
-  }, []);
-
-  return [value, batchedUpdate] as const;
-}
-```
-
-### Virtualization for Large Lists
-
-```tsx
-// components/VirtualizedQueueList.tsx
-import { useVirtualizer } from "@tanstack/react-virtual";
-import { useRef } from "react";
-
-interface QueueEntry {
-  consumerId: string;
-  position: number;
-  joinedAt: string;
-}
-
-function VirtualizedQueueList({ entries }: { entries: QueueEntry[] }) {
-  const parentRef = useRef<HTMLDivElement>(null);
-
-  const virtualizer = useVirtualizer({
-    count: entries.length,
-    getScrollElement: () => parentRef.current,
-    estimateSize: () => 60,
-    overscan: 5,
-  });
-
-  return (
-    <div ref={parentRef} className="queue-list-container" style={{ height: "400px", overflow: "auto" }}>
-      <div
-        style={{
-          height: `${virtualizer.getTotalSize()}px`,
-          width: "100%",
-          position: "relative",
-        }}
-      >
-        {virtualizer.getVirtualItems().map((virtualItem) => (
-          <div
-            key={virtualItem.key}
-            style={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              width: "100%",
-              height: `${virtualItem.size}px`,
-              transform: `translateY(${virtualItem.start}px)`,
-            }}
-          >
-            <QueueEntryRow entry={entries[virtualItem.index]} />
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-```
-
-## Best Practices
-
-### 1. Graceful Degradation
-
-```typescript
-// Fall back to polling if real-time fails
-function useRealTimeWithFallback(experienceId: string) {
-  const [usePolling, setUsePolling] = useState(false);
-
-  // Try WebSocket first
-  const { isConnected, lastMessage } = useWebSocket(`wss://api.fanfare.io/ws/queue?experienceId=${experienceId}`, {
-    onError: () => setUsePolling(true),
-    reconnect: false,
-  });
-
-  // Fall back to polling
-  const { data: polledData } = useAdaptivePolling(() => fetchQueueState(experienceId), {
-    enabled: usePolling || !isConnected,
-    minInterval: 5000,
-    maxInterval: 30000,
-  });
-
-  return isConnected ? lastMessage : polledData;
-}
-```
-
-### 2. Connection State Indicator
-
-```tsx
-function ConnectionIndicator({ isConnected }: { isConnected: boolean }) {
-  return (
-    <div className={`connection-indicator ${isConnected ? "connected" : "disconnected"}`}>
-      <span className="dot" />
-      <span className="label">{isConnected ? "Live" : "Reconnecting..."}</span>
-    </div>
-  );
-}
-```
-
-### 3. Rate Limiting Client Updates
-
-```typescript
-// Prevent overwhelming the client with updates
-function createRateLimitedHandler(handler: (data: unknown) => void, minInterval: number) {
-  let lastCall = 0;
-  let pendingData: unknown = null;
-  let timeoutId: NodeJS.Timeout | null = null;
-
-  return (data: unknown) => {
-    const now = Date.now();
-    const timeSinceLastCall = now - lastCall;
-
-    if (timeSinceLastCall >= minInterval) {
-      handler(data);
-      lastCall = now;
-    } else {
-      pendingData = data;
-      if (!timeoutId) {
-        timeoutId = setTimeout(() => {
-          if (pendingData !== null) {
-            handler(pendingData);
-            lastCall = Date.now();
-            pendingData = null;
-          }
-          timeoutId = null;
-        }, minInterval - timeSinceLastCall);
-      }
-    }
-  };
-}
-```
-
-## Troubleshooting
-
-### Connection Drops Frequently
-
-1. Check network stability
-2. Verify server heartbeat configuration
-3. Review proxy/load balancer timeouts
-4. Implement exponential backoff for reconnection
-
-### Updates Arriving Out of Order
-
-1. Include timestamps in updates
-2. Implement client-side ordering
-3. Use sequence numbers for critical updates
-
-### High Memory Usage
-
-1. Limit update history retention
-2. Implement virtualization for long lists
-3. Debounce rapid updates
-4. Clean up subscriptions properly
-
-## What's Next
-
-- [Error Handling](/guides/advanced/error-handling) - Handle connection failures
-- [Webhooks Guide](/guides/advanced/webhooks-guide) - Server-side event handling
-- [Custom Platform](/guides/platform-integrations/custom-platform) - Full integration guide
+For broader guidance, see [Testing Your Integration](/getting-started/testing) and [Core Headless Example](/sdk/examples/core-headless).

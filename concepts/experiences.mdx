@@ -16,52 +16,28 @@ Think of an experience as a campaign for a specific launch or event. When you cr
 - **How** — The method consumers use to get access (queue, draw, auction, etc.)
 - **Who** — Which consumer groups can participate (optional)
 
-## Experience Lifecycle
-
-Experiences go through three phases based on timing:
+## Experience Schedule
 
 ```
-┌─────────────────────────────────────────────────────────────────────┐
-│                       EXPERIENCE TIMELINE                            │
-├─────────────────────────────────────────────────────────────────────┤
-│                                                                     │
-│  ╔═══════════════╗    ╔════════════════╗    ╔═══════════════╗      │
-│  ║   SCHEDULED   ║    ║     OPEN       ║    ║    CLOSED     ║      │
-│  ╟───────────────╢    ╟────────────────╢    ╟───────────────╢      │
-│  ║  Consumers    ║    ║  Consumers     ║    ║  Experience   ║      │
-│  ║  see a        ║    ║  can join and  ║    ║  has ended    ║      │
-│  ║  countdown    ║    ║  participate   ║    ║               ║      │
-│  ╚═══════════════╝    ╚════════════════╝    ╚═══════════════╝      │
-│         │                    │                    │                 │
-│         │                    │                    │                 │
-│  ───────┼────────────────────┼────────────────────┼──────────►      │
-│      Opens at            Active period        Closes at             │
-│                                                                     │
-└─────────────────────────────────────────────────────────────────────┘
+[Experience]
+    │ contains
+    ▼
+[Sequences] ── contain ──► [Distributions]
+                              │
+                              ├─ upcoming
+                              ├─ active
+                              └─ ended
 ```
 
-### Scheduled
+An experience does not have a separate public state machine. Its visible schedule is derived from the distributions attached to its sequences.
 
-Before the open time, consumers see a countdown. They cannot participate yet but can see what's coming.
+| Distribution timing | Consumer-facing meaning |
+| --- | --- |
+| **upcoming** | The distribution has not opened yet; consumers may see a launch time, countdown, or waitlist prompt. |
+| **active** | The distribution is available for its supported action, such as entering, bidding, booking, or claiming access. |
+| **ended** | The distribution window has closed; consumers see closed-state messaging or their outcome. |
 
-### Open
-
-Once the experience opens, consumers can participate according to the distribution method you've configured (join a queue, enter a draw, place a bid, etc.).
-
-### Closed
-
-After the close time, no new entries are allowed. Consumers who already have access can still complete their purchases within their time window.
-
-## Timing Options
-
-You can configure timing in several ways:
-
-| Open Time | Close Time | Result                                                              |
-| --------- | ---------- | ------------------------------------------------------------------- |
-| Set       | Set        | Opens at the scheduled time, closes at the end time                 |
-| Set       | Not set    | Opens at the scheduled time, stays open until you manually close it |
-| Not set   | Set        | Open immediately, closes at the end time                            |
-| Not set   | Not set    | Always open (until you manually close it)                           |
+Draw `drawAt` and auction `settleAt` can extend the derived experience schedule beyond the entry or bidding window because they represent outcome timing.
 
 ## Access Paths (Sequences)
 
@@ -74,21 +50,21 @@ Within an experience, you can create multiple **access paths** (called sequences
 │                                                                 │
 │  ┌──────────────────┐                                          │
 │  │   VIP ACCESS     │  For your loyalty members                │
-│  │   Priority: High │  → Early access via lottery              │
+│  │   Priority: 100  │  → Early access via lottery              │
 │  │   Audience: VIP  │                                          │
 │  └──────────────────┘                                          │
 │           │                                                     │
 │           ▼ (If not VIP, check next)                           │
 │  ┌──────────────────┐                                          │
 │  │  EARLY ACCESS    │  For consumers with an access code       │
-│  │  Priority: Medium│  → First-come queue                      │
+│  │  Priority: 50   │  → First-come queue                       │
 │  │  Code: EARLYBIRD │                                          │
 │  └──────────────────┘                                          │
 │           │                                                     │
 │           ▼ (If no code, use general)                          │
 │  ┌──────────────────┐                                          │
 │  │  GENERAL ACCESS  │  For everyone else                       │
-│  │  Priority: Low   │  → Standard queue                        │
+│  │  Priority: 10   │  → Standard queue                         │
 │  │  Open to all     │                                          │
 │  └──────────────────┘                                          │
 │                                                                 │
@@ -99,22 +75,21 @@ Within an experience, you can create multiple **access paths** (called sequences
 
 When a consumer enters your experience:
 
-1. The system checks sequences in priority order (highest first)
-2. For each sequence, it checks if the consumer qualifies:
-   - Are they in the required audience? (if set)
-   - Do they have the access code? (if required)
-3. The consumer is assigned to the first sequence they qualify for
+1. Fanfare evaluates available sequences in priority order.
+2. The response returns a public outcome such as `routed`, `gated`, or `no_access`.
+3. If the consumer is gated, the response tells your UI which public requirement to collect, such as authentication, an access code, or a verification step.
+4. Once routed, the current journey state exposes only the actions that are valid for that state.
 
 ### Common Patterns
 
 **VIP Early Access**
 
 ```
-VIP Sequence (Priority: High)
+VIP Sequence (Priority: 100)
   ↳ Requires: VIP audience membership
   ↳ Distribution: Draw (lottery for fairness)
 
-General Sequence (Priority: Low)
+General Sequence (Priority: 10)
   ↳ Requires: Nothing (open to all)
   ↳ Distribution: Queue (first-come)
 ```
@@ -122,11 +97,11 @@ General Sequence (Priority: Low)
 **Access Code Launch**
 
 ```
-Presale Sequence (Priority: High)
+Presale Sequence (Priority: 100)
   ↳ Requires: Access code "PRESALE2024"
   ↳ Distribution: Queue
 
-General Sale Sequence (Priority: Low)
+General Sale Sequence (Priority: 10)
   ↳ Requires: Nothing
   ↳ Distribution: Queue
 ```
@@ -134,10 +109,10 @@ General Sale Sequence (Priority: Low)
 **Waitlist Overflow**
 
 ```
-Main Queue Sequence (Priority: High)
+Main Queue Sequence (Priority: 100)
   ↳ Distribution: Queue (limited capacity)
 
-Waitlist Sequence (Priority: Low)
+Waitlist Sequence (Priority: 10)
   ↳ Distribution: Waitlist (notified when space opens)
 ```
 
@@ -151,14 +126,16 @@ Most experiences have one product — a product launch, limited edition, or excl
 
 ### Multiple Products
 
-You can offer several products in one experience — useful for collection drops or bundle sales. Consumers can choose which product they want.
+You can offer several products in one experience — useful for collection drops, bundle sales, or mystery boxes. Depending on the experience setup, consumers can choose a product or Fanfare can assign one from the configured product pool.
 
 ### Product Selection
 
 You can control how products are selected:
 
-- **Consumer chooses** — Consumers pick their preferred product
-- **Random assignment** — System assigns a product (great for mystery boxes)
+- **Consumer-selected** — Consumers pick their preferred product or variant
+- **System-assigned** — Fanfare assigns from the configured product pool (great for mystery boxes)
+
+For system-assigned products, product allocation weights control the relative probability that each product is assigned. Keep those weights separate from draw odds: draw configuration decides which consumers are selected, while product allocation decides what an admitted or selected consumer receives.
 
 ## Theming and Customization
 
@@ -199,6 +176,8 @@ Consumer participates according to the distribution type:
 - Entered in a draw
 - Placing bids in an auction
 - Booking an appointment
+- Claiming a timed release
+- Joining a waitlist when the current access path offers one
 
 ### 4. Getting Access
 
@@ -222,7 +201,7 @@ Consumer completes their purchase within the access window.
 
 ### Design Access Paths Thoughtfully
 
-- Higher priority paths should have stricter requirements
+- Higher-priority paths should have stricter eligibility requirements
 - Always have a general access path as a fallback
 - Test your routing logic before launch
 

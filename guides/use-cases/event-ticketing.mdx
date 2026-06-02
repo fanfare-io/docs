@@ -68,7 +68,7 @@ interface EventConfig {
 interface TicketTier {
   tierId: string;
   name: string;
-  price: number;
+  price: string;
   quantity: number;
   description: string;
   perks?: string[];
@@ -92,7 +92,7 @@ const concertConfig: EventConfig = {
     {
       tierId: "vip",
       name: "VIP Experience",
-      price: 500,
+      price: "500.00",
       quantity: 500,
       description: "Premium seating + meet & greet",
       perks: ["Meet & Greet", "Early entry", "Exclusive merch", "Premium seating"],
@@ -100,21 +100,21 @@ const concertConfig: EventConfig = {
     {
       tierId: "floor",
       name: "Floor (General Admission)",
-      price: 150,
+      price: "150.00",
       quantity: 5000,
       description: "Standing floor access",
     },
     {
       tierId: "lower-bowl",
       name: "Lower Bowl",
-      price: 100,
+      price: "100.00",
       quantity: 8000,
       description: "Lower level reserved seating",
     },
     {
       tierId: "upper-bowl",
       name: "Upper Bowl",
-      price: 60,
+      price: "60.00",
       quantity: 6500,
       description: "Upper level reserved seating",
     },
@@ -133,16 +133,9 @@ const concertConfig: EventConfig = {
 ### Admin Configuration
 
 ```typescript
-import { FanfareAdminClient } from "@waitify-io/fanfare-admin-sdk";
-
-const adminClient = new FanfareAdminClient({
-  apiKey: process.env.FANFARE_ADMIN_API_KEY!,
-  organizationId: process.env.FANFARE_ORGANIZATION_ID!,
-});
-
 async function createEventTicketingExperience(event: EventConfig) {
   // Main ticket sale queue
-  const mainQueue = await adminClient.queues.create({
+  const mainQueue = await createFanfareExperience({
     name: `${event.eventName} - General Sale`,
     slug: `tickets-${event.eventId}`,
 
@@ -184,7 +177,7 @@ async function createEventTicketingExperience(event: EventConfig) {
 
 async function createPresaleQueues(event: EventConfig, mainQueueId: string) {
   // Artist presale
-  const artistPresale = await adminClient.queues.create({
+  const artistPresale = await createFanfareExperience({
     name: `${event.eventName} - Artist Presale`,
     slug: `presale-artist-${event.eventId}`,
     scheduledStart: new Date("2024-08-28T10:00:00Z"),
@@ -207,7 +200,7 @@ async function createPresaleQueues(event: EventConfig, mainQueueId: string) {
   });
 
   // Venue presale
-  const venuePresale = await adminClient.queues.create({
+  const venuePresale = await createFanfareExperience({
     name: `${event.eventName} - Venue Presale`,
     slug: `presale-venue-${event.eventId}`,
     scheduledStart: new Date("2024-08-29T10:00:00Z"),
@@ -230,7 +223,7 @@ async function createPresaleQueues(event: EventConfig, mainQueueId: string) {
   });
 
   // Credit card presale
-  const ccPresale = await adminClient.queues.create({
+  const ccPresale = await createFanfareExperience({
     name: `${event.eventName} - Card Presale`,
     slug: `presale-card-${event.eventId}`,
     scheduledStart: new Date("2024-08-30T10:00:00Z"),
@@ -258,7 +251,7 @@ async function createPresaleQueues(event: EventConfig, mainQueueId: string) {
 
 ```tsx
 // pages/events/[eventId]/tickets.tsx
-import { FanfareProvider } from "@waitify-io/fanfare-sdk-react";
+import { FanfareProvider } from "@fanfare-io/fanfare-sdk-react";
 import { TicketPurchaseExperience } from "@/components/TicketPurchaseExperience";
 import { EventInfo } from "@/components/EventInfo";
 
@@ -271,7 +264,11 @@ interface TicketPageProps {
 
 export default function TicketPage({ experienceId, event, salePhase, presaleCode }: TicketPageProps) {
   return (
-    <FanfareProvider organizationId={process.env.NEXT_PUBLIC_FANFARE_ORG_ID!} options={{ environment: "production" }}>
+    <FanfareProvider
+      organizationId={process.env.NEXT_PUBLIC_FANFARE_ORG_ID!}
+      publishableKey={process.env.NEXT_PUBLIC_FANFARE_PUBLISHABLE_KEY!}
+      environment="production"
+    >
       <div className="ticket-page">
         <EventInfo event={event} />
 
@@ -314,7 +311,8 @@ function SoldOutState({ event }: { event: EventConfig }) {
 
 ```tsx
 // components/TicketPurchaseExperience.tsx
-import { useExperienceJourney } from "@waitify-io/fanfare-sdk-react";
+import { useExperienceJourney } from "@fanfare-io/fanfare-sdk-react";
+import type { SequenceView } from "@fanfare-io/fanfare-sdk-core/experiences";
 import { useState, useEffect } from "react";
 
 interface TicketPurchaseExperienceProps {
@@ -324,50 +322,32 @@ interface TicketPurchaseExperienceProps {
 }
 
 export function TicketPurchaseExperience({ experienceId, event, presaleCode }: TicketPurchaseExperienceProps) {
-  const { journey, state, start } = useExperienceJourney(experienceId, {
+  const { view, start } = useExperienceJourney(experienceId, {
     autoStart: !presaleCode, // Auto-start if no presale code needed
   });
-
-  const snapshot = state?.snapshot;
-  const stage = snapshot?.sequenceStage;
 
   // Handle presale code entry
   const [codeEntered, setCodeEntered] = useState(false);
 
   const handleCodeSubmit = (code: string) => {
-    // Validate code and start journey
-    journey.start({ accessCode: code });
+    void start({ accessCode: code });
     setCodeEntered(true);
   };
 
   // Show presale code form if required
-  if (presaleCode && !codeEntered && stage === "not_started") {
+  if (presaleCode && !codeEntered && view?.journeyStage === "ready") {
     return <PresaleCodeForm onSubmit={handleCodeSubmit} />;
   }
 
-  switch (stage) {
-    case "not_started":
-      return <SaleNotStartedState snapshot={snapshot} event={event} />;
+  if (!view) return <LoadingState message="Joining the queue..." />;
+  if (view.journeyStage === "ready") return <SaleNotStartedState event={event} onStart={start} />;
+  if (view.journeyStage === "routing") return <LoadingState message="Joining the queue..." />;
+  if (view.journeyStage === "gated") return <GateState view={view} />;
+  if (view.sequence.stage === "participating") return <QueueState sequence={view.sequence} event={event} />;
+  if (view.sequence.stage === "admitted") return <TicketSelectionState sequence={view.sequence} event={event} />;
+  if (view.sequence.stage === "denied") return <SessionExpiredState onRetry={view.sequence.reenter ?? start} />;
 
-    case "entering":
-    case "routing":
-      return <LoadingState message="Joining the queue..." />;
-
-    case "waiting":
-      return <QueueState snapshot={snapshot} event={event} />;
-
-    case "admitted":
-      return <TicketSelectionState snapshot={snapshot} event={event} />;
-
-    case "completed":
-      return <PurchaseConfirmedState snapshot={snapshot} event={event} />;
-
-    case "expired":
-      return <SessionExpiredState onRetry={start} />;
-
-    default:
-      return null;
-  }
+  return null;
 }
 
 function PresaleCodeForm({ onSubmit }: { onSubmit: (code: string) => void }) {
@@ -403,19 +383,12 @@ function PresaleCodeForm({ onSubmit }: { onSubmit: (code: string) => void }) {
   );
 }
 
-function SaleNotStartedState({ snapshot, event }: { snapshot: JourneySnapshot; event: EventConfig }) {
-  const startsAt = snapshot?.context?.startsAt;
-
+function SaleNotStartedState({ event, onStart }: { event: EventConfig; onStart: () => Promise<unknown> }) {
   return (
     <div className="sale-not-started">
       <h2>Tickets On Sale Soon</h2>
 
-      {startsAt && (
-        <div className="countdown-section">
-          <p>Sale begins in:</p>
-          <CountdownTimer targetTime={startsAt} />
-        </div>
-      )}
+      <button onClick={() => void onStart()}>Check access</button>
 
       <div className="event-preview">
         <h3>{event.eventName}</h3>
@@ -450,11 +423,7 @@ function SaleNotStartedState({ snapshot, event }: { snapshot: JourneySnapshot; e
   );
 }
 
-function QueueState({ snapshot, event }: { snapshot: JourneySnapshot; event: EventConfig }) {
-  const position = snapshot?.context?.position;
-  const estimatedWait = snapshot?.context?.estimatedWaitSeconds;
-  const queueSize = snapshot?.context?.queueSize;
-
+function QueueState({ sequence, event }: { sequence: SequenceView; event: EventConfig }) {
   return (
     <div className="queue-state">
       <div className="queue-header">
@@ -464,26 +433,16 @@ function QueueState({ snapshot, event }: { snapshot: JourneySnapshot; event: Eve
 
       <div className="queue-position">
         <div className="position-circle">
-          <span className="position">{position?.toLocaleString()}</span>
-          <span className="label">Your position</span>
+          <span className="position">{sequence.stage}</span>
+          <span className="label">Current status</span>
         </div>
       </div>
 
       <div className="queue-stats">
         <div className="stat">
-          <span className="value">{formatWaitTime(estimatedWait)}</span>
-          <span className="label">Estimated wait</span>
+          <span className="value">Watch for admission</span>
+          <span className="label">Next step</span>
         </div>
-        {queueSize && (
-          <div className="stat">
-            <span className="value">{queueSize.toLocaleString()}</span>
-            <span className="label">People in queue</span>
-          </div>
-        )}
-      </div>
-
-      <div className="queue-animation">
-        <QueueVisualizer position={position} total={queueSize} />
       </div>
 
       <div className="event-reminder">
@@ -507,8 +466,14 @@ function QueueState({ snapshot, event }: { snapshot: JourneySnapshot; event: Eve
   );
 }
 
-function TicketSelectionState({ snapshot, event }: { snapshot: JourneySnapshot; event: EventConfig }) {
-  const expiresAt = snapshot?.context?.admittanceExpiresAt;
+function TicketSelectionState({
+  sequence,
+  event,
+}: {
+  sequence: Extract<JourneyView, { journeyStage: "routed" }>["sequence"] & { stage: "admitted" };
+  event: EventConfig;
+}) {
+  const expiresAt = sequence.admissionGrantExpiresAt;
   const [selectedTier, setSelectedTier] = useState<TicketTier | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [ticketAvailability, setTicketAvailability] = useState<Map<string, number>>(new Map());
@@ -532,8 +497,7 @@ function TicketSelectionState({ snapshot, event }: { snapshot: JourneySnapshot; 
       eventId: event.eventId,
       tierId: selectedTier.tierId,
       quantity,
-      admissionToken: snapshot?.context?.admittanceToken,
-      consumerId: snapshot?.context?.consumerId,
+      admissionGrant: sequence.admissionGrant,
     };
 
     sessionStorage.setItem("ticket_order", JSON.stringify(orderData));
@@ -635,55 +599,6 @@ function TicketSelectionState({ snapshot, event }: { snapshot: JourneySnapshot; 
   );
 }
 
-function PurchaseConfirmedState({ snapshot, event }: { snapshot: JourneySnapshot; event: EventConfig }) {
-  const order = snapshot?.context?.order;
-
-  return (
-    <div className="purchase-confirmed">
-      <div className="success-header">
-        <div className="success-icon">✓</div>
-        <h2>Tickets Secured!</h2>
-      </div>
-
-      <div className="confirmation-details">
-        <p className="confirmation-number">Confirmation: {order?.confirmationNumber}</p>
-
-        <div className="ticket-details">
-          <h3>{event.eventName}</h3>
-          <p>
-            {event.venue.name} - {event.venue.city}
-          </p>
-          <p>{event.date.toLocaleDateString()}</p>
-          <p>
-            Doors: {event.doors} | Show: {event.startTime}
-          </p>
-        </div>
-
-        <div className="order-details">
-          <h4>Your Tickets</h4>
-          <p>
-            {order?.quantity}x {order?.tierName}
-          </p>
-          <p>Total: ${order?.total}</p>
-        </div>
-      </div>
-
-      <div className="next-steps">
-        <h3>What's Next</h3>
-        <ul>
-          <li>Confirmation email sent to {snapshot?.context?.email}</li>
-          <li>Tickets will be available in your account 48 hours before the event</li>
-          <li>Bring valid photo ID matching the purchaser name</li>
-        </ul>
-      </div>
-
-      <div className="actions">
-        <button onClick={() => (window.location.href = "/account/tickets")}>View My Tickets</button>
-        <button onClick={() => addEventToCalendar(event)}>Add to Calendar</button>
-      </div>
-    </div>
-  );
-}
 ```
 
 ## Step 4: Anti-Scalping Measures
@@ -908,7 +823,7 @@ async function handleSoldOut(data: QueueSoldOutEvent) {
   await db.update(events).set({ saleStatus: "sold_out" }).where(eq(events.id, eventId));
 
   // Notify remaining queue members
-  await adminClient.queues.notifyWaiting(experienceId, {
+  await notifyWaitingConsumers(experienceId, {
     type: "sold_out",
     message: "All tickets have been sold. You can join the waitlist for cancelled tickets.",
   });

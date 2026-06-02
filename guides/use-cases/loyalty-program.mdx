@@ -1,0 +1,111 @@
+---
+title: Loyalty Program
+description: Build a customer-facing loyalty experience with dashboard configuration and Consumer API display.
+---
+
+# Loyalty Program
+
+This guide shows how to launch a loyalty program using the implemented dashboard and API surfaces. It avoids unimplemented SDK loyalty hooks and widgets; your customer-facing UI should be app-owned and read loyalty data from the Consumer API.
+
+## What You Will Build
+
+- A configured loyalty program with expiration and limits.
+- Event-based earning values for key customer actions.
+- Optional loyalty audiences for tiered access.
+- Optional loyalty-biased admission for queue or draw experiences.
+- A storefront or account-page loyalty module backed by Consumer API calls.
+
+## Prerequisites
+
+- A Fanfare organization with dashboard access.
+- Consumer authentication set up for your app.
+- A server or client helper that can call the Consumer API with the current consumer session.
+
+## Step 1: Configure The Program
+
+In **Loyalty > Settings**:
+
+1. Enable the loyalty program.
+2. Choose an expiration policy: none, fixed, or inactivity.
+3. Set the required month value for fixed or inactivity expiration.
+4. Set optional maximum balance, daily earn cap, and monthly earn cap.
+5. Save the settings.
+
+Choose customer copy before launch. For example, fixed expiration should mention that points can expire after a configured period, while inactivity expiration should explain that earning or redeeming keeps the account active.
+
+## Step 2: Review Event Points
+
+In **Loyalty > Event points**, review earning values by category:
+
+- Engagement for browsing and product discovery.
+- Conversion for cart, checkout, and purchase actions.
+- Social/message for QR and message engagement.
+- Queue, draw, auction, appointment, and waitlist for experience participation.
+
+Set events to `0` when they should not award points. Keep high-value actions weighted above lightweight engagement so customers understand which actions matter most.
+
+## Step 3: Create Loyalty Audiences
+
+Use audiences when loyalty should affect access or segmentation. Common patterns include:
+
+- Member audience for anyone with a positive balance.
+- Tier audiences based on current balance or lifetime points.
+- Early-access audiences for high-value customers.
+
+Attach those audiences to experiences the same way you would use other audience segments. Loyalty determines point state; audiences determine who qualifies for a customer group.
+
+## Step 4: Configure Loyalty-Biased Experiences
+
+For queues and draws, decide whether the experience should also recognize loyalty during admission or selection. This setting is optional, configured per experience, and off by default.
+
+Use it when loyal or highly engaged consumers should have improved opportunity without a guaranteed result. Keep customer messaging qualitative:
+
+- Queue copy should say the consumer is in line or progressing, not expose a precise numeric position.
+- Draw copy should confirm entry and outcome timing, not promise a fixed chance of winning.
+- Promotion terms should explain eligibility and any loyalty considerations in language reviewed by your legal or compliance team.
+
+## Step 5: Build App-Owned Display UI
+
+Your storefront can read loyalty state from the Consumer API after the consumer is authenticated.
+
+```ts
+export async function loadLoyaltySummary(consumerApi) {
+  const balance = await consumerApi.get("/loyalty/balance");
+  const expirations = await consumerApi.get("/loyalty/expirations?withinDays=90");
+  const history = await consumerApi.get("/loyalty/history?limit=20");
+  return { balance, expirations, history };
+}
+```
+
+Use the returned data to render:
+
+- Current balance and lifetime points.
+- A short upcoming-expiration notice when applicable.
+- Recent history entries with customer-friendly labels.
+
+If the API returns that loyalty is unavailable, hide the loyalty module or show a neutral empty state.
+
+## Step 6: Support Adjustments
+
+For support workflows, use the dashboard customer detail page or a server-side Admin API integration to add or deduct points. Keep adjustment reasons clear enough for support review and customer communication.
+
+Do not expose Admin API adjustment actions in browser code.
+
+## Verification Checklist
+
+- Loyalty settings match your published customer terms.
+- Event points are configured for the categories you want to reward.
+- Events that should not award points are set to `0`.
+- Loyalty-biased admission is enabled only on intended queue or draw experiences.
+- Queue and draw copy avoids guaranteed outcomes when loyalty bias is enabled.
+- Customer UI handles unavailable loyalty data.
+- Expiration notices match the configured policy.
+- Loyalty audiences are attached only where intended.
+
+## Related Pages
+
+- [Loyalty programs concept](/concepts/loyalty)
+- [Loyalty dashboard overview](/dashboard/loyalty/overview)
+- [Configure queue experiences](/dashboard/experiences/configure-queue)
+- [Configure draw experiences](/dashboard/experiences/configure-lottery)
+- [Consumer Loyalty API](/api/consumer-api/loyalty)

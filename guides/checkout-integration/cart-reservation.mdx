@@ -156,7 +156,7 @@ CREATE TABLE reservations (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   consumer_id TEXT NOT NULL,
   experience_id TEXT NOT NULL,
-  admission_token TEXT NOT NULL,
+  admission_grant TEXT NOT NULL,
   product_id TEXT NOT NULL,
   variant_id TEXT,
   quantity INTEGER NOT NULL DEFAULT 1,
@@ -180,10 +180,16 @@ CREATE INDEX idx_reservations_consumer ON reservations(consumer_id, status);
 // services/reservation.service.ts
 import { db } from "./db";
 
+function inventoryScope(productId: string, variantId?: string) {
+  return variantId
+    ? and(eq(inventory.productId, productId), eq(inventory.variantId, variantId))
+    : and(eq(inventory.productId, productId), isNull(inventory.variantId));
+}
+
 interface CreateReservationParams {
   consumerId: string;
   experienceId: string;
-  admissionToken: string;
+  admissionGrant: string;
   productId: string;
   variantId?: string;
   quantity: number;
@@ -191,7 +197,7 @@ interface CreateReservationParams {
 }
 
 export async function createReservation(params: CreateReservationParams) {
-  const { consumerId, experienceId, admissionToken, productId, variantId, quantity, expiresInMinutes = 10 } = params;
+  const { consumerId, experienceId, admissionGrant, productId, variantId, quantity, expiresInMinutes = 10 } = params;
 
   const expiresAt = new Date(Date.now() + expiresInMinutes * 60 * 1000);
 
@@ -207,7 +213,7 @@ export async function createReservation(params: CreateReservationParams) {
     await tx
       .update(inventory)
       .set({ reserved: sql`reserved + ${quantity}` })
-      .where(eq(inventory.productId, productId));
+      .where(inventoryScope(productId, variantId));
 
     // Create reservation record
     const [reservation] = await tx
@@ -215,7 +221,7 @@ export async function createReservation(params: CreateReservationParams) {
       .values({
         consumerId,
         experienceId,
-        admissionToken,
+        admissionGrant,
         productId,
         variantId,
         quantity,
@@ -253,7 +259,7 @@ export async function convertReservation(reservationId: string, orderId: string)
         reserved: sql`reserved - ${reservation.quantity}`,
         sold: sql`sold + ${reservation.quantity}`,
       })
-      .where(eq(inventory.productId, reservation.productId));
+      .where(inventoryScope(reservation.productId, reservation.variantId));
 
     return reservation;
   });
@@ -274,7 +280,7 @@ export async function releaseReservation(reservationId: string) {
     await tx
       .update(inventory)
       .set({ reserved: sql`reserved - ${reservation.quantity}` })
-      .where(eq(inventory.productId, reservation.productId));
+      .where(inventoryScope(reservation.productId, reservation.variantId));
   });
 }
 ```
@@ -315,19 +321,23 @@ setInterval(cleanupExpiredReservations, 60 * 1000);
 ### On Admission
 
 ```typescript
-// When journey reaches "admitted" state
-async function handleAdmission(snapshot: JourneySnapshot) {
-  const { admittanceToken, experienceId } = snapshot.context;
+// When view.sequence reaches "admitted"
+async function handleAdmission(params: {
+  consumerId: string;
+  experienceId: string;
+  admissionGrant: string;
+}) {
+  const { consumerId, experienceId, admissionGrant } = params;
 
   // Get selected products from your cart/session
-  const cart = await getConsumerCart(snapshot.context.consumerId);
+  const cart = await getConsumerCart(consumerId);
 
   // Create reservations for cart items
   for (const item of cart.items) {
     await createReservation({
-      consumerId: snapshot.context.consumerId,
+      consumerId,
       experienceId,
-      admissionToken: admittanceToken!,
+      admissionGrant,
       productId: item.productId,
       variantId: item.variantId,
       quantity: item.quantity,
@@ -341,13 +351,21 @@ async function handleAdmission(snapshot: JourneySnapshot) {
 ```typescript
 // Checkout API handler
 app.post("/api/checkout", async (req, res) => {
-  const { consumerId, cart, admissionToken } = req.body;
+  const { consumerId, cart, admissionGrant } = req.body;
 
-  // Verify reservations exist and are valid
+  // Verify reservations exist and belong to this admission
   const reservations = await getActiveReservations(consumerId);
+  if (!reservations.every((reservation) => reservation.admissionGrant === admissionGrant)) {
+    return res.status(403).json({
+      error: "ADMISSION_MISMATCH",
+      message: "This checkout session is not associated with the active reservation.",
+    });
+  }
 
   for (const item of cart) {
-    const reservation = reservations.find((r) => r.productId === item.productId && r.variantId === item.variantId);
+    const reservation = reservations.find(
+      (r) => r.productId === item.productId && r.variantId === item.variantId
+    );
 
     if (!reservation) {
       return res.status(400).json({
@@ -441,7 +459,11 @@ const reservationExpiresIn = admissionExpiresIn + 60 * 1000; // +1 minute buffer
 ```typescript
 // Use database transactions and row locking
 await db.transaction(async (tx) => {
-  const [product] = await tx.select().from(inventory).where(eq(inventory.productId, productId)).for("update"); // Lock the row
+  const [product] = await tx
+    .select()
+    .from(inventory)
+    .where(inventoryScope(productId, variantId))
+    .for("update");
 
   if (product.available < quantity) {
     throw new Error("Insufficient inventory");
@@ -488,15 +510,17 @@ If reserved counts become inconsistent:
 
 ```typescript
 // Reconciliation job
-async function reconcileInventory(productId: string) {
+async function reconcileInventory(productId: string, variantId?: string) {
   const activeReservations = await db
     .select({ total: sum(reservations.quantity) })
     .from(reservations)
-    .where(and(eq(reservations.productId, productId), eq(reservations.status, "active")));
+    .where(
+      and(eq(reservations.productId, productId), eq(reservations.variantId, variantId), eq(reservations.status, "active"))
+    );
 
   const expectedReserved = activeReservations[0]?.total || 0;
 
-  await db.update(inventory).set({ reserved: expectedReserved }).where(eq(inventory.productId, productId));
+  await db.update(inventory).set({ reserved: expectedReserved }).where(inventoryScope(productId, variantId));
 }
 ```
 

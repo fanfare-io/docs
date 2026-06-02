@@ -1,0 +1,62 @@
+---
+title: Consumer Loyalty API
+description: Customer-facing loyalty balance, expiration, and history contracts.
+---
+
+# Consumer Loyalty API
+
+The Consumer Loyalty API powers app-owned customer loyalty UI. Use it when your storefront or member account area needs to show points without relying on an SDK hook or prebuilt loyalty widget.
+
+Consumer loyalty calls require an authenticated consumer session. If loyalty is not enabled for the organization, or the consumer is not available, callers should render a neutral fallback state instead of assuming a balance.
+
+## Endpoints
+
+| Endpoint | Use it for |
+| --- | --- |
+| `GET /loyalty/balance` | Current balance and lifetime points. |
+| `GET /loyalty/expirations` | Upcoming expiration groups, filtered by an optional `withinDays` query. |
+| `GET /loyalty/history` | Recent point transactions, limited by an optional `limit` query. |
+
+The generated OpenAPI entries for these routes are available under **API Reference > Consumer API > Loyalty**.
+
+## Balance
+
+The balance response includes:
+
+- `balance`: the customer's current points balance.
+- `lifetimePoints`: points accumulated over time.
+
+Use balance for account headers, loyalty modules, and access messaging such as "You have 240 points."
+
+## Expirations
+
+Expiration responses group upcoming point expirations by date:
+
+- `expiresOn`
+- `points`
+
+Use expirations when your configured policy creates expiring points. If no points are expiring in the requested window, render a simple empty state.
+
+## History
+
+History responses include point changes with the transaction type, point delta, occurrence time, source fields, optional earning and expiration bucket dates, and actor type.
+
+Use history for account pages and support-friendly customer views. Keep labels customer-centered, such as "Earned", "Redeemed", "Expired", or "Adjusted", rather than exposing internal source details.
+
+## App-Owned UI Pattern
+
+```ts
+const [balance, expirations, history] = await Promise.all([
+  consumerApi.get("/loyalty/balance"),
+  consumerApi.get("/loyalty/expirations?withinDays=90"),
+  consumerApi.get("/loyalty/history?limit=20"),
+]);
+```
+
+Your helper can wrap authentication, error handling, and fallback states. The current SDK packages do not expose a public loyalty hook or loyalty widget.
+
+## Related Pages
+
+- [Loyalty programs concept](/concepts/loyalty)
+- [Loyalty program use case](/guides/use-cases/loyalty-program)
+- [Admin Loyalty API](/api/admin-api/loyalty)
