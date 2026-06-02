@@ -49,8 +49,8 @@ interface FlashSaleConfig {
   // Inventory
   products: Array<{
     productId: string;
-    originalPrice: number;
-    salePrice: number;
+    originalPrice: string;
+    salePrice: string;
     quantity: number;
     maxPerCustomer: number;
   }>;
@@ -74,15 +74,15 @@ const flashSaleConfig: FlashSaleConfig = {
   products: [
     {
       productId: "summer-dress-001",
-      originalPrice: 150,
-      salePrice: 75,
+      originalPrice: "150.00",
+      salePrice: "75.00",
       quantity: 500,
       maxPerCustomer: 2,
     },
     {
       productId: "leather-bag-002",
-      originalPrice: 300,
-      salePrice: 180,
+      originalPrice: "300.00",
+      salePrice: "180.00",
       quantity: 200,
       maxPerCustomer: 1,
     },
@@ -102,15 +102,8 @@ const flashSaleConfig: FlashSaleConfig = {
 ### Admin Configuration
 
 ```typescript
-import { FanfareAdminClient } from "@waitify-io/fanfare-admin-sdk";
-
-const adminClient = new FanfareAdminClient({
-  apiKey: process.env.FANFARE_ADMIN_API_KEY!,
-  organizationId: process.env.FANFARE_ORGANIZATION_ID!,
-});
-
 async function createFlashSaleExperience(config: FlashSaleConfig) {
-  const experience = await adminClient.timedReleases.create({
+  const experience = await createFanfareExperience({
     name: "Summer Flash Sale - 50% Off",
     slug: "summer-flash-sale-july",
 
@@ -146,7 +139,7 @@ async function createFlashSaleExperience(config: FlashSaleConfig) {
       metadata: {
         originalPrice: p.originalPrice,
         salePrice: p.salePrice,
-        discount: Math.round((1 - p.salePrice / p.originalPrice) * 100),
+        discount: calculateDiscountPercent(p.originalPrice, p.salePrice),
       },
     })),
 
@@ -169,13 +162,13 @@ async function createFlashSaleExperience(config: FlashSaleConfig) {
 
 async function setupVIPEarlyAccess(experienceId: string, earlyAccessStart: Date) {
   // Create VIP audience
-  const vipAudience = await adminClient.audiences.create({
+  const vipAudience = await createFanfareAudience({
     name: "VIP Early Access",
     type: "static",
   });
 
   // Configure early access
-  await adminClient.timedReleases.addEarlyAccess(experienceId, {
+  await configureEarlyAccess(experienceId, {
     audienceId: vipAudience.id,
     startTime: earlyAccessStart,
     message: "VIP Early Access - Shop before everyone else!",
@@ -191,7 +184,7 @@ async function setupVIPEarlyAccess(experienceId: string, earlyAccessStart: Date)
 
 ```tsx
 // pages/flash-sale/[slug].tsx
-import { FanfareProvider } from "@waitify-io/fanfare-sdk-react";
+import { FanfareProvider } from "@fanfare-io/fanfare-sdk-react";
 import { FlashSaleExperience } from "@/components/FlashSaleExperience";
 import { SaleCountdown } from "@/components/SaleCountdown";
 import { ProductGrid } from "@/components/ProductGrid";
@@ -206,7 +199,11 @@ interface FlashSalePageProps {
 
 export default function FlashSalePage({ experienceId, products, startTime, endTime, isActive }: FlashSalePageProps) {
   return (
-    <FanfareProvider organizationId={process.env.NEXT_PUBLIC_FANFARE_ORG_ID!} options={{ environment: "production" }}>
+    <FanfareProvider
+      organizationId={process.env.NEXT_PUBLIC_FANFARE_ORG_ID!}
+      publishableKey={process.env.NEXT_PUBLIC_FANFARE_PUBLISHABLE_KEY!}
+      environment="production"
+    >
       <div className="flash-sale-page">
         <header className="sale-header">
           <h1>Flash Sale</h1>
@@ -229,7 +226,7 @@ export default function FlashSalePage({ experienceId, products, startTime, endTi
 
 ```tsx
 // components/FlashSaleExperience.tsx
-import { useExperienceJourney } from "@waitify-io/fanfare-sdk-react";
+import { useExperienceJourney } from "@fanfare-io/fanfare-sdk-react";
 import { useState, useEffect } from "react";
 
 interface FlashSaleExperienceProps {
@@ -238,36 +235,19 @@ interface FlashSaleExperienceProps {
 }
 
 export function FlashSaleExperience({ experienceId, products }: FlashSaleExperienceProps) {
-  const { journey, state, start } = useExperienceJourney(experienceId, { autoStart: true });
+  const { view, start } = useExperienceJourney(experienceId, { autoStart: true });
 
-  const snapshot = state?.snapshot;
-  const stage = snapshot?.sequenceStage;
+  if (!view) return <LoadingState message="Getting you into the sale..." />;
+  if (view.journeyStage === "ready") return <PreSaleState products={products} onStart={start} />;
+  if (view.journeyStage === "routing") return <LoadingState message="Getting you into the sale..." />;
+  if (view.journeyStage === "gated") return <GateState view={view} />;
+  if (view.sequence.stage === "admitted") return <ShoppingState sequence={view.sequence} products={products} />;
+  if (view.sequence.stage === "denied") return <SaleEndedState />;
 
-  // Handle different sale states
-  switch (stage) {
-    case "not_started":
-      return <PreSaleState snapshot={snapshot} products={products} />;
-
-    case "entering":
-    case "routing":
-      return <LoadingState message="Getting you into the sale..." />;
-
-    case "admitted":
-      return <ShoppingState snapshot={snapshot} products={products} />;
-
-    case "completed":
-      return <PurchaseCompleteState />;
-
-    case "ended":
-      return <SaleEndedState />;
-
-    default:
-      return null;
-  }
+  return <SaleStatus sequence={view.sequence} />;
 }
 
-function PreSaleState({ snapshot, products }: { snapshot: JourneySnapshot; products: SaleProduct[] }) {
-  const startsAt = snapshot?.context?.startsAt;
+function PreSaleState({ products, onStart }: { products: SaleProduct[]; onStart: () => Promise<unknown> }) {
   const [isVIP, setIsVIP] = useState(false);
 
   // Check for VIP early access
@@ -282,8 +262,8 @@ function PreSaleState({ snapshot, products }: { snapshot: JourneySnapshot; produ
   return (
     <div className="pre-sale-state">
       <div className="countdown-section">
-        <h2>Sale Starts In</h2>
-        <CountdownTimer targetTime={startsAt} />
+        <h2>Sale Starts Soon</h2>
+        <button onClick={() => void onStart()}>Check access</button>
       </div>
 
       {isVIP && (
@@ -316,8 +296,14 @@ function PreSaleState({ snapshot, products }: { snapshot: JourneySnapshot; produ
   );
 }
 
-function ShoppingState({ snapshot, products }: { snapshot: JourneySnapshot; products: SaleProduct[] }) {
-  const expiresAt = snapshot?.context?.admittanceExpiresAt;
+function ShoppingState({
+  sequence,
+  products,
+}: {
+  sequence: Extract<JourneyView, { journeyStage: "routed" }>["sequence"] & { stage: "admitted" };
+  products: SaleProduct[];
+}) {
+  const expiresAt = sequence.admissionGrantExpiresAt;
   const [timeRemaining, setTimeRemaining] = useState(0);
   const [cart, setCart] = useState<CartItem[]>([]);
 
@@ -348,14 +334,12 @@ function ShoppingState({ snapshot, products }: { snapshot: JourneySnapshot; prod
 
   const handleCheckout = () => {
     // Store admission and cart data
-    const admissionData = {
-      token: snapshot?.context?.admittanceToken,
-      consumerId: snapshot?.context?.consumerId,
-      experienceId: snapshot?.context?.experienceId,
+    const checkoutData = {
+      admissionGrant: sequence.admissionGrant,
       cart,
     };
 
-    sessionStorage.setItem("flash_sale_checkout", JSON.stringify(admissionData));
+    sessionStorage.setItem("flash_sale_checkout", JSON.stringify(checkoutData));
     window.location.href = "/checkout/flash-sale";
   };
 
@@ -406,7 +390,7 @@ function SaleProductCard({
 }) {
   const [selectedQuantity, setSelectedQuantity] = useState(1);
   const remainingForCustomer = product.maxPerCustomer - cartQuantity;
-  const discount = Math.round((1 - product.salePrice / product.originalPrice) * 100);
+  const discount = calculateDiscountPercent(product.originalPrice, product.salePrice);
 
   return (
     <div className="sale-product-card">
@@ -482,9 +466,6 @@ function formatTime(ms: number): string {
 ### Stock Management
 
 ```typescript
-// services/flash-sale-stock.ts
-import { adminClient } from "./fanfare-admin";
-
 interface StockUpdate {
   productId: string;
   remainingStock: number;
@@ -494,8 +475,7 @@ interface StockUpdate {
 // Webhook handler for purchases
 export async function handlePurchaseComplete(orderId: string, experienceId: string, items: OrderItem[]) {
   for (const item of items) {
-    // Decrement stock in Fanfare
-    await adminClient.timedReleases.decrementStock(experienceId, {
+    await decrementSaleStock(experienceId, {
       productId: item.productId,
       quantity: item.quantity,
     });
@@ -504,7 +484,7 @@ export async function handlePurchaseComplete(orderId: string, experienceId: stri
 
 // Get real-time stock levels
 export async function getStockLevels(experienceId: string): Promise<StockUpdate[]> {
-  const experience = await adminClient.timedReleases.get(experienceId);
+  const experience = await getSaleExperience(experienceId);
 
   return experience.products.map((p) => ({
     productId: p.externalProductId,
@@ -519,7 +499,7 @@ export async function checkSoldOut(experienceId: string) {
   const allSoldOut = stockLevels.every((s) => s.remainingStock === 0);
 
   if (allSoldOut) {
-    await adminClient.timedReleases.end(experienceId, {
+    await endSaleExperience(experienceId, {
       reason: "sold_out",
       message: "All items have sold out! Thank you for shopping.",
     });
@@ -708,7 +688,7 @@ interface FlashSaleReport {
 }
 
 async function generateFlashSaleReport(experienceId: string): Promise<FlashSaleReport> {
-  const analytics = await adminClient.analytics.getTimedReleaseReport(experienceId);
+  const analytics = await getSaleReport(experienceId);
 
   return {
     overview: {
@@ -716,7 +696,7 @@ async function generateFlashSaleReport(experienceId: string): Promise<FlashSaleR
       totalRevenue: analytics.totalRevenue,
       totalItemsSold: analytics.totalItemsSold,
       uniqueCustomers: analytics.uniqueCustomers,
-      avgOrderValue: analytics.totalRevenue / analytics.orderCount,
+      avgOrderValue: calculateAverageOrderValue(analytics.totalRevenue, analytics.orderCount),
     },
     products: analytics.productBreakdown.map((p) => ({
       productId: p.productId,

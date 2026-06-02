@@ -156,7 +156,7 @@ CREATE TABLE reservations (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   consumer_id TEXT NOT NULL,
   experience_id TEXT NOT NULL,
-  admission_token TEXT NOT NULL,
+  admission_grant TEXT NOT NULL,
   product_id TEXT NOT NULL,
   variant_id TEXT,
   quantity INTEGER NOT NULL DEFAULT 1,
@@ -189,7 +189,7 @@ function inventoryScope(productId: string, variantId?: string) {
 interface CreateReservationParams {
   consumerId: string;
   experienceId: string;
-  admissionToken: string;
+  admissionGrant: string;
   productId: string;
   variantId?: string;
   quantity: number;
@@ -197,7 +197,7 @@ interface CreateReservationParams {
 }
 
 export async function createReservation(params: CreateReservationParams) {
-  const { consumerId, experienceId, admissionToken, productId, variantId, quantity, expiresInMinutes = 10 } = params;
+  const { consumerId, experienceId, admissionGrant, productId, variantId, quantity, expiresInMinutes = 10 } = params;
 
   const expiresAt = new Date(Date.now() + expiresInMinutes * 60 * 1000);
 
@@ -221,7 +221,7 @@ export async function createReservation(params: CreateReservationParams) {
       .values({
         consumerId,
         experienceId,
-        admissionToken,
+        admissionGrant,
         productId,
         variantId,
         quantity,
@@ -321,19 +321,23 @@ setInterval(cleanupExpiredReservations, 60 * 1000);
 ### On Admission
 
 ```typescript
-// When journey reaches "admitted" state
-async function handleAdmission(snapshot: JourneySnapshot) {
-  const { admittanceToken, experienceId } = snapshot.context;
+// When view.sequence reaches "admitted"
+async function handleAdmission(params: {
+  consumerId: string;
+  experienceId: string;
+  admissionGrant: string;
+}) {
+  const { consumerId, experienceId, admissionGrant } = params;
 
   // Get selected products from your cart/session
-  const cart = await getConsumerCart(snapshot.context.consumerId);
+  const cart = await getConsumerCart(consumerId);
 
   // Create reservations for cart items
   for (const item of cart.items) {
     await createReservation({
-      consumerId: snapshot.context.consumerId,
+      consumerId,
       experienceId,
-      admissionToken: admittanceToken!,
+      admissionGrant,
       productId: item.productId,
       variantId: item.variantId,
       quantity: item.quantity,
@@ -347,13 +351,21 @@ async function handleAdmission(snapshot: JourneySnapshot) {
 ```typescript
 // Checkout API handler
 app.post("/api/checkout", async (req, res) => {
-  const { consumerId, cart, admissionToken } = req.body;
+  const { consumerId, cart, admissionGrant } = req.body;
 
-  // Verify reservations exist and are valid
+  // Verify reservations exist and belong to this admission
   const reservations = await getActiveReservations(consumerId);
+  if (!reservations.every((reservation) => reservation.admissionGrant === admissionGrant)) {
+    return res.status(403).json({
+      error: "ADMISSION_MISMATCH",
+      message: "This checkout session is not associated with the active reservation.",
+    });
+  }
 
   for (const item of cart) {
-    const reservation = reservations.find((r) => r.productId === item.productId && r.variantId === item.variantId);
+    const reservation = reservations.find(
+      (r) => r.productId === item.productId && r.variantId === item.variantId
+    );
 
     if (!reservation) {
       return res.status(400).json({

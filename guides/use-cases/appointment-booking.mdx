@@ -105,15 +105,8 @@ const consultationConfig: AppointmentConfig = {
 ### Queue-Based Booking (High Demand)
 
 ```typescript
-import { FanfareAdminClient } from "@waitify-io/fanfare-admin-sdk";
-
-const adminClient = new FanfareAdminClient({
-  apiKey: process.env.FANFARE_ADMIN_API_KEY!,
-  organizationId: process.env.FANFARE_ORGANIZATION_ID!,
-});
-
 async function createAppointmentQueue(config: AppointmentConfig, releaseDate: Date) {
-  const queue = await adminClient.queues.create({
+  const queue = await createFanfareExperience({
     name: `${config.serviceName} - Booking Queue`,
     slug: `booking-${config.serviceId}-${releaseDate.toISOString().split("T")[0]}`,
 
@@ -151,7 +144,7 @@ async function createAppointmentQueue(config: AppointmentConfig, releaseDate: Da
 ```typescript
 async function createWeeklySlotRelease(config: AppointmentConfig) {
   // Release next week's appointments every Monday at 9 AM
-  const release = await adminClient.timedReleases.create({
+  const release = await createFanfareExperience({
     name: `${config.serviceName} - Weekly Slot Release`,
     slug: `slots-${config.serviceId}`,
 
@@ -186,7 +179,7 @@ async function createWeeklySlotRelease(config: AppointmentConfig) {
 
 ```tsx
 // pages/book/[serviceId].tsx
-import { FanfareProvider } from "@waitify-io/fanfare-sdk-react";
+import { FanfareProvider } from "@fanfare-io/fanfare-sdk-react";
 import { AppointmentBookingExperience } from "@/components/AppointmentBookingExperience";
 import { ServiceInfo } from "@/components/ServiceInfo";
 
@@ -198,7 +191,11 @@ interface BookingPageProps {
 
 export default function BookingPage({ experienceId, service, availableSlots }: BookingPageProps) {
   return (
-    <FanfareProvider organizationId={process.env.NEXT_PUBLIC_FANFARE_ORG_ID!} options={{ environment: "production" }}>
+    <FanfareProvider
+      organizationId={process.env.NEXT_PUBLIC_FANFARE_ORG_ID!}
+      publishableKey={process.env.NEXT_PUBLIC_FANFARE_PUBLISHABLE_KEY!}
+      environment="production"
+    >
       <div className="booking-page">
         <ServiceInfo service={service} />
         <AppointmentBookingExperience experienceId={experienceId} service={service} availableSlots={availableSlots} />
@@ -212,7 +209,8 @@ export default function BookingPage({ experienceId, service, availableSlots }: B
 
 ```tsx
 // components/AppointmentBookingExperience.tsx
-import { useExperienceJourney } from "@waitify-io/fanfare-sdk-react";
+import { useExperienceJourney } from "@fanfare-io/fanfare-sdk-react";
+import type { SequenceView } from "@fanfare-io/fanfare-sdk-core/experiences";
 import { useState, useEffect } from "react";
 
 interface AppointmentBookingExperienceProps {
@@ -226,46 +224,48 @@ export function AppointmentBookingExperience({
   service,
   availableSlots,
 }: AppointmentBookingExperienceProps) {
-  const { journey, state, start } = useExperienceJourney(experienceId, { autoStart: true });
+  const { view, start } = useExperienceJourney(experienceId, { autoStart: true });
 
-  const snapshot = state?.snapshot;
-  const stage = snapshot?.sequenceStage;
+  if (!view) return <LoadingState message="Connecting to booking system..." />;
 
-  switch (stage) {
-    case "not_started":
-      return <BookingNotOpenState snapshot={snapshot} service={service} />;
+  if (view.journeyStage === "ready") {
+    return <BookingNotOpenState service={service} onStart={start} />;
+  }
 
-    case "entering":
-    case "routing":
-      return <LoadingState message="Connecting to booking system..." />;
+  if (view.journeyStage === "routing") {
+    return <LoadingState message="Connecting to booking system..." />;
+  }
 
-    case "waiting":
-      return <WaitingState snapshot={snapshot} />;
+  if (view.journeyStage === "gated") {
+    return <GateState view={view} />;
+  }
 
-    case "admitted":
-      return <SlotSelectionState snapshot={snapshot} service={service} availableSlots={availableSlots} />;
+  switch (view.sequence.stage) {
+    case "upcoming":
+      return <BookingNotOpenState service={service} />;
 
-    case "completed":
-      return <BookingConfirmedState snapshot={snapshot} service={service} />;
+    case "active":
+      return "book" in view.sequence ? (
+        <SlotSelectionState sequence={view.sequence} service={service} availableSlots={availableSlots} />
+      ) : null;
+
+    case "participating":
+      return <BookingConfirmedState sequence={view.sequence} service={service} />;
+
+    case "denied":
+      return <SessionExpiredState onRetry={view.sequence.reenter ?? start} />;
 
     default:
       return null;
   }
 }
 
-function BookingNotOpenState({ snapshot, service }: { snapshot: JourneySnapshot; service: ServiceConfig }) {
-  const opensAt = snapshot?.context?.startsAt;
-
+function BookingNotOpenState({ service, onStart }: { service: ServiceConfig; onStart?: () => Promise<unknown> }) {
   return (
     <div className="booking-not-open">
       <h2>Booking Opens Soon</h2>
 
-      {opensAt && (
-        <div className="countdown">
-          <p>New appointments available in:</p>
-          <CountdownTimer targetTime={opensAt} />
-        </div>
-      )}
+      {onStart && <button onClick={() => void onStart()}>Check availability</button>}
 
       <div className="service-preview">
         <h3>{service.serviceName}</h3>
@@ -287,41 +287,11 @@ function BookingNotOpenState({ snapshot, service }: { snapshot: JourneySnapshot;
   );
 }
 
-function WaitingState({ snapshot }: { snapshot: JourneySnapshot }) {
-  const position = snapshot?.context?.position;
-  const estimatedWait = snapshot?.context?.estimatedWaitSeconds;
-
-  return (
-    <div className="waiting-state">
-      <h2>You're in the Booking Queue</h2>
-
-      <div className="queue-info">
-        <div className="position">
-          <span className="label">Your Position</span>
-          <span className="value">{position}</span>
-        </div>
-
-        <div className="wait-time">
-          <span className="label">Estimated Wait</span>
-          <span className="value">{formatWaitTime(estimatedWait)}</span>
-        </div>
-      </div>
-
-      <p className="instructions">Please keep this page open. We'll notify you when it's your turn to book.</p>
-    </div>
-  );
-}
-
-function SlotSelectionState({
-  snapshot,
-  service,
-  availableSlots,
-}: {
-  snapshot: JourneySnapshot;
+function SlotSelectionState({ sequence, service, availableSlots }: {
+  sequence: Extract<SequenceView, { stage: "active"; distributionType: "appointment" }>;
   service: ServiceConfig;
   availableSlots: TimeSlot[];
 }) {
-  const expiresAt = snapshot?.context?.admittanceExpiresAt;
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedSlot, setSelectedSlot] = useState<TimeSlot | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -331,17 +301,10 @@ function SlotSelectionState({
 
     setIsSubmitting(true);
     try {
-      // Reserve the slot
-      const reservation = await reserveAppointmentSlot({
-        serviceId: service.serviceId,
-        date: selectedDate,
-        slot: selectedSlot,
-        admissionToken: snapshot?.context?.admittanceToken,
-        consumerId: snapshot?.context?.consumerId,
-      });
+      await sequence.book(selectedSlot.slotId, selectedSlot.locationId);
 
-      // Redirect to payment/confirmation
-      window.location.href = `/book/confirm/${reservation.id}`;
+      // Continue to your app-owned confirmation or deposit step.
+      window.location.href = `/book/confirm`;
     } catch (error) {
       console.error("Booking failed:", error);
       alert("Failed to reserve slot. Please try another time.");
@@ -354,10 +317,6 @@ function SlotSelectionState({
     <div className="slot-selection">
       <div className="selection-header">
         <h2>Select Your Appointment</h2>
-        <div className="timer">
-          <span className="label">Time to book:</span>
-          <CountdownTimer targetTime={expiresAt} />
-        </div>
       </div>
 
       <div className="date-selection">
@@ -421,8 +380,14 @@ function SlotSelectionState({
   );
 }
 
-function BookingConfirmedState({ snapshot, service }: { snapshot: JourneySnapshot; service: ServiceConfig }) {
-  const booking = snapshot?.context?.booking;
+function BookingConfirmedState({
+  sequence,
+  service,
+}: {
+  sequence: Extract<SequenceView, { stage: "participating"; participation: { type: "appointment" } }>;
+  service: ServiceConfig;
+}) {
+  const booking = sequence.state$.get().booking;
 
   return (
     <div className="booking-confirmed">
@@ -453,7 +418,7 @@ function BookingConfirmedState({ snapshot, service }: { snapshot: JourneySnapsho
       <div className="next-steps">
         <h3>What's Next?</h3>
         <ul>
-          <li>Confirmation email sent to {snapshot?.context?.email}</li>
+          <li>Confirmation email sent to the customer</li>
           <li>Calendar invite attached</li>
           <li>Reminder sent 24 hours before appointment</li>
         </ul>
@@ -570,12 +535,10 @@ interface ReserveSlotParams {
   serviceId: string;
   date: Date;
   slot: TimeSlot;
-  admissionToken: string;
-  consumerId: string;
 }
 
 export async function reserveAppointmentSlot(params: ReserveSlotParams) {
-  const { serviceId, date, slot, admissionToken, consumerId } = params;
+  const { serviceId, date, slot } = params;
 
   return await db.transaction(async (tx) => {
     // Check slot availability with lock
@@ -612,7 +575,6 @@ export async function reserveAppointmentSlot(params: ReserveSlotParams) {
         startTime: slot.startTime,
         endTime: slot.endTime,
         status: "pending_payment",
-        admissionToken,
         confirmationNumber: generateConfirmationNumber(),
         createdAt: new Date(),
       })

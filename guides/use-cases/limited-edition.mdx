@@ -37,15 +37,8 @@ Limited edition products require careful distribution to ensure fairness while m
 ### Step 1: Configure the Draw
 
 ```typescript
-import { FanfareAdminClient } from "@waitify-io/fanfare-admin-sdk";
-
-const adminClient = new FanfareAdminClient({
-  apiKey: process.env.FANFARE_ADMIN_API_KEY!,
-  organizationId: process.env.FANFARE_ORGANIZATION_ID!,
-});
-
 async function createLimitedEditionDraw() {
-  const draw = await adminClient.draws.create({
+  const draw = await createFanfareExperience({
     name: "Limited Edition Sneaker Release",
     slug: "ltd-sneaker-fall-2024",
 
@@ -101,7 +94,7 @@ async function createLimitedEditionDraw() {
 
 ```tsx
 // pages/drops/[slug].tsx
-import { FanfareProvider } from "@waitify-io/fanfare-sdk-react";
+import { FanfareProvider } from "@fanfare-io/fanfare-sdk-react";
 import { DrawExperience } from "@/components/DrawExperience";
 import { ProductShowcase } from "@/components/ProductShowcase";
 
@@ -115,7 +108,11 @@ interface DropPageProps {
 
 export default function DropPage({ drawId, product, entryStart, entryEnd, drawTime }: DropPageProps) {
   return (
-    <FanfareProvider organizationId={process.env.NEXT_PUBLIC_FANFARE_ORG_ID!} options={{ environment: "production" }}>
+    <FanfareProvider
+      organizationId={process.env.NEXT_PUBLIC_FANFARE_ORG_ID!}
+      publishableKey={process.env.NEXT_PUBLIC_FANFARE_PUBLISHABLE_KEY!}
+      environment="production"
+    >
       <div className="drop-page">
         <ProductShowcase product={product} />
 
@@ -177,7 +174,8 @@ function DropDetails({
 
 ```tsx
 // components/DrawExperience.tsx
-import { useExperienceJourney } from "@waitify-io/fanfare-sdk-react";
+import { useExperienceJourney } from "@fanfare-io/fanfare-sdk-react";
+import type { SequenceView } from "@fanfare-io/fanfare-sdk-core/experiences";
 import { useState, useEffect } from "react";
 
 interface DrawExperienceProps {
@@ -188,10 +186,9 @@ interface DrawExperienceProps {
 }
 
 export function DrawExperience({ drawId, entryStart, entryEnd, drawTime }: DrawExperienceProps) {
-  const { journey, state, start } = useExperienceJourney(drawId, { autoStart: true });
-
-  const snapshot = state?.snapshot;
-  const stage = snapshot?.sequenceStage;
+  const { view, start } = useExperienceJourney(drawId, { autoStart: true });
+  const stage = view?.journeyStage === "routed" ? view.sequence.stage : view?.journeyStage;
+  const sequence = view?.journeyStage === "routed" ? view.sequence : null;
 
   const now = Date.now();
   const entryStartTime = new Date(entryStart).getTime();
@@ -212,13 +209,11 @@ export function DrawExperience({ drawId, entryStart, entryEnd, drawTime }: DrawE
     <div className="draw-experience">
       {phase === "pre_entry" && <PreEntryState entryStart={entryStart} />}
 
-      {phase === "entry_open" && (
-        <EntryOpenState snapshot={snapshot} stage={stage} onEnter={start} entryEnd={entryEnd} />
-      )}
+      {phase === "entry_open" && <EntryOpenState sequence={sequence} onEnter={start} entryEnd={entryEnd} />}
 
-      {phase === "entry_closed" && <EntryClosedState snapshot={snapshot} drawTime={drawTime} />}
+      {phase === "entry_closed" && <EntryClosedState sequence={sequence} drawTime={drawTime} />}
 
-      {phase === "drawn" && <DrawnState snapshot={snapshot} />}
+      {phase === "drawn" && <DrawnState sequence={sequence} />}
     </div>
   );
 }
@@ -238,18 +233,15 @@ function PreEntryState({ entryStart }: { entryStart: string }) {
 }
 
 function EntryOpenState({
-  snapshot,
-  stage,
+  sequence,
   onEnter,
   entryEnd,
 }: {
-  snapshot: JourneySnapshot;
-  stage: string;
+  sequence: SequenceView | null;
   onEnter: () => void;
   entryEnd: string;
 }) {
-  const isEntered = stage === "entered" || stage === "waiting";
-  const entryCount = snapshot?.context?.totalEntries || 0;
+  const isEntered = sequence?.stage === "participating" || sequence?.stage === "admitted";
 
   if (isEntered) {
     return (
@@ -261,14 +253,9 @@ function EntryOpenState({
 
         <p>Your entry has been recorded. Good luck!</p>
 
-        <div className="entry-confirmation">
-          <p>Entry Number: #{snapshot?.context?.entryNumber}</p>
-          <p>Total Entries: {entryCount.toLocaleString()}</p>
-        </div>
-
         <div className="draw-countdown">
           <p>Draw happens in:</p>
-          <CountdownTimer targetTime={snapshot?.context?.drawTime} />
+          <CountdownTimer targetTime={entryEnd} />
         </div>
 
         <p className="reminder">We'll notify you by email if you win.</p>
@@ -279,10 +266,6 @@ function EntryOpenState({
   return (
     <div className="entry-open-state">
       <h2>Enter the Draw</h2>
-
-      <div className="entry-stats">
-        <span className="entries">{entryCount.toLocaleString()} entries so far</span>
-      </div>
 
       <div className="entry-closing">
         <p>Entry closes in:</p>
@@ -353,9 +336,8 @@ function EntryForm({ onSubmit }: { onSubmit: () => void }) {
   );
 }
 
-function EntryClosedState({ snapshot, drawTime }: { snapshot: JourneySnapshot; drawTime: string }) {
-  const isEntered = snapshot?.context?.isEntered;
-  const totalEntries = snapshot?.context?.totalEntries || 0;
+function EntryClosedState({ sequence, drawTime }: { sequence: SequenceView | null; drawTime: string }) {
+  const isEntered = sequence?.stage === "participating" || sequence?.stage === "admitted";
 
   return (
     <div className="entry-closed-state">
@@ -364,14 +346,12 @@ function EntryClosedState({ snapshot, drawTime }: { snapshot: JourneySnapshot; d
       {isEntered ? (
         <div className="entered-confirmation">
           <p className="success">You're entered! Good luck!</p>
-          <p>Entry Number: #{snapshot?.context?.entryNumber}</p>
         </div>
       ) : (
         <p className="missed">Entry is now closed. Follow us for future drops.</p>
       )}
 
       <div className="draw-info">
-        <p>Total entries: {totalEntries.toLocaleString()}</p>
         <p>Draw happens:</p>
         <CountdownTimer targetTime={drawTime} />
       </div>
@@ -379,11 +359,8 @@ function EntryClosedState({ snapshot, drawTime }: { snapshot: JourneySnapshot; d
   );
 }
 
-function DrawnState({ snapshot }: { snapshot: JourneySnapshot }) {
-  const isWinner = snapshot?.context?.isWinner;
-  const claimDeadline = snapshot?.context?.claimDeadline;
-
-  if (isWinner) {
+function DrawnState({ sequence }: { sequence: SequenceView | null }) {
+  if (sequence?.stage === "admitted") {
     return (
       <div className="winner-state">
         <div className="winner-celebration">
@@ -392,10 +369,14 @@ function DrawnState({ snapshot }: { snapshot: JourneySnapshot }) {
         </div>
 
         <div className="claim-section">
-          <p>Complete your purchase before:</p>
-          <p className="deadline">{new Date(claimDeadline).toLocaleString()}</p>
+          <p>Complete your purchase before the access window closes.</p>
 
-          <button onClick={() => (window.location.href = `/checkout/claim/${snapshot?.context?.claimToken}`)}>
+          <button
+            onClick={() => {
+              sessionStorage.setItem("fanfare_admission", JSON.stringify({ admissionGrant: sequence.admissionGrant }));
+              window.location.href = "/checkout";
+            }}
+          >
             Claim Your Prize
           </button>
         </div>
@@ -405,22 +386,28 @@ function DrawnState({ snapshot }: { snapshot: JourneySnapshot }) {
     );
   }
 
-  return (
+  if (sequence?.stage === "denied") {
+    return (
     <div className="not-selected-state">
       <h2>Draw Complete</h2>
       <p>Unfortunately, you weren't selected this time.</p>
-
-      {snapshot?.context?.waitlistPosition && (
-        <div className="waitlist-info">
-          <p>You're on the waitlist at position #{snapshot.context.waitlistPosition}</p>
-          <p>You'll be notified if a spot opens up.</p>
-        </div>
-      )}
 
       <div className="follow-up">
         <p>Stay tuned for future drops!</p>
         <button onClick={() => (window.location.href = "/subscribe")}>Get Notified of Future Drops</button>
       </div>
+    </div>
+  );
+  }
+
+  return <WaitingForDrawState />;
+}
+
+function WaitingForDrawState() {
+  return (
+    <div className="waiting-for-draw-state">
+      <h2>Draw In Progress</h2>
+      <p>Keep an eye on your account and email for the result.</p>
     </div>
   );
 }
@@ -432,7 +419,7 @@ function DrawnState({ snapshot }: { snapshot: JourneySnapshot }) {
 
 ```typescript
 async function createLimitedEditionAuction() {
-  const auction = await adminClient.auctions.create({
+  const auction = await createFanfareExperience({
     name: "Rare Collector's Edition Artwork",
     slug: "rare-artwork-auction-001",
 
@@ -492,7 +479,7 @@ async function createLimitedEditionAuction() {
 
 ```tsx
 // components/AuctionExperience.tsx
-import { useExperienceJourney } from "@waitify-io/fanfare-sdk-react";
+import { useExperienceJourney } from "@fanfare-io/fanfare-sdk-react";
 import { useState, useEffect, useCallback } from "react";
 
 interface AuctionExperienceProps {
@@ -501,17 +488,20 @@ interface AuctionExperienceProps {
 }
 
 export function AuctionExperience({ auctionId, item }: AuctionExperienceProps) {
-  const { journey, state, start } = useExperienceJourney(auctionId, { autoStart: true });
+  const { view } = useExperienceJourney(auctionId, { autoStart: true });
 
-  const snapshot = state?.snapshot;
-  const context = snapshot?.context;
+  const auctionSequence =
+    view?.journeyStage === "routed" &&
+    view.sequence.stage === "participating" &&
+    view.sequence.participation.type === "auction"
+      ? view.sequence
+      : null;
 
-  const currentBid = context?.currentBid || context?.startingBid || "0.00";
-  const highBidderId = context?.highBidderId;
-  const myId = context?.consumerId;
-  const isHighBidder = highBidderId === myId;
-  const endTime = context?.endTime;
-  const bidIncrement = context?.bidIncrement || "50.00";
+  const auctionState = auctionSequence?.state$.get();
+  const currentBid = auctionState?.currentBid || auctionState?.startingBid || "0.00";
+  const isHighBidder = Boolean(auctionState?.isHighBidder);
+  const endTime = auctionState?.endsAt;
+  const bidIncrement = auctionState?.bidIncrement || "50.00";
 
   return (
     <div className="auction-experience">
@@ -521,7 +511,7 @@ export function AuctionExperience({ auctionId, item }: AuctionExperienceProps) {
         <div className="current-bid-section">
           <span className="label">Current Bid</span>
           <span className="amount">{formatMoney(currentBid, "USD")}</span>
-          {context?.totalBids && <span className="bid-count">{context.totalBids} bids</span>}
+          {auctionState?.totalBids && <span className="bid-count">{auctionState.totalBids} bids</span>}
         </div>
 
         {isHighBidder && (
@@ -535,13 +525,12 @@ export function AuctionExperience({ auctionId, item }: AuctionExperienceProps) {
           currentBid={currentBid}
           minBid={addMoney(currentBid, bidIncrement)}
           bidIncrement={bidIncrement}
-          buyNowPrice={context?.buyNowPrice}
+          buyNowPrice={auctionState?.buyNowPrice}
           isHighBidder={isHighBidder}
-          onBid={(amount) => placeBid(journey, amount)}
-          onBuyNow={() => buyNow(journey)}
+          onBid={(amount) => auctionSequence?.placeBid(amount)}
         />
 
-        <BidHistory bids={context?.recentBids || []} myId={myId} />
+        <BidHistory bids={auctionState?.recentBids || []} />
       </div>
     </div>
   );
@@ -582,7 +571,6 @@ function BidForm({
   buyNowPrice,
   isHighBidder,
   onBid,
-  onBuyNow,
 }: {
   currentBid: string;
   minBid: string;
@@ -590,7 +578,6 @@ function BidForm({
   buyNowPrice?: string;
   isHighBidder: boolean;
   onBid: (amount: string) => void;
-  onBuyNow: () => void;
 }) {
   const [bidAmount, setBidAmount] = useState(minBid);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -653,7 +640,7 @@ function BidForm({
       {buyNowPrice && (
         <div className="buy-now-section">
           <span className="divider">or</span>
-          <button onClick={onBuyNow} className="buy-now-btn">
+          <button onClick={() => onBid(buyNowPrice)} className="buy-now-btn">
             Buy Now for {formatMoney(buyNowPrice, "USD")}
           </button>
         </div>
@@ -662,7 +649,7 @@ function BidForm({
   );
 }
 
-function BidHistory({ bids, myId }: { bids: Bid[]; myId: string }) {
+function BidHistory({ bids }: { bids: Bid[] }) {
   if (bids.length === 0) {
     return (
       <div className="bid-history empty">
@@ -676,8 +663,8 @@ function BidHistory({ bids, myId }: { bids: Bid[]; myId: string }) {
       <h3>Recent Bids</h3>
       <ul>
         {bids.map((bid, index) => (
-          <li key={bid.id} className={bid.bidderId === myId ? "my-bid" : ""}>
-            <span className="bidder">{bid.bidderId === myId ? "You" : `Bidder ${bid.bidderNumber}`}</span>
+          <li key={bid.id}>
+            <span className="bidder">{bid.displayName}</span>
             <span className="amount">{formatMoney(bid.amount, "USD")}</span>
             <span className="time">{formatTimeAgo(bid.timestamp)}</span>
             {index === 0 && <span className="leader-badge">Leading</span>}
@@ -686,14 +673,6 @@ function BidHistory({ bids, myId }: { bids: Bid[]; myId: string }) {
       </ul>
     </div>
   );
-}
-
-async function placeBid(journey: ExperienceJourney, amount: string) {
-  await journey.perform("bid", { amount });
-}
-
-async function buyNow(journey: ExperienceJourney) {
-  await journey.perform("buyNow");
 }
 
 function formatAuctionTime(ms: number): string {
@@ -728,33 +707,33 @@ function formatTimeAgo(timestamp: number): string {
 // services/draw-winner-management.ts
 async function processDrawWinners(drawId: string) {
   // Get winners list
-  const winners = await adminClient.draws.getWinners(drawId);
+  const winners = await getDrawWinners(drawId);
 
   for (const winner of winners) {
-    // Generate unique claim token
-    const claimToken = await generateClaimToken(winner.consumerId, drawId);
+    const checkoutLink = await createSecureCheckoutLink({
+      consumerId: winner.consumerId,
+      drawId,
+      expiresInHours: 48,
+    });
 
-    // Store claim data
     await db.insert(drawClaims).values({
       drawId,
       consumerId: winner.consumerId,
-      claimToken,
       expiresAt: new Date(Date.now() + 48 * 60 * 60 * 1000), // 48 hours
       status: "pending",
     });
 
-    // Send notifications
-    await sendWinnerNotification(winner, claimToken);
+    await sendWinnerNotification(winner, checkoutLink);
   }
 
   // Process waitlist
-  const waitlist = await adminClient.draws.getWaitlist(drawId);
+  const waitlist = await getDrawWaitlist(drawId);
   for (const entry of waitlist) {
     await sendWaitlistNotification(entry);
   }
 }
 
-async function sendWinnerNotification(winner: DrawWinner, claimToken: string) {
+async function sendWinnerNotification(winner: DrawWinner, checkoutLink: string) {
   await Promise.all([
     sendEmail({
       to: winner.email,
@@ -763,14 +742,14 @@ async function sendWinnerNotification(winner: DrawWinner, claimToken: string) {
       data: {
         name: winner.name,
         productName: winner.prize.name,
-        claimUrl: `https://your-store.com/claim/${claimToken}`,
+        checkoutLink,
         deadline: new Date(Date.now() + 48 * 60 * 60 * 1000).toLocaleString(),
       },
     }),
 
     sendSMS({
       to: winner.phone,
-      message: `Congratulations! You won the ${winner.prize.name}. Claim within 48h: https://your-store.com/claim/${claimToken}`,
+      message: `Congratulations! You won the ${winner.prize.name}. Check your email to complete checkout within 48h.`,
     }),
   ]);
 }
@@ -780,7 +759,7 @@ async function sendWinnerNotification(winner: DrawWinner, claimToken: string) {
 
 ```typescript
 async function processAuctionWinner(auctionId: string) {
-  const auction = await adminClient.auctions.get(auctionId);
+  const auction = await getAuctionResult(auctionId);
 
   if (auction.status !== "ended") {
     throw new Error("Auction not yet ended");
@@ -790,14 +769,14 @@ async function processAuctionWinner(auctionId: string) {
   const finalPrice = auction.highestBid;
 
   // Check reserve price met
-  if (finalPrice < auction.config.reservePrice) {
+  if (compareMoney(finalPrice, auction.config.reservePrice) < 0) {
     await handleReserveNotMet(auction);
     return;
   }
 
   // Generate payment intent for final amount
   const paymentIntent = await stripe.paymentIntents.create({
-    amount: finalPrice * 100,
+    amount: toMinorUnits(finalPrice),
     currency: "usd",
     customer: winner.stripeCustomerId,
     metadata: {

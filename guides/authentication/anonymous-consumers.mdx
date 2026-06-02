@@ -57,7 +57,7 @@ Anonymous (guest) authentication allows consumers to participate in experiences 
 The SDK provides a simple method to create an anonymous session:
 
 ```typescript
-import { useFanfareAuth } from "@waitify-io/fanfare-sdk-react";
+import { useFanfareAuth } from "@fanfare-io/fanfare-sdk-react";
 
 function AuthButton() {
   const { isAuthenticated, isGuest, guest, session } = useFanfareAuth();
@@ -87,9 +87,9 @@ function AuthButton() {
 ### Using the Core SDK
 
 ```typescript
-import Fanfare from "@waitify-io/fanfare-sdk-core";
+import initFanfare from "@fanfare-io/fanfare-sdk-core";
 
-const sdk = await Fanfare.init({
+const sdk = await initFanfare({
   organizationId: "org_xxx",
   publishableKey: "pk_live_xxx",
 });
@@ -110,7 +110,7 @@ if (!status.isAuthenticated) {
 For a frictionless experience, automatically create a guest session when needed:
 
 ```tsx
-import { useFanfareAuth } from "@waitify-io/fanfare-sdk-react";
+import { useFanfareAuth } from "@fanfare-io/fanfare-sdk-react";
 import { useEffect, useState } from "react";
 
 function useAutoGuestAuth() {
@@ -265,7 +265,7 @@ Guest sessions can be bound to a device fingerprint for security:
 ### Fingerprint Benefits
 
 - **Fraud prevention**: Detect suspicious multi-account behavior
-- **Session binding**: Tie admission tokens to the originating device
+- **Session binding**: Tie admission grants to the originating device
 - **Queue position protection**: Prevent queue position transfer
 
 ### Privacy Considerations
@@ -284,7 +284,7 @@ Guest sessions can be bound to a device fingerprint for security:
 Subscribe to authentication events:
 
 ```tsx
-import { useFanfare } from "@waitify-io/fanfare-sdk-react";
+import { useFanfare } from "@fanfare-io/fanfare-sdk-react";
 import { useEffect } from "react";
 
 function AuthEventHandler() {
@@ -327,12 +327,12 @@ function AuthEventHandler() {
 ## Complete Example: Guest Experience Flow
 
 ```tsx
-import { FanfareProvider, useFanfareAuth, useExperienceJourney } from "@waitify-io/fanfare-sdk-react";
+import { FanfareProvider, useFanfareAuth, useExperienceJourney } from "@fanfare-io/fanfare-sdk-react";
 import { useEffect, useState } from "react";
 
 function GuestExperience({ experienceId }: { experienceId: string }) {
   const { isAuthenticated, isGuest, guest, session } = useFanfareAuth();
-  const { journey, state, status, start } = useExperienceJourney(experienceId);
+  const { view, start } = useExperienceJourney(experienceId);
   const [isInitializing, setIsInitializing] = useState(true);
 
   // Step 1: Auto-authenticate as guest
@@ -348,16 +348,14 @@ function GuestExperience({ experienceId }: { experienceId: string }) {
 
   // Step 2: Start journey when authenticated
   useEffect(() => {
-    if (isAuthenticated && status === "idle" && !isInitializing) {
-      start();
+    if (isAuthenticated && view?.journeyStage === "ready" && !isInitializing) {
+      void start();
     }
-  }, [isAuthenticated, status, isInitializing, start]);
+  }, [isAuthenticated, view?.journeyStage, isInitializing, start]);
 
   if (isInitializing) {
     return <div className="loading">Preparing your experience...</div>;
   }
-
-  const snapshot = state?.snapshot;
 
   return (
     <div className="guest-experience">
@@ -369,23 +367,23 @@ function GuestExperience({ experienceId }: { experienceId: string }) {
 
       {/* Experience Status */}
       <div className="experience-status">
-        <p>Status: {status}</p>
+        <p>Status: {view?.journeyStage ?? "loading"}</p>
       </div>
 
       {/* Actions */}
       <div className="actions">
-        {snapshot?.availableActions.sequence.includes("enter_queue") && (
-          <button onClick={() => journey?.perform("enter_queue")} className="primary-btn">
+        {view?.journeyStage === "routed" && view.sequence.stage === "active" && "enter" in view.sequence && (
+          <button onClick={() => void view.sequence.enter()} className="primary-btn">
             Join Queue
           </button>
         )}
 
-        {snapshot?.sequenceStage === "admitted" && (
+        {view?.journeyStage === "routed" && view.sequence.stage === "admitted" && (
           <div className="admitted">
             <h3>You're In!</h3>
-            <a href={`/checkout?token=${snapshot.context.admittanceToken}`} className="checkout-btn">
+            <button onClick={() => sendAdmissionGrant(view.sequence.admissionGrant)} className="checkout-btn">
               Continue to Checkout
-            </a>
+            </button>
           </div>
         )}
       </div>
