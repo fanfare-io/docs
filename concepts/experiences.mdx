@@ -74,21 +74,21 @@ Within an experience, you can create multiple **access paths** (called sequences
 │                                                                 │
 │  ┌──────────────────┐                                          │
 │  │   VIP ACCESS     │  For your loyalty members                │
-│  │   Priority: High │  → Early access via lottery              │
+│  │   Priority: 100  │  → Early access via lottery              │
 │  │   Audience: VIP  │                                          │
 │  └──────────────────┘                                          │
 │           │                                                     │
 │           ▼ (If not VIP, check next)                           │
 │  ┌──────────────────┐                                          │
 │  │  EARLY ACCESS    │  For consumers with an access code       │
-│  │  Priority: Medium│  → First-come queue                      │
+│  │  Priority: 50   │  → First-come queue                       │
 │  │  Code: EARLYBIRD │                                          │
 │  └──────────────────┘                                          │
 │           │                                                     │
 │           ▼ (If no code, use general)                          │
 │  ┌──────────────────┐                                          │
 │  │  GENERAL ACCESS  │  For everyone else                       │
-│  │  Priority: Low   │  → Standard queue                        │
+│  │  Priority: 10   │  → Standard queue                         │
 │  │  Open to all     │                                          │
 │  └──────────────────┘                                          │
 │                                                                 │
@@ -99,7 +99,7 @@ Within an experience, you can create multiple **access paths** (called sequences
 
 When a consumer enters your experience:
 
-1. The system checks sequences in priority order (higher numeric priority first)
+1. The system checks sequences in priority order (higher numeric priority is evaluated first)
 2. For each sequence, it checks if the consumer qualifies:
    - Are they in the required audience? (if set)
    - Do they have the access code? (if required)
@@ -110,11 +110,11 @@ When a consumer enters your experience:
 **VIP Early Access**
 
 ```
-VIP Sequence (Priority: High)
+VIP Sequence (Priority: 100)
   ↳ Requires: VIP audience membership
   ↳ Distribution: Draw (lottery for fairness)
 
-General Sequence (Priority: Low)
+General Sequence (Priority: 10)
   ↳ Requires: Nothing (open to all)
   ↳ Distribution: Queue (first-come)
 ```
@@ -122,11 +122,11 @@ General Sequence (Priority: Low)
 **Access Code Launch**
 
 ```
-Presale Sequence (Priority: High)
+Presale Sequence (Priority: 100)
   ↳ Requires: Access code "PRESALE2024"
   ↳ Distribution: Queue
 
-General Sale Sequence (Priority: Low)
+General Sale Sequence (Priority: 10)
   ↳ Requires: Nothing
   ↳ Distribution: Queue
 ```
@@ -134,10 +134,10 @@ General Sale Sequence (Priority: Low)
 **Waitlist Overflow**
 
 ```
-Main Queue Sequence (Priority: High)
+Main Queue Sequence (Priority: 100)
   ↳ Distribution: Queue (limited capacity)
 
-Waitlist Sequence (Priority: Low)
+Waitlist Sequence (Priority: 10)
   ↳ Distribution: Waitlist (notified when space opens)
 ```
 
@@ -151,16 +151,16 @@ Most experiences have one product — a product launch, limited edition, or excl
 
 ### Multiple Products
 
-You can offer several products in one experience — useful for collection drops or bundle sales. Consumers can choose which product they want.
+You can offer several products in one experience — useful for collection drops, bundle sales, or mystery boxes. Depending on the experience setup, consumers can choose a product or Fanfare can assign one from the configured product pool.
 
 ### Product Selection
 
 You can control how products are selected:
 
-- **Consumer chooses** — Consumers pick their preferred product
-- **Random assignment** — Fanfare assigns from the configured product pool (great for mystery boxes)
+- **Consumer-selected** — Consumers pick their preferred product or variant
+- **System-assigned** — Fanfare assigns from the configured product pool (great for mystery boxes)
 
-For random assignment, product weights let you make some products more or less likely while keeping assignment automatic. Keep those weights separate from draw odds: draw configuration decides which consumers are selected, while product allocation decides what an admitted or selected consumer receives.
+For system-assigned products, product allocation weights control the relative probability that each product is assigned. Keep those weights separate from draw odds: draw configuration decides which consumers are selected, while product allocation decides what an admitted or selected consumer receives.
 
 ## Theming and Customization
 

@@ -58,7 +58,7 @@ _Caption: Enter basic information about your experience_
 
 ### Product Selection
 
-Select the product that consumers will access through this experience.
+Select the product or product pool that consumers will access through this experience.
 
 {/* IMAGE_PLACEHOLDER
 Type: screenshot
@@ -69,12 +69,13 @@ Alt text: "Product selection dropdown showing available products"
 */}
 
 
-_Caption: Select a product from your catalog_
+_Caption: Select products from your catalog_
 
-| Field               | Required | Description                                            |
-| ------------------- | -------- | ------------------------------------------------------ |
-| **Product**         | Yes      | The product to offer                                   |
-| **Variant Options** | No       | Specific variants to include (if product has variants) |
+| Field               | Required | Description                                                                    |
+| ------------------- | -------- | ------------------------------------------------------------------------------ |
+| **Product**         | Yes      | The product or product pool to offer                                           |
+| **Variant Options** | No       | Specific variants to include (if product has variants)                         |
+| **Selection Mode**  | Varies   | Consumer-selected products let consumers choose; system-assigned products use allocation settings  |
 
 <Tip>
 Create products before experiences. Navigate to **Products** to add items to your catalog.
@@ -82,7 +83,7 @@ Create products before experiences. Navigate to **Products** to add items to you
 
 ### Audience Selection
 
-Control who can access the experience by selecting an audience.
+Control who is eligible for an access path by selecting one or more audiences.
 
 {/* IMAGE_PLACEHOLDER
 Type: screenshot
@@ -93,11 +94,11 @@ Alt text: "Audience selection dropdown showing available audiences"
 */}
 
 
-_Caption: Select which audience can access this experience_
+_Caption: Select which audiences are eligible for this access path_
 
-| Field        | Required | Description                       |
-| ------------ | -------- | --------------------------------- |
-| **Audience** | Yes      | The audience that can participate |
+| Field        | Required | Description                                    |
+| ------------ | -------- | ---------------------------------------------- |
+| **Audience** | Varies   | Audiences whose members are eligible to participate |
 
 **Options:**
 

@@ -86,9 +86,13 @@ _Caption: Configure how winners are selected_
 | -------------------------- | ------------------------------ | ------------------ |
 | **Pure Random**            | Equal chance for everyone      | Fair giveaways     |
 | **Weighted by Engagement** | Higher chance for active users | Rewarding loyalty  |
-
-Winner selection is separate from product allocation. If the experience uses system-assigned products, configure product weights in the product allocation step so Fanfare can assign from the product pool after a consumer is selected.
 | **Weighted by Tier**       | Based on loyalty tier          | VIP prioritization |
+
+Winner selection is separate from product allocation. Selection methods decide which eligible consumers are selected as winners; product allocation decides what product a selected consumer receives.
+
+### Product Allocation
+
+For consumer-selected products, winners choose from the available products or variants configured for the experience. For system-assigned products, configure product allocation weights so Fanfare can assign from the product pool; higher weights make a product more likely to be assigned relative to the other products in that pool.
 
 ### Inventory Allocation
 
