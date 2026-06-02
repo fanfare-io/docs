@@ -6,8 +6,11 @@
   "description": "Fanfare documentation",
   "scripts": {
     "dev": "mintlify dev",
+    "dev:drafts": "node scripts/with-draft-docs.mjs -- pnpm dev",
     "build": "mintlify validate",
+    "build:drafts": "node scripts/with-draft-docs.mjs -- pnpm build",
     "broken-links": "mintlify broken-links",
+    "broken-links:drafts": "node scripts/with-draft-docs.mjs -- pnpm broken-links",
     "update": "mintlify update",
     "generate:openapi": "node scripts/generate-openapi.mjs",
     "generate:openapi:local": "node scripts/generate-openapi.mjs --env local",
