@@ -1,468 +1,104 @@
 ---
 title: Testing Your Integration
-description: Test your Fanfare integration locally with mock utilities and test environments.
+description: Test Fanfare integrations against public journey states and handoff behavior.
 ---
 
 # Testing Your Integration
 
-This guide covers testing strategies for your Fanfare integration, including unit testing with mocks, integration testing with the staging environment, and end-to-end testing.
+Test your Fanfare integration from the public contract. Your tests should prove that the right UI appears for each public state, that valid actions are wired correctly, and that admission handoff stays inside your trusted flow.
 
-## Test Utilities
+For the deeper SDK reference, see [SDK Testing](/sdk/reference/testing).
 
-The Fanfare SDK provides test utilities for mocking the SDK in your tests.
+## What To Cover
 
-### Core SDK Mock
+| Scenario | What to verify |
+| --- | --- |
+| Ready | Start CTA appears and calls the current view's start action. |
+| Routing | Loading UI appears without invalid buttons. |
+| Gated | Auth, access-code, or verification UI uses generic customer-safe copy. |
+| Upcoming | Scheduled or waitlist messaging renders. |
+| Active | The enter or booking action is available when exposed by the view. |
+| Participating | Status, progress, and valid participation actions render. |
+| Admitted | Checkout handoff receives `admissionGrant` and optional `admissionGrantExpiresAt`. |
+| Denied | Recovery or support copy is clear and does not infer private reasons. |
+| Error | Retry or fallback UI is visible. |
 
-Import the mock SDK factory from the test utilities:
+## Component Tests
 
-```typescript
-import { createMockFanfareSDK } from "@fanfare/sdk/test-utils";
-
-const mockSDK = createMockFanfareSDK();
-```
-
-The mock SDK provides default implementations for all methods:
-
-```typescript
-const mockSDK = createMockFanfareSDK({
-  // Override specific methods
-  queues: {
-    enter: async () => ({
-      position: 5,
-      estimatedWaitTimeInSeconds: 120,
-      status: "QUEUED",
-    }),
-  },
-});
-```
-
-### React Testing
-
-For React components, use the `MockFanfareProvider`:
+For custom React UI, split SDK wiring from rendering. The wrapper calls `useExperienceJourney`; the view component accepts controlled props.
 
 ```tsx
-import { render, screen } from "@testing-library/react";
-import { MockFanfareProvider } from "@fanfare/react/mocks";
-import { createMockSDK } from "@fanfare/react/mocks";
-import { QueueWidget } from "@fanfare/react";
+import { useExperienceJourney } from "@fanfare-io/fanfare-sdk-react";
 
-describe("QueueWidget", () => {
-  it("shows queue position after entering", async () => {
-    const mockSDK = createMockSDK({
-      queues: {
-        get: async () => ({
-          id: "queue_123",
-          name: "Test Queue",
-          status: "open",
-        }),
-        status: async () => ({
-          status: "QUEUED",
-          position: 5,
-        }),
-      },
-    });
+export function LaunchExperience({ experienceId }: { experienceId: string }) {
+  const journey = useExperienceJourney(experienceId);
 
-    render(
-      <MockFanfareProvider sdk={mockSDK}>
-        <QueueWidget experienceId="exp_123" />
-      </MockFanfareProvider>
-    );
-
-    // Assert on rendered output
-    expect(await screen.findByText(/position/i)).toBeInTheDocument();
-  });
-});
-```
-
-### Testing Hooks
-
-Test hooks using `@testing-library/react`:
-
-```tsx
-import { renderHook, waitFor } from "@testing-library/react";
-import { MockFanfareProvider } from "@fanfare/react/mocks";
-import { createMockSDK } from "@fanfare/react/mocks";
-import { useQueue } from "@fanfare/react";
-
-describe("useQueue", () => {
-  it("enters queue and returns position", async () => {
-    const mockSDK = createMockSDK({
-      queues: {
-        enter: async () => ({
-          position: 1,
-          estimatedWaitTimeInSeconds: 60,
-          status: "QUEUED",
-        }),
-      },
-    });
-
-    const wrapper = ({ children }: { children: React.ReactNode }) => (
-      <MockFanfareProvider sdk={mockSDK}>{children}</MockFanfareProvider>
-    );
-
-    const { result } = renderHook(() => useQueue("queue_123"), { wrapper });
-
-    // Enter the queue
-    await result.current.enter();
-
-    await waitFor(() => {
-      expect(result.current.position).toBe(1);
-    });
-  });
-});
-```
-
-## Mock Data Fixtures
-
-The SDK provides pre-built mock data for common entities:
-
-```typescript
-import {
-  mockQueue,
-  mockQueueEnterResult,
-  mockQueueStatus,
-  mockDraw,
-  mockDrawStatus,
-  mockAuction,
-  mockAuctionStatus,
-  mockWaitlistEntry,
-  mockTimedRelease,
-  mockExperience,
-} from "@fanfare/sdk/test-utils";
-
-// Use in your tests
-const mockSDK = createMockFanfareSDK({
-  queues: {
-    get: async () => mockQueue,
-    enter: async () => mockQueueEnterResult,
-    status: async () => mockQueueStatus,
-  },
-});
-```
-
-### Available Mock Data
-
-| Mock                   | Description                |
-| ---------------------- | -------------------------- |
-| `mockQueue`            | Basic queue object         |
-| `mockQueueEnterResult` | Result of entering a queue |
-| `mockQueueStatus`      | Consumer's queue status    |
-| `mockDraw`             | Basic draw object          |
-| `mockDrawStatus`       | Consumer's draw status     |
-| `mockAuction`          | Basic auction object       |
-| `mockAuctionStatus`    | Consumer's auction status  |
-| `mockWaitlistEntry`    | Waitlist entry             |
-| `mockTimedRelease`     | Timed release object       |
-| `mockExperience`       | Basic experience object    |
-
-## Testing Event Handlers
-
-Mock SDK events using the `on` method override:
-
-```tsx
-import { createMockFanfareSDK } from "@fanfare/sdk/test-utils";
-
-describe("Queue admission handling", () => {
-  it("handles admission event", async () => {
-    const listeners: Record<string, ((data: unknown) => void)[]> = {};
-
-    const mockSDK = createMockFanfareSDK({
-      on: (event: string, handler: (data: unknown) => void) => {
-        if (!listeners[event]) {
-          listeners[event] = [];
-        }
-        listeners[event].push(handler);
-        return () => {
-          listeners[event] = listeners[event].filter((h) => h !== handler);
-        };
-      },
-    });
-
-    // Set up your component with the mock SDK...
-
-    // Trigger an event
-    listeners["queue:admitted"]?.forEach((handler) => {
-      handler({
-        queueId: "queue_123",
-        token: "admission_token_xyz",
-      });
-    });
-
-    // Assert that your component handled the event
-  });
-});
-```
-
-## Testing with Staging Environment
-
-For integration tests, use the staging environment with test credentials:
-
-```tsx
-import { FanfareProvider } from "@fanfare/react";
-
-function TestApp() {
-  return (
-    <FanfareProvider
-      organizationId={process.env.FANFARE_TEST_ORG_ID!}
-      publishableKey={process.env.FANFARE_TEST_PUBLISHABLE_KEY!}
-      environment="staging"
-    >
-      <YourApp />
-    </FanfareProvider>
-  );
+  return <LaunchExperienceView {...journey} />;
 }
 ```
 
-### Staging Environment Setup
+In unit tests, render `LaunchExperienceView` with representative public views. Avoid depending on private SDK internals, undocumented mock helpers, or assumed state-transition timing.
 
-1. Create a test organization in your Fanfare dashboard
-2. Generate test API keys (prefixed with `pk_test_`)
-3. Create test experiences for different scenarios
-4. Use the staging API endpoint: `https://api-staging.fanfare.io`
+## Widget Tests
 
-{/* IMAGE_PLACEHOLDER
-Type: screenshot
-Page/Component: Fanfare Dashboard - Test Environment Toggle
-Shows: How to switch between test and live environments in the dashboard
-Alt text: "Fanfare dashboard showing test/live environment toggle"
-*/}
+When using `ExperienceWidget`, keep tests focused on app-owned behavior:
 
-## Local Development Server
+- The widget is rendered with the expected `experienceId`.
+- `checkoutUrl` or `onAdmitted` is configured for admitted users.
+- Slot overrides render your custom UI.
+- Sensitive values are not sent to logs or analytics.
 
-For local development with the full Fanfare stack:
+Example admitted-state handoff boundary:
 
 ```tsx
-<FanfareProvider
-  organizationId="org_dev123"
-  publishableKey="pk_dev_xyz789"
-  environment="development"
->
+<ExperienceWidget
+  experienceId="exp_123"
+  onAdmitted={(admissionGrant) => {
+    void sendAdmissionToServer({ admissionGrant });
+  }}
+/>
 ```
 
-This connects to `http://localhost:4802` (the consumer-app service).
+Test `sendAdmissionToServer` as your application code. Use SDK-level integration tests sparingly for full journey behavior.
 
-### Running the Local Stack
+## End-To-End Tests
 
-If you have access to the Fanfare development environment:
+Use a test experience and test publishable key for browser tests. Keep assertions based on visible public states and your app's handoff behavior.
 
-```bash
-# In the waitify-mono repository
-pnpm install
-pnpm infra:up        # Start PostgreSQL, Valkey, LocalStack
-pnpm db:migrate      # Run database migrations
-pnpm dev:apps        # Start all services
-```
+```ts
+import { expect, test } from "@playwright/test";
 
-Services run on:
+test("customer can reach the launch experience", async ({ page }) => {
+  await page.goto("/launch");
 
-- Admin API: `http://localhost:4800`
-- Admin Client: `http://localhost:4801`
-- Consumer API: `http://localhost:4802`
-- Beacon: `http://localhost:4803`
-
-## Testing Different Scenarios
-
-### Queue Full Scenario
-
-```typescript
-const fullQueueSDK = createMockFanfareSDK({
-  queues: {
-    enter: async () => {
-      throw new FanfareError("QUEUE_FULL", "Queue is at capacity");
-    },
-  },
+  await expect(page.getByRole("main")).toBeVisible();
+  await expect(page.getByText(/launch|access|checkout/i)).toBeVisible();
 });
 ```
 
-### Authentication Required
+For admitted-state tests, prefer a controlled test experience or a test fixture in your application boundary. Do not put real admission grants in URLs, screenshots, or test logs.
 
-```typescript
-const authRequiredSDK = createMockFanfareSDK({
-  experiences: {
-    findSequence: async () => ({
-      requiresAuthentication: true,
-      requiresAccessCode: false,
-    }),
-  },
-});
-```
+## Manual QA Checklist
 
-### Draw Lost Scenario
+- Start from a clean browser profile.
+- Repeat with an existing browser session.
+- Open the same experience in two tabs.
+- Verify ready, routing, gated, routed, admitted, denied, unavailable, and error copy where your experience can reach those states.
+- Confirm checkout receives only the values it needs.
+- Confirm analytics record high-level outcomes, not raw grants or snapshots.
+- Confirm production builds do not enable debug logging.
 
-```typescript
-const drawLostSDK = createMockFanfareSDK({
-  draws: {
-    checkResult: async () => ({
-      won: false,
-      drawId: "draw_123",
-    }),
-  },
-});
-```
+## Local Development
 
-### Auction Outbid Scenario
+Use your application's normal local server with Fanfare test credentials. If you need deterministic states, place a small boundary around your UI and supply controlled public `JourneyView` values in tests.
 
-```typescript
-const outbidSDK = createMockFanfareSDK({
-  auctions: {
-    placeBid: async () => ({
-      status: "outbid",
-      amount: "100.00",
-      highestBid: "150.00",
-      bidCount: 5,
-    }),
-  },
-});
-```
+Avoid inventing SDK mock helper names unless they are documented in the SDK reference or provided by your installed SDK version.
 
-### Network Error
+## CI
 
-```typescript
-const networkErrorSDK = createMockFanfareSDK({
-  queues: {
-    enter: async () => {
-      throw new Error("Network request failed");
-    },
-  },
-});
-```
-
-## End-to-End Testing
-
-For E2E tests with Playwright or Cypress, use the staging environment:
-
-### Playwright Example
-
-```typescript
-// e2e/queue.spec.ts
-import { test, expect } from "@playwright/test";
-
-test("user can join queue and be admitted", async ({ page }) => {
-  // Navigate to your app
-  await page.goto("/product/limited-edition");
-
-  // Click join queue button
-  await page.click('button:has-text("Join Queue")');
-
-  // Wait for queue position to appear
-  await expect(page.locator(".queue-position")).toBeVisible();
-
-  // Simulate time passing (use test controls in staging)
-  // Or wait for actual admission in a long-running test
-
-  // Verify admission
-  await expect(page.locator('text="You are admitted"')).toBeVisible({
-    timeout: 120000, // 2 minutes
-  });
-});
-```
-
-### Cypress Example
-
-```typescript
-// cypress/e2e/queue.cy.ts
-describe("Queue Experience", () => {
-  it("allows user to join queue", () => {
-    cy.visit("/product/limited-edition");
-
-    cy.contains("Join Queue").click();
-
-    cy.get(".queue-position").should("be.visible");
-
-    // Intercept and mock the admission for faster tests
-    cy.intercept("GET", "**/queues/*/status", {
-      statusCode: 200,
-      body: {
-        status: "ADMITTED",
-        admissionToken: "test_token_123",
-      },
-    });
-
-    cy.contains("You are admitted").should("be.visible");
-  });
-});
-```
-
-## Test Data Management
-
-### Cleaning Up Test Data
-
-After running tests, clean up test consumers and participations:
-
-```typescript
-// In your test teardown
-afterEach(async () => {
-  // Leave any active queues
-  await mockSDK.queues.leave("queue_123");
-
-  // Clear local storage
-  localStorage.clear();
-  sessionStorage.clear();
-});
-```
-
-### Seeding Test Data
-
-For integration tests, seed your test environment with data:
-
-```typescript
-// test-setup.ts
-import { init } from "@fanfare/sdk";
-
-async function seedTestData() {
-  const sdk = await init({
-    organizationId: process.env.FANFARE_TEST_ORG_ID!,
-    publishableKey: process.env.FANFARE_TEST_PUBLISHABLE_KEY!,
-    environment: "staging",
-  });
-
-  // Create test session
-  await sdk.auth.guest();
-
-  // Enter experiences for testing
-  await sdk.experiences.enter("exp_test_queue");
-
-  return sdk;
-}
-```
-
-## Debugging Tests
-
-### Enable Debug Logging
-
-```tsx
-<FanfareProvider
-  organizationId="org_test123"
-  publishableKey="pk_test_xyz789"
-  debug={true}
-  logging={{ level: "debug" }}
->
-```
-
-### Inspect SDK State
-
-```typescript
-const sdk = useFanfare();
-
-// Log current state
-console.log("Session:", sdk.auth.getSession());
-console.log("Active experiences:", await sdk.getActiveExperiences());
-```
-
-### Network Request Inspection
-
-In your browser's DevTools, filter network requests by:
-
-- `api.fanfare.io` (production)
-- `api-staging.fanfare.io` (staging)
-- `localhost:4802` (local development)
-
-## CI/CD Integration
-
-### GitHub Actions Example
+Add the checks that already protect your application:
 
 ```yaml
-# .github/workflows/test.yml
 name: Tests
 
 on: [push, pull_request]
@@ -475,78 +111,14 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Run unit tests
-        run: npm test
-        env:
-          FANFARE_TEST_ORG_ID: ${{ secrets.FANFARE_TEST_ORG_ID }}
-          FANFARE_TEST_PUBLISHABLE_KEY: ${{ secrets.FANFARE_TEST_PUBLISHABLE_KEY }}
-
-      - name: Run E2E tests
-        run: npm run test:e2e
-        env:
-          FANFARE_TEST_ORG_ID: ${{ secrets.FANFARE_TEST_ORG_ID }}
-          FANFARE_TEST_PUBLISHABLE_KEY: ${{ secrets.FANFARE_TEST_PUBLISHABLE_KEY }}
+      - run: npm ci
+      - run: npm test
 ```
 
-## Best Practices
-
-### 1. Isolate Tests
-
-Each test should start with a clean state:
-
-```typescript
-beforeEach(() => {
-  localStorage.clear();
-  sessionStorage.clear();
-});
-```
-
-### 2. Mock External Dependencies
-
-Always mock the SDK in unit tests to avoid network calls:
-
-```typescript
-// Good
-const mockSDK = createMockFanfareSDK();
-
-// Avoid in unit tests
-const realSDK = await init({ ... });
-```
-
-### 3. Test Error States
-
-Always test error handling:
-
-```typescript
-it("handles queue full error gracefully", async () => {
-  const mockSDK = createMockFanfareSDK({
-    queues: {
-      enter: async () => {
-        throw new Error("Queue is full");
-      },
-    },
-  });
-
-  // ... test that error is displayed to user
-});
-```
-
-### 4. Use Realistic Timing
-
-When testing time-based features (auctions, draws), use realistic but shortened timeframes:
-
-```typescript
-const shortAuction = {
-  ...mockAuction,
-  closeAt: new Date(Date.now() + 5000).toISOString(), // 5 seconds
-};
-```
+Store only test publishable credentials in frontend test environments. Keep secret keys in server-side CI contexts.
 
 ## Next Steps
 
-- [Deployment](/getting-started/deployment) - Production deployment checklist
-- [Next Steps](/getting-started/next-steps) - Where to go from here
+- [Deployment](/getting-started/deployment) - Prepare production rollout.
+- [SDK Testing](/sdk/reference/testing) - Review the SDK testing contract.
+- [Journey State](/sdk/core/journey-state) - Cover the public states your UI renders.

@@ -1,365 +1,166 @@
 ---
 title: Installation
-description: Install the Fanfare SDK for React, SolidJS, or vanilla JavaScript.
+description: Install the Fanfare SDK package for your integration path.
 ---
 
 # Installation
 
-Fanfare provides official SDK packages for different frameworks. Choose the installation that matches your project setup.
+Fanfare has three public SDK paths. Choose the package set that matches how much UI ownership your application needs.
 
-## Package Overview
+| Path | Install | Use when |
+| --- | --- | --- |
+| React components | `@fanfare-io/fanfare-sdk-core` and `@fanfare-io/fanfare-sdk-react` | You use React and want the supported `ExperienceWidget`, hooks, slots, and styles. |
+| Core SDK | `@fanfare-io/fanfare-sdk-core` | You want to render every state from `JourneyView` with your own UI. |
+| Web components | `@fanfare-io/fanfare-sdk-core` and `@fanfare-io/fanfare-sdk-solid` | You need a custom element for static HTML, CMS pages, or a non-React host. |
 
-| Package     | npm Name         | Description                           |
-| ----------- | ---------------- | ------------------------------------- |
-| Core SDK    | `@fanfare/sdk`   | Framework-agnostic core functionality |
-| React SDK   | `@fanfare/react` | React hooks, components, and provider |
-| SolidJS SDK | `@fanfare/solid` | SolidJS primitives and components     |
-
-The React and SolidJS packages depend on the core SDK and install it automatically.
+All paths use the same journey model. You can start with a component path and move specific states to custom UI later.
 
 ## React
 
-### Installation
+Install the core SDK, React adapter, and animation peer dependency:
 
 ```bash
-npm install @fanfare/react motion
+pnpm add @fanfare-io/fanfare-sdk-core @fanfare-io/fanfare-sdk-react motion
 ```
 
-Or with other package managers:
+Equivalent commands:
 
 ```bash
-# Yarn
-yarn add @fanfare/react motion
-
-# pnpm
-pnpm add @fanfare/react motion
-
-# Bun
-bun add @fanfare/react motion
+npm install @fanfare-io/fanfare-sdk-core @fanfare-io/fanfare-sdk-react motion
+yarn add @fanfare-io/fanfare-sdk-core @fanfare-io/fanfare-sdk-react motion
+bun add @fanfare-io/fanfare-sdk-core @fanfare-io/fanfare-sdk-react motion
 ```
 
-### Requirements
+The React package has peer dependencies on `react`, `react-dom`, and `motion`.
 
-- React 18.0.0 or later (React 19 is also supported)
-- ReactDOM 18.0.0 or later
-- Motion 12.0.0 or later (for animations)
-
-### Exports
-
-The React package provides:
+Use the provider and widget:
 
 ```tsx
-// Provider
-import { FanfareProvider } from "@fanfare/react";
-
-// Hooks
 import {
-  useFanfare,
-  useExperienceJourney,
-  useQueue,
-  useDraw,
-  useAuction,
-  useWaitlist,
-  useTimedRelease,
-  useFanfareAuth,
-} from "@fanfare/react";
-
-// Pre-built widgets
-import { QueueWidget, DrawWidget, AuctionWidget, WaitlistWidget } from "@fanfare/react";
-
-// Composition components
-import { AdmittedView, EndedView, ErrorView, AuthForm } from "@fanfare/react";
-
-// Primitives
-import { Button, Card, Input, QueuePosition } from "@fanfare/react";
-
-// Styles (optional - for default widget styling)
-import "@fanfare/react/styles";
-```
-
-### TypeScript Support
-
-The React SDK is written in TypeScript and includes type definitions. No additional `@types` packages are required.
-
-```tsx
-import type { FanfareProviderProps, QueueWidgetProps, UseDrawReturn } from "@fanfare/react";
-```
-
-## SolidJS
-
-### Installation
-
-```bash
-npm install @fanfare/solid @fanfare/sdk motion
-```
-
-Or with other package managers:
-
-```bash
-# Yarn
-yarn add @fanfare/solid @fanfare/sdk motion
-
-# pnpm
-pnpm add @fanfare/solid @fanfare/sdk motion
-```
-
-### Requirements
-
-- SolidJS 1.8.0 or later
-- Motion 12.0.0 or later (for animations)
-
-### Exports
-
-The SolidJS package provides:
-
-```tsx
-// Provider
-import { FanfareProvider, useFanfare } from "@fanfare/solid";
-
-// Hooks
-import {
-  useExperienceJourney,
-  useQueue,
-  useDraw,
-  useAuction,
-  useWaitlist,
-  useTimedRelease,
-  useAuth,
-} from "@fanfare/solid";
-
-// Pre-built widgets
-import { QueueWidget, DrawWidget, AuctionWidget, WaitlistWidget } from "@fanfare/solid";
-
-// Web components registration
-import { registerWebComponents } from "@fanfare/solid";
-
-// Styles
-import "@fanfare/solid/styles";
-```
-
-### Web Components
-
-The SolidJS SDK supports web component registration for use outside of SolidJS applications:
-
-```tsx
-import { registerWebComponents } from "@fanfare/solid";
-
-// Register all Fanfare web components
-registerWebComponents();
-```
-
-Then use them as custom elements:
-
-```html
-<fanfare-queue experience-id="exp_123"></fanfare-queue>
-```
-
-## Vanilla JavaScript (Core SDK)
-
-### Installation
-
-```bash
-npm install @fanfare/sdk
-```
-
-Or with other package managers:
-
-```bash
-# Yarn
-yarn add @fanfare/sdk
-
-# pnpm
-pnpm add @fanfare/sdk
-```
-
-### Requirements
-
-- A modern browser with ES2020 support
-- Valibot 1.1.0 or later (peer dependency for validation)
-
-### Usage
-
-```typescript
-import { init } from "@fanfare/sdk";
-
-async function main() {
-  const fanfare = await init({
-    organizationId: "org_abc123",
-    publishableKey: "pk_live_xyz789",
-  });
-
-  // Restore any existing session
-  await fanfare.restore();
-
-  // Create a guest session
-  await fanfare.auth.guest();
-
-  // Enter an experience
-  const session = await fanfare.experiences.enter("exp_123");
-
-  // Join a queue
-  const result = await fanfare.queues.enter("queue_456");
-  console.log("Position:", result.position);
-
-  // Start polling for updates
-  fanfare.queues.startPolling("queue_456");
-
-  // Listen for admission
-  fanfare.on("queue:admitted", (data) => {
-    console.log("Admitted with token:", data.token);
-    // Redirect to checkout
-  });
-}
-
-main();
-```
-
-### Exports
-
-```typescript
-// Main init function
-import { init } from "@fanfare/sdk";
-
-// Types
-import type { FanfareConfig, FanfareSDK, Queue, Draw, AuctionDetails, Session } from "@fanfare/sdk";
-
-// Experience journey (state machine)
-import { ExperienceJourney } from "@fanfare/sdk";
-
-// Error handling
-import { FanfareError, ErrorCodes, isFanfareError } from "@fanfare/sdk";
-
-// Theme utilities
-import { DefaultExperienceTheme, mergeExperienceTheme } from "@fanfare/sdk";
-
-// Test utilities
-import { createMockFanfareSDK } from "@fanfare/sdk/test-utils";
-```
-
-## CDN Installation
-
-For quick prototyping or non-bundled projects, you can load the SDK from a CDN:
-
-```html
-<script type="module">
-  import { init } from "https://esm.sh/@fanfare/sdk@latest";
-
-  const fanfare = await init({
-    organizationId: "org_abc123",
-    publishableKey: "pk_live_xyz789",
-  });
-
-  // Use the SDK...
-</script>
-```
-
-{/* TODO: MISSING_FUNCTIONALITY
-Feature: Official CDN build
-Expected behavior: Pre-bundled UMD or IIFE build for CDN usage
-Current state: ESM-only builds require esm.sh or similar service
-*/}
-
-<Callout type="warning">
-  **CDN Usage**: Using ESM from CDN services like esm.sh works for prototyping but is not recommended for production.
-  Use a bundler for optimal performance and reliability.
-</Callout>
-
-## Bundle Size
-
-The Fanfare SDK is designed to be lightweight:
-
-| Package               | Size (gzipped)         |
-| --------------------- | ---------------------- |
-| `@fanfare/sdk` (core) | ~34 KB                 |
-| `@fanfare/react`      | ~45 KB (includes core) |
-| `@fanfare/solid`      | ~40 KB (includes core) |
-
-The SDK supports tree-shaking, so unused modules are not included in your final bundle.
-
-## ESM Only
-
-All Fanfare packages are ESM-only. If your project uses CommonJS, you may need to configure your bundler to handle ESM dependencies.
-
-### Vite
-
-Vite handles ESM natively. No additional configuration is required.
-
-### Next.js
-
-Next.js supports ESM packages in both the App Router and Pages Router:
-
-```tsx
-// app/layout.tsx or pages/_app.tsx
-import { FanfareProvider } from "@fanfare/react";
-```
-
-### Webpack
-
-For Webpack 5, ESM packages work by default. For Webpack 4, you may need to configure the `resolve.fullySpecified` option:
-
-```javascript
-// webpack.config.js
-module.exports = {
-  resolve: {
-    fullySpecified: false,
-  },
-};
-```
-
-## Peer Dependencies
-
-### Valibot
-
-The core SDK requires Valibot for runtime validation:
-
-```bash
-npm install valibot
-```
-
-If you are using the React or SolidJS packages, Valibot is included as a transitive dependency.
-
-### Motion
-
-The React and SolidJS packages use Motion for animations:
-
-```bash
-npm install motion
-```
-
-Motion is a peer dependency because:
-
-1. It allows you to share a single instance across your app
-2. You can configure motion settings globally
-3. It reduces bundle size when you already use motion elsewhere
-
-If you do not want animations, install motion anyway but configure the SDK to disable animations (see [Configuration](/getting-started/configuration)).
-
-## Verifying Installation
-
-After installation, verify the SDK is working:
-
-```tsx
-import { FanfareProvider, useFanfare } from "@fanfare/react";
-
-function DebugComponent() {
-  const fanfare = useFanfare();
-  console.log("Fanfare SDK loaded:", fanfare);
-  return <div>SDK Ready</div>;
-}
-
-function App() {
+  ExperienceWidget,
+  FanfareProvider,
+} from "@fanfare-io/fanfare-sdk-react";
+import "@fanfare-io/fanfare-sdk-react/styles";
+
+export function App() {
   return (
-    <FanfareProvider organizationId="org_test123" publishableKey="pk_test_xyz789">
-      <DebugComponent />
+    <FanfareProvider
+      organizationId="org_123"
+      publishableKey="pk_live_123"
+      environment="production"
+    >
+      <ExperienceWidget experienceId="exp_123" autoStart checkoutUrl="/checkout" />
     </FanfareProvider>
   );
 }
 ```
 
-Check your browser console. You should see the SDK object logged without errors.
+For custom React UI, import `useExperienceJourney` and render from the returned `view`.
+
+```tsx
+import { useExperienceJourney } from "@fanfare-io/fanfare-sdk-react";
+```
+
+## Core SDK
+
+Install only the core package when your application owns the UI:
+
+```bash
+pnpm add @fanfare-io/fanfare-sdk-core
+```
+
+Initialize once and read the public journey view:
+
+```ts
+import initFanfare from "@fanfare-io/fanfare-sdk-core";
+import type { JourneyView } from "@fanfare-io/fanfare-sdk-core/experiences";
+
+const sdk = await initFanfare({
+  organizationId: "org_123",
+  publishableKey: "pk_live_123",
+  environment: "production",
+});
+
+const journey = sdk.journeys.get("exp_123");
+
+journey.view$.listen((view: JourneyView) => {
+  renderJourney(view);
+});
+```
+
+Render UI from `JourneyView` and call only actions exposed by the current view.
+
+## Web Components
+
+Install the core SDK, Solid adapter, and Solid peer dependency:
+
+```bash
+pnpm add @fanfare-io/fanfare-sdk-core @fanfare-io/fanfare-sdk-solid solid-js
+```
+
+Register the custom elements once:
+
+```html
+<script type="module">
+  import { registerWebComponents } from "@fanfare-io/fanfare-sdk-solid";
+
+  registerWebComponents({
+    organizationId: "org_123",
+    publishableKey: "pk_live_123",
+    environment: "production",
+  });
+</script>
+```
+
+Then render the experience widget:
+
+```html
+<fanfare-experience-widget
+  experience-id="exp_123"
+  auto-start
+  checkout-url="/checkout"
+></fanfare-experience-widget>
+```
+
+## TypeScript and Modules
+
+Fanfare SDK packages include TypeScript definitions and are ESM-only. Modern bundlers such as Vite, Next.js, Webpack 5, and Astro handle ESM packages without additional SDK configuration.
+
+Import public types from the package that owns the API:
+
+```ts
+import type { JourneyView } from "@fanfare-io/fanfare-sdk-core/experiences";
+import type { ExperienceWidgetProps } from "@fanfare-io/fanfare-sdk-react";
+```
+
+## No CDN Path
+
+Use the npm packages with a bundler for production integrations. The public SDK docs do not define a separate CDN API surface.
+
+## Verify Installation
+
+Use a minimal render before adding custom states:
+
+```tsx
+import {
+  ExperienceWidget,
+  FanfareProvider,
+} from "@fanfare-io/fanfare-sdk-react";
+import "@fanfare-io/fanfare-sdk-react/styles";
+
+export function FanfareSmokeTest() {
+  return (
+    <FanfareProvider organizationId="org_123" publishableKey="pk_test_123">
+      <ExperienceWidget experienceId="exp_123" />
+    </FanfareProvider>
+  );
+}
+```
+
+If the provider mounts and the widget renders a ready, loading, gated, participating, admitted, or unavailable state, the package install is working. Use test credentials and a test experience for local verification.
 
 ## Next Steps
 
-- [Configuration](/getting-started/configuration) - Configure the provider and SDK options
-- [First Experience](/getting-started/first-experience) - Create your first queue, draw, or auction
-- [Testing](/getting-started/testing) - Set up local testing with mock utilities
+- [Quickstart](/getting-started/quickstart) - Build the first React integration.
+- [Configuration](/getting-started/configuration) - Set credentials, environment, copy, and theme.
+- [Choose Your Path](/sdk/choose-your-path) - Compare core, React, and web component paths.

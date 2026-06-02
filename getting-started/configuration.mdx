@@ -1,499 +1,270 @@
 ---
 title: Configuration
-description: Configure the Fanfare SDK provider, API keys, environments, and advanced options.
+description: Configure Fanfare SDK credentials, environments, widgets, and public customization surfaces.
 ---
 
 # Configuration
 
-This guide covers all configuration options for the Fanfare SDK, including the provider setup, environment configuration, and advanced options.
+Fanfare configuration starts with three values:
 
-## Provider Configuration
+| Value | Purpose |
+| --- | --- |
+| `organizationId` | Your Fanfare organization ID from the dashboard. |
+| `publishableKey` | A browser-safe publishable key for the current environment. |
+| `experienceId` | The experience your page should render. |
 
-### React
+Keep secret keys on your server. Client SDK integrations should use publishable keys only.
 
-Wrap your application with `FanfareProvider` at the root level:
+## React Provider
+
+Most React apps configure Fanfare once near the route or app area that renders the experience.
 
 ```tsx
-import { FanfareProvider } from "@fanfare/react";
+import { FanfareProvider } from "@fanfare-io/fanfare-sdk-react";
+import "@fanfare-io/fanfare-sdk-react/styles";
 
-function App() {
+export function App() {
   return (
-    <FanfareProvider organizationId="org_abc123" publishableKey="pk_live_xyz789">
-      <YourApp />
+    <FanfareProvider
+      organizationId="org_123"
+      publishableKey="pk_live_123"
+      environment="production"
+      locale="en"
+    >
+      <ProductLaunchPage />
     </FanfareProvider>
   );
 }
 ```
 
-### SolidJS
+`FanfareProvider` initializes the core SDK, restores local session state by default, and provides SDK access to components and hooks below it.
 
-For SolidJS, initialize the SDK first, then pass it to the provider:
+Common provider props:
+
+| Prop | Use for |
+| --- | --- |
+| `organizationId` | Required organization ID. |
+| `publishableKey` | Required browser-safe key. |
+| `environment` | `production` or `development`. |
+| `autoRestore` | Restore local session on mount. Defaults to `true`. |
+| `autoResume` | Resume known journeys after restore. Defaults to `true`. |
+| `loadingComponent` | UI shown while the provider initializes. |
+| `locale` | Locale for built-in component text. |
+| `translations` | Partial copy overrides. |
+| `debug` | Development troubleshooting only. |
+
+See [Configuration Reference](/sdk/reference/configuration) for the full public option list.
+
+## ExperienceWidget
+
+Configure the journey UI with `ExperienceWidget`.
 
 ```tsx
-import { init } from "@fanfare/sdk";
-import { FanfareProvider } from "@fanfare/solid";
-import { createResource } from "solid-js";
+import { ExperienceWidget } from "@fanfare-io/fanfare-sdk-react";
 
-function App() {
-  const [sdk] = createResource(async () => {
-    return await init({
-      organizationId: "org_abc123",
-      publishableKey: "pk_live_xyz789",
-    });
-  });
-
+export function ProductLaunchPage() {
   return (
-    <Show when={sdk()}>
-      <FanfareProvider sdk={sdk()!}>
-        <YourApp />
-      </FanfareProvider>
-    </Show>
+    <ExperienceWidget
+      experienceId="exp_123"
+      autoStart
+      checkoutUrl="/checkout"
+      variant="clean"
+    />
   );
 }
 ```
 
-### Vanilla JavaScript
+Common widget props:
 
-For the core SDK without a framework, call `init` directly:
+| Prop | Use for |
+| --- | --- |
+| `experienceId` | Required experience ID. |
+| `autoStart` | Start the journey when the widget is ready. |
+| `checkoutUrl` | Default destination after admission. |
+| `onAdmitted` | Custom server handoff or app routing after admission. |
+| `slots` | Override specific journey states. |
+| `theme` | Per-widget theme values. |
+| `variant` | Supported widget visual variant. |
+| `accessCode` | Provide an access code when your page already has one. |
+| `autoEnterWaitlist` | Enter waitlist automatically when that public action is available. |
 
-```typescript
-import { init } from "@fanfare/sdk";
+Use `onAdmitted` when checkout needs a trusted handoff:
 
-const fanfare = await init({
-  organizationId: "org_abc123",
-  publishableKey: "pk_live_xyz789",
+```tsx
+<ExperienceWidget
+  experienceId="exp_123"
+  autoStart
+  onAdmitted={async (admissionGrant) => {
+    await fetch("/api/fanfare/admission", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ admissionGrant }),
+    });
+    window.location.assign("/checkout");
+  }}
+/>
+```
+
+## Copy And Theme
+
+Use provider-level `locale` and `translations` for shared copy. Use widget `theme`, `variant`, and `slots` for per-page customization.
+
+```tsx
+<FanfareProvider
+  organizationId="org_123"
+  publishableKey="pk_live_123"
+  locale="en"
+  translations={{
+    "queue.enter": "Join the launch",
+    "admitted.cta": "Continue",
+  }}
+>
+  <ExperienceWidget
+    experienceId="exp_123"
+    variant="rounded"
+    theme={{
+      primary: "#0F766E",
+      fontFamily: "Inter, system-ui, sans-serif",
+    }}
+  />
+</FanfareProvider>
+```
+
+For targeted UI ownership, use slots:
+
+```tsx
+<ExperienceWidget
+  experienceId="exp_123"
+  slots={{
+    admitted: ({ admissionGrant, expiresAt }) => (
+      <CheckoutPanel
+        admissionGrant={admissionGrant}
+        admissionGrantExpiresAt={expiresAt}
+      />
+    ),
+  }}
+/>
+```
+
+## Core SDK
+
+Use the core SDK when your application owns every screen.
+
+```ts
+import initFanfare from "@fanfare-io/fanfare-sdk-core";
+import type { JourneyView } from "@fanfare-io/fanfare-sdk-core/experiences";
+
+const sdk = await initFanfare({
+  organizationId: "org_123",
+  publishableKey: "pk_live_123",
+  environment: "production",
+});
+
+const journey = sdk.journeys.get("exp_123");
+
+const unsubscribe = journey.view$.listen((view: JourneyView) => {
+  renderJourney(view);
 });
 ```
 
-## Required Configuration
+Call `sdk.destroy()` when the application area that owns the SDK permanently unmounts.
 
-### organizationId
+## Web Components
 
-Your Fanfare organization identifier. Find this in your Fanfare dashboard under Settings > API Keys.
+Register web components once before rendering custom elements.
 
-```tsx
-<FanfareProvider
-  organizationId="org_abc123"
-  // ...
->
+```html
+<script type="module">
+  import { registerWebComponents } from "@fanfare-io/fanfare-sdk-solid";
+
+  registerWebComponents({
+    organizationId: "org_123",
+    publishableKey: "pk_live_123",
+    environment: "production",
+    locale: "en",
+  });
+</script>
+
+<fanfare-experience-widget
+  experience-id="exp_123"
+  auto-start
+  checkout-url="/checkout"
+></fanfare-experience-widget>
 ```
 
-Organization IDs always start with `org_`.
+Listen for admitted events when the host page needs a custom handoff:
 
-### publishableKey
+```html
+<script>
+  const widget = document.querySelector("fanfare-experience-widget");
 
-Your publishable API key for client-side use. This key is safe to include in your frontend code.
+  widget.addEventListener("fanfare-admitted", async (event) => {
+    await fetch("/api/fanfare/admission", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ admissionGrant: event.detail.grant }),
+    });
 
-```tsx
-<FanfareProvider
-  organizationId="org_abc123"
-  publishableKey="pk_live_xyz789"
->
+    window.location.assign("/checkout");
+  });
+</script>
 ```
 
-Publishable keys start with:
-
-- `pk_live_` for production
-- `pk_test_` for test/sandbox environments
-
-{/* IMAGE_PLACEHOLDER
-Type: screenshot
-Page/Component: Fanfare Dashboard - API Keys settings
-Shows: Where to find organizationId and publishableKey
-Alt text: "Fanfare dashboard API keys settings showing organization ID and publishable key"
-*/}
-
-## Provider Options (React)
-
-The React `FanfareProvider` accepts additional configuration options:
-
-```tsx
-interface FanfareProviderProps {
-  // Required
-  organizationId: string;
-  publishableKey: string;
-
-  // Session behavior
-  autoRestore?: boolean; // Default: true
-  autoResume?: boolean; // Default: true
-
-  // UI
-  loadingComponent?: React.ReactNode;
-
-  // Localization
-  locale?: Locale;
-  translations?: PartialTranslationMessages;
-
-  // Advanced (passed to core SDK)
-  environment?: "production" | "staging" | "development";
-  apiUrl?: string;
-  debug?: boolean;
-  auth?: AuthConfig;
-  logging?: LoggingConfig;
-  sync?: SyncConfig;
-  features?: FeaturesConfig;
-  beacon?: BeaconConfig;
-}
-```
-
-### autoRestore
-
-When `true` (default), the provider automatically restores any existing session from local storage when the component mounts.
-
-```tsx
-<FanfareProvider
-  organizationId="org_abc123"
-  publishableKey="pk_live_xyz789"
-  autoRestore={true}
->
-```
-
-Disable this if you want manual control over session restoration:
-
-```tsx
-<FanfareProvider
-  organizationId="org_abc123"
-  publishableKey="pk_live_xyz789"
-  autoRestore={false}
->
-```
-
-### autoResume
-
-When `true` (default), the provider automatically resumes active operations (queue polling, auction watching) after restoring a session.
-
-```tsx
-<FanfareProvider
-  organizationId="org_abc123"
-  publishableKey="pk_live_xyz789"
-  autoResume={true}
->
-```
-
-### loadingComponent
-
-A React node to display while the SDK initializes:
-
-```tsx
-<FanfareProvider
-  organizationId="org_abc123"
-  publishableKey="pk_live_xyz789"
-  loadingComponent={<LoadingSpinner />}
->
-```
-
-If not provided, the provider renders nothing during initialization.
-
-### locale
-
-Set the locale for built-in widget text:
-
-```tsx
-<FanfareProvider
-  organizationId="org_abc123"
-  publishableKey="pk_live_xyz789"
-  locale="es"
->
-```
-
-Supported locales include: `en`, `es`, `fr`, `de`, `it`, `pt`, `ja`, `ko`, `zh`.
-
-### translations
-
-Override or extend the default translations:
-
-```tsx
-<FanfareProvider
-  organizationId="org_abc123"
-  publishableKey="pk_live_xyz789"
-  translations={{
-    "queue.enter": "Join the Line",
-    "admitted.cta": "Go to Checkout",
-    "queue.position": "Your spot: {{position}}",
-  }}
->
-```
-
-This merges with the default translations for the current locale.
-
-## Core SDK Configuration
-
-These options can be passed to `FanfareProvider` (React) or directly to `init()`:
-
-### environment
-
-Set the API environment:
-
-```tsx
-<FanfareProvider
-  organizationId="org_abc123"
-  publishableKey="pk_test_xyz789"
-  environment="staging"
->
-```
-
-| Environment   | API URL                          | Use Case               |
-| ------------- | -------------------------------- | ---------------------- |
-| `production`  | `https://api.fanfare.io`         | Live traffic (default) |
-| `staging`     | `https://api-staging.fanfare.io` | Pre-release testing    |
-| `development` | `http://localhost:4802`          | Local development      |
-
-### apiUrl
-
-Override the API URL directly (takes precedence over `environment`):
-
-```tsx
-<FanfareProvider
-  organizationId="org_abc123"
-  publishableKey="pk_test_xyz789"
-  apiUrl="https://api-custom.example.com"
->
-```
-
-### debug
-
-Enable debug logging to the console:
-
-```tsx
-<FanfareProvider
-  organizationId="org_abc123"
-  publishableKey="pk_test_xyz789"
-  debug={true}
->
-```
-
-When enabled, the SDK logs:
-
-- Initialization steps
-- API requests and responses
-- State changes
-- Event emissions
-
-### auth
-
-Configure authentication behavior:
-
-```tsx
-<FanfareProvider
-  organizationId="org_abc123"
-  publishableKey="pk_live_xyz789"
-  auth={{
-    persistSession: true,     // Store session in localStorage (default: true)
-    sessionDuration: 3600,    // Session duration in seconds (default: 3600)
-  }}
->
-```
-
-### logging
-
-Configure logging behavior:
-
-```tsx
-<FanfareProvider
-  organizationId="org_abc123"
-  publishableKey="pk_live_xyz789"
-  logging={{
-    level: "info",  // "error" | "warn" | "info" | "debug" | "metrics"
-  }}
->
-```
-
-Default log level is `error`.
-
-### sync
-
-Configure multi-tab synchronization:
-
-```tsx
-<FanfareProvider
-  organizationId="org_abc123"
-  publishableKey="pk_live_xyz789"
-  sync={{
-    enabled: true,
-    syncKeys: ["session", "activeQueues", "activeDraws"],
-    channelName: "fanfare-sdk-sync",
-  }}
->
-```
-
-Or disable sync entirely:
-
-```tsx
-<FanfareProvider
-  organizationId="org_abc123"
-  publishableKey="pk_live_xyz789"
-  sync={false}
->
-```
-
-Multi-tab sync ensures that:
-
-- Session state is shared across tabs
-- Queue positions update in all tabs
-- Admission in one tab notifies other tabs
-
-### features
-
-Enable or disable optional features:
-
-```tsx
-<FanfareProvider
-  organizationId="org_abc123"
-  publishableKey="pk_live_xyz789"
-  features={{
-    fingerprinting: true,  // Browser fingerprinting (default: true)
-  }}
->
-```
-
-Browser fingerprinting helps identify returning visitors and prevent abuse. Disable it if you have privacy concerns or regulatory requirements.
-
-### beacon
-
-Configure analytics event tracking:
-
-```tsx
-<FanfareProvider
-  organizationId="org_abc123"
-  publishableKey="pk_live_xyz789"
-  beacon={{
-    enabled: true,
-    batchSize: 10,
-    flushInterval: 5000,
-  }}
->
-```
+Avoid logging admission grants or raw journey snapshots to third-party tools.
 
 ## Environment Variables
 
-Store your credentials in environment variables for security:
+Use framework-supported public environment variables for browser credentials.
 
 ```bash
-# .env.local
-NEXT_PUBLIC_FANFARE_ORG_ID=org_abc123
-NEXT_PUBLIC_FANFARE_PUBLISHABLE_KEY=pk_live_xyz789
+NEXT_PUBLIC_FANFARE_ORG_ID=org_123
+NEXT_PUBLIC_FANFARE_PUBLISHABLE_KEY=pk_live_123
 ```
-
-Then reference them in your code:
 
 ```tsx
 <FanfareProvider
   organizationId={process.env.NEXT_PUBLIC_FANFARE_ORG_ID!}
   publishableKey={process.env.NEXT_PUBLIC_FANFARE_PUBLISHABLE_KEY!}
+  environment="production"
 >
+  <ProductLaunchPage />
+</FanfareProvider>
 ```
 
-### Framework-specific Environment Variables
+Common public prefixes:
 
-| Framework        | Prefix         | Example                      |
-| ---------------- | -------------- | ---------------------------- |
-| Next.js          | `NEXT_PUBLIC_` | `NEXT_PUBLIC_FANFARE_ORG_ID` |
-| Vite             | `VITE_`        | `VITE_FANFARE_ORG_ID`        |
-| Create React App | `REACT_APP_`   | `REACT_APP_FANFARE_ORG_ID`   |
-| Astro            | `PUBLIC_`      | `PUBLIC_FANFARE_ORG_ID`      |
+| Framework | Prefix |
+| --- | --- |
+| Next.js | `NEXT_PUBLIC_` |
+| Vite | `VITE_` |
+| Astro | `PUBLIC_` |
+| Create React App | `REACT_APP_` |
 
-## Development vs Production
+## Development And Production
 
-Use different credentials for development and production:
+Use test credentials for development and live credentials for production.
 
 ```tsx
-const isDev = process.env.NODE_ENV === "development";
+const isProduction = process.env.NODE_ENV === "production";
 
 <FanfareProvider
   organizationId={process.env.NEXT_PUBLIC_FANFARE_ORG_ID!}
   publishableKey={
-    isDev
-      ? process.env.NEXT_PUBLIC_FANFARE_TEST_KEY!
-      : process.env.NEXT_PUBLIC_FANFARE_LIVE_KEY!
+    isProduction
+      ? process.env.NEXT_PUBLIC_FANFARE_LIVE_KEY!
+      : process.env.NEXT_PUBLIC_FANFARE_TEST_KEY!
   }
-  environment={isDev ? "staging" : "production"}
-  debug={isDev}
+  environment={isProduction ? "production" : "development"}
+  debug={!isProduction}
 >
+  <ProductLaunchPage />
+</FanfareProvider>;
 ```
 
-## Complete Configuration Example
-
-Here is a fully configured provider with all options:
-
-```tsx
-import { FanfareProvider } from "@fanfare/react";
-import { LoadingSpinner } from "./components/loading-spinner";
-
-function App() {
-  return (
-    <FanfareProvider
-      // Required
-      organizationId={process.env.NEXT_PUBLIC_FANFARE_ORG_ID!}
-      publishableKey={process.env.NEXT_PUBLIC_FANFARE_PUBLISHABLE_KEY!}
-      // Session behavior
-      autoRestore={true}
-      autoResume={true}
-      // Loading state
-      loadingComponent={<LoadingSpinner />}
-      // Localization
-      locale="en"
-      translations={{
-        "queue.enter": "Join the Waitlist",
-      }}
-      // Environment
-      environment="production"
-      debug={process.env.NODE_ENV === "development"}
-      // Authentication
-      auth={{
-        persistSession: true,
-        sessionDuration: 7200, // 2 hours
-      }}
-      // Logging
-      logging={{
-        level: process.env.NODE_ENV === "development" ? "debug" : "error",
-      }}
-      // Multi-tab sync
-      sync={{
-        enabled: true,
-      }}
-      // Features
-      features={{
-        fingerprinting: true,
-      }}
-      // Analytics
-      beacon={{
-        enabled: true,
-        batchSize: 10,
-        flushInterval: 5000,
-      }}
-    >
-      <YourApp />
-    </FanfareProvider>
-  );
-}
-```
-
-## Accessing the SDK Directly
-
-Sometimes you need direct access to the SDK instance. Use the `useFanfare` hook:
-
-```tsx
-import { useFanfare } from "@fanfare/react";
-
-function MyComponent() {
-  const fanfare = useFanfare();
-
-  const handleCustomAction = async () => {
-    // Access SDK methods directly
-    const session = fanfare.auth.getSession();
-    const active = await fanfare.getActiveExperiences();
-    console.log("Session:", session);
-    console.log("Active experiences:", active);
-  };
-
-  return <button onClick={handleCustomAction}>Check Status</button>;
-}
-```
-
-The `useFanfare` hook returns the initialized `FanfareSDK` instance.
+Only enable debug logging during development or guided troubleshooting.
 
 ## Next Steps
 
-- [First Experience](/getting-started/first-experience) - Create your first queue, draw, or auction
-- [Testing](/getting-started/testing) - Set up local testing with mock utilities
-- [Deployment](/getting-started/deployment) - Production deployment checklist
+- [Quickstart](/getting-started/quickstart) - Render the first experience.
+- [Testing](/getting-started/testing) - Test public journey states.
+- [Configuration Reference](/sdk/reference/configuration) - Review the full public option list.
