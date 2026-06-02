@@ -3423,9 +3423,6 @@
                         "consumerId": {
                           "type": "string"
                         },
-                        "deviceFingerprint": {
-                          "type": "string"
-                        },
                         "email": {
                           "type": "string"
                         },
@@ -3624,9 +3621,6 @@
                     "session": {
                       "properties": {
                         "consumerId": {
-                          "type": "string"
-                        },
-                        "deviceFingerprint": {
                           "type": "string"
                         },
                         "email": {
@@ -4194,9 +4188,6 @@
                         "consumerId": {
                           "type": "string"
                         },
-                        "deviceFingerprint": {
-                          "type": "string"
-                        },
                         "email": {
                           "type": "string"
                         },
@@ -4760,17 +4751,6 @@
                         }
                       ]
                     },
-                    "lastRiskAssessmentAt": {
-                      "anyOf": [
-                        {
-                          "format": "date-time",
-                          "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
                     "loyaltyBalance": {
                       "default": 0,
                       "type": "number"
@@ -4872,9 +4852,6 @@
                           "type": "null"
                         }
                       ]
-                    },
-                    "riskScore": {
-                      "type": "number"
                     },
                     "smsOptOut": {
                       "default": false,
@@ -5393,17 +5370,6 @@
                         }
                       ]
                     },
-                    "lastRiskAssessmentAt": {
-                      "anyOf": [
-                        {
-                          "format": "date-time",
-                          "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
                     "loyaltyBalance": {
                       "default": 0,
                       "type": "number"
@@ -5505,9 +5471,6 @@
                           "type": "null"
                         }
                       ]
-                    },
-                    "riskScore": {
-                      "type": "number"
                     },
                     "smsOptOut": {
                       "default": false,
@@ -12935,29 +12898,6 @@
                           },
                           "type": "array"
                         },
-                        "riskAssessment": {
-                          "properties": {
-                            "blocked": {
-                              "type": "boolean"
-                            },
-                            "requiresChallenge": {
-                              "type": "boolean"
-                            },
-                            "riskLevel": {
-                              "enum": [
-                                "LOW",
-                                "MEDIUM",
-                                "HIGH"
-                              ]
-                            }
-                          },
-                          "required": [
-                            "riskLevel",
-                            "requiresChallenge",
-                            "blocked"
-                          ],
-                          "type": "object"
-                        },
                         "schemaVersion": {
                           "const": 1
                         },
@@ -13246,29 +13186,6 @@
                           },
                           "type": "array"
                         },
-                        "riskAssessment": {
-                          "properties": {
-                            "blocked": {
-                              "type": "boolean"
-                            },
-                            "requiresChallenge": {
-                              "type": "boolean"
-                            },
-                            "riskLevel": {
-                              "enum": [
-                                "LOW",
-                                "MEDIUM",
-                                "HIGH"
-                              ]
-                            }
-                          },
-                          "required": [
-                            "riskLevel",
-                            "requiresChallenge",
-                            "blocked"
-                          ],
-                          "type": "object"
-                        },
                         "schemaVersion": {
                           "const": 1
                         },
@@ -13556,29 +13473,6 @@
                             "type": "object"
                           },
                           "type": "array"
-                        },
-                        "riskAssessment": {
-                          "properties": {
-                            "blocked": {
-                              "type": "boolean"
-                            },
-                            "requiresChallenge": {
-                              "type": "boolean"
-                            },
-                            "riskLevel": {
-                              "enum": [
-                                "LOW",
-                                "MEDIUM",
-                                "HIGH"
-                              ]
-                            }
-                          },
-                          "required": [
-                            "riskLevel",
-                            "requiresChallenge",
-                            "blocked"
-                          ],
-                          "type": "object"
                         },
                         "schemaVersion": {
                           "const": 1

@@ -6,7 +6,15 @@ const OUTPUT_DIR = "api/openapi";
 const DOCS_CONFIG_PATH = "docs.json";
 const METHODS = ["get", "post", "put", "patch", "delete", "options", "head"];
 const METHOD_ORDER = new Map(METHODS.map((method, index) => [method, index]));
-const PUBLIC_OMITTED_SCHEMA_FIELDS = new Set(["botScore", "fingerprint", "source"]);
+const PUBLIC_OMITTED_SCHEMA_FIELDS = new Set([
+  "botScore",
+  "deviceFingerprint",
+  "fingerprint",
+  "lastRiskAssessmentAt",
+  "riskAssessment",
+  "riskScore",
+  "source",
+]);
 
 const genericJsonValueSchema = {
   anyOf: [

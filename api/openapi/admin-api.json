@@ -12822,17 +12822,6 @@
                               }
                             ]
                           },
-                          "lastRiskAssessmentAt": {
-                            "anyOf": [
-                              {
-                                "format": "date-time",
-                                "type": "string"
-                              },
-                              {
-                                "type": "null"
-                              }
-                            ]
-                          },
                           "loyaltyBalance": {
                             "default": 0,
                             "type": "number"
@@ -13200,9 +13189,6 @@
                                 "type": "null"
                               }
                             ]
-                          },
-                          "riskScore": {
-                            "type": "number"
                           },
                           "smsOptOut": {
                             "default": false,
@@ -17080,17 +17066,6 @@
                               }
                             ]
                           },
-                          "lastRiskAssessmentAt": {
-                            "anyOf": [
-                              {
-                                "format": "date-time",
-                                "type": "string"
-                              },
-                              {
-                                "type": "null"
-                              }
-                            ]
-                          },
                           "loyaltyBalance": {
                             "default": 0,
                             "type": "number"
@@ -17458,9 +17433,6 @@
                                 "type": "null"
                               }
                             ]
-                          },
-                          "riskScore": {
-                            "type": "number"
                           },
                           "smsOptOut": {
                             "default": false,
@@ -20159,17 +20131,6 @@
                               }
                             ]
                           },
-                          "lastRiskAssessmentAt": {
-                            "anyOf": [
-                              {
-                                "format": "date-time",
-                                "type": "string"
-                              },
-                              {
-                                "type": "null"
-                              }
-                            ]
-                          },
                           "loyaltyBalance": {
                             "default": 0,
                             "type": "number"
@@ -20537,9 +20498,6 @@
                                 "type": "null"
                               }
                             ]
-                          },
-                          "riskScore": {
-                            "type": "number"
                           },
                           "smsOptOut": {
                             "default": false,
@@ -21029,17 +20987,6 @@
                         }
                       ]
                     },
-                    "lastRiskAssessmentAt": {
-                      "anyOf": [
-                        {
-                          "format": "date-time",
-                          "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
                     "loyaltyBalance": {
                       "default": 0,
                       "type": "number"
@@ -21407,9 +21354,6 @@
                           "type": "null"
                         }
                       ]
-                    },
-                    "riskScore": {
-                      "type": "number"
                     },
                     "smsOptOut": {
                       "default": false,
@@ -21937,17 +21881,6 @@
                         }
                       ]
                     },
-                    "lastRiskAssessmentAt": {
-                      "anyOf": [
-                        {
-                          "format": "date-time",
-                          "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
                     "loyaltyBalance": {
                       "default": 0,
                       "type": "number"
@@ -22209,9 +22142,6 @@
                           "type": "null"
                         }
                       ]
-                    },
-                    "riskScore": {
-                      "type": "number"
                     },
                     "smsOptOut": {
                       "default": false,
@@ -22661,17 +22591,6 @@
                         }
                       ]
                     },
-                    "lastRiskAssessmentAt": {
-                      "anyOf": [
-                        {
-                          "format": "date-time",
-                          "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
                     "loyaltyBalance": {
                       "default": 0,
                       "type": "number"
@@ -22933,9 +22852,6 @@
                           "type": "null"
                         }
                       ]
-                    },
-                    "riskScore": {
-                      "type": "number"
                     },
                     "smsOptOut": {
                       "default": false,
@@ -25162,17 +25078,6 @@
                           }
                         ]
                       },
-                      "lastRiskAssessmentAt": {
-                        "anyOf": [
-                          {
-                            "format": "date-time",
-                            "type": "string"
-                          },
-                          {
-                            "type": "null"
-                          }
-                        ]
-                      },
                       "loyaltyBalance": {
                         "default": 0,
                         "type": "number"
@@ -25434,9 +25339,6 @@
                             "type": "null"
                           }
                         ]
-                      },
-                      "riskScore": {
-                        "type": "number"
                       },
                       "smsOptOut": {
                         "default": false,
@@ -68475,17 +68377,6 @@
                               }
                             ]
                           },
-                          "lastRiskAssessmentAt": {
-                            "anyOf": [
-                              {
-                                "format": "date-time",
-                                "type": "string"
-                              },
-                              {
-                                "type": "null"
-                              }
-                            ]
-                          },
                           "loyaltyBalance": {
                             "default": 0,
                             "type": "number"
@@ -68747,9 +68638,6 @@
                                 "type": "null"
                               }
                             ]
-                          },
-                          "riskScore": {
-                            "type": "number"
                           },
                           "smsOptOut": {
                             "default": false,
