@@ -1,0 +1,47 @@
+---
+title: Configure Waitlist
+description: Set up waitlists for interest capture and overflow handling
+---
+
+# Configure Waitlist
+
+Waitlists capture consumer interest for an access path. They are useful before a launch, when another distribution is not active yet, or when you want to collect demand without granting checkout access.
+
+## Creating a Waitlist
+
+1. Navigate to **Experiences > Create Experience**
+2. Configure the access path that should collect interest
+3. Add or configure the waitlist for that path when the option is available for your account
+4. Set the waitlist capacity, if you need one
+
+## Waitlist Settings
+
+| Setting | API field | Required | Description |
+| --- | --- | --- | --- |
+| **Capacity** | `capacity` | No | Maximum waitlist entries. Leave unset when you want to capture all interested consumers. |
+
+Standalone Admin API creation also requires `sequenceId`. When a waitlist is created from the dashboard experience flow, the sequence relationship is handled by the selected access path.
+
+## Consumer Experience
+
+| State | Consumer experience |
+| --- | --- |
+| **Can join** | Consumer can join the waitlist for the access path. |
+| **Joined** | Consumer sees confirmation that they are on the waitlist. |
+| **Unavailable** | Waitlist is full or no public access path is available. |
+
+Waitlists do not grant checkout access by themselves. Consumers continue through the current public journey state when another distribution becomes available.
+
+## Common Patterns
+
+| Pattern | Configuration |
+| --- | --- |
+| Pre-launch interest | Waitlist sequence before a queue, draw, or timed release opens. |
+| Overflow | Waitlist shown when primary access is not available. |
+| Restock interest | Waitlist on a product or experience page to capture future demand. |
+
+## Related Guides
+
+- [Create Experience](/dashboard/experiences/create-experience) - General creation guide
+- [Experience Schedule](/dashboard/experiences/experience-lifecycle) - Derived timing and distribution states
+- [Waitlist Distribution](/concepts/distributions/exclusive) - Concept overview

@@ -51,13 +51,11 @@ Alt text: "Schedule configuration showing date range and time slot settings"
 
 _Caption: Configure available dates and times_
 
-| Field               | Required | Description                       |
-| ------------------- | -------- | --------------------------------- |
-| **Available From**  | Yes      | First date appointments available |
-| **Available Until** | Yes      | Last date appointments available  |
-| **Time Zone**       | Yes      | Time zone for all slots           |
-| **Booking Opens**   | No       | When consumers can start booking  |
-| **Booking Closes**  | No       | Deadline for booking              |
+| Field | API field | Required | Description |
+| --- | --- | --- | --- |
+| **Open At** | `openAt` | No | When booking becomes active. |
+| **Close At** | `closeAt` | No | When the booking window ends. |
+| **Time Zone** | `timeZone` | Yes | Time zone for all scheduled fields. |
 
 ### Time Slot Configuration
 
@@ -72,12 +70,11 @@ Alt text: "Time slot configuration showing duration and scheduling options"
 
 _Caption: Define your time slot structure_
 
-| Field              | Required | Description                                   |
-| ------------------ | -------- | --------------------------------------------- |
-| **Slot Duration**  | Yes      | Length of each appointment (e.g., 30 minutes) |
-| **Start Times**    | Yes      | When slots begin (e.g., every hour)           |
-| **Buffer Time**    | No       | Gap between appointments                      |
-| **Slots Per Time** | No       | Concurrent appointments allowed               |
+| Field | API field | Required | Description |
+| --- | --- | --- | --- |
+| **Slot Duration** | `slotDurationMinutes` | No | Length of each appointment. |
+| **Buffer Time** | `bufferMinutes` | No | Gap between appointment slots. |
+| **Max Capacity Per Slot** | `maxCapacityPerSlot` | No | Concurrent appointments allowed. |
 
 ### Availability Patterns
 
@@ -103,11 +100,9 @@ _Caption: Set different availability for each day of the week_
 
 ### Capacity Settings
 
-| Field                | Required | Description                     |
-| -------------------- | -------- | ------------------------------- |
-| **Slots Per Time**   | Yes      | How many can book the same slot |
-| **Max Per Day**      | No       | Total appointments per day      |
-| **Max Per Consumer** | No       | Limit bookings per consumer     |
+| Field | API field | Required | Description |
+| --- | --- | --- | --- |
+| **Max Capacity Per Slot** | `maxCapacityPerSlot` | No | How many consumers can book the same slot. |
 
 ## Location Configuration
 
@@ -124,11 +119,10 @@ Alt text: "Location configuration for in-person appointments"
 
 _Caption: Configure appointment location_
 
-| Field                    | Description                           |
-| ------------------------ | ------------------------------------- |
-| **Location**             | Select from your configured locations |
-| **Address Display**      | What consumers see for the address    |
-| **Arrival Instructions** | Directions, parking, check-in info    |
+| Field | API field | Description |
+| --- | --- | --- |
+| **Location** | `locationId` | Select from your configured locations. |
+| **Arrival Instructions** | Dashboard content | Directions, parking, or check-in instructions shown by your experience content. |
 
 ## Booking Rules
 
@@ -141,25 +135,6 @@ Control how far in advance bookings can be made:
 | **Minimum Notice**  | How far ahead bookings must be (e.g., 24 hours) |
 | **Maximum Advance** | How far ahead bookings can be (e.g., 30 days)   |
 
-### Cancellation Policy
-
-| Setting                 | Description                        |
-| ----------------------- | ---------------------------------- |
-| **Allow Cancellation**  | Whether consumers can cancel       |
-| **Cancellation Window** | How far ahead they must cancel     |
-| **Allow Rescheduling**  | Whether consumers can change times |
-
-{/* IMAGE_PLACEHOLDER
-Type: screenshot
-Page: /app/experiences/create?type=APPOINTMENT
-Shows: Cancellation and rescheduling settings
-Annotations: Label cancellation window and rescheduling toggle
-Alt text: "Booking policy settings for cancellations and changes"
-*/}
-
-
-_Caption: Set cancellation and rescheduling policies_
-
 ## Notifications
 
 ### Consumer Notifications
@@ -170,15 +145,12 @@ _Caption: Set cancellation and rescheduling policies_
 | **Reminder**               | Upcoming appointment reminder        |
 | **24-Hour Reminder**       | Day-before reminder                  |
 | **Same-Day Reminder**      | Morning-of reminder                  |
-| **Cancellation Confirmed** | Booking cancelled confirmation       |
-| **Rescheduled**            | New time confirmation                |
 
 ### Staff Notifications
 
 | Event                | Notification                  |
 | -------------------- | ----------------------------- |
 | **New Booking**      | Someone booked an appointment |
-| **Cancellation**     | Appointment was cancelled     |
 | **Today's Schedule** | Daily appointment summary     |
 
 ### Reminder Schedule
@@ -191,22 +163,20 @@ Configure automatic reminders:
 | 24 hours before | Standard reminder     |
 | 2 hours before  | Same-day confirmation |
 
-## Appointment States
+## Appointment Timing
 
 ```
-Draft → Published → Booking Open → In Progress → Completed
-                         ↓              ↓
-                    Fully Booked    Cancelled
+upcoming -> active -> ended
+              ↓
+            killed
 ```
 
-| State            | Description                      |
-| ---------------- | -------------------------------- |
-| **Draft**        | Not published                    |
-| **Published**    | Live, waiting for booking window |
-| **Booking Open** | Accepting reservations           |
-| **Fully Booked** | All slots filled                 |
-| **In Progress**  | Appointments happening           |
-| **Completed**    | All appointments finished        |
+| State | Description |
+| --- | --- |
+| **upcoming** | The appointment distribution is scheduled but booking is not active yet. |
+| **active** | Consumers can book available slots. |
+| **ended** | The booking window has closed. |
+| **killed** | The distribution has been stopped and booking is unavailable. |
 
 ## Example: Private Shopping Experience
 
@@ -225,27 +195,21 @@ Product: Exclusive Collection Preview
 Audience: VIP Members
 
 Schedule:
-  Available From: March 1
-  Available Until: March 31
-  Booking Opens: February 20
+  Open At: February 20
+  Close At: March 31
 
 Time Slots:
-  Duration: 60 minutes
-  Buffer: 15 minutes
-  Start Times: 10 AM, 12 PM, 2 PM, 4 PM
+  Slot Duration Minutes: 60
+  Buffer Minutes: 15
+  Max Capacity Per Slot: 2
 
 Weekly Availability:
   Monday-Friday: 10 AM - 6 PM
   Saturday: Closed
   Sunday: Closed
 
-Capacity:
-  Slots Per Time: 2
-  Max Per Consumer: 1
-
 Location:
-  Name: "Flagship Store"
-  Address: "123 Main St, Suite 100"
+  Location ID: "loc_flagship"
   Instructions: "Enter through VIP entrance on Oak Street"
 
 Booking Rules:
@@ -330,8 +294,7 @@ Block times for breaks, staff meetings, or maintenance:
 
 1. **Clear instructions** - Location, parking, what to bring
 2. **Multiple reminders** - Reduce no-shows
-3. **Easy rescheduling** - Make changes simple
-4. **Follow-up** - Post-appointment feedback
+3. **Follow-up** - Post-appointment feedback
 
 ## Handling Issues
 
@@ -353,17 +316,8 @@ If you accidentally overbooked:
 3. Provide compensation if appropriate
 4. Review booking system settings
 
-### Last-Minute Cancellations
-
-If cancellations create empty slots:
-
-- Enable waitlist notifications
-- Reduce cancellation window
-- Consider cancellation fees
-- Offer to reschedule instead
-
 ## Related Guides
 
 - [Location Management](/dashboard/settings/overview) - Set up appointment locations
-- [Experience Lifecycle](/dashboard/experiences/experience-lifecycle) - Managing active appointments
+- [Experience Schedule](/dashboard/experiences/experience-lifecycle) - Understanding appointment timing
 - [Experience Analytics](/dashboard/experiences/experience-analytics) - Appointment metrics

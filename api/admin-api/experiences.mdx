@@ -1,0 +1,69 @@
+---
+title: "Admin Experience Contracts"
+description: "Public contract notes for creating and updating experiences."
+---
+
+# Admin Experience Contracts
+
+Use the generated endpoint reference for the complete schema. This page highlights the fields most often used when creating or updating experiences through the Admin API.
+
+## Create Experience
+
+`POST /experiences` creates the experience container. The request body accepts:
+
+| Field | Required | Description |
+| --- | --- | --- |
+| `name` | Yes | Customer-facing experience name. |
+| `timeZone` | No | Time zone used when child distributions do not supply their own. |
+| `products` | No | Product mappings for the experience. |
+| `accessCode` | No | Experience-level access code. Use sequence access codes for path-specific gates. |
+| `theme` | No | Brand theme overrides for this experience. |
+| `i18n` | No | Experience-level text overrides. |
+| `sequence` | No | Nested access path and distribution creation. |
+
+Experience `openAt` and `closeAt` appear in responses, but they are derived from the attached distribution windows. Set timing on the distribution records rather than sending top-level experience timing.
+
+## Nested Sequence Creation
+
+The optional `sequence` object lets an integration create the first access path and its distributions in the same request:
+
+| Field | Required | Description |
+| --- | --- | --- |
+| `name` | Yes | Access path name. |
+| `audienceId` | No | Audience required for this path. |
+| `accessCode` | No | Access code required for this path. |
+| `priority` | No | Higher numeric priority is evaluated first. |
+| `productSelectionMode` | No | Product selection mode for the products routed through this path. |
+| `sequenceProducts` | No | Product allocation weights for system-assigned selection. Each item includes `productId` and `weight`. |
+| `queues`, `draws`, `auctions`, `appointments`, `timedReleases` | No | Distributions to create under the sequence. |
+
+Nested distributions use the same field names as their standalone Admin API endpoints, without `sequenceId` because the API creates that relationship from the nested sequence.
+
+Waitlists are managed through the waitlist and sequence surfaces rather than the nested `POST /experiences` distribution array.
+
+## Update Experience
+
+`PUT /experiences/{id}` updates top-level experience metadata only:
+
+| Field | Description |
+| --- | --- |
+| `name` | Experience name. |
+| `timeZone` | Experience time zone. |
+| `theme` | Brand theme overrides. |
+| `i18n` | Text overrides. |
+
+Use product, sequence, and distribution endpoints to update product mappings, access paths, access codes, distribution timing, capacity, winner selection, auction pricing, waitlists, or timed-release settings.
+
+## Timing
+
+Experience timing is calculated from child distributions:
+
+| Distribution | Timing fields used for the experience envelope |
+| --- | --- |
+| Queue | `openAt`, `closeAt` |
+| Draw | `openAt`, `closeAt`, `drawAt` |
+| Auction | `openAt`, `closeAt`, `settleAt` |
+| Appointment | `openAt`, `closeAt` |
+| Timed release | `openAt`, `closeAt` |
+
+An experience with no scheduled distributions has no derived schedule until distributions are added.

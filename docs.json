@@ -252,6 +252,7 @@
               {
                 "group": "Distributions",
                 "pages": [
+                  "api/admin-api/distributions",
                   "api/openapi/admin-api.json GET /announcements",
                   "api/openapi/admin-api.json POST /announcements",
                   "api/openapi/admin-api.json GET /announcements/{id}",
@@ -320,6 +321,7 @@
               {
                 "group": "Experiences",
                 "pages": [
+                  "api/admin-api/experiences",
                   "api/openapi/admin-api.json GET /experience-pages",
                   "api/openapi/admin-api.json POST /experience-pages",
                   "api/openapi/admin-api.json GET /experience-pages/{id}",
@@ -567,6 +569,8 @@
               "dashboard/experiences/configure-auction",
               "dashboard/experiences/configure-lottery",
               "dashboard/experiences/configure-appointment",
+              "dashboard/experiences/configure-timed-release",
+              "dashboard/experiences/configure-waitlist",
               "dashboard/experiences/experience-lifecycle",
               "dashboard/experiences/experience-analytics"
             ]

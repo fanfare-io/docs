@@ -35,65 +35,54 @@ _Caption: The queue creation form with all configuration options_
 
 ## Queue-Specific Settings
 
-### Queue Behavior
+### Queue Contract
 
-| Setting              | Description                              | Default                  |
-| -------------------- | ---------------------------------------- | ------------------------ |
-| **Queue Mode**       | How consumers progress through the queue | First-come, first-served |
-| **Auto-advance**     | Automatically move consumers forward     | Enabled                  |
-| **Position Display** | Show consumers their position in line    | Enabled                  |
+| Setting | API field | Required | Description |
+| --- | --- | --- | --- |
+| **Admit Rate** | `admitRate` | Yes | Rate at which consumers are admitted. |
+| **Queue Capacity** | `capacity` | No | Maximum consumers allowed in the queue. |
+| **Max Admissions** | `maxAdmissions` | No | Maximum consumers who can be admitted. |
+| **Admission Window** | `admissionExpirationSeconds` | No | How long admitted consumers have to continue. |
 
-### Entry Window
+### Timing Window
 
-Configure when consumers can join the queue:
+Configure when the queue is active:
 
 {/* IMAGE_PLACEHOLDER
 Type: screenshot
 Page: /app/experiences/create?type=QUEUE
 Shows: Entry window configuration section
 Annotations: Label start time, end time fields
-Alt text: "Entry window configuration for queue start and end times"
+Alt text: "Timing window configuration for queue open and close times"
 */}
 
 
 _Caption: Set when consumers can join the queue_
 
-| Field            | Required | Description                                                     |
-| ---------------- | -------- | --------------------------------------------------------------- |
-| **Entry Opens**  | Yes      | Date/time when consumers can start joining                      |
-| **Entry Closes** | No       | Date/time when new entries stop (queue can continue processing) |
+| Field | Required | Description |
+| --- | --- | --- |
+| **Open At** | No | Date/time when the queue becomes active. |
+| **Close At** | No | Date/time when the queue window ends. |
+| **Time Zone** | Yes | Time zone for queue timing. |
 
-### Service Window
-
-Configure when queue processing occurs:
-
-| Field              | Required | Description                             |
-| ------------------ | -------- | --------------------------------------- |
-| **Service Starts** | Yes      | When the queue begins serving consumers |
-| **Service Ends**   | No       | When queue processing stops             |
-
-<Tip>
-You can allow entries before service begins. This lets consumers join early while processing starts at a specific time.
-</Tip>
-
-### Inventory Configuration
+### Capacity Configuration
 
 {/* IMAGE_PLACEHOLDER
 Type: screenshot
 Page: /app/experiences/create?type=QUEUE
-Shows: Inventory settings section
+Shows: Capacity settings section
 Annotations: Label quantity fields
-Alt text: "Inventory configuration showing quantity and per-consumer limits"
+Alt text: "Capacity configuration showing queue limits"
 */}
 
 
 _Caption: Configure how many consumers can be served_
 
-| Field                  | Required | Description                            |
-| ---------------------- | -------- | -------------------------------------- |
-| **Total Inventory**    | Yes      | Total number of successful completions |
-| **Per-Consumer Limit** | No       | Maximum purchases per consumer         |
-| **Reserve Quantity**   | No       | Inventory held back for later release  |
+| Field | Required | Description |
+| --- | --- | --- |
+| **Admit Rate** | Yes | Rate at which consumers are admitted. |
+| **Queue Capacity** | No | Maximum consumers waiting at once. |
+| **Max Admissions** | No | Maximum consumers admitted over the queue window. |
 
 ### Timeout Settings
 
@@ -101,8 +90,7 @@ Configure how long consumers have to complete their purchase:
 
 | Field                | Description                                            | Recommended   |
 | -------------------- | ------------------------------------------------------ | ------------- |
-| **Checkout Timeout** | Time allowed to complete purchase after reaching front | 10-15 minutes |
-| **Idle Timeout**     | Time before inactive consumers are removed             | 30 minutes    |
+| **Admission Window** | Time allowed to continue after admission | 10-15 minutes |
 
 {/* IMAGE_PLACEHOLDER
 Type: screenshot
@@ -130,16 +118,6 @@ Show consumers estimated wait times based on:
 | **Show Position**    | Display queue position to consumers |
 | **Show Estimate**    | Display estimated wait time         |
 | **Refresh Interval** | How often to update position info   |
-
-### Fairness Controls
-
-Prevent abuse and ensure fair access:
-
-| Setting                    | Description                              |
-| -------------------------- | ---------------------------------------- |
-| **One Entry Per Consumer** | Prevent duplicate entries                |
-| **Device Fingerprinting**  | Detect multiple entries from same device |
-| **Rate Limiting**          | Limit entry attempts per IP              |
 
 ### Notifications
 
@@ -187,18 +165,16 @@ Name: "Air Max 2024 Launch Queue"
 Product: Air Max Limited Edition
 Audience: All Customers
 
-Schedule:
-  Entry Opens: Friday 6 PM (day before)
-  Service Starts: Saturday 10 AM
-  Entry Closes: Saturday 2 PM
+Timing:
+  Open At: Friday 6 PM
+  Close At: Saturday 2 PM
 
-Inventory:
-  Total: 500
-  Per-Consumer: 1
+Capacity:
+  Admit Rate: 100/minute
+  Max Admissions: 500
 
 Timeouts:
-  Checkout: 10 minutes
-  Idle: 30 minutes
+  Admission Window: 10 minutes
 
 Notifications:
   - Entry confirmed
@@ -222,7 +198,7 @@ _Caption: A fully configured product launch queue_
 ### Before Launch
 
 1. **Test with small inventory** - Create a test queue with 5-10 items
-2. **Verify notifications** - Ensure email/SMS delivery works
+2. **Verify notifications** - Ensure customer notifications work
 3. **Check audience access** - Confirm target audience can see the queue
 4. **Set realistic timeouts** - Balance urgency with customer experience
 
@@ -231,7 +207,7 @@ _Caption: A fully configured product launch queue_
 1. **Monitor in real-time** - Watch the dashboard for issues
 2. **Respond to support requests** - Handle consumer questions quickly
 3. **Stop entry if needed** - Use the dashboard controls if an operational issue requires ending consumer entry
-4. **Track completion rate** - Monitor how many complete vs. timeout
+4. **Track completion rate** - Monitor how many admitted consumers continue vs. expire
 
 ### Common Mistakes to Avoid
 
@@ -260,16 +236,8 @@ If the queue seems stuck:
 - Verify inventory is available
 - Look for payment processing issues
 
-### Suspected Abuse
-
-If you notice suspicious activity:
-
-- Enable device fingerprinting
-- Review entries for patterns
-- Consider pausing and investigating
-
 ## Related Guides
 
-- [Experience Lifecycle](/dashboard/experiences/experience-lifecycle) - Managing active queues
+- [Experience Schedule](/dashboard/experiences/experience-lifecycle) - Understanding queue timing
 - [Experience Analytics](/dashboard/experiences/experience-analytics) - Understanding queue metrics
 - [Create Experience](/dashboard/experiences/create-experience) - General creation guide

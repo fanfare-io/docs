@@ -1,0 +1,82 @@
+---
+title: "Admin Distribution Contracts"
+description: "Current public field names for Admin API distribution creation and updates."
+---
+
+# Admin Distribution Contracts
+
+Distributions define consumer timing and participation inside a sequence. Use these field names with standalone distribution endpoints or nested under `POST /experiences` sequence creation.
+
+## Shared Timing Fields
+
+| Field | Required | Description |
+| --- | --- | --- |
+| `sequenceId` | Standalone create only | Parent sequence. Omit this field when creating distributions nested under `POST /experiences`. |
+| `name` | Yes | Distribution name. |
+| `openAt` | No | When the distribution becomes active. |
+| `closeAt` | No | When the active window ends. |
+| `timeZone` | No | Time zone for scheduled fields. If omitted during nested experience creation, the organization or experience default is used. |
+
+The public timing states are `upcoming`, `active`, `ended`, and `killed`. Customer-facing docs should use those distribution timing concepts instead of a separate experience-level state machine.
+
+## Queues
+
+| Field | Required | Description |
+| --- | --- | --- |
+| `admitRate` | Yes | Rate at which consumers are admitted. |
+| `capacity` | No | Maximum consumers allowed in the queue. |
+| `maxAdmissions` | No | Maximum consumers who can be admitted. |
+| `admissionExpirationSeconds` | No | Checkout/access window after admission. |
+
+## Draws
+
+| Field | Required | Description |
+| --- | --- | --- |
+| `drawAt` | Yes | When winner selection runs. |
+| `winnerCount` | Yes | Number of winners to select. |
+| `capacity` | No | Maximum draw entries. |
+| `admissionExpirationSeconds` | No | Checkout/access window for winners. |
+| `continueSelectingUntilCompleted` | No | Continue selecting replacements until the configured winner count completes, when supported for the launch. |
+
+## Auctions
+
+| Field | Required | Description |
+| --- | --- | --- |
+| `settleAt` | Yes | Settlement deadline/time used in the distribution schedule. |
+| `auctionType` | No | `english` or `dutch`; defaults to `english`. |
+| `reservePrice` | No | Minimum successful price. Money fields are strings. |
+| `minBidIncrement` | No | Minimum increment for English auctions. Money fields are strings. |
+| `autoExtendSeconds` | No | Extension duration for late bidding. |
+| `startPrice` | No | Starting price for Dutch auctions. Money fields are strings. |
+| `floorPrice` | No | Floor price for Dutch auctions. Money fields are strings. |
+| `priceDropAmount` | No | Dutch price drop amount. Money fields are strings. |
+| `priceDropIntervalSeconds` | No | Dutch price drop interval. |
+| `quantity` | No | Quantity available for the auction. |
+
+Send money values as decimal strings such as `"25"` or `"25.00"`, never numbers.
+
+## Timed Releases
+
+| Field | Required | Description |
+| --- | --- | --- |
+| `supportsGuest` | Yes | Whether guest participants can use the timed release. |
+| `openAt` | No | Release start. |
+| `closeAt` | No | Release end, if any. |
+
+## Waitlists
+
+| Field | Required | Description |
+| --- | --- | --- |
+| `sequenceId` | Yes | Parent sequence for standalone create. |
+| `capacity` | No | Maximum waitlist entries. |
+
+Waitlists capture interest and do not grant checkout access by themselves. They are created and updated through the waitlist surfaces, not through the nested distribution arrays on `POST /experiences`.
+
+## Appointments
+
+| Field | Required | Description |
+| --- | --- | --- |
+| `locationId` | No | Location associated with the appointment distribution. |
+| `slotDurationMinutes` | No | Slot length. |
+| `bufferMinutes` | No | Gap between slots. |
+| `maxCapacityPerSlot` | No | Maximum bookings per slot. |

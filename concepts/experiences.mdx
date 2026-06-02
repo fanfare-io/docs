@@ -16,52 +16,28 @@ Think of an experience as a campaign for a specific launch or event. When you cr
 - **How** — The method consumers use to get access (queue, draw, auction, etc.)
 - **Who** — Which consumer groups can participate (optional)
 
-## Experience Lifecycle
-
-Experiences go through three phases based on timing:
+## Experience Schedule
 
 ```
-┌─────────────────────────────────────────────────────────────────────┐
-│                       EXPERIENCE TIMELINE                            │
-├─────────────────────────────────────────────────────────────────────┤
-│                                                                     │
-│  ╔═══════════════╗    ╔════════════════╗    ╔═══════════════╗      │
-│  ║   SCHEDULED   ║    ║     OPEN       ║    ║    CLOSED     ║      │
-│  ╟───────────────╢    ╟────────────────╢    ╟───────────────╢      │
-│  ║  Consumers    ║    ║  Consumers     ║    ║  Experience   ║      │
-│  ║  see a        ║    ║  can join and  ║    ║  has ended    ║      │
-│  ║  countdown    ║    ║  participate   ║    ║               ║      │
-│  ╚═══════════════╝    ╚════════════════╝    ╚═══════════════╝      │
-│         │                    │                    │                 │
-│         │                    │                    │                 │
-│  ───────┼────────────────────┼────────────────────┼──────────►      │
-│      Opens at            Active period        Closes at             │
-│                                                                     │
-└─────────────────────────────────────────────────────────────────────┘
+[Experience]
+    │ contains
+    ▼
+[Sequences] ── contain ──► [Distributions]
+                              │
+                              ├─ upcoming
+                              ├─ active
+                              └─ ended
 ```
 
-### Scheduled
+An experience does not have a separate public state machine. Its visible schedule is derived from the distributions attached to its sequences.
 
-Before the open time, consumers see a countdown. They cannot participate yet but can see what's coming.
+| Distribution timing | Consumer-facing meaning |
+| --- | --- |
+| **upcoming** | The distribution has not opened yet; consumers may see a launch time, countdown, or waitlist prompt. |
+| **active** | The distribution is available for its supported action, such as entering, bidding, booking, or claiming access. |
+| **ended** | The distribution window has closed; consumers see closed-state messaging or their outcome. |
 
-### Open
-
-Once the experience opens, consumers can participate according to the distribution method you've configured (join a queue, enter a draw, place a bid, etc.).
-
-### Closed
-
-After the close time, no new entries are allowed. Consumers who already have access can still complete their purchases within their time window.
-
-## Timing Options
-
-You can configure timing in several ways:
-
-| Open Time | Close Time | Result                                                              |
-| --------- | ---------- | ------------------------------------------------------------------- |
-| Set       | Set        | Opens at the scheduled time, closes at the end time                 |
-| Set       | Not set    | Opens at the scheduled time, stays open until you manually close it |
-| Not set   | Set        | Open immediately, closes at the end time                            |
-| Not set   | Not set    | Always open (until you manually close it)                           |
+Draw `drawAt` and auction `settleAt` can extend the derived experience schedule beyond the entry or bidding window because they represent outcome timing.
 
 ## Access Paths (Sequences)
 
@@ -99,11 +75,10 @@ Within an experience, you can create multiple **access paths** (called sequences
 
 When a consumer enters your experience:
 
-1. The system checks sequences in priority order (higher numeric priority is evaluated first)
-2. For each sequence, it checks if the consumer qualifies:
-   - Are they in the required audience? (if set)
-   - Do they have the access code? (if required)
-3. The consumer is assigned to the first sequence they qualify for
+1. Fanfare evaluates available sequences in priority order.
+2. The response returns a public outcome such as `routed`, `gated`, or `no_access`.
+3. If the consumer is gated, the response tells your UI which public requirement to collect, such as authentication, an access code, or a verification step.
+4. Once routed, the current journey state exposes only the actions that are valid for that state.
 
 ### Common Patterns
 
@@ -201,6 +176,8 @@ Consumer participates according to the distribution type:
 - Entered in a draw
 - Placing bids in an auction
 - Booking an appointment
+- Claiming a timed release
+- Joining a waitlist when the current access path offers one
 
 ### 4. Getting Access
 

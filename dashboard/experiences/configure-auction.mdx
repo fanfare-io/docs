@@ -40,22 +40,21 @@ _Caption: The auction creation form with all configuration options_
 
 Choose the auction format:
 
-| Type                    | Description                      | Best For                         |
-| ----------------------- | -------------------------------- | -------------------------------- |
-| **English (Ascending)** | Bids increase until time expires | Most common, transparent         |
-| **Dutch (Descending)**  | Price drops until someone bids   | Quick sales, perishables         |
-| **Sealed Bid**          | Hidden bids revealed at end      | Fair allocation, no bidding wars |
+| Type | API value | Description | Best For |
+| --- | --- | --- | --- |
+| **English (Ascending)** | `english` | Bids increase until time expires | Most common, transparent |
+| **Dutch (Descending)** | `dutch` | Price drops over time until purchase or floor price | Quick sales, perishables |
 
 {/* IMAGE_PLACEHOLDER
 Type: screenshot
 Page: /app/experiences/create?type=AUCTION
 Shows: Auction type selector
 Annotations: Label each auction type option
-Alt text: "Auction type selection showing English, Dutch, and Sealed bid options"
+Alt text: "Auction type selection showing English and Dutch options"
 */}
 
 
-_Caption: Choose from three auction formats_
+_Caption: Choose the supported auction format_
 
 ### Pricing Configuration
 
@@ -70,12 +69,16 @@ Alt text: "Auction pricing configuration with reserve price and bid settings"
 
 _Caption: Configure pricing rules for your auction_
 
-| Field             | Required | Description                          |
-| ----------------- | -------- | ------------------------------------ |
-| **Starting Bid**  | Yes      | Minimum first bid amount             |
-| **Reserve Price** | No       | Minimum price for the item to sell   |
-| **Bid Increment** | Yes      | Minimum increase between bids        |
-| **Buy Now Price** | No       | Price to immediately win the auction |
+| Field | API field | Required | Description |
+| --- | --- | --- | --- |
+| **Auction Type** | `auctionType` | No | `english` or `dutch`; defaults to `english`. |
+| **Reserve Price** | `reservePrice` | No | Minimum successful price. |
+| **Minimum Bid Increment** | `minBidIncrement` | No | Minimum increment for English auctions. |
+| **Start Price** | `startPrice` | No | Starting price for Dutch auctions. |
+| **Floor Price** | `floorPrice` | No | Lowest Dutch auction price. |
+| **Price Drop Amount** | `priceDropAmount` | No | Dutch auction drop amount. |
+| **Price Drop Interval** | `priceDropIntervalSeconds` | No | Seconds between Dutch price drops. |
+| **Quantity** | `quantity` | No | Quantity available. |
 
 <Info>
 **Reserve Price**
@@ -83,24 +86,24 @@ _Caption: Configure pricing rules for your auction_
 If the reserve price isn't met, the item won't sell even if there are bids. The reserve is hidden from bidders by default.
 </Info>
 
+Send money values as decimal strings, such as `"100"` or `"100.00"`, when using the Admin API.
+
 ### Schedule Configuration
 
-| Field             | Required | Description                             |
-| ----------------- | -------- | --------------------------------------- |
-| **Auction Start** | Yes      | When bidding opens                      |
-| **Auction End**   | Yes      | When bidding closes                     |
-| **Soft Close**    | No       | Extend auction if bid placed near end   |
-| **Settle By**     | No       | Deadline for winner to complete payment |
+| Field | API field | Required | Description |
+| --- | --- | --- | --- |
+| **Open At** | `openAt` | No | When bidding opens. |
+| **Close At** | `closeAt` | No | When bidding closes. |
+| **Settle At** | `settleAt` | Yes | Settlement timing used for the auction schedule. |
+| **Auto Extend Seconds** | `autoExtendSeconds` | No | Extension duration for late bidding. |
 
-### Soft Close (Anti-Sniping)
+### Auto Extend
 
-Prevent last-second bidding from unfairly winning auctions:
+Extend the auction when late bidding occurs:
 
-| Setting                | Description                                               |
-| ---------------------- | --------------------------------------------------------- |
-| **Extension Window**   | Time before end that triggers extension (e.g., 5 minutes) |
-| **Extension Duration** | How long to extend (e.g., 5 minutes)                      |
-| **Max Extensions**     | Maximum number of extensions allowed                      |
+| Setting | API field | Description |
+| --- | --- | --- |
+| **Auto Extend Seconds** | `autoExtendSeconds` | Extension duration applied by the auction when late bidding extends the close. |
 
 {/* IMAGE_PLACEHOLDER
 Type: screenshot
@@ -136,24 +139,15 @@ Alt text: "Stripe Connect integration for auction payments"
 
 _Caption: Connect Stripe to process auction payments_
 
-### Payment Terms
-
-| Setting          | Description                          |
-| ---------------- | ------------------------------------ |
-| **Payment Due**  | Hours after auction ends for payment |
-| **Auto-charge**  | Automatically charge winning bidder  |
-| **Payment Hold** | Authorize payment before bidding     |
-
 ## Bidder Requirements
 
 Control who can participate:
 
-| Setting                     | Description                         |
-| --------------------------- | ----------------------------------- |
-| **Audience Restriction**    | Limit to specific audiences         |
-| **Payment Method Required** | Require card on file before bidding |
-| **Bid Approval**            | Manually approve bidders            |
-| **Bid Limit**               | Maximum bid amount per bidder       |
+| Setting | Description |
+| --- | --- |
+| **Audience Restriction** | Limit to specific audiences by configuring the sequence. |
+| **Access Code** | Require an access code on the sequence when appropriate. |
+| **Account Requirement** | Use your integration path to require identified consumers for bidding. |
 
 {/* IMAGE_PLACEHOLDER
 Type: screenshot
@@ -226,20 +220,17 @@ Pricing:
   Starting Bid: $100
   Reserve Price: $500
   Bid Increment: $25
-  Buy Now: $1,500
 
 Schedule:
-  Auction Start: Monday 9 AM
-  Auction End: Sunday 9 PM
+  Open At: Monday 9 AM
+  Close At: Sunday 9 PM
+  Settle At: Sunday 10 PM
 
-Soft Close:
-  Extension Window: 5 minutes
-  Extension Duration: 5 minutes
-  Max Extensions: 10
+Auto Extend:
+  Auto Extend Seconds: 300
 
 Payment:
-  Payment Due: 48 hours
-  Auto-charge: No (manual confirmation)
+  Follow your checkout/payment integration after the auction settles
 
 Notifications:
   - All bidder notifications
@@ -311,5 +302,5 @@ If a bidder disputes:
 ## Related Guides
 
 - [Payment Settings](/dashboard/settings/integrations) - Configure Stripe Connect
-- [Experience Lifecycle](/dashboard/experiences/experience-lifecycle) - Managing active auctions
+- [Experience Schedule](/dashboard/experiences/experience-lifecycle) - Understanding auction timing
 - [Experience Analytics](/dashboard/experiences/experience-analytics) - Auction metrics

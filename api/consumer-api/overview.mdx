@@ -3,7 +3,7 @@ title: "Consumer API"
 description: "Reference for end-user experience interactions."
 ---
 
-The Consumer API powers end-user participation in Fanfare experiences: entering queues, draws, appointments, auctions, waitlists, and checking the current participation state.
+The Consumer API powers end-user participation in Fanfare experiences: reading experience details, routing the consumer to the right access path, passing public gates, entering an experience, and taking state-gated actions for queues, draws, appointments, auctions, waitlists, and timed releases.
 
 Use this section when you are integrating a customer-facing application with Fanfare directly. The endpoint reference is generated from the service OpenAPI specification and filtered to the public integration surface.
 
@@ -21,9 +21,13 @@ Consumer API calls use the authentication flow appropriate for your integration 
 ## Common Areas
 
 - Consumer authentication and session refresh
-- Experience lookup and entry
-- Queue, draw, auction, waitlist, appointment, and timed-release participation
-- Current consumer state
+- Experience lookup and journey-first routing
+- Public routing outcomes: `routed`, `gated`, and `no_access`
+- Public gates such as authentication, access code, and verification challenges
+- Queue, draw, auction, waitlist, appointment, and timed-release participation through the current state
+- State-gated actions exposed by the current journey view
 - Organization configuration needed by client integrations
+
+Consumer-facing integrations should render the current public journey state and only show actions that are available in that state. Do not infer private eligibility or enforcement details from endpoint names.
 
 For request and response schemas, use the generated endpoint pages in this section.
