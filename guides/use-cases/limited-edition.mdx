@@ -80,7 +80,7 @@ async function createLimitedEditionDraw() {
     prize: {
       productId: "sneaker-ltd-fall-2024",
       name: "Fall 2024 Limited Edition Sneaker",
-      price: 250,
+      price: "250.00",
       description: "Only 500 pairs available worldwide",
       imageUrl: "https://your-store.com/images/ltd-sneaker.jpg",
     },
@@ -506,12 +506,12 @@ export function AuctionExperience({ auctionId, item }: AuctionExperienceProps) {
   const snapshot = state?.snapshot;
   const context = snapshot?.context;
 
-  const currentBid = context?.currentBid || context?.startingBid;
+  const currentBid = context?.currentBid || context?.startingBid || "0.00";
   const highBidderId = context?.highBidderId;
   const myId = context?.consumerId;
   const isHighBidder = highBidderId === myId;
   const endTime = context?.endTime;
-  const bidIncrement = context?.bidIncrement || 50;
+  const bidIncrement = context?.bidIncrement || "50.00";
 
   return (
     <div className="auction-experience">
@@ -520,7 +520,7 @@ export function AuctionExperience({ auctionId, item }: AuctionExperienceProps) {
       <div className="auction-main">
         <div className="current-bid-section">
           <span className="label">Current Bid</span>
-          <span className="amount">${currentBid?.toLocaleString()}</span>
+          <span className="amount">{formatMoney(currentBid, "USD")}</span>
           {context?.totalBids && <span className="bid-count">{context.totalBids} bids</span>}
         </div>
 
@@ -533,7 +533,7 @@ export function AuctionExperience({ auctionId, item }: AuctionExperienceProps) {
 
         <BidForm
           currentBid={currentBid}
-          minBid={currentBid + bidIncrement}
+          minBid={addMoney(currentBid, bidIncrement)}
           bidIncrement={bidIncrement}
           buyNowPrice={context?.buyNowPrice}
           isHighBidder={isHighBidder}
@@ -584,12 +584,12 @@ function BidForm({
   onBid,
   onBuyNow,
 }: {
-  currentBid: number;
-  minBid: number;
-  bidIncrement: number;
-  buyNowPrice?: number;
+  currentBid: string;
+  minBid: string;
+  bidIncrement: string;
+  buyNowPrice?: string;
   isHighBidder: boolean;
-  onBid: (amount: number) => void;
+  onBid: (amount: string) => void;
   onBuyNow: () => void;
 }) {
   const [bidAmount, setBidAmount] = useState(minBid);
@@ -597,13 +597,13 @@ function BidForm({
 
   // Update minimum when current bid changes
   useEffect(() => {
-    if (bidAmount < minBid) {
+    if (compareMoney(bidAmount, minBid) < 0) {
       setBidAmount(minBid);
     }
   }, [minBid, bidAmount]);
 
   const handleBid = async () => {
-    if (bidAmount < minBid) return;
+    if (compareMoney(bidAmount, minBid) < 0) return;
 
     setIsSubmitting(true);
     try {
@@ -613,14 +613,19 @@ function BidForm({
     }
   };
 
-  const quickBidAmounts = [minBid, minBid + bidIncrement, minBid + bidIncrement * 2, minBid + bidIncrement * 5];
+  const quickBidAmounts = [
+    minBid,
+    addMoney(minBid, bidIncrement),
+    addMoney(minBid, multiplyMoney(bidIncrement, 2)),
+    addMoney(minBid, multiplyMoney(bidIncrement, 5)),
+  ];
 
   return (
     <div className="bid-form">
       <div className="quick-bids">
         {quickBidAmounts.map((amount) => (
           <button key={amount} onClick={() => setBidAmount(amount)} className={bidAmount === amount ? "selected" : ""}>
-            ${amount.toLocaleString()}
+            {formatMoney(amount, "USD")}
           </button>
         ))}
       </div>
@@ -633,15 +638,15 @@ function BidForm({
             id="bid-amount"
             type="number"
             value={bidAmount}
-            onChange={(e) => setBidAmount(Math.max(minBid, Number(e.target.value)))}
+            onChange={(e) => setBidAmount(normalizeMoneyInput(e.target.value, minBid))}
             min={minBid}
             step={bidIncrement}
           />
         </div>
-        <span className="min-bid">Minimum: ${minBid.toLocaleString()}</span>
+        <span className="min-bid">Minimum: {formatMoney(minBid, "USD")}</span>
       </div>
 
-      <button onClick={handleBid} disabled={isSubmitting || bidAmount < minBid} className="place-bid-btn">
+      <button onClick={handleBid} disabled={isSubmitting || compareMoney(bidAmount, minBid) < 0} className="place-bid-btn">
         {isSubmitting ? "Placing Bid..." : isHighBidder ? "Increase Bid" : "Place Bid"}
       </button>
 
@@ -649,7 +654,7 @@ function BidForm({
         <div className="buy-now-section">
           <span className="divider">or</span>
           <button onClick={onBuyNow} className="buy-now-btn">
-            Buy Now for ${buyNowPrice.toLocaleString()}
+            Buy Now for {formatMoney(buyNowPrice, "USD")}
           </button>
         </div>
       )}
@@ -673,7 +678,7 @@ function BidHistory({ bids, myId }: { bids: Bid[]; myId: string }) {
         {bids.map((bid, index) => (
           <li key={bid.id} className={bid.bidderId === myId ? "my-bid" : ""}>
             <span className="bidder">{bid.bidderId === myId ? "You" : `Bidder ${bid.bidderNumber}`}</span>
-            <span className="amount">${bid.amount.toLocaleString()}</span>
+            <span className="amount">{formatMoney(bid.amount, "USD")}</span>
             <span className="time">{formatTimeAgo(bid.timestamp)}</span>
             {index === 0 && <span className="leader-badge">Leading</span>}
           </li>
@@ -683,7 +688,7 @@ function BidHistory({ bids, myId }: { bids: Bid[]; myId: string }) {
   );
 }
 
-async function placeBid(journey: ExperienceJourney, amount: number) {
+async function placeBid(journey: ExperienceJourney, amount: string) {
   await journey.perform("bid", { amount });
 }
 

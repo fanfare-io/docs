@@ -68,7 +68,7 @@ interface EventConfig {
 interface TicketTier {
   tierId: string;
   name: string;
-  price: number;
+  price: string;
   quantity: number;
   description: string;
   perks?: string[];
@@ -92,7 +92,7 @@ const concertConfig: EventConfig = {
     {
       tierId: "vip",
       name: "VIP Experience",
-      price: 500,
+      price: "500.00",
       quantity: 500,
       description: "Premium seating + meet & greet",
       perks: ["Meet & Greet", "Early entry", "Exclusive merch", "Premium seating"],
@@ -100,21 +100,21 @@ const concertConfig: EventConfig = {
     {
       tierId: "floor",
       name: "Floor (General Admission)",
-      price: 150,
+      price: "150.00",
       quantity: 5000,
       description: "Standing floor access",
     },
     {
       tierId: "lower-bowl",
       name: "Lower Bowl",
-      price: 100,
+      price: "100.00",
       quantity: 8000,
       description: "Lower level reserved seating",
     },
     {
       tierId: "upper-bowl",
       name: "Upper Bowl",
-      price: 60,
+      price: "60.00",
       quantity: 6500,
       description: "Upper level reserved seating",
     },

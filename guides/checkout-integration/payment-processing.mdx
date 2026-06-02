@@ -57,6 +57,8 @@ Consumer Admitted
 
 ## Stripe Integration
 
+Fanfare-facing amounts should remain decimal strings such as `"199.99"`. Convert to provider-specific minor units only when calling a payment provider, and use a currency-aware helper so zero-decimal currencies are handled correctly.
+
 ### Step 1: Create Payment Intent with Admission Validation
 
 ```typescript
@@ -72,14 +74,14 @@ interface CreatePaymentParams {
   consumerId: string;
   distributionId: string;
   distributionType: "queue" | "draw" | "auction";
-  amount: number;
-  currency: string;
-  items: Array<{ productId: string; quantity: number }>;
+  amount: string;
+  currencyCode: string;
+  items: Array<{ productId: string; variantId?: string; quantity: number; unitAmount?: string }>;
 }
 
 router.post("/create-payment-intent", async (req, res) => {
   try {
-    const { admissionToken, consumerId, distributionId, distributionType, amount, currency, items } =
+    const { admissionToken, consumerId, distributionId, distributionType, amount, currencyCode, items } =
       req.body as CreatePaymentParams;
 
     // 1. Validate admission with Fanfare FIRST
@@ -99,8 +101,8 @@ router.post("/create-payment-intent", async (req, res) => {
 
     // 2. Create Stripe PaymentIntent
     const paymentIntent = await stripe.paymentIntents.create({
-      amount: Math.round(amount * 100), // Stripe uses cents
-      currency,
+      amount: moneyToProviderMinorUnits(amount, currencyCode),
+      currency: currencyCode.toLowerCase(),
       automatic_payment_methods: { enabled: true },
       metadata: {
         admissionToken,
@@ -138,7 +140,7 @@ interface CheckoutFormProps {
   distributionId: string;
   distributionType: "queue" | "draw" | "auction";
   cart: CartItem[];
-  totalAmount: number;
+  totalAmount: string;
 }
 
 function PaymentForm({ onSuccess, onError }: { onSuccess: () => void; onError: (msg: string) => void }) {
@@ -195,7 +197,7 @@ export function StripeCheckout(props: CheckoutFormProps) {
             distributionId: props.distributionId,
             distributionType: props.distributionType,
             amount: props.totalAmount,
-            currency: "usd",
+            currencyCode: "USD",
             items: props.cart,
           }),
         });
@@ -288,8 +290,8 @@ async function handlePaymentSuccess(paymentIntent: Stripe.PaymentIntent) {
     consumerId,
     items: JSON.parse(items),
     paymentIntentId: paymentIntent.id,
-    amount: paymentIntent.amount / 100,
-    currency: paymentIntent.currency,
+    amount: providerMinorUnitsToMoneyString(paymentIntent.amount, paymentIntent.currency),
+    currencyCode: paymentIntent.currency.toUpperCase(),
   });
 
   // 2. Complete admission with Fanfare
@@ -328,7 +330,7 @@ const paypalClient = new PayPalHttpClient({
 const ordersApi = new OrdersApi(paypalClient);
 
 router.post("/create-paypal-order", async (req, res) => {
-  const { admissionToken, consumerId, distributionId, distributionType, amount, currency, items } = req.body;
+  const { admissionToken, consumerId, distributionId, distributionType, amount, currencyCode, items } = req.body;
 
   // 1. Validate admission
   const isValid = await validateAdmission({
@@ -352,8 +354,8 @@ router.post("/create-paypal-order", async (req, res) => {
       purchaseUnits: [
         {
           amount: {
-            currencyCode: currency.toUpperCase(),
-            value: amount.toFixed(2),
+            currencyCode,
+            value: amount,
           },
           customId: JSON.stringify({
             admissionToken,
@@ -405,7 +407,7 @@ export function PayPalCheckout(props: CheckoutFormProps) {
         distributionId: props.distributionId,
         distributionType: props.distributionType,
         amount: props.totalAmount,
-        currency: "USD",
+        currencyCode: "USD",
         items: props.cart,
       }),
     });
@@ -479,9 +481,14 @@ function PaymentErrorHandler({ error, onRetry }: { error: PaymentError; onRetry:
 async function createPaymentWithIdempotency(params: CreatePaymentParams, idempotencyKey: string) {
   return await stripe.paymentIntents.create(
     {
-      amount: params.amount,
-      currency: params.currency,
-      metadata: params.metadata,
+      amount: moneyToProviderMinorUnits(params.amount, params.currencyCode),
+      currency: params.currencyCode.toLowerCase(),
+      metadata: {
+        admissionToken: params.admissionToken,
+        consumerId: params.consumerId,
+        distributionId: params.distributionId,
+        distributionType: params.distributionType,
+      },
     },
     {
       idempotencyKey,

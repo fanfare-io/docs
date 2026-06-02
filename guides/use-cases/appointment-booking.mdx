@@ -44,7 +44,7 @@ interface AppointmentConfig {
   serviceId: string;
   serviceName: string;
   duration: number; // minutes
-  price: number;
+  price: string;
   location: "in_person" | "virtual";
 
   // Availability
@@ -56,11 +56,11 @@ interface AppointmentConfig {
   minAdvanceBookingHours: number;
   maxBookingsPerConsumer: number;
   requireDeposit: boolean;
-  depositAmount?: number;
+  depositAmount?: string;
 
   // Cancellation policy
   freeCancellationHours: number;
-  cancellationFee?: number;
+  cancellationFee?: string;
 }
 
 interface TimeSlot {
@@ -74,7 +74,7 @@ const consultationConfig: AppointmentConfig = {
   serviceId: "specialist-consultation",
   serviceName: "Specialist Consultation",
   duration: 30,
-  price: 150,
+  price: "150.00",
   location: "virtual",
 
   availableDays: [1, 2, 3, 4, 5], // Monday-Friday
@@ -93,10 +93,10 @@ const consultationConfig: AppointmentConfig = {
   minAdvanceBookingHours: 24,
   maxBookingsPerConsumer: 2,
   requireDeposit: true,
-  depositAmount: 50,
+  depositAmount: "50.00",
 
   freeCancellationHours: 48,
-  cancellationFee: 25,
+  cancellationFee: "25.00",
 };
 ```
 
@@ -402,18 +402,18 @@ function SlotSelectionState({
             <dd>{service.duration} minutes</dd>
 
             <dt>Price</dt>
-            <dd>${service.price}</dd>
+            <dd>{formatMoney(service.price, "USD")}</dd>
 
             {service.requireDeposit && (
               <>
                 <dt>Deposit (due now)</dt>
-                <dd>${service.depositAmount}</dd>
+                <dd>{formatMoney(service.depositAmount, "USD")}</dd>
               </>
             )}
           </dl>
 
           <button onClick={handleBookSlot} disabled={isSubmitting} className="book-btn">
-            {isSubmitting ? "Reserving..." : `Book & Pay $${service.depositAmount || service.price}`}
+            {isSubmitting ? "Reserving..." : `Book & Pay ${formatMoney(service.depositAmount || service.price, "USD")}`}
           </button>
         </div>
       )}
@@ -648,7 +648,7 @@ export async function cancelAppointment(appointmentId: string, consumerId: strin
       .set({
         status: "cancelled",
         cancelledAt: new Date(),
-        cancellationFee: isFreeCancellation ? 0 : service.cancellationFee,
+        cancellationFee: isFreeCancellation ? "0.00" : service.cancellationFee,
       })
       .where(eq(appointments.id, appointmentId));
 
@@ -686,7 +686,7 @@ export async function cancelAppointment(appointmentId: string, consumerId: strin
   if (isFreeCancellation && appointment.depositPaid) {
     await processRefund(appointment.paymentId, appointment.depositAmount);
   } else if (appointment.depositPaid && service.cancellationFee) {
-    await processPartialRefund(appointment.paymentId, appointment.depositAmount - service.cancellationFee);
+    await processPartialRefund(appointment.paymentId, subtractMoney(appointment.depositAmount, service.cancellationFee));
   }
 }
 ```
@@ -808,11 +808,11 @@ function BookingRules({ service }: { service: ServiceConfig }) {
         <li>Minimum {service.minAdvanceBookingHours} hours notice required</li>
         <li>Maximum {service.maxBookingsPerConsumer} active bookings per customer</li>
 
-        {service.requireDeposit && <li>Deposit of ${service.depositAmount} required to confirm</li>}
+        {service.requireDeposit && <li>Deposit of {formatMoney(service.depositAmount, "USD")} required to confirm</li>}
 
         <li>Free cancellation up to {service.freeCancellationHours} hours before appointment</li>
 
-        {service.cancellationFee && <li>Late cancellation fee: ${service.cancellationFee}</li>}
+        {service.cancellationFee && <li>Late cancellation fee: {formatMoney(service.cancellationFee, "USD")}</li>}
       </ul>
     </section>
   );

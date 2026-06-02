@@ -950,8 +950,8 @@ router.post("/complete-order/:orderId", async (req, res) => {
   }
 });
 
-function calculateTotal(items: Array<{ price: number; quantity: number }>): number {
-  return items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+function calculateTotal(items: Array<{ price: string; quantity: number }>): string {
+  return sumMoney(items.map((item) => multiplyMoney(item.price, item.quantity)));
 }
 
 export default router;

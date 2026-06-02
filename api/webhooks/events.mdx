@@ -7,6 +7,8 @@ description: Complete reference for all Fanfare webhook event types and payloads
 
 This page documents all webhook event types and their payload structures.
 
+Monetary payload fields use decimal strings such as `"149.99"`, not JSON numbers. Use `currencyCode` where the event includes a currency.
+
 ## Queue Events
 
 ### queue.consumer.entered
@@ -224,11 +226,10 @@ Triggered when a bid is placed on an auction.
     "experienceId": "exp_01HXYZ123456789",
     "consumerId": "cons_01HXYZ123456789",
     "bidId": "bid_01HXYZ123456789",
-    "amount": 250.0,
+    "bidAmount": "250.00",
     "currencyCode": "USD",
     "bidTime": "2024-12-01T14:30:00Z",
-    "isHighestBid": true,
-    "previousHighBid": 225.0
+    "isHighestBid": true
   }
 }
 ```
@@ -249,8 +250,8 @@ Triggered when a bidder is outbid.
     "experienceId": "exp_01HXYZ123456789",
     "consumerId": "cons_01HXYZ123456789",
     "outbidAt": "2024-12-01T14:35:00Z",
-    "previousBidAmount": 250.0,
-    "newHighBidAmount": 275.0
+    "previousBidAmount": "250.00",
+    "newHighBidAmount": "275.00"
   }
 }
 ```
@@ -271,7 +272,7 @@ Triggered when a consumer wins an auction.
     "experienceId": "exp_01HXYZ123456789",
     "consumerId": "cons_01HXYZ123456789",
     "wonAt": "2024-12-01T18:00:00Z",
-    "winningBid": 500.0,
+    "winningBidAmount": "500.00",
     "currencyCode": "USD",
     "paymentToken": "eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9..."
   }
@@ -295,7 +296,7 @@ Triggered when an auction has been fully settled.
     "settledAt": "2024-12-01T18:30:00Z",
     "totalBids": 145,
     "uniqueBidders": 42,
-    "winningBid": 500.0,
+    "winningBidAmount": "500.00",
     "winnerId": "cons_01HXYZ123456789"
   }
 }
@@ -321,14 +322,13 @@ Triggered when a new order is created.
     "experienceId": "exp_01HXYZ123456789",
     "sequenceId": "seq_01HXYZ123456789",
     "createdAt": "2024-12-01T09:20:00Z",
-    "totalAmount": 149.99,
+    "amount": "149.99",
     "currencyCode": "USD",
     "items": [
       {
         "productId": "prod_01HXYZ123456789",
-        "productName": "Limited Edition Item",
-        "quantity": 1,
-        "price": 149.99
+        "variantId": "var_01HXYZ123456789",
+        "quantity": 1
       }
     ]
   }
@@ -349,7 +349,7 @@ Triggered when an order is completed.
     "orderId": "order_01HXYZ123456789",
     "consumerId": "cons_01HXYZ123456789",
     "completedAt": "2024-12-01T09:25:00Z",
-    "totalAmount": 149.99,
+    "amount": "149.99",
     "currencyCode": "USD"
   }
 }

@@ -180,6 +180,12 @@ CREATE INDEX idx_reservations_consumer ON reservations(consumer_id, status);
 // services/reservation.service.ts
 import { db } from "./db";
 
+function inventoryScope(productId: string, variantId?: string) {
+  return variantId
+    ? and(eq(inventory.productId, productId), eq(inventory.variantId, variantId))
+    : and(eq(inventory.productId, productId), isNull(inventory.variantId));
+}
+
 interface CreateReservationParams {
   consumerId: string;
   experienceId: string;
@@ -207,7 +213,7 @@ export async function createReservation(params: CreateReservationParams) {
     await tx
       .update(inventory)
       .set({ reserved: sql`reserved + ${quantity}` })
-      .where(eq(inventory.productId, productId));
+      .where(inventoryScope(productId, variantId));
 
     // Create reservation record
     const [reservation] = await tx
@@ -253,7 +259,7 @@ export async function convertReservation(reservationId: string, orderId: string)
         reserved: sql`reserved - ${reservation.quantity}`,
         sold: sql`sold + ${reservation.quantity}`,
       })
-      .where(eq(inventory.productId, reservation.productId));
+      .where(inventoryScope(reservation.productId, reservation.variantId));
 
     return reservation;
   });
@@ -274,7 +280,7 @@ export async function releaseReservation(reservationId: string) {
     await tx
       .update(inventory)
       .set({ reserved: sql`reserved - ${reservation.quantity}` })
-      .where(eq(inventory.productId, reservation.productId));
+      .where(inventoryScope(reservation.productId, reservation.variantId));
   });
 }
 ```
@@ -441,7 +447,11 @@ const reservationExpiresIn = admissionExpiresIn + 60 * 1000; // +1 minute buffer
 ```typescript
 // Use database transactions and row locking
 await db.transaction(async (tx) => {
-  const [product] = await tx.select().from(inventory).where(eq(inventory.productId, productId)).for("update"); // Lock the row
+  const [product] = await tx
+    .select()
+    .from(inventory)
+    .where(inventoryScope(productId, variantId))
+    .for("update");
 
   if (product.available < quantity) {
     throw new Error("Insufficient inventory");
@@ -488,15 +498,17 @@ If reserved counts become inconsistent:
 
 ```typescript
 // Reconciliation job
-async function reconcileInventory(productId: string) {
+async function reconcileInventory(productId: string, variantId?: string) {
   const activeReservations = await db
     .select({ total: sum(reservations.quantity) })
     .from(reservations)
-    .where(and(eq(reservations.productId, productId), eq(reservations.status, "active")));
+    .where(
+      and(eq(reservations.productId, productId), eq(reservations.variantId, variantId), eq(reservations.status, "active"))
+    );
 
   const expectedReserved = activeReservations[0]?.total || 0;
 
-  await db.update(inventory).set({ reserved: expectedReserved }).where(eq(inventory.productId, productId));
+  await db.update(inventory).set({ reserved: expectedReserved }).where(inventoryScope(productId, variantId));
 }
 ```
 
