@@ -30,8 +30,8 @@ Initial rendered global links observed on the API reference page, and the remedi
 | API Status | `https://status.fanfare.io/` | Removed until a public status page is confirmed. |
 | GitHub | `https://github.com/waitify-io` | Updated to the current public docs repo, `https://github.com/fanfare-io/docs`. |
 | Support | `mailto:support@fanfare.io` | Updated to the internal docs support page, `/resources/support/contact`, so users stay in the docs flow first. |
-| Dashboard | `https://app.fanfare.io/` | Needs product confirmation that this is the right customer dashboard destination. |
-| Get Started | `https://app.fanfare.io/signup` | Needs product confirmation that public docs should send users directly to signup. |
+| Dashboard | `https://admin.fanfare.io/app/dashboard` | Confirmed customer dashboard destination. |
+| Get Started | `https://admin.fanfare.io/auth/sign-in` | Confirmed admin sign-in destination for docs entry points. |
 
 ## Agent Assignments
 

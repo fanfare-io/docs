@@ -691,13 +691,13 @@
     "links": [
       {
         "label": "Dashboard",
-        "href": "https://app.fanfare.io"
+        "href": "https://admin.fanfare.io/app/dashboard"
       }
     ],
     "primary": {
       "type": "button",
       "label": "Get Started",
-      "href": "https://app.fanfare.io/signup"
+      "href": "https://admin.fanfare.io/auth/sign-in"
     }
   },
   "contextual": {
