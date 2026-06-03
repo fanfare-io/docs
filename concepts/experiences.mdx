@@ -15,16 +15,7 @@ Think of an experience as a campaign for a specific launch or event. When you cr
 
 ## Experience Schedule
 
-```
-[Experience]
-    │ contains
-    ▼
-[Sequences] ── contain ──► [Distributions]
-                              │
-                              ├─ upcoming
-                              ├─ active
-                              └─ ended
-```
+![Experience schedule model showing experiences containing sequences, distributions, and public timing states.](/images/concepts/experience-schedule.webp)
 
 An experience does not have a separate public state machine. Its visible schedule is derived from the distributions attached to its sequences.
 
@@ -40,33 +31,7 @@ Draw `drawAt` and auction `settleAt` can extend the derived experience schedule 
 
 Within an experience, you can create multiple **access paths** (called sequences) to give different consumer groups different experiences:
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                     YOUR EXPERIENCE                              │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                 │
-│  ┌──────────────────┐                                          │
-│  │   VIP ACCESS     │  For your loyalty members                │
-│  │   Priority: 100  │  → Early access via lottery              │
-│  │   Audience: VIP  │                                          │
-│  └──────────────────┘                                          │
-│           │                                                     │
-│           ▼ (If not VIP, check next)                           │
-│  ┌──────────────────┐                                          │
-│  │  EARLY ACCESS    │  For consumers with an access code       │
-│  │  Priority: 50   │  → First-come queue                       │
-│  │  Code: EARLYBIRD │                                          │
-│  └──────────────────┘                                          │
-│           │                                                     │
-│           ▼ (If no code, use general)                          │
-│  ┌──────────────────┐                                          │
-│  │  GENERAL ACCESS  │  For everyone else                       │
-│  │  Priority: 10   │  → Standard queue                         │
-│  │  Open to all     │                                          │
-│  └──────────────────┘                                          │
-│                                                                 │
-└─────────────────────────────────────────────────────────────────┘
-```
+![Access path priority diagram showing VIP, early access, and general access paths evaluated in order.](/images/concepts/access-path-priority.webp)
 
 ### How Routing Works
 

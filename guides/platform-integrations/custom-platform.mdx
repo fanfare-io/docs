@@ -26,31 +26,7 @@ This guide covers building a complete Fanfare integration for platforms without 
 
 ## Architecture Overview
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                         Your Platform                           │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                 │
-│  ┌─────────────┐    ┌─────────────┐    ┌─────────────┐         │
-│  │  Frontend   │    │   Backend   │    │  Database   │         │
-│  │  (SDK)      │───▶│  (API)      │───▶│             │         │
-│  └─────────────┘    └─────────────┘    └─────────────┘         │
-│         │                  │                                    │
-└─────────┼──────────────────┼────────────────────────────────────┘
-          │                  │
-          │                  │ Server-side validation
-          │                  │ Order completion
-          │                  │
-          ▼                  ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                       Fanfare Platform                          │
-├─────────────────────────────────────────────────────────────────┤
-│  ┌─────────────┐    ┌─────────────┐    ┌─────────────┐         │
-│  │ Consumer    │    │  Admin      │    │  Webhooks   │         │
-│  │ API         │    │  API        │    │             │         │
-│  └─────────────┘    └─────────────┘    └─────────────┘         │
-└─────────────────────────────────────────────────────────────────┘
-```
+![Custom platform architecture showing frontend SDK, backend API, database, and Fanfare platform APIs.](/images/guides/custom-platform-architecture.webp)
 
 ## Step 1: Backend Configuration
 

@@ -26,25 +26,7 @@ Fanfare webhooks notify your server when events occur in your experiences. Use w
 
 ## Webhook Architecture
 
-```
-Fanfare Platform                    Your Server
-      │                                  │
-      │  Event occurs (e.g.,             │
-      │  consumer admitted)              │
-      │                                  │
-      │───────────────────────────────▶ │
-      │  POST /webhooks/fanfare          │
-      │  Headers: X-Fanfare-Signature    │
-      │  Body: { type, data, ... }       │
-      │                                  │
-      │                                  │ 1. Verify signature
-      │                                  │ 2. Process event
-      │                                  │ 3. Return 200 OK
-      │                                  │
-      │◀─────────────────────────────── │
-      │  200 OK                          │
-      │                                  │
-```
+![Webhook delivery flow showing Fanfare event delivery, webhook endpoint processing, success, and retry.](/images/api/webhook-delivery-flow.webp)
 
 ## Step 1: Configure Webhooks
 

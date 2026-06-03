@@ -6,36 +6,7 @@ An **Auction** is a distribution mechanism that allocates products through compe
 
 ## How Auctions Work
 
-```
-┌────────────────────────────────────────────────────────────────────┐
-│                        AUCTION LIFECYCLE                            │
-├────────────────────────────────────────────────────────────────────┤
-│                                                                    │
-│   BIDDING PERIOD                                   SETTLEMENT      │
-│   ──────────────                                   ──────────      │
-│                                                                    │
-│  ┌────────────┐                                  ┌────────────┐   │
-│  │Auction Open│                                  │Auction Ends│   │
-│  └─────┬──────┘                                  └─────┬──────┘   │
-│        │                                               │          │
-│  ──────┼───────────────────────────────────────────────┼──────►   │
-│        │                                               │          │
-│        ▼                                               ▼          │
-│  Bidding starts                               Highest bid wins    │
-│        │                                               │          │
-│        ▼                                               │          │
-│  ┌──────────────────────┐    ┌──────────────────┐     │          │
-│  │ $100 → $120 → $150   │    │ Auto-extend      │     │          │
-│  │ Bids accumulate      │◄──►│ if bid in final  │     │          │
-│  │                      │    │ 60 seconds       │     │          │
-│  └──────────────────────┘    └──────────────────┘     │          │
-│                                                        │          │
-│                              Reserve met?              │          │
-│                              ├── Yes → Winner!         │          │
-│                              └── No → No sale          │          │
-│                                                                    │
-└────────────────────────────────────────────────────────────────────┘
-```
+![Auction lifecycle diagram showing bidding, extension, auction end, reserve decision, and result.](/images/concepts/distributions/auction-lifecycle.webp)
 
 ### Bidding Phase
 
@@ -97,39 +68,7 @@ Plan your follow-up process for non-completing winners when setting up auctions.
 
 ## Consumer Journey
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                  AUCTION CONSUMER JOURNEY                       │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                 │
-│  ┌─────────────┐                                               │
-│  │ Not Bidding │                                               │
-│  └──────┬──────┘                                               │
-│         │ Place first bid                                      │
-│         ▼                                                      │
-│  ┌─────────────┐     outbid      ┌────────┐                   │
-│  │   Winning   │◄───────────────►│ Outbid │                   │
-│  │  (leading)  │    place higher │        │                   │
-│  └──────┬──────┘       bid       └────┬───┘                   │
-│         │                             │                        │
-│         │ auction ends                │ auction ends           │
-│         │                             │                        │
-│    ┌────┴────┐                        │                        │
-│    ▼         ▼                        ▼                        │
-│ ┌──────┐ ┌──────────┐           ┌──────────┐                  │
-│ │ Won! │ │  Lost    │           │   Lost   │                  │
-│ └──┬───┘ │(reserve  │           └──────────┘                  │
-│    │     │ not met) │                                         │
-│    │     └──────────┘                                         │
-│    │                                                           │
-│    │ Complete purchase                                         │
-│    ▼                                                           │
-│ ┌──────────┐                                                   │
-│ │ Complete │                                                   │
-│ └──────────┘                                                   │
-│                                                                 │
-└─────────────────────────────────────────────────────────────────┘
-```
+![Auction consumer journey showing not bidding, winning, outbid, won, lost, and complete states.](/images/concepts/distributions/auction-journey.webp)
 
 ## When to Use Auctions
 

@@ -6,32 +6,7 @@ A **Timed Release** is a distribution mechanism that grants instant access at a 
 
 ## How Timed Releases Work
 
-```
-┌────────────────────────────────────────────────────────────────────┐
-│                     TIMED RELEASE LIFECYCLE                         │
-├────────────────────────────────────────────────────────────────────┤
-│                                                                    │
-│    BEFORE RELEASE        AT RELEASE TIME          DURING WINDOW    │
-│    ──────────────        ───────────────          ─────────────    │
-│                                                                    │
-│    ┌──────────┐          ┌──────────┐           ┌──────────┐      │
-│    │ Countdown│──────────►│  OPEN!   │──────────►│ Checkout │      │
-│    │          │   time   │          │  instant  │          │      │
-│    │  3:00:00 │          │ Access   │  access   │ Complete │      │
-│    │  2:59:59 │          │ Granted  │           │ purchase │      │
-│    │  2:59:58 │          │          │           │          │      │
-│    │    ...   │          │          │           │          │      │
-│    └──────────┘          └──────────┘           └──────────┘      │
-│                                                                    │
-│    Consumer sees         All waiting            Standard          │
-│    countdown timer       consumers get          checkout flow     │
-│                          immediate access                         │
-│                                                                    │
-│    ───────────────────────────────────────────────────────────►   │
-│              Release Time                   Close Time             │
-│                                                                    │
-└────────────────────────────────────────────────────────────────────┘
-```
+![Timed release lifecycle diagram showing countdown, release opens, instant access, and checkout window.](/images/concepts/distributions/timed-release-lifecycle.webp)
 
 ### Pre-Release Phase
 
@@ -79,33 +54,7 @@ If the access window is still open:
 
 ## Consumer Journey
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                 TIMED RELEASE CONSUMER JOURNEY                  │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                 │
-│  ┌─────────────┐                                               │
-│  │   Waiting   │  (countdown to release)                       │
-│  └──────┬──────┘                                               │
-│         │ Release time arrives                                 │
-│         ▼                                                      │
-│  ┌─────────────┐                                               │
-│  │   Access    │  (instant access granted)                     │
-│  │   Granted   │                                               │
-│  └──────┬──────┘                                               │
-│         │ Add to cart                                          │
-│         ▼                                                      │
-│  ┌─────────────┐                                               │
-│  │  Checkout   │  (complete purchase)                          │
-│  └──────┬──────┘                                               │
-│         │                                                      │
-│         ▼                                                      │
-│  ┌─────────────┐                                               │
-│  │  Complete   │                                               │
-│  └─────────────┘                                               │
-│                                                                 │
-└─────────────────────────────────────────────────────────────────┘
-```
+![Timed release consumer journey showing waiting, access granted, checkout, and complete.](/images/concepts/distributions/timed-release-journey.webp)
 
 ## When to Use Timed Releases
 

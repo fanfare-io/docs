@@ -8,13 +8,7 @@ Fanfare helps commerce teams run controlled-access experiences for high-demand l
 
 The core concept is a **journey**: one customer's progress through one Fanfare experience.
 
-```text
-[Your App] -> [Fanfare SDK] -> [JourneyView]
-     |              |              |
-     |              |              +-> ready, routing, gated, routed
-     |              +-> valid actions for the current state
-     +-> product UI, checkout, analytics, support copy
-```
+![Journey mental model showing your app using the Fanfare SDK to read JourneyView state and valid actions.](/images/concepts/journey-mental-model.webp)
 
 Your integration reads the journey state, renders the matching UI, and calls only actions that are available in that state. It does not need to know private routing, enforcement, or operational details.
 
@@ -67,12 +61,7 @@ Start with [Choose Your Path](/sdk/choose-your-path) if you are deciding between
 
 ## How The Browser SDK Fits
 
-```text
-[Customer Browser]
-  [Product Page] -> [Fanfare SDK] -> [Fanfare API]
-        |
-        +-> after admitted: send grant to [Your Backend] -> [Checkout]
-```
+![Browser SDK fit showing a product page using the Fanfare SDK, Fanfare API, and backend checkout handoff.](/images/concepts/browser-sdk-fit.webp)
 
 The SDK manages the browser-side journey. Your backend should validate the admitted customer before completing protected business actions. Keep secret keys and validation logic on the server.
 

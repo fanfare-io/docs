@@ -6,38 +6,7 @@ A **Waitlist** is a distribution mechanism for capturing interest and notifying 
 
 ## How Waitlists Work
 
-```
-┌────────────────────────────────────────────────────────────────────┐
-│                       WAITLIST LIFECYCLE                            │
-├────────────────────────────────────────────────────────────────────┤
-│                                                                    │
-│   INTEREST CAPTURE         WAITING            CONVERSION           │
-│   ────────────────         ───────            ──────────           │
-│                                                                    │
-│   ┌──────────────┐       ┌──────────────┐    ┌──────────────┐     │
-│   │ Consumer     │──────►│   Waitlist   │───►│ Distribution │     │
-│   │ signs up     │       │   (passive)  │    │   opens      │     │
-│   └──────────────┘       └──────────────┘    └──────────────┘     │
-│                                │                    │              │
-│                                │                    ▼              │
-│                                │              ┌──────────────┐     │
-│                                │              │ Notification │     │
-│                                │              │    sent      │     │
-│                                │              └──────────────┘     │
-│                                │                    │              │
-│                                │                    ▼              │
-│                                │              ┌──────────────┐     │
-│                                └─────────────►│  Consumer    │     │
-│                                               │  converts    │     │
-│                                               └──────────────┘     │
-│                                                                    │
-│   Use Cases:                                                       │
-│   • Pre-launch interest: "Notify me when available"               │
-│   • Overflow handling: Queue full → join waitlist                 │
-│   • Restock alerts: Out of stock → notify when back               │
-│                                                                    │
-└────────────────────────────────────────────────────────────────────┘
-```
+![Waitlist lifecycle diagram showing interest, waiting, opening, notification, and conversion.](/images/concepts/distributions/waitlist-lifecycle.webp)
 
 ### Signup Phase
 
@@ -85,38 +54,7 @@ Consumers receive:
 
 ## Consumer Journey
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                    WAITLIST CONSUMER JOURNEY                    │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                 │
-│  ┌─────────────┐                                               │
-│  │ Not Signed  │  (hasn't joined)                              │
-│  │     Up      │                                               │
-│  └──────┬──────┘                                               │
-│         │ Sign up                                              │
-│         ▼                                                      │
-│  ┌─────────────┐                                               │
-│  │   Waiting   │  (on the waitlist)                            │
-│  └──────┬──────┘                                               │
-│         │                                                      │
-│         │ Notification sent                                    │
-│         ▼                                                      │
-│  ┌─────────────┐                                               │
-│  │  Notified   │  (it's available!)                            │
-│  └──────┬──────┘                                               │
-│         │                                                      │
-│    ┌────┴────┐                                                 │
-│    ▼         ▼                                                 │
-│ Convert   Don't                                                │
-│    │      Convert                                              │
-│    ▼                                                           │
-│ ┌──────────┐                                                   │
-│ │Converted │  (completed purchase)                             │
-│ └──────────┘                                                   │
-│                                                                 │
-└─────────────────────────────────────────────────────────────────┘
-```
+![Waitlist consumer journey showing not signed up, waiting, notified, convert, and no conversion.](/images/concepts/distributions/waitlist-journey.webp)
 
 ## When to Use Waitlists
 

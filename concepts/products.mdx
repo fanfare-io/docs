@@ -132,22 +132,7 @@ Import products from your existing store:
 
 ### How Sync Works
 
-```
-Your Store                     Fanfare
-┌─────────────┐               ┌─────────────┐
-│   Product   │ ─── sync ───► │   Product   │
-│   updated   │               │   updated   │
-└─────────────┘               └─────────────┘
-       │                             │
-       │                             ▼
-       │                      Experience shows
-       │                      updated info
-       │
-       │        ┌─────────────┐
-       └─────── │  Inventory  │ ◄─── Stays in sync
-                │   webhook   │
-                └─────────────┘
-```
+![Product sync flow showing store product updates syncing to Fanfare and inventory webhooks keeping the experience current.](/images/concepts/product-sync-flow.webp)
 
 ### Keeping Inventory Synced
 

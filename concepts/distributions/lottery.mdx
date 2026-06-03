@@ -8,41 +8,7 @@ Draws can also optionally use loyalty-biased selection. When enabled for a speci
 
 ## How Draws Work
 
-```
-┌────────────────────────────────────────────────────────────────────┐
-│                         DRAW LIFECYCLE                              │
-├────────────────────────────────────────────────────────────────────┤
-│                                                                    │
-│  ENTRY PERIOD              SELECTION               COMPLETION      │
-│  ─────────────             ─────────               ──────────      │
-│                                                                    │
-│  ┌─────────────┐          ┌─────────────┐        ┌─────────────┐  │
-│  │ Entry Opens │          │ Draw Happens│        │Checkout Ends│  │
-│  └──────┬──────┘          └──────┬──────┘        └──────┬──────┘  │
-│         │                        │                      │          │
-│  ───────┼────────────────────────┼──────────────────────┼──────►   │
-│         │                        │                      │          │
-│         ▼                        ▼                      ▼          │
-│   Consumers                 Random                 Winners         │
-│   enter draw               selection              complete         │
-│                                 │                                  │
-│  ┌────────────────┐            │                                  │
-│  │ ○ ○ ○ ○ ○ ○ ○  │            │                                  │
-│  │ Pool of        │─── draw ──►│                                  │
-│  │ entries        │            │                                  │
-│  └────────────────┘            │                                  │
-│                                 ▼                                  │
-│                           ┌─────────────┐                          │
-│                           │ ● ● ●       │ Winners selected         │
-│                           │ Winners     │                          │
-│                           └─────────────┘                          │
-│                                 │                                  │
-│                                 ▼                                  │
-│                           Notifications                            │
-│                           sent to winners                          │
-│                                                                    │
-└────────────────────────────────────────────────────────────────────┘
-```
+![Draw lifecycle diagram showing entry period, selection, winner notification, and completion.](/images/concepts/distributions/draw-lifecycle.webp)
 
 ### Entry Period
 
@@ -96,36 +62,7 @@ Winners have a time window to complete their purchase. If they don't complete in
 
 ## Consumer Journey
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                    DRAW CONSUMER JOURNEY                        │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                 │
-│  ┌─────────────┐                                               │
-│  │ Not Entered │  (hasn't joined the draw)                     │
-│  └──────┬──────┘                                               │
-│         │ Enter draw                                           │
-│         ▼                                                      │
-│  ┌─────────────┐                                               │
-│  │   Entered   │  (waiting for selection)                      │
-│  └──────┬──────┘                                               │
-│         │                                                      │
-│         │ Draw happens                                         │
-│         │                                                      │
-│    ┌────┴────┐                                                 │
-│    ▼         ▼                                                 │
-│ ┌──────┐  ┌────────────┐                                       │
-│ │ Won! │  │Not Selected│                                       │
-│ └──┬───┘  └────────────┘                                       │
-│    │                                                           │
-│    │ Complete purchase                                         │
-│    ▼                                                           │
-│ ┌──────────┐                                                   │
-│ │ Complete │                                                   │
-│ └──────────┘                                                   │
-│                                                                 │
-└─────────────────────────────────────────────────────────────────┘
-```
+![Draw consumer journey showing not entered, entered, selected or not selected, and complete.](/images/concepts/distributions/draw-journey.webp)
 
 ## When to Use Draws
 

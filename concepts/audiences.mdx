@@ -101,50 +101,15 @@ Dynamic audiences use rules to determine who qualifies. You define conditions ba
 
 **AND logic:** All conditions must be true
 
-```
-VIP California Consumers:
-├── Loyalty score > 100 (AND)
-├── Region = California (AND)
-└── Status = Active
-```
-
 **OR logic:** Any condition can be true
 
-```
-Eligible for Promotion:
-├── Group A: Loyalty score > 150
-│       (OR)
-└── Group B: Total orders > 10
-```
+![Audience rule logic diagram showing AND requiring all conditions and OR allowing either group.](/images/concepts/audience-rule-logic.webp)
 
 ## Using Audiences with Experiences
 
 Audiences control which consumers can access specific parts of your experience:
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                     YOUR EXPERIENCE                              │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                 │
-│  ┌──────────────────┐                                          │
-│  │   VIP ACCESS     │ ◄── Requires: VIP Audience               │
-│  │   Early draw     │                                          │
-│  └──────────────────┘                                          │
-│           │                                                     │
-│           ▼ (if not VIP)                                       │
-│  ┌──────────────────┐                                          │
-│  │  LOYALTY ACCESS  │ ◄── Requires: Loyalty Members Audience   │
-│  │   Priority queue │                                          │
-│  └──────────────────┘                                          │
-│           │                                                     │
-│           ▼ (if not in loyalty program)                        │
-│  ┌──────────────────┐                                          │
-│  │  GENERAL ACCESS  │ ◄── No audience required                 │
-│  │   Standard queue │                                          │
-│  └──────────────────┘                                          │
-│                                                                 │
-└─────────────────────────────────────────────────────────────────┘
-```
+![Audience routing diagram showing VIP audience, loyalty audience, and general fallback access paths.](/images/concepts/audience-routing.webp)
 
 ### How Routing Works
 
