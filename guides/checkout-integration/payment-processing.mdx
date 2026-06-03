@@ -24,36 +24,7 @@ When a consumer is admitted through Fanfare, they have a limited time window to 
 
 ## Payment Flow Architecture
 
-```
-Consumer Admitted
-       │
-       ▼
-┌──────────────────┐
-│  Checkout Page   │
-│  (Collect Info)  │
-└──────────────────┘
-       │
-       ▼
-┌──────────────────┐     ┌──────────────────┐
-│ Create Payment   │────▶│ Validate         │
-│ Intent (Server)  │     │ Admission Token  │
-└──────────────────┘     └──────────────────┘
-       │                          │
-       │                          │ Invalid? Return Error
-       │◄─────────────────────────┘
-       │
-       ▼
-┌──────────────────┐
-│ Process Payment  │
-│ (Stripe/PayPal)  │
-└──────────────────┘
-       │
-       ├─── Success ──▶ Complete Admission
-       │                Create Order
-       │
-       └─── Failure ──▶ Allow Retry
-                       (Keep Admission Valid)
-```
+![Payment processing flow diagram showing admitted checkout, admission validation, payment completion, and retry on failure.](/images/guides/payment-processing-flow.webp)
 
 ## Stripe Integration
 

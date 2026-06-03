@@ -26,28 +26,7 @@ When a consumer is admitted from a queue, draw, or auction, you may want to rese
 
 Without reservation, admitted consumers may find their items sold out by the time they reach checkout:
 
-```
-Timeline without reservation:
-────────────────────────────────────────────────────────
-
-Consumer A admitted ─────────────────▶ Tries to checkout
-                                              │
-Consumer B buys last item ──────────────────────▶
-                                              │
-                                              ▼
-                                    "Out of Stock" ❌
-```
-
-With reservation:
-
-```
-Timeline with reservation:
-────────────────────────────────────────────────────────
-
-Consumer A admitted ─▶ Inventory reserved ─▶ Checkout ✓
-        │                     │
-        └── 10 min hold ──────┘
-```
+![Cart reservation timeline comparing no reservation with a protected reservation hold.](/images/guides/cart-reservation-timeline.webp)
 
 ## Reservation Strategies
 

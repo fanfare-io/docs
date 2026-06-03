@@ -6,40 +6,7 @@ An **Appointment** is a distribution mechanism for scheduling time-based interac
 
 ## How Appointments Work
 
-```
-┌────────────────────────────────────────────────────────────────────┐
-│                      APPOINTMENT LIFECYCLE                          │
-├────────────────────────────────────────────────────────────────────┤
-│                                                                    │
-│  AVAILABILITY          BOOKING              FULFILLMENT            │
-│  ────────────          ───────              ───────────            │
-│                                                                    │
-│  ┌─────────────┐      ┌─────────────┐      ┌─────────────┐        │
-│  │ View slots  │─────►│ Select slot │─────►│ Confirmation│        │
-│  │ with        │      │ and book    │      │ + reminder  │        │
-│  │ capacity    │      │             │      │             │        │
-│  └─────────────┘      └─────────────┘      └──────┬──────┘        │
-│                                                    │               │
-│                                                    ▼               │
-│                                             ┌─────────────┐        │
-│                                             │  Check-in   │        │
-│                                             │  at time    │        │
-│                                             └──────┬──────┘        │
-│                                                    │               │
-│                                                    ▼               │
-│                                             ┌─────────────┐        │
-│                                             │  Completed  │        │
-│                                             └─────────────┘        │
-│                                                                    │
-│  Slot Grid Example:                                                │
-│  ┌────────┬────────┬────────┬────────┐                            │
-│  │ 9:00am │ 9:30am │10:00am │10:30am │  ← Available slots         │
-│  │  ○ ○   │  ● ○   │  ● ●   │  ○ ○   │  ← Capacity (2 per slot)  │
-│  └────────┴────────┴────────┴────────┘                            │
-│    Open     1 left    Full     Open                                │
-│                                                                    │
-└────────────────────────────────────────────────────────────────────┘
-```
+![Appointment lifecycle diagram showing view slots, book, confirm, check in, and complete.](/images/concepts/distributions/appointment-lifecycle.webp)
 
 ### Availability Phase
 
@@ -91,38 +58,7 @@ Consumers receive:
 
 ## Consumer Journey
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                 APPOINTMENT CONSUMER JOURNEY                    │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                 │
-│  ┌─────────────┐                                               │
-│  │   Viewing   │  (browsing available slots)                   │
-│  └──────┬──────┘                                               │
-│         │ Select and book slot                                 │
-│         ▼                                                      │
-│  ┌─────────────┐                                               │
-│  │   Booked    │  (waiting for appointment time)               │
-│  └──────┬──────┘                                               │
-│         │                                                      │
-│    ┌────┴────┐                                                 │
-│    │         │                                                 │
-│    ▼         ▼                                                 │
-│ Arrive    Cancel                                               │
-│    │         │                                                 │
-│    ▼         ▼                                                 │
-│ ┌───────────┐  ┌───────────┐                                  │
-│ │Checked In │  │ Cancelled │                                  │
-│ └─────┬─────┘  └───────────┘                                  │
-│       │                                                        │
-│       │ Service completed                                      │
-│       ▼                                                        │
-│ ┌───────────┐                                                  │
-│ │ Completed │                                                  │
-│ └───────────┘                                                  │
-│                                                                 │
-└─────────────────────────────────────────────────────────────────┘
-```
+![Appointment consumer journey showing viewing, booked, reminder, check in, complete, and cancelled.](/images/concepts/distributions/appointment-journey.webp)
 
 ## When to Use Appointments
 

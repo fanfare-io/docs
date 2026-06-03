@@ -43,56 +43,11 @@ Timing updates automatically:
 
 ### Waiting in a Queue
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                     QUEUE STATUS                                 │
-│                                                                 │
-│     Your position: #47                                          │
-│     Estimated wait: ~3 minutes                                  │
-│                                                                 │
-│     ████████████████░░░░░░░░░░░░░░░░░░░░░░  47/200              │
-│                                                                 │
-│     Position updates automatically                              │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              │ (position changes)
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                     QUEUE STATUS                                 │
-│                                                                 │
-│     Your position: #12                                          │
-│     Estimated wait: ~45 seconds                                 │
-│                                                                 │
-│     █████████████████████████████████████░░  12/200             │
-│                                                                 │
-│     Almost there!                                               │
-└─────────────────────────────────────────────────────────────────┘
-```
+![Queue status update diagram showing a consumer position moving from 47 to 12 as updates arrive.](/images/concepts/realtime-queue-updates.webp)
 
 ### Bidding in an Auction
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                     AUCTION STATUS                               │
-│                                                                 │
-│     Current high bid: $150.00                                   │
-│     Your bid: $150.00 ✓ (You're winning!)                       │
-│     Time remaining: 2:34                                        │
-│                                                                 │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              │ (someone outbids)
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                     AUCTION STATUS                               │
-│                                                                 │
-│     Current high bid: $175.00                                   │
-│     Your bid: $150.00 ✗ (You've been outbid!)                   │
-│     Time remaining: 2:15                                        │
-│                                                                 │
-│     [Place new bid]                                             │
-└─────────────────────────────────────────────────────────────────┘
-```
+![Auction status update diagram showing a winning bid changing to an outbid state.](/images/concepts/realtime-auction-updates.webp)
 
 ## Multiple Browser Tabs
 
@@ -108,31 +63,7 @@ This prevents confusion and duplicate actions.
 
 Fanfare uses efficient techniques to keep consumers updated:
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                     UPDATE FLOW                                  │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                 │
-│  Consumer's browser                        Fanfare              │
-│  ┌─────────────────┐                   ┌─────────────────┐     │
-│  │  Shows current  │◄─── updates ──────│  Tracks real    │     │
-│  │  position: #47  │                   │  positions      │     │
-│  └─────────────────┘                   └─────────────────┘     │
-│         │                                      │                │
-│         │                                      │                │
-│         │    (every few seconds)               │                │
-│         │◄───────────────────────────────────►│                │
-│         │       check for updates              │                │
-│         │                                      │                │
-│         │                                      │                │
-│         ▼                                      ▼                │
-│  ┌─────────────────┐                   ┌─────────────────┐     │
-│  │  Updates to     │◄─── new data ─────│  Position       │     │
-│  │  position: #12  │                   │  changed        │     │
-│  └─────────────────┘                   └─────────────────┘     │
-│                                                                 │
-└─────────────────────────────────────────────────────────────────┘
-```
+![Real-time update flow diagram showing the browser checking public state and rendering the latest journey view.](/images/concepts/realtime-update-flow.webp)
 
 ### Adaptive Frequency
 

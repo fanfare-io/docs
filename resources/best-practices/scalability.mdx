@@ -8,17 +8,7 @@ Fanfare is designed to handle massive traffic spikes during high-demand product 
 
 Product launches and limited releases typically follow predictable traffic patterns:
 
-```
-Traffic
-   ^
-   |     ┌──────┐
-   |    ╱        ╲
-   |   ╱          ╲
-   |  ╱            ╲──────
-   | ╱
-   +────────────────────────> Time
-        Launch    Sale
-```
+![Traffic pattern diagram showing pre-launch rise, launch peak, and sale traffic over time.](/images/resources/traffic-pattern.webp)
 
 - **Pre-launch surge**: Traffic builds as the launch time approaches
 - **Peak at launch**: Maximum traffic at the moment the experience opens
@@ -62,12 +52,7 @@ const sequence = {
 
 Keep your product pages separate from Fanfare experiences.
 
-```
-┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
-│  Product Page   │ --> │ Fanfare Widget  │ --> │ Checkout Page   │
-│  (Your CDN)     │     │ (Fanfare CDN)   │     │ (Your Backend)  │
-└─────────────────┘     └─────────────────┘     └─────────────────┘
-```
+![Scalability architecture showing customer CDN product page, Fanfare widget, and checkout backed by the customer backend.](/images/resources/scalability-architecture.webp)
 
 Benefits:
 

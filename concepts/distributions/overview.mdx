@@ -21,29 +21,7 @@ Fanfare supports six distribution types:
 
 Every distribution follows a similar pattern:
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                    THE CONSUMER JOURNEY                          │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                 │
-│  ┌───────────┐    ┌─────────────┐    ┌────────────────────┐    │
-│  │   JOIN    │    │ PARTICIPATE │    │    GET ACCESS      │    │
-│  │           │───►│             │───►│                    │    │
-│  │ Consumer  │    │ Consumer    │    │ Consumer receives  │    │
-│  │ enters    │    │ waits for   │    │ access to checkout │    │
-│  │           │    │ their turn  │    │                    │    │
-│  └───────────┘    └─────────────┘    └────────────────────┘    │
-│                                              │                  │
-│                                              ▼                  │
-│                                    ┌────────────────────┐      │
-│                                    │ COMPLETE PURCHASE  │      │
-│                                    │                    │      │
-│                                    │ Time-limited       │      │
-│                                    │ checkout window    │      │
-│                                    └────────────────────┘      │
-│                                                                 │
-└─────────────────────────────────────────────────────────────────┘
-```
+![Distribution consumer journey showing join, participate, get access, and purchase.](/images/concepts/distributions/consumer-journey.webp)
 
 ### 1. Join
 
@@ -154,25 +132,7 @@ Different distributions have different capacity options:
 
 Here's a decision guide:
 
-```
-Is there more demand than supply?
-    │
-    ├── YES
-    │     │
-    │     └── Should order matter?
-    │           │
-    │           ├── YES (first-come fairness) ─────► QUEUE
-    │           │
-    │           └── NO (everyone gets equal chance) ─► DRAW
-    │
-    └── NO
-          │
-          └── Do consumers need specific times?
-                │
-                ├── YES (scheduled access) ─────────► APPOINTMENT
-                │
-                └── NO (instant access) ────────────► TIMED RELEASE
-```
+![Distribution choice tree showing queue, draw, appointment, and timed release options.](/images/concepts/distributions/choice-tree.webp)
 
 ### Queue
 

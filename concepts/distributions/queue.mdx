@@ -10,30 +10,7 @@ Queues can also optionally use loyalty-biased admission. When enabled for a spec
 
 When consumers join a standard queue, they're assigned a position and wait for their turn:
 
-```
-┌────────────────────────────────────────────────────────────────────┐
-│                         THE QUEUE FLOW                              │
-├────────────────────────────────────────────────────────────────────┤
-│                                                                    │
-│    Consumers join and wait in line                                 │
-│           │                                                        │
-│           ▼                                                        │
-│    ┌──────────────────────────────────────────┐                   │
-│    │ ○ ○ ○ ○ ○ ○ ○ ○ ○ ○ ○ ○ ○ │ ● │           │                   │
-│    │ Back of queue              │Front│  →  Checkout access        │
-│    └──────────────────────────────────────────┘                   │
-│           │                        │                               │
-│           │                        │                               │
-│      New consumers            Consumers get                        │
-│      join here               access at your                        │
-│                              configured rate                       │
-│                                    │                               │
-│                                    ▼                               │
-│                              Complete purchase                     │
-│                              (time-limited window)                 │
-│                                                                    │
-└────────────────────────────────────────────────────────────────────┘
-```
+![Queue flow diagram showing consumers join, wait, reach the front, and receive checkout access.](/images/concepts/distributions/queue-flow.webp)
 
 ## The Consumer Experience
 
@@ -44,33 +21,7 @@ When consumers join a standard queue, they're assigned a position and wait for t
 
 ## Consumer Journey
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                    QUEUE CONSUMER JOURNEY                       │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                 │
-│  ┌─────────────┐                                               │
-│  │ Not in Line │                                               │
-│  └──────┬──────┘                                               │
-│         │ Join queue                                           │
-│         ▼                                                      │
-│  ┌─────────────┐                                               │
-│  │  In Queue   │  (watching progress)                          │
-│  └──────┬──────┘                                               │
-│         │ Reach the front                                      │
-│         ▼                                                      │
-│  ┌─────────────┐                                               │
-│  │   Access    │  (checkout available)                         │
-│  │   Granted   │                                               │
-│  └──────┬──────┘                                               │
-│         │ Complete purchase                                    │
-│         ▼                                                      │
-│  ┌─────────────┐                                               │
-│  │  Complete   │                                               │
-│  └─────────────┘                                               │
-│                                                                 │
-└─────────────────────────────────────────────────────────────────┘
-```
+![Queue consumer journey showing not in line, in queue, access granted, and complete.](/images/concepts/distributions/queue-journey.webp)
 
 ## When to Use Queues
 

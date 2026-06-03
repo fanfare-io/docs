@@ -8,24 +8,7 @@ Fanfare tracks your **consumers** as they participate in experiences. Consumers 
 
 As consumers engage with your experiences, they can progress through different identity levels:
 
-```
-┌────────────────────────────────────────────────────────────────────┐
-│                    CONSUMER IDENTITY LEVELS                         │
-├────────────────────────────────────────────────────────────────────┤
-│                                                                    │
-│  ┌──────────────┐    ┌──────────────┐    ┌──────────────┐         │
-│  │    GUEST     │───►│  REGISTERED  │───►│   VERIFIED   │         │
-│  │              │    │              │    │              │         │
-│  │  No account  │    │  Provided    │    │  Confirmed   │         │
-│  │  needed      │    │  email or    │    │  identity    │         │
-│  │              │    │  phone       │    │  via code    │         │
-│  └──────────────┘    └──────────────┘    └──────────────┘         │
-│        │                   │                    │                  │
-│   Quick entry         Can receive         Higher trust,            │
-│   Low friction        notifications       Account features         │
-│                                                                    │
-└────────────────────────────────────────────────────────────────────┘
-```
+![Consumer identity levels diagram showing guest, registered, and verified progression.](/images/concepts/consumer-identity-levels.webp)
 
 ### Guest Consumers
 
@@ -147,25 +130,7 @@ Different distributions may require different identity levels:
 
 You can collect consumer information gradually:
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                   PROGRESSIVE PROFILING                          │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                 │
-│  1. ENTRY                                                       │
-│     └── Guest access (no information required)                  │
-│                                                                 │
-│  2. JOIN QUEUE/DRAW                                             │
-│     └── Request email (for notifications)                       │
-│                                                                 │
-│  3. WIN OR GET ACCESS                                           │
-│     └── Request phone (for SMS updates)                         │
-│                                                                 │
-│  4. CHECKOUT                                                    │
-│     └── Full profile (shipping, payment)                        │
-│                                                                 │
-└─────────────────────────────────────────────────────────────────┘
-```
+![Progressive collection diagram showing guest entry, email collection, phone collection, and checkout profile collection.](/images/concepts/progressive-profiling.webp)
 
 This approach:
 

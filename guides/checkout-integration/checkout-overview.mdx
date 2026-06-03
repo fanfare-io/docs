@@ -24,35 +24,7 @@ When a consumer is admitted through a Fanfare experience, the public SDK surface
 
 ## The Checkout Flow
 
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│                        Consumer Journey                              │
-└─────────────────────────────────────────────────────────────────────┘
-
-   ┌──────────┐     ┌──────────┐     ┌──────────┐     ┌──────────┐
-   │  Enter   │     │  Wait/   │     │ Admitted │     │ Complete │
-   │Experience│────▶│Participate│────▶│(Grant)   │────▶│ Checkout │
-   └──────────┘     └──────────┘     └──────────┘     └──────────┘
-                                           │
-                                           │ Admission Grant
-                                           ▼
-                                    ┌──────────┐
-                                    │ Validate │
-                                    │  Grant   │
-                                    └──────────┘
-                                           │
-                                           ▼
-                                    ┌──────────┐
-                                    │  Place   │
-                                    │  Order   │
-                                    └──────────┘
-                                           │
-                                           ▼
-                                    ┌──────────┐
-                                    │ Complete │
-                                    │Admission │
-                                    └──────────┘
-```
+![Checkout flow diagram showing experience entry, participation, access granted, server check, order placement, and completion.](/images/guides/checkout-flow.webp)
 
 ## Understanding Admission Grants
 
@@ -65,13 +37,7 @@ When a consumer is admitted, the public SDK surfaces an admission grant. This gr
 
 ### Grant Lifecycle
 
-```
-Created ──▶ Valid ──▶ Used/Expired ──▶ Invalid
-   │          │            │              │
-   │          │            │              │
-window    Checkout      Complete      Rejected
-opens      window        order
-```
+![Admission lifecycle diagram showing created, checkout window, used, expired, and invalid states.](/images/guides/admission-grant-lifecycle.webp)
 
 ## Step 1: Detect Admission
 

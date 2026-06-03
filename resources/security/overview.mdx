@@ -25,18 +25,7 @@ Fanfare is built with security as a core principle. This document outlines our s
 
 ### Data Flow Security
 
-```
-Consumer Device                    Fanfare Platform                    Your Systems
-     │                                    │                                  │
-     │──── TLS 1.3 ────────────────────►  │                                  │
-     │     Encrypted request              │                                  │
-     │                                    │                                  │
-     │                                    │──── TLS 1.3 ──────────────────► │
-     │                                    │     Webhook / API call           │
-     │                                    │                                  │
-     │  ◄───────────────────────────────  │                                  │
-     │     Encrypted response             │                                  │
-```
+![Security data flow diagram showing encrypted transport from consumer devices through Fanfare to customer systems.](/images/resources/security-data-flow.webp)
 
 ## Authentication & Authorization
 

@@ -24,33 +24,7 @@ After a consumer completes checkout, you need to notify Fanfare that the admissi
 
 ## The Completion Flow
 
-```
-Payment Successful
-       │
-       ▼
-┌──────────────────┐
-│  Create Order    │
-│  in Your System  │
-└──────────────────┘
-       │
-       ▼
-┌──────────────────┐
-│ Complete Fanfare │
-│    Admission     │
-└──────────────────┘
-       │
-       ▼
-┌──────────────────┐
-│ Fanfare Triggers │
-│    Webhooks      │
-└──────────────────┘
-       │
-       ▼
-┌──────────────────┐
-│ Send Customer    │
-│  Confirmation    │
-└──────────────────┘
-```
+![Order completion flow diagram showing payment success, order creation, admission completion, webhooks, and customer confirmation.](/images/guides/order-completion-flow.webp)
 
 ## Step 1: Complete Admission API
 

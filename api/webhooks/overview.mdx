@@ -11,17 +11,7 @@ Webhooks allow you to receive real-time notifications when events occur in your 
 3. Your server processes the event and responds with a 2xx status code
 4. If delivery fails, Fanfare retries with exponential backoff
 
-```
-┌─────────────┐     Event     ┌─────────────┐     POST     ┌─────────────┐
-│   Fanfare   │──────────────>│   Webhook   │─────────────>│ Your Server │
-│   Platform  │               │   Service   │              │             │
-└─────────────┘               └─────────────┘              └─────────────┘
-                                    │
-                                    │ Retry on failure
-                                    └──────────────────────────────────────┐
-                                                                           │
-                                                                           ▼
-```
+![Webhook delivery flow showing Fanfare event delivery, webhook endpoint processing, success, and retry.](/images/api/webhook-delivery-flow.webp)
 
 ## Webhook Payload
 

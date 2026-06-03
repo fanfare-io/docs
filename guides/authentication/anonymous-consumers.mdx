@@ -23,34 +23,7 @@ Anonymous (guest) authentication allows consumers to participate in experiences 
 
 ## How Anonymous Authentication Works
 
-```
-┌─────────────────────────────────────────────────────────┐
-│                   Consumer Visit                         │
-└─────────────────────────────────────────────────────────┘
-                           │
-                           ▼
-              ┌───────────────────────┐
-              │   Check for Session    │
-              └───────────────────────┘
-                           │
-           ┌───────────────┴───────────────┐
-           │                               │
-    No Session                      Has Session
-           │                               │
-           ▼                               ▼
-   ┌───────────────┐              ┌───────────────┐
-   │ Create Guest  │              │    Restore    │
-   │   Session     │              │    Session    │
-   └───────────────┘              └───────────────┘
-           │                               │
-           └───────────────┬───────────────┘
-                           │
-                           ▼
-              ┌───────────────────────┐
-              │   Participate in      │
-              │     Experience        │
-              └───────────────────────┘
-```
+![Anonymous consumer flow diagram showing session check, restore or create guest, and participate.](/images/guides/anonymous-consumer-flow.webp)
 
 ## Step 1: Create a Guest Session
 

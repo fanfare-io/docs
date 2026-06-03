@@ -33,50 +33,7 @@ Use JWT authentication when:
 
 ## Authentication Architecture
 
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│                          Your Infrastructure                          │
-│                                                                       │
-│  ┌─────────────┐     ┌─────────────┐     ┌─────────────┐            │
-│  │   Browser   │     │  Your API   │     │  Checkout   │            │
-│  │   (SDK)     │     │   Server    │     │   Server    │            │
-│  └─────────────┘     └─────────────┘     └─────────────┘            │
-│         │                   │                   │                    │
-└─────────│───────────────────│───────────────────│────────────────────┘
-          │                   │                   │
-          │  1. User logs in  │                   │
-          │─────────────────►│                   │
-          │                   │                   │
-          │                   │ 2. Exchange Code  │
-          │                   │──────────────────►│─────┐
-          │                   │                   │     │ Fanfare API
-          │                   │◄──────────────────│◄────┘
-          │                   │                   │
-          │  3. Exchange Code │                   │
-          │◄─────────────────│                   │
-          │                   │                   │
-          │  4. exchangeExternal()                │
-          │───────────────────────────────────────│─────┐
-          │                   │                   │     │ Fanfare API
-          │◄──────────────────────────────────────│◄────┘
-          │   (Fanfare Session)                   │
-          │                   │                   │
-          │  5. User Admitted │                   │
-          │───────────────────────────────────────│─────┐
-          │                   │                   │     │ Experience
-          │◄──────────────────────────────────────│◄────┘
-          │   (Admission Grant)                   │
-          │                   │                   │
-          │  6. Checkout with Grant               │
-          │───────────────────┼──────────────────►│
-          │                   │                   │
-          │                   │ 7. Validate Grant │
-          │                   │◄──────────────────│
-          │                   │                   │─────┐
-          │                   │──────────────────►│     │ Fanfare API
-          │                   │◄──────────────────│◄────┘
-          │                   │ (Valid/Invalid)   │
-```
+![Server-side authentication flow diagram showing browser SDK, backend exchange, Fanfare session, admission grant, and checkout validation.](/images/guides/jwt-token-flow.webp)
 
 ## Step 1: External Authentication Endpoint
 

@@ -33,47 +33,7 @@ Use identified authentication when you need:
 
 ## Authentication Flow
 
-```
-┌─────────────────────────────────────────────────────────┐
-│                   User Starts Auth                       │
-└─────────────────────────────────────────────────────────┘
-                           │
-                           ▼
-              ┌───────────────────────┐
-              │   Enter Email/Phone   │
-              └───────────────────────┘
-                           │
-                           ▼
-              ┌───────────────────────┐
-              │   Request OTP Code    │──────────────┐
-              │   POST /auth/otp/     │              │
-              │        request        │              │
-              └───────────────────────┘              │
-                           │                        │
-                           ▼                        │
-              ┌───────────────────────┐              │
-              │   User Receives OTP   │◄─────────────┘
-              │   (Email or SMS)      │
-              └───────────────────────┘
-                           │
-                           ▼
-              ┌───────────────────────┐
-              │   Enter OTP Code      │
-              └───────────────────────┘
-                           │
-                           ▼
-              ┌───────────────────────┐
-              │   Verify OTP Code     │
-              │   POST /auth/otp/     │
-              │        verify         │
-              └───────────────────────┘
-                           │
-                           ▼
-              ┌───────────────────────┐
-              │   Session Created     │
-              │   (Authenticated)     │
-              └───────────────────────┘
-```
+![Identified consumer flow diagram showing contact entry, OTP request, code receipt, verification, and session creation.](/images/guides/identified-consumer-flow.webp)
 
 ## Step 1: Email OTP Authentication
 
