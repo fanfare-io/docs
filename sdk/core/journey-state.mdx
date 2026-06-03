@@ -24,6 +24,11 @@ if (view.journeyStage === "routed" && view.sequence.stage === "active") {
 
 Use `snapshot$` when you need raw diagnostic fields, event history, or exhaustive state inspection. Do not drive normal UI from private assumptions about how the snapshot was produced.
 
+Both `view$` and `snapshot$` are reactive readable stores. Calling `.get()` reads
+the current value once; calling `.listen(...)` subscribes to future changes and
+returns an unsubscribe function. For framework integrations, prefer the adapter's
+state helper where one exists, such as `useExperienceJourney` in React.
+
 ## Top-level stages
 
 | Stage | Meaning | Typical UI |

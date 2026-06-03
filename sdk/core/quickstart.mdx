@@ -41,6 +41,13 @@ The journey exposes four stores:
 
 Most integrations should render from `view$`.
 
+These are reactive readable stores. Use `.get()` for the current value, and
+`.listen(...)` when your UI needs to update as the journey changes. Always keep
+the unsubscribe function and call it when your component, page, or integration
+mount point is removed. React integrations usually do not need to subscribe to
+these stores directly because `useExperienceJourney` returns the current `view`
+and `snapshot` for React rendering.
+
 ## Render from `JourneyView`
 
 ```ts

@@ -109,3 +109,9 @@ The hook returns the same public journey model as the core SDK:
 | `snapshot` | Debugging or exhaustive inspection. |
 | `error` | Adapter-level setup or action errors. |
 | `start()` | Convenience method for starting the journey. |
+
+`useExperienceJourney` is the React-friendly wrapper around the underlying
+journey stores. It subscribes to the current `view$` and `snapshot$` values for
+you, updates React state when they change, and cleans up those subscriptions
+when the component unmounts. Most React UI should render from the returned
+`view` instead of subscribing to `journey.view$` directly.
