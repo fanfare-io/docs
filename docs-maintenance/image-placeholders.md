@@ -198,7 +198,7 @@ These should be handled before broad screenshot replacement because they improve
 | `dashboard/settings/team-members.mdx:14` | sanitized screenshot | /app/settings/organization | Team members section or link to team management | Highlight the team members link |
 | `dashboard/settings/team-members.mdx:63` | sanitized screenshot | Team management interface | Invite member dialog with email and role fields | Label the email field and role selector |
 | `dashboard/settings/team-members.mdx:105` | sanitized screenshot | Team management interface | Team members list with multiple users | Highlight role badges and action menus |
-| `dashboard/getting-started.mdx:18` | sanitized screenshot | /auth/sign-up | Sign-up form with email and password fields | None needed |
+| `dashboard/getting-started.mdx:18` | sanitized screenshot | /auth/sign-in | Sign-in form with email and password fields | None needed |
 | `dashboard/getting-started.mdx:33` | sanitized screenshot | /auth/organization-setup | Organization setup wizard | Highlight required fields |
 | `dashboard/getting-started.mdx:55` | sanitized screenshot | /app/dashboard | Empty dashboard state with quick actions | Point to the three quick action cards |
 | `dashboard/getting-started.mdx:80` | sanitized screenshot | /app/settings/organization | Organization settings form with fields filled in | Highlight save button |
