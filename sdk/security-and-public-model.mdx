@@ -13,7 +13,7 @@ You can rely on:
 
 - Package names, exported SDK APIs, component props, and event names.
 - Public journey states such as `ready`, `routing`, `gated`, and `routed`.
-- Public sequence states such as `upcoming`, `active`, `participating`, `admitted`, and `denied`.
+- Public sequence phases such as `scheduled`, `enterable`, `participating`, `settling`, `granted`, and `ended`.
 - Public actions exposed by `JourneyView`, such as `start()`, `reroute()`, `enter()`, and `leave()`.
 - Component customization surfaces: theme, variant, slots, render props, callbacks, locale, and translation overrides.
 
@@ -37,7 +37,7 @@ Prefer outcome-oriented language:
 | --- | --- |
 | "Verification was triggered by signal X" | "Additional verification is required" |
 | "Access was denied because of rule X" | "Access is not available right now" |
-| "The queue let you through because..." | "You have been admitted" |
+| "The queue let you through because..." | "You have access to continue" |
 | "Your current attempt count is X" | "Please try again later" |
 
 ## Handling sensitive runtime values

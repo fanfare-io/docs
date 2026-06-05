@@ -240,8 +240,8 @@ export function FlashSaleExperience({ experienceId, products }: FlashSaleExperie
   if (view.journeyStage === "ready") return <PreSaleState products={products} onStart={start} />;
   if (view.journeyStage === "routing") return <LoadingState message="Getting you into the sale..." />;
   if (view.journeyStage === "gated") return <GateState view={view} />;
-  if (view.sequence.stage === "admitted") return <ShoppingState sequence={view.sequence} products={products} />;
-  if (view.sequence.stage === "denied") return <SaleEndedState />;
+  if (view.sequence.phase === "granted") return <ShoppingState sequence={view.sequence} products={products} />;
+  if (view.sequence.phase === "ended") return <SaleEndedState />;
 
   return <SaleStatus sequence={view.sequence} />;
 }
@@ -299,10 +299,10 @@ function ShoppingState({
   sequence,
   products,
 }: {
-  sequence: Extract<JourneyView, { journeyStage: "routed" }>["sequence"] & { stage: "admitted" };
+  sequence: Extract<SequenceView, { phase: "granted" }>;
   products: SaleProduct[];
 }) {
-  const expiresAt = sequence.admissionGrantExpiresAt;
+  const expiresAt = sequence.grant.expiresAt ? new Date(sequence.grant.expiresAt).getTime() : undefined;
   const [timeRemaining, setTimeRemaining] = useState(0);
   const [cart, setCart] = useState<CartItem[]>([]);
 
@@ -334,7 +334,7 @@ function ShoppingState({
   const handleCheckout = () => {
     // Store admission and cart data
     const checkoutData = {
-      admissionGrant: sequence.admissionGrant,
+      admissionGrant: sequence.grant.token,
       cart,
     };
 

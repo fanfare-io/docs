@@ -2,7 +2,7 @@
 title: Deployment
 description: Production checklist for a public Fanfare SDK integration.
 ---
-Before shipping Fanfare to production, verify that your browser SDK setup, admitted-state handoff, and fallback behavior are ready for real customers.
+Before shipping Fanfare to production, verify that your browser SDK setup, granted-state handoff, and fallback behavior are ready for real customers.
 
 ## Production Checklist
 
@@ -11,7 +11,7 @@ Before shipping Fanfare to production, verify that your browser SDK setup, admit
 | Credentials | Production uses `pk_live_...` publishable keys and server-only secret keys. |
 | Experience | The production page points at the intended `experienceId`. |
 | SDK defaults | Browser SDK config does not override the default environment or API URL. |
-| Handoff | Admitted customers pass through your trusted server or checkout flow. |
+| Handoff | Granted customers pass through your trusted server or checkout flow. |
 | Logging | Debug logging is disabled in production. |
 | Copy | Gated, denied, and error states use generic customer-safe language. |
 | Fallback | Your app has a plan if the launch experience cannot be rendered. |
@@ -43,13 +43,13 @@ Never expose secret API keys in frontend code, static HTML, client logs, or brow
 
 ## Handle Admission Safely
 
-When a customer is admitted, send the admission grant to the next trusted step. Avoid placing grants in URLs or third-party telemetry.
+When a customer receives a grant, send it to the next trusted step. Avoid placing grants in URLs or third-party telemetry.
 
 ```tsx
 <ExperienceWidget
   experienceId="exp_123"
   autoStart
-  onAdmitted={async (admissionGrant) => {
+  onGranted={async (admissionGrant) => {
     await fetch("/api/fanfare/admission", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -61,20 +61,20 @@ When a customer is admitted, send the admission grant to the next trusted step. 
 />
 ```
 
-If your custom UI renders directly from `JourneyView`, read the admitted fields from the public sequence view:
+If your custom UI renders directly from `JourneyView`, read the grant from the public sequence view:
 
 ```tsx
-if (view.sequence.stage === "admitted") {
+if (view.sequence.phase === "granted") {
   return (
     <CheckoutPanel
-      admissionGrant={view.sequence.admissionGrant}
-      admissionGrantExpiresAt={view.sequence.admissionGrantExpiresAt}
+      admissionGrant={view.sequence.grant.token}
+      admissionGrantExpiresAt={view.sequence.grant.expiresAt}
     />
   );
 }
 ```
 
-Your backend should validate admitted customers before completing protected actions such as checkout, booking, or fulfillment.
+Your backend should validate granted customers before completing protected actions such as checkout, booking, or fulfillment.
 
 ## Avoid Development Overrides
 

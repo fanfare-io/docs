@@ -8,7 +8,7 @@ Test your integration from the public contract:
 - The right UI renders for each public journey state.
 - Buttons call the actions exposed by the current `JourneyView`.
 - Gates show generic, customer-safe messaging.
-- Admission sends the consumer to the next app step.
+- A granted handoff sends the consumer to the next app step.
 - Sensitive runtime values are not sent to third-party logs.
 
 ![SDK testing workflow showing setup, simulated public states, rendered behavior verification, and full-flow release testing.](/images/sdk/testing-workflow.webp)
@@ -21,11 +21,12 @@ Test your integration from the public contract:
 | Routing | Loading state appears without offering invalid actions. |
 | Gated auth | Auth UI completes, then reroutes. |
 | Gated access code | Code submission calls `reroute({ accessCode })`. |
-| Upcoming | Timing and optional waitlist action render. |
-| Active | Enter action is available. |
+| Scheduled | Timing renders without invalid actions. |
+| Enterable | Enter, bid, or booking action is available for the mechanism. |
 | Participating | Participation status renders and valid actions are available. |
-| Admitted | Checkout handoff runs and does not leak the grant. |
-| Denied | Recovery copy is clear and generic. |
+| Settling | Pending-result copy renders without actions. |
+| Granted | Checkout handoff runs and does not leak the grant. |
+| Ended | Outcome copy is clear and generic. |
 | Error | Retry or support path is visible. |
 
 ## Component integration tests
@@ -47,6 +48,6 @@ Test `LaunchExperienceView` with representative `view` values. Keep SDK network 
 - Start from a clean browser profile.
 - Repeat with an existing session.
 - Open the same experience in two tabs.
-- Verify loading, gated, participating, admitted, denied, and error copy.
+- Verify loading, gated, participating, granted, ended, and error copy.
 - Confirm checkout receives only the values it needs.
 - Confirm analytics use high-level outcomes rather than raw grants or snapshots.

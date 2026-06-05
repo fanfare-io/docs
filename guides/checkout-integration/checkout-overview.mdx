@@ -51,7 +51,7 @@ function ExperienceWithCheckout({ experienceId }: { experienceId: string }) {
     <ExperienceWidget
       experienceId={experienceId}
       autoStart
-      onAdmitted={async (admissionGrant) => {
+      onGranted={async (admissionGrant) => {
         await fetch("/api/fanfare/admission", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -67,7 +67,7 @@ function ExperienceWithCheckout({ experienceId }: { experienceId: string }) {
 
 ## Step 2: Show Checkout Call-to-Action
 
-For custom React UI, branch on the public `JourneyView` and read the grant from the admitted sequence:
+For custom React UI, branch on the public `JourneyView` and read the grant from the granted sequence:
 
 ```tsx
 import { useExperienceJourney } from "@fanfare-io/fanfare-sdk-react";
@@ -80,11 +80,11 @@ function CustomCheckoutCTA({ experienceId }: { experienceId: string }) {
   if (view.journeyStage === "ready") return <button onClick={() => void start()}>Enter</button>;
   if (view.journeyStage === "gated") return <GatePanel view={view} />;
 
-  if (view.sequence.stage === "admitted") {
+  if (view.sequence.phase === "granted") {
     return (
       <CheckoutButton
-        expiresAt={view.sequence.admissionGrantExpiresAt}
-        onClick={() => sendAdmissionGrant(view.sequence.admissionGrant)}
+        expiresAt={view.sequence.grant.expiresAt}
+        onClick={() => sendAdmissionGrant(view.sequence.grant.token)}
       />
     );
   }

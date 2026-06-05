@@ -186,7 +186,7 @@ interface DrawExperienceProps {
 
 export function DrawExperience({ drawId, entryStart, entryEnd, drawTime }: DrawExperienceProps) {
   const { view, start } = useExperienceJourney(drawId, { autoStart: true });
-  const stage = view?.journeyStage === "routed" ? view.sequence.stage : view?.journeyStage;
+  const stage = view?.journeyStage === "routed" ? view.sequence.phase : view?.journeyStage;
   const sequence = view?.journeyStage === "routed" ? view.sequence : null;
 
   const now = Date.now();
@@ -359,7 +359,7 @@ function EntryClosedState({ sequence, drawTime }: { sequence: SequenceView | nul
 }
 
 function DrawnState({ sequence }: { sequence: SequenceView | null }) {
-  if (sequence?.stage === "admitted") {
+  if (sequence?.phase === "granted") {
     return (
       <div className="winner-state">
         <div className="winner-celebration">
@@ -372,7 +372,7 @@ function DrawnState({ sequence }: { sequence: SequenceView | null }) {
 
           <button
             onClick={() => {
-              sessionStorage.setItem("fanfare_admission", JSON.stringify({ admissionGrant: sequence.admissionGrant }));
+              sessionStorage.setItem("fanfare_admission", JSON.stringify({ admissionGrant: sequence.grant.token }));
               window.location.href = "/checkout";
             }}
           >
@@ -491,8 +491,8 @@ export function AuctionExperience({ auctionId, item }: AuctionExperienceProps) {
 
   const auctionSequence =
     view?.journeyStage === "routed" &&
-    view.sequence.stage === "participating" &&
-    view.sequence.participation.type === "auction"
+    view.sequence.phase === "participating" &&
+    view.sequence.mechanism === "auction"
       ? view.sequence
       : null;
 
@@ -526,7 +526,7 @@ export function AuctionExperience({ auctionId, item }: AuctionExperienceProps) {
           bidIncrement={bidIncrement}
           buyNowPrice={auctionState?.buyNowPrice}
           isHighBidder={isHighBidder}
-          onBid={(amount) => auctionSequence?.placeBid(amount)}
+          onBid={(amount) => auctionSequence?.bid(amount)}
         />
 
         <BidHistory bids={auctionState?.recentBids || []} />

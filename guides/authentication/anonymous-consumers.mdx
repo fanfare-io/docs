@@ -335,16 +335,16 @@ function GuestExperience({ experienceId }: { experienceId: string }) {
 
       {/* Actions */}
       <div className="actions">
-        {view?.journeyStage === "routed" && view.sequence.stage === "active" && "enter" in view.sequence && (
+        {view?.journeyStage === "routed" && view.sequence.phase === "enterable" && "enter" in view.sequence && (
           <button onClick={() => void view.sequence.enter()} className="primary-btn">
             Join Queue
           </button>
         )}
 
-        {view?.journeyStage === "routed" && view.sequence.stage === "admitted" && (
+        {view?.journeyStage === "routed" && view.sequence.phase === "granted" && (
           <div className="admitted">
             <h3>You're In!</h3>
-            <button onClick={() => sendAdmissionGrant(view.sequence.admissionGrant)} className="checkout-btn">
+            <button onClick={() => sendAdmissionGrant(view.sequence.grant.token)} className="checkout-btn">
               Continue to Checkout
             </button>
           </div>

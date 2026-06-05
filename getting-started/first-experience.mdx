@@ -38,7 +38,7 @@ function ProductPage() {
     return <button onClick={() => start()}>Start</button>;
   }
 
-  if (view?.journeyStage === "routed" && view.sequence.stage === "active") {
+  if (view?.journeyStage === "routed" && view.sequence.phase === "enterable" && "enter" in view.sequence) {
     return <button onClick={() => view.sequence.enter()}>Enter</button>;
   }
 
@@ -55,13 +55,13 @@ Use `JourneyView` first when building UI. It exposes only the actions that are v
 | `ready` | The journey exists and can be started |
 | `routing` | Fanfare is resolving the consumer's current public path |
 | `gated` | The consumer must complete authentication, an access code, or another public requirement |
-| `routed.upcoming` | A matching sequence exists but is not active yet |
-| `routed.waitlist_entered` | The consumer is on the waitlist |
-| `routed.active` | The consumer can enter, book, bid, or otherwise participate |
+| `routed.scheduled` | A matching sequence exists but is not active yet |
+| `routed.waitlist` | The consumer is on the waitlist |
+| `routed.enterable` | The consumer can enter, book, bid, or otherwise participate |
 | `routed.participating` | The consumer is already participating |
-| `routed.admitted` | The consumer has access to continue to checkout or the next app step |
-| `routed.denied` | Access is not available for this public journey state |
-| `routed.no_sequence` | No public sequence is currently available |
+| `routed.granted` | The consumer has access to continue to checkout or the next app step |
+| `routed.ended` | The sequence has a terminal outcome |
+| `routed.unavailable` | No public sequence is currently available |
 
 ## Creating a Queue Experience
 
@@ -89,7 +89,7 @@ function QueueExperience() {
     return <p>Setting up your spot...</p>;
   }
 
-  if (view.journeyStage === "routed" && view.sequence.stage === "participating") {
+  if (view.journeyStage === "routed" && view.sequence.phase === "participating") {
     return (
       <div className="queue-waiting">
         <h2>You are in the queue</h2>
@@ -98,8 +98,8 @@ function QueueExperience() {
     );
   }
 
-  if (view.journeyStage === "routed" && view.sequence.stage === "admitted") {
-    const admissionGrant = view.sequence.admissionGrant;
+  if (view.journeyStage === "routed" && view.sequence.phase === "granted") {
+    const admissionGrant = view.sequence.grant.token;
     const proceedToCheckout = async () => {
       await fetch("/api/checkout/handoff", {
         method: "POST",
@@ -151,7 +151,7 @@ function ProductPage() {
 }
 ```
 
-Use this same widget for queues, draws, auctions, appointments, and timed releases. The routed `view.sequence.stage` decides which module appears.
+Use this same widget for queues, draws, auctions, appointments, and timed releases. The routed `view.sequence.phase` and `view.sequence.mechanism` decide which module appears.
 
 ## Creating a Draw Experience
 
@@ -176,12 +176,12 @@ function DrawExperience() {
     return <button onClick={() => start()}>Enter Draw</button>;
   }
 
-  if (view?.journeyStage === "routed" && view.sequence.stage === "participating") {
+  if (view?.journeyStage === "routed" && view.sequence.phase === "participating") {
     return <p>You are entered. Winners will be selected when the draw closes.</p>;
   }
 
-  if (view?.journeyStage === "routed" && view.sequence.stage === "admitted") {
-    return <button onClick={() => proceedToCheckout(view.sequence.admissionGrant)}>Complete Purchase</button>;
+  if (view?.journeyStage === "routed" && view.sequence.phase === "granted") {
+    return <button onClick={() => proceedToCheckout(view.sequence.grant.token)}>Complete Purchase</button>;
   }
 
   return error ? <p>{error}</p> : <p>Loading draw...</p>;
@@ -215,12 +215,12 @@ function AuctionExperience() {
     return <button onClick={() => start()}>Start Auction</button>;
   }
 
-  if (view?.journeyStage === "routed" && view.sequence.stage === "participating" && "placeBid" in view.sequence) {
+  if (view?.journeyStage === "routed" && view.sequence.phase === "participating" && "bid" in view.sequence) {
     return (
       <form
         onSubmit={(event) => {
           event.preventDefault();
-          void view.sequence.placeBid(bidAmount);
+          void view.sequence.bid(bidAmount);
         }}
       >
         <input value={bidAmount} onChange={(event) => setBidAmount(event.target.value)} />
@@ -229,8 +229,8 @@ function AuctionExperience() {
     );
   }
 
-  if (view?.journeyStage === "routed" && view.sequence.stage === "admitted") {
-    return <button onClick={() => proceedToCheckout(view.sequence.admissionGrant)}>Complete Purchase</button>;
+  if (view?.journeyStage === "routed" && view.sequence.phase === "granted") {
+    return <button onClick={() => proceedToCheckout(view.sequence.grant.token)}>Complete Purchase</button>;
   }
 
   return error ? <p>{error}</p> : <p>Loading auction...</p>;
@@ -260,12 +260,12 @@ function TimedReleaseExperience() {
     return <button onClick={() => start()}>Enter</button>;
   }
 
-  if (view?.journeyStage === "routed" && view.sequence.stage === "participating" && "complete" in view.sequence) {
+  if (view?.journeyStage === "routed" && view.sequence.phase === "participating" && "complete" in view.sequence) {
     return <button onClick={() => view.sequence.complete()}>Continue to checkout</button>;
   }
 
-  if (view?.journeyStage === "routed" && view.sequence.stage === "admitted") {
-    return <button onClick={() => proceedToCheckout(view.sequence.admissionGrant)}>Complete Purchase</button>;
+  if (view?.journeyStage === "routed" && view.sequence.phase === "granted") {
+    return <button onClick={() => proceedToCheckout(view.sequence.grant.token)}>Complete Purchase</button>;
   }
 
   return <p>Loading...</p>;
@@ -345,7 +345,7 @@ import { useExperienceJourney } from "@fanfare-io/fanfare-sdk-react";
 function UpcomingExperience() {
   const { view } = useExperienceJourney("exp_upcoming_experience_id");
 
-  if (view?.journeyStage === "routed" && view.sequence.stage === "waitlist_entered") {
+  if (view?.journeyStage === "routed" && view.sequence.phase === "participating" && view.sequence.mechanism === "waitlist") {
     return (
       <div className="waitlist-joined">
         <h2>You are on the waitlist</h2>
@@ -369,18 +369,20 @@ const handlers: Record<string, () => JSX.Element | null> = {
   ready: () => <LandingView />,
   routing: () => <LoadingSpinner />,
   gated: () => <GateView />,
-  "routed.upcoming": () => <UpcomingView />,
-  "routed.waitlist_entered": () => <WaitingView />,
-  "routed.active": () => <EnterView />,
+  "routed.scheduled": () => <UpcomingView />,
+  "routed.waitlist": () => <WaitingView />,
+  "routed.enterable": () => <EnterView />,
   "routed.participating": () => <ParticipationView />,
-  "routed.admitted": () => <AdmittedView />,
-  "routed.denied": () => <DeniedView />,
-  "routed.no_sequence": () => <UnavailableView />,
+  "routed.granted": () => <GrantedView />,
+  "routed.ended": () => <EndedView />,
+  "routed.unavailable": () => <UnavailableView />,
 };
 
 const key =
   view?.journeyStage === "routed"
-    ? `routed.${view.sequence.stage}`
+    ? view.sequence.mechanism === "waitlist"
+      ? "routed.waitlist"
+      : `routed.${view.sequence.phase}`
     : view?.journeyStage;
 
 return (key && handlers[key]?.()) ?? <LoadingSpinner />;
@@ -391,8 +393,8 @@ return (key && handlers[key]?.()) ?? <LoadingSpinner />;
 Always include the admission token when redirecting to checkout:
 
 ```tsx
-if (view?.journeyStage === "routed" && view.sequence.stage === "admitted") {
-  const token = view.sequence.admissionGrant;
+if (view?.journeyStage === "routed" && view.sequence.phase === "granted") {
+  const token = view.sequence.grant.token;
   return <a href={`/checkout?admission_token=${token}`}>Complete Purchase</a>;
 }
 ```
@@ -403,10 +405,10 @@ Admission tokens expire. Check the expiration and handle accordingly:
 
 ```tsx
 const admission =
-  view?.journeyStage === "routed" && view.sequence.stage === "admitted"
+  view?.journeyStage === "routed" && view.sequence.phase === "granted"
     ? view.sequence
     : null;
-const expiresAt = admission?.admissionGrantExpiresAt ? new Date(admission.admissionGrantExpiresAt) : null;
+const expiresAt = admission?.grant.expiresAt ? new Date(admission.grant.expiresAt) : null;
 const isExpired = expiresAt && expiresAt < new Date();
 
 if (isExpired) {

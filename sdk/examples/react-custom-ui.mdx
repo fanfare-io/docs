@@ -49,8 +49,8 @@ function JourneyPanel({
     return <GatePanel view={view} />;
   }
 
-  if (view.sequence.stage === "admitted") {
-    return <CheckoutPanel grant={view.sequence.admissionGrant} />;
+  if (view.sequence.phase === "granted") {
+    return <CheckoutPanel grant={view.sequence.grant.token} />;
   }
 
   return <SequencePanel sequence={view.sequence} />;

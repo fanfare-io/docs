@@ -342,9 +342,9 @@ export function TicketPurchaseExperience({ experienceId, event, presaleCode }: T
   if (view.journeyStage === "ready") return <SaleNotStartedState event={event} onStart={start} />;
   if (view.journeyStage === "routing") return <LoadingState message="Joining the queue..." />;
   if (view.journeyStage === "gated") return <GateState view={view} />;
-  if (view.sequence.stage === "participating") return <QueueState sequence={view.sequence} event={event} />;
-  if (view.sequence.stage === "admitted") return <TicketSelectionState sequence={view.sequence} event={event} />;
-  if (view.sequence.stage === "denied") return <SessionExpiredState onRetry={view.sequence.reenter ?? start} />;
+  if (view.sequence.phase === "participating") return <QueueState sequence={view.sequence} event={event} />;
+  if (view.sequence.phase === "granted") return <TicketSelectionState sequence={view.sequence} event={event} />;
+  if (view.sequence.phase === "ended") return <SessionExpiredState onRetry={start} />;
 
   return null;
 }
@@ -432,7 +432,7 @@ function QueueState({ sequence, event }: { sequence: SequenceView; event: EventC
 
       <div className="queue-position">
         <div className="position-circle">
-          <span className="position">{sequence.stage}</span>
+          <span className="position">{sequence.phase}</span>
           <span className="label">Current status</span>
         </div>
       </div>
@@ -469,10 +469,10 @@ function TicketSelectionState({
   sequence,
   event,
 }: {
-  sequence: Extract<JourneyView, { journeyStage: "routed" }>["sequence"] & { stage: "admitted" };
+  sequence: Extract<SequenceView, { phase: "granted" }>;
   event: EventConfig;
 }) {
-  const expiresAt = sequence.admissionGrantExpiresAt;
+  const expiresAt = sequence.grant.expiresAt ? new Date(sequence.grant.expiresAt).getTime() : undefined;
   const [selectedTier, setSelectedTier] = useState<TicketTier | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [ticketAvailability, setTicketAvailability] = useState<Map<string, number>>(new Map());
@@ -496,7 +496,7 @@ function TicketSelectionState({
       eventId: event.eventId,
       tierId: selectedTier.tierId,
       quantity,
-      admissionGrant: sequence.admissionGrant,
+      admissionGrant: sequence.grant.token,
     };
 
     sessionStorage.setItem("ticket_order", JSON.stringify(orderData));

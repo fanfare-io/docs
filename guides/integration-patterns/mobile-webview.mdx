@@ -33,9 +33,9 @@ export function MobileExperiencePage() {
       <ExperienceWidget
         experienceId="exp_123"
         autoStart
-        onAdmitted={(admissionGrant) => {
+        onGranted={(admissionGrant) => {
           window.ReactNativeWebView?.postMessage(
-            JSON.stringify({ type: "fanfare:admitted", admissionGrant })
+            JSON.stringify({ type: "fanfare:granted", admissionGrant })
           );
         }}
         onError={(error) => {
@@ -57,9 +57,9 @@ For a framework-agnostic page, use the web component events.
 <script>
   const widget = document.querySelector("fanfare-experience-widget");
 
-  widget.addEventListener("fanfare-admitted", (event) => {
+  widget.addEventListener("fanfare-granted", (event) => {
     window.ReactNativeWebView?.postMessage(
-      JSON.stringify({ type: "fanfare:admitted", admissionGrant: event.detail.grant })
+      JSON.stringify({ type: "fanfare:granted", admissionGrant: event.detail.grant })
     );
   });
 

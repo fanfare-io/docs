@@ -49,15 +49,15 @@ export function ProductLaunchPage() {
 }
 ```
 
-Use `checkoutUrl` for default admitted-state navigation.
+Use `checkoutUrl` for default granted-state navigation.
 
-Use `onAdmitted` when your application needs to coordinate custom routing or server handoff.
+Use `onGranted` when your application needs to coordinate custom routing or server handoff.
 
 ```tsx
 <ExperienceWidget
   experienceId="exp_123"
   autoStart
-  onAdmitted={async (grant) => {
+  onGranted={async (grant) => {
     await fetch("/api/fanfare/admission", {
       method: "POST",
       headers: { "Content-Type": "application/json" },

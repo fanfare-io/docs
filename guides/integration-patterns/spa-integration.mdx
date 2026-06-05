@@ -181,17 +181,17 @@ export function ExperienceStatus({ view, error }: ExperienceStatusProps) {
   }
 
   if (view.journeyStage === "routed") {
-    switch (view.sequence.stage) {
-      case "upcoming":
+    switch (view.sequence.phase) {
+      case "scheduled":
         return <p>Waiting for access to open...</p>;
-      case "active":
+      case "enterable":
         return <p>Ready to participate!</p>;
       case "participating":
         return <p>You are participating.</p>;
-      case "admitted":
+      case "granted":
         return <p>You have access to checkout.</p>;
-      case "no_sequence":
-      case "denied":
+      case "unavailable":
+      case "ended":
         return <p>No access currently available.</p>;
     }
   }
@@ -217,20 +217,20 @@ export function JourneyActions({ view }: JourneyActionsProps) {
 
   return (
     <div className="journey-actions">
-      {view.sequence.stage === "active" && "enter" in view.sequence && (
+      {view.sequence.phase === "enterable" && "enter" in view.sequence && (
         <button onClick={() => view.sequence.enter()} className="primary-button">
           Join the Queue
         </button>
       )}
 
-      {view.sequence.stage === "participating" && view.sequence.participation.type === "queue" && (
+      {view.sequence.phase === "participating" && view.sequence.mechanism === "queue" && (
         <p className="hint">You are in the queue. Stay on this page for updates.</p>
       )}
 
-      {view.sequence.stage === "admitted" && (
+      {view.sequence.phase === "granted" && (
         <AdmittedView
-          admissionToken={view.sequence.admissionGrant}
-          expiresAt={view.sequence.admissionGrantExpiresAt}
+          admissionToken={view.sequence.grant.token}
+          expiresAt={view.sequence.grant.expiresAt}
         />
       )}
     </div>
@@ -338,12 +338,12 @@ function ExperienceWidget() {
     <div>
       <p>Status: {view?.journeyStage ?? "loading"}</p>
 
-      {view?.journeyStage === "routed" && view.sequence.stage === "active" && "enter" in view.sequence && (
+      {view?.journeyStage === "routed" && view.sequence.phase === "enterable" && "enter" in view.sequence && (
         <button onClick={() => view.sequence.enter()}>Join Queue</button>
       )}
 
-      {view?.journeyStage === "routed" && view.sequence.stage === "admitted" && (
-        <button onClick={() => handleCheckout(view.sequence.admissionGrant)}>Go to Checkout</button>
+      {view?.journeyStage === "routed" && view.sequence.phase === "granted" && (
+        <button onClick={() => handleCheckout(view.sequence.grant.token)}>Go to Checkout</button>
       )}
     </div>
   );

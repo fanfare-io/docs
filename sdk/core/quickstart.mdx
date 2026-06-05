@@ -85,40 +85,39 @@ The key rule: actions live on the view for the current state. If an action is no
 import type { SequenceView } from "@fanfare-io/fanfare-sdk-core/experiences";
 
 function renderSequence(sequence: SequenceView) {
-  if (sequence.stage === "upcoming") {
+  if (sequence.phase === "scheduled") {
     showUpcoming({
-      onJoinWaitlist: sequence.enterWaitlist,
+      startsAt: sequence.startsAt,
     });
     return;
   }
 
-  if (sequence.stage === "active") {
+  if (sequence.phase === "enterable") {
     if ("enter" in sequence) {
       showEnterButton(() => sequence.enter());
-    } else {
+    } else if (sequence.mechanism === "auction") {
+      showBidForm((amount) => sequence.bid(amount));
+    } else if (sequence.mechanism === "appointment") {
       showAppointmentPicker((slotId, locationId) => sequence.book(slotId, locationId));
     }
     return;
   }
 
-  if (sequence.stage === "participating") {
+  if (sequence.phase === "participating") {
     showParticipation({
-      type: sequence.participation.type,
-      onLeave: () => sequence.leave(),
+      type: sequence.mechanism,
+      onLeave: "leave" in sequence ? () => sequence.leave() : undefined,
     });
     return;
   }
 
-  if (sequence.stage === "admitted") {
-    showCheckout(sequence.admissionGrant);
+  if (sequence.phase === "granted") {
+    showCheckout(sequence.grant.token);
     return;
   }
 
-  if (sequence.stage === "denied") {
-    showDenied({
-      reason: sequence.reason,
-      onReenter: sequence.reenter,
-    });
+  if (sequence.phase === "ended") {
+    showEnded({ reason: sequence.outcome.type });
   }
 }
 ```

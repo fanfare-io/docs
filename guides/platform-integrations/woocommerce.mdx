@@ -232,8 +232,8 @@ const container = document.getElementById("fanfare-experience");
 const journey = sdk.journeys.get(container.dataset.experienceId);
 
 journey.view$.listen((view) => {
-  if (view.journeyStage === "routed" && view.sequence.stage === "admitted") {
-    storeAdmission(container.dataset.productId, view.sequence.admissionGrant, view.sequence.admissionGrantExpiresAt);
+  if (view.journeyStage === "routed" && view.sequence.phase === "granted") {
+    storeAdmission(container.dataset.productId, view.sequence.grant.token, view.sequence.grant.expiresAt);
   }
 });
 

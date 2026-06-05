@@ -71,7 +71,7 @@ export function LaunchExperience({ experienceId }: { experienceId: string }) {
     <ExperienceWidget
       experienceId={experienceId}
       autoStart
-      onAdmitted={async (admissionGrant) => {
+      onGranted={async (admissionGrant) => {
         await fetch("/api/fanfare/admission", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -85,7 +85,7 @@ export function LaunchExperience({ experienceId }: { experienceId: string }) {
 }
 ```
 
-Use `checkoutUrl` instead of `onAdmitted` when simple browser navigation is enough.
+Use `checkoutUrl` instead of `onGranted` when simple browser navigation is enough.
 
 ## Custom Client UI
 

@@ -6,7 +6,8 @@ description: Understand the public journey state model used by every SDK integra
 A journey has two layers of public state:
 
 - `journeyStage`: the top-level state of the journey.
-- `sequence.stage`: the current state inside a routed experience.
+- `sequence.phase`: the common state inside a routed experience.
+- `sequence.mechanism`: the consumer path for that phase, such as `queue`, `draw`, `auction`, `appointment`, `timed_release`, or `waitlist`.
 
 ![Public journey state model showing ready, routing, gated, routed, and the routed sequence states.](/images/sdk/journey-state-model.webp)
 
@@ -17,7 +18,7 @@ A journey has two layers of public state:
 ```ts
 const view = journey.view$.get();
 
-if (view.journeyStage === "routed" && view.sequence.stage === "active") {
+if (view.journeyStage === "routed" && view.sequence.phase === "enterable" && "enter" in view.sequence) {
   await view.sequence.enter();
 }
 ```
@@ -36,19 +37,19 @@ state helper where one exists, such as `useExperienceJourney` in React.
 | `ready` | The journey exists but has not started. | Start button or auto-start setup |
 | `routing` | Fanfare is resolving the consumer's current public path. | Loading state |
 | `gated` | The consumer must complete a public requirement before continuing. | Auth, access-code, or verification UI |
-| `routed` | The consumer has a public sequence state. | Upcoming, enterable, participating, admitted, or denied UI |
+| `routed` | The consumer has a public sequence state. | Scheduled, enterable, participating, granted, ended, or unavailable UI |
 
-## Routed sequence stages
+## Routed sequence phases
 
-| Stage | Meaning | Typical action |
+| Phase | Meaning | Typical action |
 | --- | --- | --- |
-| `no_sequence` | No public sequence is currently available. | Explain that access is not available |
-| `upcoming` | A sequence is scheduled but not active yet. | Show timing and optional waitlist action |
-| `waitlist_entered` | The consumer joined the waitlist. | Show waitlist status and leave action |
-| `active` | A sequence is available for entry. | Let the consumer enter or book |
+| `unavailable` | No public sequence is currently available. | Explain that access is not available |
+| `scheduled` | A sequence exists but its primary action is not open yet. | Show timing |
+| `enterable` | A sequence or waitlist is available for entry. | Let the consumer enter, bid, or book |
 | `participating` | The consumer is participating. | Show status and valid participation actions |
-| `admitted` | The consumer has access to proceed. | Send them to checkout or the next app step |
-| `denied` | Access is not available for this journey state. | Show recovery or re-entry only if provided |
+| `settling` | A draw or auction is closed to action but final results are pending. | Show pending-result copy |
+| `granted` | The consumer has an active handoff grant. | Send them to checkout or the next app step |
+| `ended` | The sequence has a terminal outcome. | Show outcome copy |
 
 ## State-gated actions
 
@@ -56,10 +57,10 @@ Actions are intentionally state-gated. For example:
 
 - `ready` exposes `start()`.
 - `gated` exposes `reroute()` and `retry()`.
-- `routed.upcoming` may expose `enterWaitlist()`.
-- `routed.active` exposes `enter()` or appointment booking.
-- `routed.participating` exposes actions for the participation type.
-- `routed.denied` may expose `reenter()`.
+- `routed.enterable` exposes `enter()` for queue, draw, timed release, or waitlist; `bid(amount)` for auction; or `book(slotId, locationId?)` for appointment.
+- `routed.participating` exposes mechanism-specific actions such as `leave()`, `bid(amount)`, `complete()`, `cancel()`, or `reschedule()`.
+- `routed.granted` exposes `claim()` and the active `grant`.
+- `routed.ended` does not expose sequence actions.
 
 This prevents your integration from presenting actions that are not valid for the current consumer state.
 

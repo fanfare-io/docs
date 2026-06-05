@@ -15,17 +15,17 @@ export function LaunchWidget() {
     <ExperienceWidget
       experienceId="exp_123"
       slots={{
-        upcoming: ({ startsAt, canEnterWaitlist, onEnterWaitlist }) => (
+        upcoming: ({ startsAt, canEnter, onEnter }) => (
           <section className="launch-upcoming">
             <h2>Early access opens soon</h2>
             {startsAt ? <p>Starts {startsAt.toLocaleString()}</p> : null}
-            {canEnterWaitlist ? (
-              <button onClick={onEnterWaitlist}>Notify me</button>
+            {canEnter ? (
+              <button onClick={onEnter}>Notify me</button>
             ) : null}
           </section>
         ),
-        admitted: ({ admissionGrant }) => (
-          <CheckoutButton admissionGrant={admissionGrant}>
+        granted: ({ grant }) => (
+          <CheckoutButton grant={grant}>
             Continue to checkout
           </CheckoutButton>
         ),
@@ -48,12 +48,12 @@ export function LaunchWidget() {
 | `waitlist` | The consumer has joined the waitlist. |
 | `enterable` | The sequence is active and the consumer can enter. |
 | `participating` | The consumer is participating. |
-| `admitted` | The consumer has been admitted. |
+| `granted` | The consumer has an active grant. |
 | `expired` | A previous admission is no longer usable. |
-| `ended` | The experience or sequence has ended. |
+| `ended` | The experience or sequence has a terminal outcome. |
 | `error` | The widget cannot continue without recovery. |
 
-Slot props include the current `snapshot`, `view`, and `error` where relevant, plus state-specific callbacks such as `onStart`, `onEnter`, `onLeave`, `onRetry`, or `onEnterWaitlist`.
+Slot props include the current `snapshot`, `view`, and `error` where relevant, plus state-specific callbacks such as `onStart`, `onEnter`, `onLeave`, or `onRetry`.
 
 ## Render prop
 

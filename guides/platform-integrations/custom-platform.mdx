@@ -310,27 +310,26 @@ import initFanfare from "@fanfare-io/fanfare-sdk-core";
       return;
     }
 
-    const stage = view.sequence.stage;
+    const phase = view.sequence.phase;
 
-    switch (stage) {
-      case "upcoming":
-      case "waitlist_entered":
+    switch (phase) {
+      case "scheduled":
       case "participating":
         renderWaiting(container, view);
         break;
 
-      case "admitted":
+      case "granted":
         renderAdmitted(container, view, productId);
         break;
 
-      case "active":
+      case "enterable":
         renderEnterable(container, view);
         break;
 
-      case "denied":
-      case "no_sequence":
+      case "ended":
+      case "unavailable":
       default:
-        renderDefault(container, stage);
+        renderDefault(container, phase);
     }
   }
 
@@ -372,8 +371,8 @@ import initFanfare from "@fanfare-io/fanfare-sdk-core";
   }
 
   function renderAdmitted(container, view, productId) {
-    const token = view.sequence.admissionGrant;
-    const expiresAt = view.sequence.admissionGrantExpiresAt;
+    const token = view.sequence.grant.token;
+    const expiresAt = view.sequence.grant.expiresAt;
 
     storeAdmission({
       token: token,
@@ -532,10 +531,10 @@ export function FanfareExperience({ experienceId, productId, onAdmitted, onExpir
   });
 
   useEffect(() => {
-    if (view?.journeyStage === "routed" && view.sequence.stage === "admitted") {
+    if (view?.journeyStage === "routed" && view.sequence.phase === "granted") {
       onAdmitted({
-        token: view.sequence.admissionGrant,
-        expiresAt: view.sequence.admissionGrantExpiresAt,
+        token: view.sequence.grant.token,
+        expiresAt: view.sequence.grant.expiresAt,
       });
     }
   }, [view, onAdmitted]);
@@ -556,19 +555,19 @@ export function FanfareExperience({ experienceId, productId, onAdmitted, onExpir
     return <GatedState />;
   }
 
-  if (view.sequence.stage === "active" && "enter" in view.sequence) {
+  if (view.sequence.phase === "enterable" && "enter" in view.sequence) {
     return <EnterableState onEnter={() => view.sequence.enter()} />;
   }
 
-  if (view.sequence.stage === "participating" && view.sequence.participation.type === "queue") {
+  if (view.sequence.phase === "participating" && view.sequence.mechanism === "queue") {
     return <WaitingState />;
   }
 
-  if (view.sequence.stage === "admitted") {
-    return <AdmittedState expiresAt={view.sequence.admissionGrantExpiresAt} onExpired={onExpired} />;
+  if (view.sequence.phase === "granted") {
+    return <AdmittedState expiresAt={view.sequence.grant.expiresAt} onExpired={onExpired} />;
   }
 
-  return <div>Status: {view.sequence.stage}</div>;
+  return <div>Status: {view.sequence.phase}</div>;
 }
 
 function StartState({ onStart }: { onStart: () => void }) {

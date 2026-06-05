@@ -84,7 +84,7 @@ For framework-agnostic hosts, listen to custom element events.
     updateHostChrome({ experienceId: event.detail.experienceId });
   });
 
-  widget.addEventListener("fanfare-admitted", (event) => {
+  widget.addEventListener("fanfare-granted", (event) => {
     sendAdmissionToServer(event.detail.grant);
   });
 

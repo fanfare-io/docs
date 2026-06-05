@@ -2,7 +2,7 @@
 title: Testing Your Integration
 description: Test Fanfare integrations against public journey states and handoff behavior.
 ---
-Test your Fanfare integration from the public contract. Your tests should prove that the right UI appears for each public state, that valid actions are wired correctly, and that admission handoff stays inside your trusted flow.
+Test your Fanfare integration from the public contract. Your tests should prove that the right UI appears for each public state, that valid actions are wired correctly, and that granted handoff stays inside your trusted flow.
 
 For the deeper SDK reference, see [SDK Testing](/sdk/reference/testing).
 
@@ -13,11 +13,11 @@ For the deeper SDK reference, see [SDK Testing](/sdk/reference/testing).
 | Ready | Start CTA appears and calls the current view's start action. |
 | Routing | Loading UI appears without invalid buttons. |
 | Gated | Auth, access-code, or verification UI uses generic customer-safe copy. |
-| Upcoming | Scheduled or waitlist messaging renders. |
-| Active | The enter or booking action is available when exposed by the view. |
+| Scheduled | Scheduled or waitlist messaging renders. |
+| Enterable | The enter, bid, or booking action is available when exposed by the view. |
 | Participating | Status, progress, and valid participation actions render. |
-| Admitted | Checkout handoff receives `admissionGrant` and optional `admissionGrantExpiresAt`. |
-| Denied | Recovery or support copy is clear and does not infer private reasons. |
+| Granted | Checkout handoff receives the grant. |
+| Ended | Recovery or support copy is clear and does not infer private reasons. |
 | Error | Retry or fallback UI is visible. |
 
 ## Component Tests
@@ -41,16 +41,16 @@ In unit tests, render `LaunchExperienceView` with representative public views. A
 When using `ExperienceWidget`, keep tests focused on app-owned behavior:
 
 - The widget is rendered with the expected `experienceId`.
-- `checkoutUrl` or `onAdmitted` is configured for admitted users.
+- `checkoutUrl` or `onGranted` is configured for granted users.
 - Slot overrides render your custom UI.
 - Sensitive values are not sent to logs or analytics.
 
-Example admitted-state handoff boundary:
+Example granted-state handoff boundary:
 
 ```tsx
 <ExperienceWidget
   experienceId="exp_123"
-  onAdmitted={(admissionGrant) => {
+  onGranted={(admissionGrant) => {
     void sendAdmissionToServer({ admissionGrant });
   }}
 />

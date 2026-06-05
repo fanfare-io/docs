@@ -37,7 +37,7 @@ function LaunchPage() {
           fontFamily: "Inter, system-ui, sans-serif",
         }}
         variant="clean"
-        onAdmitted={async (grant) => {
+        onGranted={async (grant) => {
           await fetch("/api/fanfare/admission", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -60,8 +60,8 @@ Start with the default widget. Add slots when a specific state needs custom mark
 <ExperienceWidget
   experienceId="exp_123"
   slots={{
-    admitted: ({ admissionGrant }) => (
-      <CheckoutButton grant={admissionGrant} />
+    granted: ({ grant }) => (
+      <CheckoutButton grant={grant} />
     ),
   }}
 />

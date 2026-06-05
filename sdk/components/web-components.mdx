@@ -48,7 +48,7 @@ Call `registerWebComponents()` once before rendering Fanfare custom elements.
 | `auto-start` | Starts the journey when the element is ready. |
 | `auto-enter-waitlist` | Enters the waitlist automatically when that action is available. |
 | `access-code` | Provides an access code when starting or rerouting. |
-| `checkout-url` | Destination for the default admitted CTA. |
+| `checkout-url` | Destination for the default granted CTA. |
 | `locale` | Locale for built-in text. |
 | `translations` | JSON object of translation overrides. |
 | `theme-config` | JSON object matching `BrandTheme`. |
@@ -64,7 +64,7 @@ Call `registerWebComponents()` once before rendering Fanfare custom elements.
   locale="en"
   variant="rounded"
   theme-config='{"primary":"#0F766E","fontFamily":"Inter, system-ui, sans-serif"}'
-  translations='{"queue.enter":"Join the line","admitted.cta":"Shop now"}'
+  translations='{"queue.enter":"Join the line","granted.cta":"Shop now"}'
 ></fanfare-experience-widget>
 ```
 
@@ -82,7 +82,7 @@ Web component events bubble and are composed, so they can be handled by the host
     console.log("Journey changed", event.detail.experienceId);
   });
 
-  widget.addEventListener("fanfare-admitted", (event) => {
+  widget.addEventListener("fanfare-granted", (event) => {
     const grant = event.detail.grant;
     fetch("/api/fanfare/admission", {
       method: "POST",

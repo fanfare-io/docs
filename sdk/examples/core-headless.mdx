@@ -47,40 +47,36 @@ function render(view: JourneyView) {
 }
 
 function renderSequence(sequence: SequenceView) {
-  switch (sequence.stage) {
-    case "upcoming":
-      mountUpcoming({ onWaitlist: sequence.enterWaitlist });
+  switch (sequence.phase) {
+    case "unavailable":
+      mountUnavailable();
       return;
 
-    case "waitlist_entered":
-      mountWaitlist({ onLeave: () => sequence.leaveWaitlist() });
+    case "scheduled":
+      mountUpcoming({ startsAt: sequence.startsAt });
       return;
 
-    case "active":
-      if ("enter" in sequence) {
-        mountEnterButton(() => sequence.enter());
-      } else {
-        mountAppointmentPicker((slotId, locationId) => sequence.book(slotId, locationId));
-      }
+    case "enterable":
+      mountEnterable(sequence);
       return;
 
     case "participating":
       mountParticipation({
-        type: sequence.participation.type,
-        onLeave: () => sequence.leave(),
+        type: sequence.mechanism,
+        onLeave: "leave" in sequence ? () => sequence.leave() : undefined,
       });
       return;
 
-    case "admitted":
-      mountCheckout(sequence.admissionGrant);
+    case "settling":
+      mountSettling(sequence);
       return;
 
-    case "denied":
-      mountDenied({ onReenter: sequence.reenter });
+    case "granted":
+      mountCheckout(sequence.grant.token);
       return;
 
-    case "no_sequence":
-      mountUnavailable();
+    case "ended":
+      mountEnded({ reason: sequence.outcome.type });
   }
 }
 ```

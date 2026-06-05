@@ -43,11 +43,11 @@ Most UI should render from `journey.view$`, which emits `JourneyView`.
 | `gated` | Auth, access-code, or verification UI. |
 | `routed` | The current sequence state. |
 
-When the journey is routed, the nested sequence can be `upcoming`, `active`, `participating`, `admitted`, `denied`, `waitlist_entered`, or `no_sequence`. See [Journey State](/sdk/core/journey-state) for the full model.
+When the journey is routed, the nested sequence has a `phase` such as `scheduled`, `enterable`, `participating`, `settling`, `granted`, `ended`, or `unavailable`. It also has a `mechanism` such as `queue`, `draw`, `auction`, `appointment`, `timed_release`, or `waitlist`. See [Journey State](/sdk/core/journey-state) for the full model.
 
-### Admission Grant
+### Grant
 
-When the customer is admitted, the public view provides an `admissionGrant` and may include `admissionGrantExpiresAt`. Treat these values as sensitive runtime data. Use them only for the next step in your integration, such as a server handoff or checkout transition.
+When the customer has access to continue, the public view exposes `sequence.phase === "granted"` and a `sequence.grant`. Treat grant values as sensitive runtime data. Use them only for the next step in your integration, such as a server handoff or checkout transition.
 
 ## Integration Paths
 
@@ -63,7 +63,7 @@ Start with [Choose Your Path](/sdk/choose-your-path) if you are deciding between
 
 ![Browser SDK fit showing a product page using the Fanfare SDK, Fanfare API, and backend checkout handoff.](/images/concepts/browser-sdk-fit.webp)
 
-The SDK manages the browser-side journey. Your backend should validate the admitted customer before completing protected business actions. Keep secret keys and validation logic on the server.
+The SDK manages the browser-side journey. Your backend should validate the granted customer before completing protected business actions. Keep secret keys and validation logic on the server.
 
 ## What You Need
 

@@ -67,16 +67,18 @@ function renderJourney(view: JourneyView) {
 }
 
 function renderSequence(sequence: SequenceView) {
-  switch (sequence.stage) {
-    case "upcoming":
-      mountUpcoming({ onWaitlist: sequence.enterWaitlist });
+  switch (sequence.phase) {
+    case "unavailable":
+      mountUnavailable();
       return;
-    case "waitlist_entered":
-      mountWaitlist({ onLeave: () => sequence.leaveWaitlist() });
+    case "scheduled":
+      mountUpcoming({ startsAt: sequence.startsAt });
       return;
-    case "active":
+    case "enterable":
       if ("enter" in sequence) {
         mountEnterButton(() => sequence.enter());
+      } else if ("bid" in sequence) {
+        mountBidForm((amount) => sequence.bid(amount));
       } else if ("book" in sequence) {
         mountAppointmentPicker((slotId, locationId) =>
           sequence.book(slotId, locationId)
@@ -87,18 +89,18 @@ function renderSequence(sequence: SequenceView) {
       return;
     case "participating":
       mountParticipation({
-        type: sequence.participation.type,
-        onLeave: () => sequence.leave(),
+        type: sequence.mechanism,
+        onLeave: "leave" in sequence ? () => sequence.leave() : undefined,
       });
       return;
-    case "admitted":
-      mountCheckout(sequence.admissionGrant);
+    case "settling":
+      mountSettling(sequence);
       return;
-    case "denied":
-      mountDenied({ reason: sequence.reason, onReenter: sequence.reenter });
+    case "granted":
+      mountCheckout(sequence.grant.token);
       return;
-    case "no_sequence":
-      mountUnavailable();
+    case "ended":
+      mountEnded({ reason: sequence.outcome.type });
   }
 }
 ```

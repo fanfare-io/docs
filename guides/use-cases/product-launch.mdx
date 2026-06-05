@@ -234,7 +234,7 @@ interface ProductLaunchExperienceProps {
 export function ProductLaunchExperience({ queueId, product }: ProductLaunchExperienceProps) {
   const { view, start } = useExperienceJourney(queueId, { autoStart: true });
 
-  const stage = view?.journeyStage === "routed" ? view.sequence.stage : (view?.journeyStage ?? "loading");
+  const stage = view?.journeyStage === "routed" ? view.sequence.phase : (view?.journeyStage ?? "loading");
 
   // Track analytics
   useEffect(() => {
@@ -253,15 +253,15 @@ export function ProductLaunchExperience({ queueId, product }: ProductLaunchExper
 
       {view?.journeyStage === "routing" && <EnteringState />}
 
-      {view?.journeyStage === "routed" && view.sequence.stage === "participating" && (
+      {view?.journeyStage === "routed" && view.sequence.phase === "participating" && (
         <QueueState sequence={view.sequence} product={product} />
       )}
 
-      {view?.journeyStage === "routed" && view.sequence.stage === "admitted" && (
+      {view?.journeyStage === "routed" && view.sequence.phase === "granted" && (
         <AdmittedState sequence={view.sequence} product={product} />
       )}
 
-      {view?.journeyStage === "routed" && view.sequence.stage === "denied" && <CompletedState />}
+      {view?.journeyStage === "routed" && view.sequence.phase === "ended" && <CompletedState />}
 
       {!view && <LoadingState message="Loading launch..." />}
     </div>
@@ -302,7 +302,7 @@ function QueueState({ sequence, product }: { sequence: SequenceView; product: Pr
       <div className="queue-stats">
         <div className="stat position">
           <span className="label">Status</span>
-          <span className="value">{sequence.stage}</span>
+          <span className="value">{sequence.phase}</span>
         </div>
 
         <div className="stat wait-time">
@@ -335,10 +335,10 @@ function AdmittedState({
   sequence,
   product,
 }: {
-  sequence: Extract<JourneyView, { journeyStage: "routed" }>["sequence"] & { stage: "admitted" };
+  sequence: Extract<SequenceView, { phase: "granted" }>;
   product: Product;
 }) {
-  const expiresAt = sequence.admissionGrantExpiresAt;
+  const expiresAt = sequence.grant.expiresAt ? new Date(sequence.grant.expiresAt).getTime() : undefined;
   const [timeRemaining, setTimeRemaining] = useState(0);
 
   useEffect(() => {
@@ -359,7 +359,7 @@ function AdmittedState({
   const handleCheckout = () => {
     // Navigate to checkout with admission context
     const admissionData = {
-      admissionGrant: sequence.admissionGrant,
+      admissionGrant: sequence.grant.token,
       productId: product.id,
     };
 

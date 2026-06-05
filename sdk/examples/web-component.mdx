@@ -35,7 +35,7 @@ Use the web component when your host page is not a React application.
     <script>
       const widget = document.querySelector("fanfare-experience-widget");
 
-      widget.addEventListener("fanfare-admitted", (event) => {
+      widget.addEventListener("fanfare-granted", (event) => {
         const grant = event.detail.grant;
         fetch("/api/fanfare/admission", {
           method: "POST",
@@ -54,4 +54,4 @@ Use the web component when your host page is not a React application.
 </html>
 ```
 
-Do not log admission grants or raw journey snapshots to third-party analytics. Use high-level events such as "admitted" or "denied" for reporting.
+Do not log grants or raw journey snapshots to third-party analytics. Use high-level events such as "granted" or "ended" for reporting.

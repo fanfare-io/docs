@@ -38,7 +38,7 @@ export function App() {
       translations={{
         "queue.enter": "Join the line",
         "queue.leave": "Leave the line",
-        "admitted.cta": "Continue to checkout",
+        "granted.cta": "Continue to checkout",
         "error.retry": "Try again",
       }}
     >
@@ -69,9 +69,8 @@ import type { TranslationMessageKey } from "@fanfare-io/fanfare-sdk-react";
 
 const customCopy: Partial<Record<TranslationMessageKey, string>> = {
   "common.continue": "Continue",
-  "admitted.cta": "Shop now",
+  "granted.cta": "Shop now",
 };
 ```
 
 Use customer-friendly copy. For verification and access decisions, keep the message outcome-oriented and avoid describing private enforcement logic.
-

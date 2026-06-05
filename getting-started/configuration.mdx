@@ -75,21 +75,21 @@ Common widget props:
 | --- | --- |
 | `experienceId` | Required experience ID. |
 | `autoStart` | Start the journey when the widget is ready. |
-| `checkoutUrl` | Default destination after admission. |
-| `onAdmitted` | Custom server handoff or app routing after admission. |
+| `checkoutUrl` | Default destination after a grant. |
+| `onGranted` | Custom server handoff or app routing after a grant. |
 | `slots` | Override specific journey states. |
 | `theme` | Per-widget theme values. |
 | `variant` | Supported widget visual variant. |
 | `accessCode` | Provide an access code when your page already has one. |
 | `autoEnterWaitlist` | Enter waitlist automatically when that public action is available. |
 
-Use `onAdmitted` when checkout needs a trusted handoff:
+Use `onGranted` when checkout needs a trusted handoff:
 
 ```tsx
 <ExperienceWidget
   experienceId="exp_123"
   autoStart
-  onAdmitted={async (admissionGrant) => {
+  onGranted={async (admissionGrant) => {
     await fetch("/api/fanfare/admission", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -111,7 +111,7 @@ Use provider-level `locale` and `translations` for shared copy. Use widget `them
   locale="en"
   translations={{
     "queue.enter": "Join the launch",
-    "admitted.cta": "Continue",
+    "granted.cta": "Continue",
   }}
 >
   <ExperienceWidget
@@ -131,9 +131,9 @@ For targeted UI ownership, use slots:
 <ExperienceWidget
   experienceId="exp_123"
   slots={{
-    admitted: ({ admissionGrant, expiresAt }) => (
+    granted: ({ grant, expiresAt }) => (
       <CheckoutPanel
-        admissionGrant={admissionGrant}
+        admissionGrant={grant}
         admissionGrantExpiresAt={expiresAt}
       />
     ),
@@ -185,13 +185,13 @@ Register web components once before rendering custom elements.
 ></fanfare-experience-widget>
 ```
 
-Listen for admitted events when the host page needs a custom handoff:
+Listen for granted events when the host page needs a custom handoff:
 
 ```html
 <script>
   const widget = document.querySelector("fanfare-experience-widget");
 
-  widget.addEventListener("fanfare-admitted", async (event) => {
+  widget.addEventListener("fanfare-granted", async (event) => {
     await fetch("/api/fanfare/admission", {
       method: "POST",
       headers: { "Content-Type": "application/json" },

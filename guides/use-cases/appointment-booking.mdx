@@ -239,11 +239,11 @@ export function AppointmentBookingExperience({
     return <GateState view={view} />;
   }
 
-  switch (view.sequence.stage) {
-    case "upcoming":
+  switch (view.sequence.phase) {
+    case "scheduled":
       return <BookingNotOpenState service={service} />;
 
-    case "active":
+    case "enterable":
       return "book" in view.sequence ? (
         <SlotSelectionState sequence={view.sequence} service={service} availableSlots={availableSlots} />
       ) : null;
@@ -251,8 +251,8 @@ export function AppointmentBookingExperience({
     case "participating":
       return <BookingConfirmedState sequence={view.sequence} service={service} />;
 
-    case "denied":
-      return <SessionExpiredState onRetry={view.sequence.reenter ?? start} />;
+    case "ended":
+      return <SessionExpiredState onRetry={start} />;
 
     default:
       return null;
@@ -287,7 +287,7 @@ function BookingNotOpenState({ service, onStart }: { service: ServiceConfig; onS
 }
 
 function SlotSelectionState({ sequence, service, availableSlots }: {
-  sequence: Extract<SequenceView, { stage: "active"; distributionType: "appointment" }>;
+  sequence: Extract<SequenceView, { phase: "enterable"; mechanism: "appointment" }>;
   service: ServiceConfig;
   availableSlots: TimeSlot[];
 }) {
@@ -383,7 +383,7 @@ function BookingConfirmedState({
   sequence,
   service,
 }: {
-  sequence: Extract<SequenceView, { stage: "participating"; participation: { type: "appointment" } }>;
+  sequence: Extract<SequenceView, { phase: "participating"; mechanism: "appointment" }>;
   service: ServiceConfig;
 }) {
   const booking = sequence.state$.get().booking;

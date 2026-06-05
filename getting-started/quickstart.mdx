@@ -69,17 +69,17 @@ export function ProductLaunchPage() {
 }
 ```
 
-Use `checkoutUrl` when the default admitted state can navigate directly to your next step.
+Use `checkoutUrl` when the default granted state can navigate directly to your next step.
 
 ## Step 4: Add A Server Handoff
 
-When your app needs to prepare checkout, use `onAdmitted`. Keep the grant out of URLs, console logs, and third-party analytics.
+When your app needs to prepare checkout, use `onGranted`. Keep the grant out of URLs, console logs, and third-party analytics.
 
 ```tsx
 <ExperienceWidget
   experienceId="exp_123"
   autoStart
-  onAdmitted={async (admissionGrant) => {
+  onGranted={async (admissionGrant) => {
     await fetch("/api/fanfare/admission", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -102,9 +102,9 @@ Use slots when the default widget works but one state needs custom markup.
   experienceId="exp_123"
   autoStart
   slots={{
-    admitted: ({ admissionGrant, expiresAt }) => (
+    granted: ({ grant, expiresAt }) => (
       <CheckoutPanel
-        admissionGrant={admissionGrant}
+        admissionGrant={grant}
         admissionGrantExpiresAt={expiresAt}
       />
     ),
@@ -139,11 +139,11 @@ export function CustomLaunch({ experienceId }: { experienceId: string }) {
     return <GatePanel view={view} />;
   }
 
-  if (view.sequence.stage === "admitted") {
+  if (view.sequence.phase === "granted") {
     return (
       <CheckoutPanel
-        admissionGrant={view.sequence.admissionGrant}
-        admissionGrantExpiresAt={view.sequence.admissionGrantExpiresAt}
+        admissionGrant={view.sequence.grant.token}
+        admissionGrantExpiresAt={view.sequence.grant.expiresAt}
       />
     );
   }
@@ -159,8 +159,8 @@ The important rule is the same for every path: render from the current view and 
 1. `FanfareProvider` initializes the SDK with your browser-safe credentials.
 2. The widget or hook gets a journey for the experience ID.
 3. The journey resolves the customer's public state.
-4. Your UI renders ready, routing, gated, routed, admitted, denied, or unavailable states.
-5. When admitted, your app sends the admission grant to the next trusted step.
+4. Your UI renders ready, routing, gated, routed, granted, ended, or unavailable states.
+5. When granted, your app sends the grant to the next trusted step.
 
 The SDK docs explain the public contract in more detail:
 
