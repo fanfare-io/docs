@@ -13,9 +13,11 @@ You can rely on:
 
 - Package names, exported SDK APIs, component props, and event names.
 - Public journey states such as `ready`, `routing`, `gated`, and `routed`.
-- Public sequence phases such as `scheduled`, `enterable`, `participating`, `settling`, `granted`, and `ended`.
-- Public actions exposed by `JourneyView`, such as `start()`, `reroute()`, `enter()`, and `leave()`.
+- Public sequence phases such as `unavailable`, `scheduled`, `enterable`, `participating`, `settling`, `granted`, and `ended`.
+- Public stage actions on `JourneyView` (from `view$`), such as `start()`, `reroute()`, and `submitAccessCode()`, and per-phase mechanism actions on the routed `SequenceView` (via `RoutedView.sequence`), such as `enter()`, `bid()`, `book()`, `leave()`, and `claim()`.
 - Component customization surfaces: theme, variant, slots, render props, callbacks, locale, and translation overrides.
+
+Render from two public layers: the stage-level `JourneyView` (exposed by `view$`) and the routed `SequenceView` (reached via `RoutedView.sequence`). Waitlist is a public scheduled-phase attachment (`SequenceView.waitlist`), not a separate phase or distribution mechanism; it never grants access on its own.
 
 ## What is not public
 

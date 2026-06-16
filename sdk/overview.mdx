@@ -20,6 +20,7 @@ The core concept is a **journey**. A journey represents one consumer's progress 
 | Core SDK | You want full control over UI, routing, state management, or framework integration. | `init`, `sdk.journeys.get()`, `JourneyView`, `JourneySnapshot` |
 | React components | You use React and want a supported UI layer that can still be themed and customized. | `FanfareProvider`, `ExperienceWidget`, `useExperienceJourney` |
 | Web components | You are integrating into static HTML, a CMS, or a non-React host. | `registerWebComponents()`, `<fanfare-experience-widget>` |
+| [Shopify storefront](/sdk/shopify/quickstart) | You run a Shopify theme, Hydrogen/Oxygen, or headless storefront and want to gate products and checkout. | `createShopifyExperienceResolver`, `createShopifyCheckoutVerifier`, `createShopifyCheckoutClaimer`, `FanfareAdapterProvider` |
 
 All paths use the same journey model. Even if you start with `ExperienceWidget`, understanding the core journey states will make customization and troubleshooting easier.
 

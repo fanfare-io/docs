@@ -16,17 +16,19 @@ import type {
 
 | Type | Purpose |
 | --- | --- |
-| `FanfareConfig` | Initialization options for `initFanfare()`. |
+| `FanfareConfig` | Initialization options for `init()` (the default export of `@fanfare-io/fanfare-sdk-core`). |
 | `FanfareSDK` | Main SDK instance with `auth`, `journeys`, `challenges`, `beacon`, and `destroy()`. |
 
 ## Journey types
 
 ```ts
 import type {
+  AccessCodeSubmitResult,
   JourneyHandle,
   JourneySnapshot,
   JourneyView,
   SequenceView,
+  WaitlistAttachmentView,
 } from "@fanfare-io/fanfare-sdk-core/experiences";
 ```
 
@@ -34,8 +36,10 @@ import type {
 | --- | --- |
 | `JourneyHandle` | Handle returned by `sdk.journeys.get(experienceId)`. |
 | `JourneyView` | Primary UI and action surface. |
-| `JourneySnapshot` | Raw discriminated state for diagnostics or exhaustive rendering. |
-| `SequenceView` | Routed sequence state and state-gated actions. |
+| `JourneySnapshot` | Serializable, discriminated snapshot read from `snapshot$` for client persistence, cross-tab restore, and diagnostics. Render from `view$` (`JourneyView`); actions live only on the view, never on the snapshot. |
+| `SequenceView` | Routed sequence render view, discriminated by `phase` (and `mechanism`). Exposes only the actions legal in the current phase — for example `enter()`, `bid()`, `book()`, or `claim()` — plus the live `display$` atom while participating. |
+| `WaitlistAttachmentView` | Scheduled-phase attachment on a sequence view (`SequenceView.waitlist`). Carries `status` and `join()` / `leave()`; it never grants access and is cleared once the distribution opens. |
+| `AccessCodeSubmitResult` | Result of `RoutedView.submitAccessCode(code)`: `{ outcome: "advanced"; sequenceId }`, `{ outcome: "unchanged" }`, or `{ outcome: "gated" }`. Only `"advanced"` commits the code. |
 
 ## Theme types
 
@@ -71,6 +75,37 @@ import type {
 ```
 
 Use these when building wrappers around `ExperienceWidget` or sharing slot definitions across pages.
+
+## Shopify types
+
+The storefront integration types most Shopify (Hydrogen/Oxygen, Next, Remix) integrations need. These come from the SSR-safe root barrel, which imports zero React; the provider and hooks live in `@fanfare-io/fanfare-sdk-shopify/react`.
+
+```ts
+import type {
+  AccessStatus,
+  CheckoutVerifier,
+  ExperienceResolver,
+  ShopifyCheckoutClaimer,
+  ShopifyCheckoutContext,
+  ShopifyCheckoutVerifierConfig,
+  ShopifyClaimConfig,
+  ShopifyExperienceResolverConfig,
+  VerificationResult,
+} from "@fanfare-io/fanfare-sdk-shopify";
+```
+
+| Type | Purpose |
+| --- | --- |
+| `ShopifyExperienceResolverConfig` | Config for `createShopifyExperienceResolver`, which maps a product to its experience IDs. |
+| `ShopifyCheckoutVerifierConfig` | Config for `createShopifyCheckoutVerifier`, the proxy-backed admission-credential verifier. |
+| `ShopifyClaimConfig` | Config for `createShopifyCheckoutClaimer`, the proxy-backed checkout claimer. |
+| `ShopifyCheckoutClaimer` | Claimer instance that exchanges an admission grant for checkout access. |
+| `ShopifyCheckoutContext` | Per-request context passed into the checkout verifier. |
+| `ExperienceResolver` | Framework-free `resolve(product)` seam shared by default and proxy-backed resolvers. |
+| `CheckoutVerifier` | Framework-free `verify(grant)` seam shared by default and proxy-backed verifiers. |
+| `VerificationResult` / `AccessStatus` | Verifier result shape and the discrete access state (`ACCESS_STATUSES`). |
+
+See the [Shopify quickstart](/sdk/shopify/quickstart) for end-to-end setup.
 
 ## Public-only contract
 

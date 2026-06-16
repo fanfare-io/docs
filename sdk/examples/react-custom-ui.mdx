@@ -35,7 +35,7 @@ function JourneyPanel({
   start,
 }: {
   view: JourneyView;
-  start: () => Promise<JourneyView>;
+  start: (options?: { accessCode?: string; autoEnterWaitlist?: boolean }) => Promise<JourneyView>;
 }) {
   if (view.journeyStage === "ready") {
     return <button onClick={() => void start()}>Enter</button>;
@@ -50,21 +50,25 @@ function JourneyPanel({
   }
 
   if (view.sequence.phase === "granted") {
-    return <CheckoutPanel grant={view.sequence.grant.token} />;
+    return <CheckoutPanel onCheckout={() => view.sequence.claim().token} />;
   }
 
   return <SequencePanel sequence={view.sequence} />;
 }
 ```
 
+Call `claim()` to begin checkout: it returns the `AdmissionGrant` (use `grant.token` for handoff) and starts checkout, stopping the client-side grant-expiry timer so the server reservation owns the deadline. An unclaimed grant lapses to an `ended` sequence with an `"expired"` outcome.
+
 ## Gate handling
 
 Your `GatePanel` should complete the user action, then call `reroute()`.
 
 ```tsx
-async function submitAccessCode(view: Extract<JourneyView, { journeyStage: "gated" }>, code: string) {
+async function applyGateAccessCode(view: Extract<JourneyView, { journeyStage: "gated" }>, code: string) {
   await view.reroute({ accessCode: code });
 }
 ```
+
+The routed-stage equivalent is `view.submitAccessCode(code)`, which returns an `AccessCodeSubmitResult` instead of rerouting the gate.
 
 Use generic customer-facing copy for gates. Do not describe private enforcement or routing logic.
