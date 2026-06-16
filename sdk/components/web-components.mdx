@@ -45,8 +45,13 @@ Call `registerWebComponents()` once before rendering Fanfare custom elements.
 | `experience-id` | Required experience ID. |
 | `organization-id` | Optional per-element organization override. |
 | `publishable-key` | Optional per-element publishable key override. |
+| `environment` | SDK environment (production or development). |
+| `api-url` | Custom API URL that overrides environment. |
+| `debug` | Enables SDK debug logging. |
+| `auto-restore` | Restore a persisted session on load (default true). |
+| `auto-resume` | Resume active journeys after restore (default true). |
 | `auto-start` | Starts the journey when the element is ready. |
-| `auto-enter-waitlist` | Enters the waitlist automatically when that action is available. |
+| `auto-enter-waitlist` | Automatically joins the waitlist when the routed sequence is in its scheduled phase and offers a waitlist attachment. |
 | `access-code` | Provides an access code when starting or rerouting. |
 | `checkout-url` | Destination for the default granted CTA. |
 | `locale` | Locale for built-in text. |

@@ -25,7 +25,7 @@ export function LaunchWidget() {
           </section>
         ),
         granted: ({ grant }) => (
-          <CheckoutButton grant={grant}>
+          <CheckoutButton grantToken={grant}>
             Continue to checkout
           </CheckoutButton>
         ),
@@ -34,6 +34,8 @@ export function LaunchWidget() {
   );
 }
 ```
+
+The `granted` slot's `grant` prop is the grant **token string** (`grant?: string`), and may be `undefined`. Pass it to your checkout handoff as a token, not as an object.
 
 ## Available slots
 
@@ -44,16 +46,18 @@ export function LaunchWidget() {
 | `auth` | Authentication is required. |
 | `accessCode` | An access code is required. |
 | `challenge` | Additional verification is required. |
-| `upcoming` | The sequence is scheduled but not active. |
-| `waitlist` | The consumer has joined the waitlist. |
+| `upcoming` | The routed sequence is scheduled (not yet open); `onEnter` joins the waitlist attachment when `canEnter` is true. |
+| `waitlist` | The routed sequence is scheduled and the consumer has joined its waitlist attachment (`sequence.waitlist.status` is `waitlisted` or `notified`). |
 | `enterable` | The sequence is active and the consumer can enter. |
 | `participating` | The consumer is participating. |
 | `granted` | The consumer has an active grant. |
 | `expired` | A previous admission is no longer usable. |
-| `ended` | The experience or sequence has a terminal outcome. |
+| `ended` | The experience or sequence has a terminal outcome. Also rendered for phase `"unavailable"` (a non-terminal placeholder) for convenience. |
 | `error` | The widget cannot continue without recovery. |
 
 Slot props include the current `snapshot`, `view`, and `error` where relevant, plus state-specific callbacks such as `onStart`, `onEnter`, `onLeave`, or `onRetry`.
+
+Inside the `enterable` and `participating` slots the slot's `sequence` is a routed `SequenceView`; participating views expose their live data as the `display$` atom (not `state$`). Subscribe to it (for example with `useNanostore`) to render real-time fields such as queue position.
 
 ## Render prop
 

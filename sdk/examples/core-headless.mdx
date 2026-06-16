@@ -43,6 +43,27 @@ function render(view: JourneyView) {
     return;
   }
 
+  if (view.offers.length > 0) {
+    // Routed upgrade offers are always gated and informational. Submitting an
+    // access code is single-shot: only "advanced" commits the code and moves the
+    // journey into the offered sequence; "unchanged" leaves current participation
+    // in place, while "gated" pushes the journey into a gated stage where the gate
+    // UI must take over.
+    mountUpgradeOffers({
+      offers: view.offers,
+      onAccessCode: async (accessCode) => {
+        const result = await view.submitAccessCode(accessCode);
+        if (result.outcome === "advanced") {
+          mountUpgraded(result.sequenceId);
+        } else if (result.outcome === "gated") {
+          mountUpgradeBlocked();
+        } else {
+          mountUpgradeRejected();
+        }
+      },
+    });
+  }
+
   renderSequence(view.sequence);
 }
 
@@ -53,7 +74,11 @@ function renderSequence(sequence: SequenceView) {
       return;
 
     case "scheduled":
-      mountUpcoming({ startsAt: sequence.startsAt });
+      mountUpcoming({
+        startsAt: sequence.startsAt,
+        // WaitlistAttachmentView | undefined: { status, join(), leave() }
+        waitlist: sequence.waitlist,
+      });
       return;
 
     case "enterable":
@@ -61,8 +86,20 @@ function renderSequence(sequence: SequenceView) {
       return;
 
     case "participating":
+      if (sequence.mechanism === "appointment") {
+        // Appointments never expose leave(); manage the booked slot instead.
+        mountParticipation({
+          type: sequence.mechanism,
+          display$: sequence.display$, // live slot, location, check-in state
+          onCancel: (reason) => sequence.cancel(reason),
+          onReschedule: (newSlotId, newLocationId) =>
+            sequence.reschedule(newSlotId, newLocationId),
+        });
+        return;
+      }
       mountParticipation({
         type: sequence.mechanism,
+        display$: sequence.display$, // live participating data (read here, not state$)
         onLeave: "leave" in sequence ? () => sequence.leave() : undefined,
       });
       return;
@@ -72,7 +109,8 @@ function renderSequence(sequence: SequenceView) {
       return;
 
     case "granted":
-      mountCheckout(sequence.grant.token);
+      // claim() returns the AdmissionGrant synchronously and starts checkout.
+      mountCheckout(sequence.claim().token);
       return;
 
     case "ended":

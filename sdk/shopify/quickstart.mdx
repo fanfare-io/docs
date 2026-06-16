@@ -1,0 +1,216 @@
+---
+title: Shopify SDK Quickstart
+description: Resolve experiences, verify checkout, and claim grants from a Shopify storefront.
+---
+
+The Shopify SDK is the storefront adapter for Fanfare: a product → experience resolver, a checkout verifier, the `experienceIds` metafield primitives, and an optional React provider/hook. It plugs the two storefront seams (which product carries which experience, and proving a shopper cleared the drop before checkout) into your Shopify theme, Hydrogen/Oxygen app, or any headless storefront.
+
+For the higher-level integration walkthrough (installing the Fanfare Shopify app, embedding experiences in your theme, and connecting products), read the [Shopify integration guide](/guides/platform-integrations/shopify) first. This page covers the SDK package itself.
+
+## Install
+
+```bash
+pnpm add @fanfare-io/fanfare-sdk-shopify @fanfare-io/fanfare-sdk-core
+```
+
+`@fanfare-io/fanfare-sdk-core` is a required peer dependency. `react` and `react-dom` are optional peers — install them only if you use the `./react` subpath.
+
+```bash
+# Only if you use the React provider/hook
+pnpm add react react-dom
+```
+
+## Two import surfaces
+
+The package has two entry points so a server-only consumer can install it without React.
+
+| Import | When to use | Carries React |
+| --- | --- | --- |
+| `@fanfare-io/fanfare-sdk-shopify` | The SSR-safe root barrel: resolver, verifier, claimer, and metafield primitives. Use it from Hydrogen/Oxygen loaders, RSC, and Next/Remix server code. | No |
+| `@fanfare-io/fanfare-sdk-shopify/react` | The `"use client"` provider and hook. Use it in client components. | Yes |
+
+The root barrel imports zero React, so it is safe to call from a loader or server component.
+
+```ts
+import {
+  createShopifyExperienceResolver,
+  createShopifyCheckoutVerifier,
+  shopifyCheckoutVerifier,
+  createShopifyCheckoutClaimer,
+  FANFARE_PRODUCT_METAFIELD,
+  parseExperienceIds,
+  parseFirstExperienceId,
+} from "@fanfare-io/fanfare-sdk-shopify";
+```
+
+The React subpath exports only the provider and hook (plus the value type).
+
+```tsx
+"use client";
+
+import {
+  FanfareAdapterProvider,
+  useFanfareAdapter,
+} from "@fanfare-io/fanfare-sdk-shopify/react";
+import type { FanfareAdapterValue } from "@fanfare-io/fanfare-sdk-shopify/react";
+```
+
+## Resolve a product to an experience
+
+`createShopifyExperienceResolver(config)` returns an `ExperienceResolver` whose `resolve(product)` returns the experience id carried by the product's `experienceIds` metafield (first id wins), or `null` when the product is not covered. The default path reads from a config-supplied `metafieldValues` map (product `handle` → raw metafield value), so it runs SSR-safe and network-free.
+
+```ts
+import { createShopifyExperienceResolver } from "@fanfare-io/fanfare-sdk-shopify";
+
+const resolver = createShopifyExperienceResolver({
+  shopDomain: "shop.myshopify.com",
+  apiVersion: "2024-10",
+  storefrontAccessToken: "shpat_public_token",
+  fanfareAppId: "1234567",
+  metafieldValues: {
+    "limited-drop": '["exp_123"]',
+  },
+});
+
+const experienceId = await resolver.resolve({ id: "gid://shopify/Product/1", handle: "limited-drop" });
+// "exp_123" — or null when the product is not covered
+```
+
+Config is validated eagerly, so a misconfigured resolver throws at construction (`shopDomain`, `apiVersion`, and `storefrontAccessToken` must be non-empty; `fanfareAppId` must be a numeric string). When the product is not covered, render your native purchase UI — the SDK never boots.
+
+### Metafield primitives
+
+If you already have the raw `experienceIds` value, parse it directly. Both helpers are pure, SSR-safe, and never throw.
+
+```ts
+import { parseExperienceIds, parseFirstExperienceId, FANFARE_PRODUCT_METAFIELD } from "@fanfare-io/fanfare-sdk-shopify";
+
+parseExperienceIds('["exp_123","exp_456"]'); // ["exp_123", "exp_456"]
+parseFirstExperienceId('["exp_123","exp_456"]'); // "exp_123"
+parseFirstExperienceId(null); // null
+
+FANFARE_PRODUCT_METAFIELD.key; // "experienceIds"
+```
+
+The Fanfare app defines the metafield under the reserved namespace `$app:product`, which Shopify reifies at runtime to `app--<numericAppId>--product`. A headless Storefront-API read must use the reified namespace — that is why `fanfareAppId` is required.
+
+## Verify checkout
+
+The verifier is called at checkout entry with the `GrantRecord` the adapter recorded when the shopper cleared the drop. Both the default and proxy-backed verifiers implement the `CheckoutVerifier` seam and are **total**: they resolve for every grant and never reject.
+
+### Default (client-side expiry only)
+
+`shopifyCheckoutVerifier` is the zero-config default. It enforces only client-side grant expiry, so you can render the gate without any server wiring.
+
+```ts
+import { shopifyCheckoutVerifier } from "@fanfare-io/fanfare-sdk-shopify";
+
+const result = await shopifyCheckoutVerifier.verify(grant);
+// { ok: true } — or { ok: false, reason: "grant_expired" }
+```
+
+### Proxy-backed (server-enforced)
+
+`createShopifyCheckoutVerifier(config)` drives the Fanfare Shopify app proxy at checkout entry: it relays the admission credential and cart to the proxy, which validates against the admission authority, reserves the admission, and re-mints the platform gate token into the cart metafield. The proxy — not this client — is the trust boundary.
+
+```ts
+import { createShopifyCheckoutVerifier } from "@fanfare-io/fanfare-sdk-shopify";
+
+const verifier = createShopifyCheckoutVerifier({
+  proxyBaseUrl: "/apps/fanfare/api",
+  getCheckoutContext: () => ({
+    credential: admissionGrant, // the admissionGrant from /consumers/me
+    distributionId: "dist_123",
+    cartId: cartToken,
+  }),
+  // endpoint defaults to "admissions/reserve"; timeoutMs defaults to 10s
+});
+
+const result = await verifier.verify(grant);
+// { ok: true } on a 2xx; otherwise { ok: false, reason } —
+// "grant_expired" | "no_checkout_context" | "proxy_<status>" | "verify_unreachable"
+```
+
+`getCheckoutContext` supplies the live context the grant seam omits (the admission credential, the distribution, and the cart). Returning `null` (not ready to check out yet) surfaces as a denied result rather than a thrown error.
+
+## Claim a grant
+
+`createShopifyCheckoutClaimer(config)` is the on-grant, **non-consuming** sibling of the verifier. It fires when the shopper is granted: it POSTs to the non-consuming `admissions/claim` route, which validates the credential, mints a short-lived gate token, and writes it to the cart metafield — reserving and spending nothing. It returns the minted token's `expDate` so you can surface a continuity signal.
+
+```ts
+import { createShopifyCheckoutClaimer } from "@fanfare-io/fanfare-sdk-shopify";
+
+const claimer = createShopifyCheckoutClaimer({
+  proxyBaseUrl: "/apps/fanfare/api",
+  getClaimContext: () => ({
+    credential: admissionGrant,
+    distributionId: "dist_123",
+    cartId: cartToken,
+  }),
+  // endpoint defaults to "admissions/claim"; timeoutMs defaults to 10s
+});
+
+const result = await claimer.claim();
+if (result.ok) {
+  showContinuity(result.expDate);
+} else if (result.reason === "cart_not_materialized") {
+  // materialize a real cart, then re-claim — the claimer does not own materialization
+}
+```
+
+`getClaimContext` is optional; when absent, every claim is a benign not-ready no-op (`{ ok: false, reason: "no_claim_context" }`). A `409 cart_not_materialized` is surfaced verbatim so you can materialize a cart and re-claim; other non-2xx responses surface as `proxy_<status>`.
+
+## React adapter
+
+The `./react` subpath bridges journey snapshots to a single `AccessStatus` and persists the recorded grant across reloads. Wrap your storefront in `FanfareAdapterProvider` and read state with `useFanfareAdapter`.
+
+```tsx
+"use client";
+
+import {
+  FanfareAdapterProvider,
+  useFanfareAdapter,
+} from "@fanfare-io/fanfare-sdk-shopify/react";
+
+export function StorefrontGate({ children }: { children: React.ReactNode }) {
+  return <FanfareAdapterProvider>{children}</FanfareAdapterProvider>;
+}
+
+function BuyButton() {
+  const { status, grant, reportSnapshot, recordGrant, clearGrant, verifier } = useFanfareAdapter();
+
+  if (status !== "granted") {
+    return <DropWidget onSnapshot={reportSnapshot} onGranted={recordGrant} />;
+  }
+
+  return <Checkout grant={grant} verifier={verifier} onReset={clearGrant} />;
+}
+```
+
+`useFanfareAdapter` returns a `FanfareAdapterValue`:
+
+| Field | Purpose |
+| --- | --- |
+| `snapshot` | The latest `JourneySnapshot` reported into the adapter (or `null`). |
+| `status` | The derived `AccessStatus` for the current surface. |
+| `grant` | The recorded `GrantRecord` (survives reloads), or `null`. |
+| `reportSnapshot(snapshot)` | Report the latest journey snapshot. |
+| `recordGrant(grant)` | Record the grant when the shopper clears the drop. |
+| `clearGrant()` | Clear the recorded grant. |
+| `verifier` | The `CheckoutVerifier` to call at checkout entry. |
+
+`FanfareAdapterProvider` accepts an optional `verifier` (defaults to `shopifyCheckoutVerifier`) and `legacyStorageKeys` (prior `sessionStorage` keys to hydrate a grant from once, on mount, when migrating off a bespoke adapter). `useFanfareAdapter` throws if called outside the provider.
+
+## Notes and gotchas
+
+- **The root barrel is React-free and SSR-safe.** It imports zero React, so a server-only consumer (Hydrogen/Oxygen loader, RSC, Next/Remix server code) installs and uses it without React.
+- **The default resolver and verifier are network-free.** `createShopifyExperienceResolver` resolves from the static `metafieldValues` map and `shopifyCheckoutVerifier` enforces only client-side expiry, so a storefront can render the gate without any server wiring.
+- **The proxy factories are total — they never reject.** A missing context, a non-2xx proxy response, a malformed body, and any transport throw all resolve to a denied `{ ok: false, reason }`. The verifier and the claimer are deliberately separate factories on opposite sides of the validate / reserve / spend boundary, not one factory with a flag.
+- **`GrantRecord` is UX/continuity state, not admission authority.** Checkout admission is enforced server-side through the proxy using the admission credential. Store only a non-authoritative reference in the grant; the platform gate token is server-minted and delivered out-of-band into the cart metafield.
+- **The grant is persisted under `storefront_adapter_grant` in `sessionStorage`.** The key is intentionally not `fanfare`-prefixed so it survives host machinery that clears `fanfare`/`harness`-keyed storage on session installs.
+
+## Next steps
+
+- Follow the [Shopify integration guide](/guides/platform-integrations/shopify) for app installation and theme embedding.
+- Read the [Shopify types reference](/sdk/reference/types) for the full exported type list.
+- See [Core SDK Quickstart](/sdk/core/quickstart) for the journey model the resolver and verifier feed from.

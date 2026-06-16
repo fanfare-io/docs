@@ -79,6 +79,8 @@ function renderJourney(view: JourneyView) {
 
 The key rule: actions live on the view for the current state. If an action is not present in the current view, your UI should not offer it.
 
+A routed view may also surface `view.offers` (informational, always-gated upgrade routes) and `view.submitAccessCode(code)` for an in-place upgrade attempt. See [Gates and Auth](/sdk/core/gates-and-auth) for how this differs from the gated-stage reroute flow.
+
 ## Render routed sequence states
 
 ```ts
@@ -89,6 +91,16 @@ function renderSequence(sequence: SequenceView) {
     showUpcoming({
       startsAt: sequence.startsAt,
     });
+    // Waitlist is now a scheduled-phase attachment, not a mechanism or phase.
+    // See [Journey State](/sdk/core/journey-state) for the full model.
+    const waitlist = sequence.waitlist;
+    if (waitlist) {
+      showWaitlist({
+        status: waitlist.status,
+        onJoin: () => waitlist.join(),
+        onLeave: () => waitlist.leave(),
+      });
+    }
     return;
   }
 
@@ -104,15 +116,31 @@ function renderSequence(sequence: SequenceView) {
   }
 
   if (sequence.phase === "participating") {
-    showParticipation({
-      type: sequence.mechanism,
-      onLeave: "leave" in sequence ? () => sequence.leave() : undefined,
+    // Live participating data is read from the `display$` atom, not the view itself.
+    const unsubscribeDisplay = sequence.display$.listen((display) => {
+      showLiveParticipation({ type: sequence.mechanism, display });
     });
-    return;
+
+    if (sequence.mechanism === "appointment") {
+      showAppointmentControls({
+        onReschedule: (slotId, locationId) => sequence.reschedule(slotId, locationId),
+        onCancel: (reason) => sequence.cancel(reason),
+      });
+    } else {
+      // queue, draw, and timed_release can leave; auction can leave and also raise its bid.
+      showParticipationControls({
+        onLeave: "leave" in sequence ? () => sequence.leave() : undefined,
+        onBid: sequence.mechanism === "auction" ? (amount) => sequence.bid(amount) : undefined,
+      });
+    }
+
+    return unsubscribeDisplay;
   }
 
   if (sequence.phase === "granted") {
-    showCheckout(sequence.grant.token);
+    // claim() starts checkout and stops the client-side grant-expiry countdown.
+    const grant = sequence.claim();
+    goToCheckout(grant.token);
     return;
   }
 

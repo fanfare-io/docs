@@ -7,9 +7,11 @@ A journey has two layers of public state:
 
 - `journeyStage`: the top-level state of the journey.
 - `sequence.phase`: the common state inside a routed experience.
-- `sequence.mechanism`: the consumer path for that phase, such as `queue`, `draw`, `auction`, `appointment`, `timed_release`, or `waitlist`.
+- `sequence.mechanism`: the consumer path for that phase, such as `queue`, `draw`, `auction`, `appointment`, or `timed_release`.
 
-![Public journey state model showing ready, routing, gated, routed, and the routed sequence states.](/images/sdk/journey-state-model.webp)
+Waitlisting is no longer a mechanism — it appears as an optional `waitlist` attachment on a scheduled sequence, with `join()`/`leave()`.
+
+![Public journey model showing the ready, routing, gated, and routed stages, with the routed sequence phases from scheduled through ended.](/images/sdk/journey-state-model.webp)
 
 ## Use `view$` first
 
@@ -44,11 +46,11 @@ state helper where one exists, such as `useExperienceJourney` in React.
 | Phase | Meaning | Typical action |
 | --- | --- | --- |
 | `unavailable` | No public sequence is currently available. | Explain that access is not available |
-| `scheduled` | A sequence exists but its primary action is not open yet. | Show timing |
-| `enterable` | A sequence or waitlist is available for entry. | Let the consumer enter, bid, or book |
+| `scheduled` | A sequence exists but its primary action is not open yet. | Show timing. May expose a waitlist attachment (`waitlist.join()` / `waitlist.leave()`). |
+| `enterable` | A sequence is open for entry. | Let the consumer enter (queue/draw/timed release), bid (auction), or book (appointment). |
 | `participating` | The consumer is participating. | Show status and valid participation actions |
 | `settling` | A draw or auction is closed to action but final results are pending. | Show pending-result copy |
-| `granted` | The consumer has an active handoff grant. | Send them to checkout or the next app step |
+| `granted` | The consumer has an active handoff grant. Appointments never reach `granted`. | Send them to checkout or the next app step. Call `claim()` promptly: an unclaimed grant lapses to `ended` with an `expired` outcome. |
 | `ended` | The sequence has a terminal outcome. | Show outcome copy |
 
 ## State-gated actions
@@ -56,13 +58,41 @@ state helper where one exists, such as `useExperienceJourney` in React.
 Actions are intentionally state-gated. For example:
 
 - `ready` exposes `start()`.
-- `gated` exposes `reroute()` and `retry()`.
-- `routed.enterable` exposes `enter()` for queue, draw, timed release, or waitlist; `bid(amount)` for auction; or `book(slotId, locationId?)` for appointment.
-- `routed.participating` exposes mechanism-specific actions such as `leave()`, `bid(amount)`, `complete()`, `cancel()`, or `reschedule()`.
-- `routed.granted` exposes `claim()` and the active `grant`.
+- `gated` exposes `reroute(opts?: { accessCode? })` and `retry()`. Omitting `accessCode` re-sends the journey's stored code; passing `accessCode: undefined` explicitly clears the stored code first.
+- `routed` exposes `reroute()` (no arguments — reuses the stored access code), `retry()`, `submitAccessCode(accessCode)`, and the routed `sequence` view. `submitAccessCode` returns an `AccessCodeSubmitResult`; only the `"advanced"` outcome commits the submitted code as the stored code (see [Upgrade offers and access codes](#upgrade-offers-and-access-codes)).
+- `routed.scheduled` may expose a `waitlist` attachment with `waitlist.join()` and `waitlist.leave()` while the primary distribution is not yet open.
+- `routed.enterable` exposes `enter()` for queue, draw, or timed release; `bid(amount)` for auction; or `book(slotId, locationId?)` for appointment.
+- `routed.participating` exposes mechanism-specific actions such as `leave()`, `bid(amount)`, `complete()`, `cancel(reason?)`, or `reschedule(newSlotId, newLocationId?)`.
+- `routed.granted` exposes `claim()` and the active `grant`. `claim()` returns the `AdmissionGrant` synchronously, marks checkout as started, and stops the client-side grant-expiry and capability-refresh timers so the server reservation owns the deadline. An unclaimed grant lapses to `ended` with an `expired` outcome.
 - `routed.ended` does not expose sequence actions.
 
 This prevents your integration from presenting actions that are not valid for the current consumer state.
+
+## Waitlist attachment
+
+A waitlist is not a mechanism or a phase. It is an optional attachment that appears on a `scheduled` sequence while the primary distribution has not yet opened. When present, `sequence.waitlist` exposes:
+
+- `status`: one of `"not_waitlisted"`, `"waitlisted"`, or `"notified"`.
+- `join()`: join the scheduled distribution's waitlist.
+- `leave()`: leave the scheduled distribution's waitlist.
+
+The attachment never grants access on its own. It is cleared when the primary distribution opens, and a `"notified"` status is restored only from `/consumers/me`.
+
+## Upgrade offers and access codes
+
+A `routed` view can carry gated upgrade offers and accept an access code to attempt an upgrade:
+
+- `offers`: the gated sequences the consumer could route to. They are informational until a reroute or access code selects one.
+- `submitAccessCode(accessCode)`: a single-shot, stateless upgrade attempt. It returns an `AccessCodeSubmitResult`:
+  - `{ outcome: "advanced"; sequenceId }`: the code unlocked a higher-priority offered sequence; the journey moved into it and the code became the stored code.
+  - `{ outcome: "unchanged" }`: the code unlocked nothing; the journey stays in its current sequence and the stored code is untouched.
+  - `{ outcome: "gated" }`: routing no longer yields an admissible sequence; the journey is now gated and the gate UI should take over.
+
+Only the `"advanced"` outcome commits the submitted code. A rejected code never displaces the stored code or the current participation. This routed upgrade flow is distinct from the gated-stage `reroute({ accessCode })` flow.
+
+## Sequence-change events
+
+When the routed sequence changes, the SDK emits a `reroute` journey event. Its `detail.direction` is one of `"upgrade"`, `"downgrade"`, `"lateral"`, or `"unknown"`. A downgrade surfaces as a `reroute` event with `severity` `"warning"` and the message `"Sequence downgraded"`; other changes use `severity` `"info"` and `"Sequence changed"`. The direction is event-level diagnostic context, not a field on the view.
 
 ## Public-state mindset
 

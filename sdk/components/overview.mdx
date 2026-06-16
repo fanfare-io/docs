@@ -9,7 +9,7 @@ The component packages sit on top of the same journey contract as the core SDK. 
 
 ## Supported component entrypoint
 
-`ExperienceWidget` is the primary UI entrypoint for queue, draw, auction, timed release, appointment, waitlist, gated, granted, ended, and error states.
+`ExperienceWidget` is the primary UI entrypoint for queue, draw, auction, timed release, and appointment sequences, plus the gated, granted, ended, and error stages. It also renders the waitlist attachment that can appear on a scheduled sequence (consumers join or leave via the scheduled sequence's waitlist attachment, not a standalone waitlist mechanism).
 
 Do not start new integrations with standalone distribution widgets. The supported model is journey-first:
 
