@@ -6,7 +6,7 @@ Fanfare uses different authentication methods depending on the API and use case.
 
 ## API Keys
 
-Every organization has two types of API keys, which you can find and manage — alongside your organization ID — in your dashboard under **Settings → Developer → API keys**:
+Every organization has two types of API keys, which you can find and manage (alongside your organization ID) in your dashboard under **Settings → Developer → API keys**:
 
 ### Publishable Key
 
@@ -30,7 +30,7 @@ const fanfare = new Fanfare({
 - **Usage**: Server-side code only
 - **Permissions**: Full API access including write operations
 - **Security**: Must be kept confidential, never expose in client-side code
-- **Where to find it**: Your dashboard under **Settings → Developer → API keys**. For security, the full secret key is shown only once — right after you rotate it. Rotating issues a new key and retires the old one (it stops authenticating within seconds), so update your server when you rotate.
+- **Where to find it**: Your dashboard under **Settings → Developer → API keys**. For security, the full secret key is shown only once, right after you rotate it. Rotating issues a new key and retires the old one (it stops authenticating within seconds), so update your server when you rotate.
 
 ```bash
 # Server-side API call
