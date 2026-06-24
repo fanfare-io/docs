@@ -81,29 +81,35 @@ Use these when building wrappers around `ExperienceWidget` or sharing slot defin
 The storefront integration types most Shopify (Hydrogen/Oxygen, Next, Remix) integrations need. These come from the SSR-safe root barrel, which imports zero React; the provider and hooks live in `@fanfare-io/fanfare-sdk-shopify/react`.
 
 ```ts
+// Isomorphic root barrel — the checkout vocabulary + config types.
 import type {
-  AccessStatus,
-  CheckoutVerifier,
-  ExperienceResolver,
-  ShopifyCheckoutClaimer,
-  ShopifyCheckoutContext,
-  ShopifyCheckoutVerifierConfig,
-  ShopifyClaimConfig,
-  ShopifyExperienceResolverConfig,
-  VerificationResult,
+  ClaimResult,
+  FanfareGatedCheckoutResult,
+  GatedLine,
+  ProductGID,
+  ShopifyProductRef,
+  VariantGID,
 } from "@fanfare-io/fanfare-sdk-shopify";
+// React subpath — the hook surface.
+import type {
+  FanfareCartAdapter,
+  FanfareClaimInput,
+  FanfareGatedCheckoutInput,
+  UseFanfareCheckoutResult,
+} from "@fanfare-io/fanfare-sdk-shopify/react";
 ```
 
 | Type | Purpose |
 | --- | --- |
-| `ShopifyExperienceResolverConfig` | Config for `createShopifyExperienceResolver`, which maps a product to its experience IDs. |
-| `ShopifyCheckoutVerifierConfig` | Config for `createShopifyCheckoutVerifier`, the proxy-backed admission-credential verifier. |
-| `ShopifyClaimConfig` | Config for `createShopifyCheckoutClaimer`, the proxy-backed checkout claimer. |
-| `ShopifyCheckoutClaimer` | Claimer instance that exchanges an admission grant for checkout access. |
-| `ShopifyCheckoutContext` | Per-request context passed into the checkout verifier. |
-| `ExperienceResolver` | Framework-free `resolve(product)` seam shared by default and proxy-backed resolvers. |
-| `CheckoutVerifier` | Framework-free `verify(grant)` seam shared by default and proxy-backed verifiers. |
-| `VerificationResult` / `AccessStatus` | Verifier result shape and the discrete access state (`ACCESS_STATUSES`). |
+| `GatedLine` | The purchase intent: `{ shopifyProductId, merchandiseId, quantity }`. `shopifyProductId` is a `ProductGID` (the gate's policy anchor); `merchandiseId` is a `VariantGID` (Shopify's `cartLinesAdd` id). Both branded. |
+| `ProductGID` / `VariantGID` | Branded Shopify GID strings; build with the `productGid` / `variantGid` constructors so a transposition fails to compile. |
+| `FanfareGatedCheckoutResult` | The closed result of `gatedCheckout`: success (`{ cart, checkoutUrl, expDate }`) or a typed failure (`code` / `retryable` / `kind`, plus `retry()` on `add_line_failed`). |
+| `FanfareCartAdapter<TCart>` | Your cart I/O — `createCart` / `addLine` / `readCart` — passed to `useFanfareCheckout`. |
+| `FanfareGatedCheckoutInput` | `{ gatedLine, ungatedLines? }` — what to check out (only `gatedLine` is policy-checked). |
+| `UseFanfareCheckoutResult<TCart>` | The `useFanfareCheckout` return: `{ gatedCheckout, claim, pending }`. |
+| `FanfareClaimInput` | `{ cartId, purchase }` — the object form of the advanced `claim`. |
+| `ClaimResult` | The advanced `claim` result: `{ ok, expDate }` or `{ ok: false, reason }`. |
+| `ShopifyProductRef` | `{ handle, id }` — how `useFanfareExperience` / `FanfareCheckoutGate` reference a product. |
 
 See the [Shopify quickstart](/sdk/shopify/quickstart) for end-to-end setup.
 
