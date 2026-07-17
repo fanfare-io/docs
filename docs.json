@@ -350,6 +350,8 @@
                 "pages": [
                   "api/openapi/admin-api.json PUT /organizations",
                   "api/openapi/admin-api.json GET /organizations/current",
+                  "api/openapi/admin-api.json GET /organizations/current/sdk-config",
+                  "api/openapi/admin-api.json POST /organizations/secret-key/rotate",
                   "api/openapi/admin-api.json GET /organizations/slug/availability"
                 ]
               },
@@ -453,12 +455,10 @@
                 "group": "Draws",
                 "pages": [
                   "api/openapi/consumer-api.json GET /draws/{drawId}",
-                  "api/openapi/consumer-api.json POST /draws/{drawId}/complete",
                   "api/openapi/consumer-api.json POST /draws/{drawId}/deny",
                   "api/openapi/consumer-api.json POST /draws/{drawId}/enter",
                   "api/openapi/consumer-api.json POST /draws/{drawId}/leave",
-                  "api/openapi/consumer-api.json GET /draws/{drawId}/status",
-                  "api/openapi/consumer-api.json POST /draws/{drawId}/validate"
+                  "api/openapi/consumer-api.json GET /draws/{drawId}/status"
                 ]
               },
               {
@@ -467,7 +467,8 @@
                   "api/openapi/consumer-api.json GET /experiences/{experienceId}",
                   "api/openapi/consumer-api.json POST /experiences/{experienceId}/enter",
                   "api/openapi/consumer-api.json DELETE /experiences/{experienceId}/leave",
-                  "api/openapi/consumer-api.json POST /experiences/{experienceId}/route"
+                  "api/openapi/consumer-api.json POST /experiences/{experienceId}/route",
+                  "api/openapi/consumer-api.json POST /experiences/archived-status"
                 ]
               },
               {
@@ -489,19 +490,16 @@
                 "pages": [
                   "api/openapi/consumer-api.json GET /queues/{queueId}",
                   "api/openapi/consumer-api.json POST /queues/{queueId}/admit",
-                  "api/openapi/consumer-api.json POST /queues/{queueId}/complete",
                   "api/openapi/consumer-api.json POST /queues/{queueId}/deny",
                   "api/openapi/consumer-api.json POST /queues/{queueId}/enter",
                   "api/openapi/consumer-api.json POST /queues/{queueId}/leave",
-                  "api/openapi/consumer-api.json GET /queues/{queueId}/status",
-                  "api/openapi/consumer-api.json POST /queues/{queueId}/validate"
+                  "api/openapi/consumer-api.json GET /queues/{queueId}/status"
                 ]
               },
               {
                 "group": "Timed Releases",
                 "pages": [
                   "api/openapi/consumer-api.json GET /timed-releases/{timedReleaseId}",
-                  "api/openapi/consumer-api.json POST /timed-releases/{timedReleaseId}/complete",
                   "api/openapi/consumer-api.json POST /timed-releases/{timedReleaseId}/enter",
                   "api/openapi/consumer-api.json POST /timed-releases/{timedReleaseId}/leave",
                   "api/openapi/consumer-api.json GET /timed-releases/{timedReleaseId}/status"

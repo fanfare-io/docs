@@ -17,36 +17,51 @@
   "paths": {
     "/checkout": {
       "post": {
-        "description": "Create a checkout session for an order",
+        "description": "Create a checkout session for an admitted participant",
         "operationId": "postCheckout",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
                 "properties": {
+                  "admissionToken": {
+                    "type": "string"
+                  },
                   "cancelUrl": {
                     "type": "string"
                   },
-                  "checkoutClaim": {
+                  "currencyCode": {
+                    "type": "string"
+                  },
+                  "distributionId": {
+                    "format": "uuid",
                     "type": "string"
                   },
                   "idempotencyKey": {
                     "type": "string"
                   },
-                  "mode": {
-                    "enum": [
-                      "hosted",
-                      "embedded"
-                    ],
+                  "productId": {
+                    "format": "uuid",
                     "type": "string"
                   },
+                  "quantity": {
+                    "type": "number"
+                  },
                   "successUrl": {
+                    "type": "string"
+                  },
+                  "variantId": {
+                    "format": "uuid",
                     "type": "string"
                   }
                 },
                 "required": [
-                  "checkoutClaim",
-                  "mode",
+                  "admissionToken",
+                  "distributionId",
+                  "productId",
+                  "variantId",
+                  "quantity",
+                  "currencyCode",
                   "successUrl",
                   "cancelUrl",
                   "idempotencyKey"
@@ -65,6 +80,9 @@
                     "checkoutUrl": {
                       "type": "string"
                     },
+                    "deadline": {
+                      "type": "string"
+                    },
                     "expiresAt": {
                       "type": "string"
                     },
@@ -79,7 +97,8 @@
                     "orderId",
                     "paymentId",
                     "checkoutUrl",
-                    "expiresAt"
+                    "expiresAt",
+                    "deadline"
                   ],
                   "type": "object"
                 }
@@ -112,7 +131,14 @@
                               "properties": {
                                 "input": {},
                                 "key": {
-                                  "type": "string"
+                                  "anyOf": [
+                                    {
+                                      "type": "string"
+                                    },
+                                    {
+                                      "type": "number"
+                                    }
+                                  ]
                                 },
                                 "origin": {
                                   "type": "string"
@@ -302,7 +328,14 @@
                               "properties": {
                                 "input": {},
                                 "key": {
-                                  "type": "string"
+                                  "anyOf": [
+                                    {
+                                      "type": "string"
+                                    },
+                                    {
+                                      "type": "number"
+                                    }
+                                  ]
                                 },
                                 "origin": {
                                   "type": "string"
@@ -503,7 +536,14 @@
                               "properties": {
                                 "input": {},
                                 "key": {
-                                  "type": "string"
+                                  "anyOf": [
+                                    {
+                                      "type": "string"
+                                    },
+                                    {
+                                      "type": "number"
+                                    }
+                                  ]
                                 },
                                 "origin": {
                                   "type": "string"
