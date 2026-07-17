@@ -84,6 +84,10 @@
                       "eventTimestampNs": {
                         "type": "string"
                       },
+                      "experienceId": {
+                        "format": "uuid",
+                        "type": "string"
+                      },
                       "geoCity": {
                         "type": "string"
                       },
@@ -101,6 +105,9 @@
                       },
                       "ipAddress": {
                         "type": "string"
+                      },
+                      "isGuest": {
+                        "type": "boolean"
                       },
                       "organizationId": {
                         "type": "string"
@@ -153,6 +160,10 @@
                         },
                         "required": [],
                         "type": "object"
+                      },
+                      "sequenceId": {
+                        "format": "uuid",
+                        "type": "string"
                       },
                       "sessionId": {
                         "type": "string"
@@ -252,6 +263,10 @@
                       "eventTimestampNs": {
                         "type": "string"
                       },
+                      "experienceId": {
+                        "format": "uuid",
+                        "type": "string"
+                      },
                       "geoCity": {
                         "type": "string"
                       },
@@ -269,6 +284,9 @@
                       },
                       "ipAddress": {
                         "type": "string"
+                      },
+                      "isGuest": {
+                        "type": "boolean"
                       },
                       "organizationId": {
                         "type": "string"
@@ -321,6 +339,10 @@
                         },
                         "required": [],
                         "type": "object"
+                      },
+                      "sequenceId": {
+                        "format": "uuid",
+                        "type": "string"
                       },
                       "sessionId": {
                         "type": "string"
@@ -420,6 +442,10 @@
                       "eventTimestampNs": {
                         "type": "string"
                       },
+                      "experienceId": {
+                        "format": "uuid",
+                        "type": "string"
+                      },
                       "geoCity": {
                         "type": "string"
                       },
@@ -437,6 +463,9 @@
                       },
                       "ipAddress": {
                         "type": "string"
+                      },
+                      "isGuest": {
+                        "type": "boolean"
                       },
                       "organizationId": {
                         "type": "string"
@@ -489,6 +518,10 @@
                         },
                         "required": [],
                         "type": "object"
+                      },
+                      "sequenceId": {
+                        "format": "uuid",
+                        "type": "string"
                       },
                       "sessionId": {
                         "type": "string"
@@ -603,6 +636,10 @@
                       "eventTimestampNs": {
                         "type": "string"
                       },
+                      "experienceId": {
+                        "format": "uuid",
+                        "type": "string"
+                      },
                       "geoCity": {
                         "type": "string"
                       },
@@ -620,6 +657,9 @@
                       },
                       "ipAddress": {
                         "type": "string"
+                      },
+                      "isGuest": {
+                        "type": "boolean"
                       },
                       "organizationId": {
                         "type": "string"
@@ -672,6 +712,10 @@
                         },
                         "required": [],
                         "type": "object"
+                      },
+                      "sequenceId": {
+                        "format": "uuid",
+                        "type": "string"
                       },
                       "sessionId": {
                         "type": "string"
@@ -789,6 +833,10 @@
                       "eventTimestampNs": {
                         "type": "string"
                       },
+                      "experienceId": {
+                        "format": "uuid",
+                        "type": "string"
+                      },
                       "geoCity": {
                         "type": "string"
                       },
@@ -806,6 +854,9 @@
                       },
                       "ipAddress": {
                         "type": "string"
+                      },
+                      "isGuest": {
+                        "type": "boolean"
                       },
                       "organizationId": {
                         "type": "string"
@@ -858,6 +909,10 @@
                         },
                         "required": [],
                         "type": "object"
+                      },
+                      "sequenceId": {
+                        "format": "uuid",
+                        "type": "string"
                       },
                       "sessionId": {
                         "type": "string"
@@ -975,6 +1030,10 @@
                       "eventTimestampNs": {
                         "type": "string"
                       },
+                      "experienceId": {
+                        "format": "uuid",
+                        "type": "string"
+                      },
                       "geoCity": {
                         "type": "string"
                       },
@@ -992,6 +1051,9 @@
                       },
                       "ipAddress": {
                         "type": "string"
+                      },
+                      "isGuest": {
+                        "type": "boolean"
                       },
                       "organizationId": {
                         "type": "string"
@@ -1044,6 +1106,10 @@
                         },
                         "required": [],
                         "type": "object"
+                      },
+                      "sequenceId": {
+                        "format": "uuid",
+                        "type": "string"
                       },
                       "sessionId": {
                         "type": "string"
@@ -1146,6 +1212,10 @@
                       "eventTimestampNs": {
                         "type": "string"
                       },
+                      "experienceId": {
+                        "format": "uuid",
+                        "type": "string"
+                      },
                       "geoCity": {
                         "type": "string"
                       },
@@ -1163,6 +1233,9 @@
                       },
                       "ipAddress": {
                         "type": "string"
+                      },
+                      "isGuest": {
+                        "type": "boolean"
                       },
                       "organizationId": {
                         "type": "string"
@@ -1215,6 +1288,10 @@
                         },
                         "required": [],
                         "type": "object"
+                      },
+                      "sequenceId": {
+                        "format": "uuid",
+                        "type": "string"
                       },
                       "sessionId": {
                         "type": "string"
@@ -1320,6 +1397,10 @@
                       "eventTimestampNs": {
                         "type": "string"
                       },
+                      "experienceId": {
+                        "format": "uuid",
+                        "type": "string"
+                      },
                       "geoCity": {
                         "type": "string"
                       },
@@ -1337,6 +1418,9 @@
                       },
                       "ipAddress": {
                         "type": "string"
+                      },
+                      "isGuest": {
+                        "type": "boolean"
                       },
                       "organizationId": {
                         "type": "string"
@@ -1389,6 +1473,10 @@
                         },
                         "required": [],
                         "type": "object"
+                      },
+                      "sequenceId": {
+                        "format": "uuid",
+                        "type": "string"
                       },
                       "sessionId": {
                         "type": "string"
@@ -1536,6 +1624,10 @@
                       "eventTimestampNs": {
                         "type": "string"
                       },
+                      "experienceId": {
+                        "format": "uuid",
+                        "type": "string"
+                      },
                       "geoCity": {
                         "type": "string"
                       },
@@ -1553,6 +1645,9 @@
                       },
                       "ipAddress": {
                         "type": "string"
+                      },
+                      "isGuest": {
+                        "type": "boolean"
                       },
                       "organizationId": {
                         "type": "string"
@@ -1605,6 +1700,10 @@
                         },
                         "required": [],
                         "type": "object"
+                      },
+                      "sequenceId": {
+                        "format": "uuid",
+                        "type": "string"
                       },
                       "sessionId": {
                         "type": "string"
@@ -1701,6 +1800,10 @@
                       "eventTimestampNs": {
                         "type": "string"
                       },
+                      "experienceId": {
+                        "format": "uuid",
+                        "type": "string"
+                      },
                       "geoCity": {
                         "type": "string"
                       },
@@ -1718,6 +1821,9 @@
                       },
                       "ipAddress": {
                         "type": "string"
+                      },
+                      "isGuest": {
+                        "type": "boolean"
                       },
                       "organizationId": {
                         "type": "string"
@@ -1770,6 +1876,10 @@
                         },
                         "required": [],
                         "type": "object"
+                      },
+                      "sequenceId": {
+                        "format": "uuid",
+                        "type": "string"
                       },
                       "sessionId": {
                         "type": "string"
@@ -1835,9 +1945,6 @@
                       },
                       "eventProperties": {
                         "properties": {
-                          "experienceId": {
-                            "type": "string"
-                          },
                           "geoLat": {
                             "type": "number"
                           },
@@ -1851,9 +1958,6 @@
                             "type": "string"
                           },
                           "qrPayload": {
-                            "type": "string"
-                          },
-                          "sequenceId": {
                             "type": "string"
                           },
                           "timezone": {
@@ -1870,6 +1974,10 @@
                         "type": "string"
                       },
                       "eventTimestampNs": {
+                        "type": "string"
+                      },
+                      "experienceId": {
+                        "format": "uuid",
                         "type": "string"
                       },
                       "geoCity": {
@@ -1889,6 +1997,9 @@
                       },
                       "ipAddress": {
                         "type": "string"
+                      },
+                      "isGuest": {
+                        "type": "boolean"
                       },
                       "organizationId": {
                         "type": "string"
@@ -1941,6 +2052,10 @@
                         },
                         "required": [],
                         "type": "object"
+                      },
+                      "sequenceId": {
+                        "format": "uuid",
+                        "type": "string"
                       },
                       "sessionId": {
                         "type": "string"
@@ -2050,6 +2165,10 @@
                       "eventTimestampNs": {
                         "type": "string"
                       },
+                      "experienceId": {
+                        "format": "uuid",
+                        "type": "string"
+                      },
                       "geoCity": {
                         "type": "string"
                       },
@@ -2067,6 +2186,9 @@
                       },
                       "ipAddress": {
                         "type": "string"
+                      },
+                      "isGuest": {
+                        "type": "boolean"
                       },
                       "organizationId": {
                         "type": "string"
@@ -2119,6 +2241,10 @@
                         },
                         "required": [],
                         "type": "object"
+                      },
+                      "sequenceId": {
+                        "format": "uuid",
+                        "type": "string"
                       },
                       "sessionId": {
                         "type": "string"
@@ -2228,6 +2354,10 @@
                       "eventTimestampNs": {
                         "type": "string"
                       },
+                      "experienceId": {
+                        "format": "uuid",
+                        "type": "string"
+                      },
                       "geoCity": {
                         "type": "string"
                       },
@@ -2245,6 +2375,9 @@
                       },
                       "ipAddress": {
                         "type": "string"
+                      },
+                      "isGuest": {
+                        "type": "boolean"
                       },
                       "organizationId": {
                         "type": "string"
@@ -2297,6 +2430,10 @@
                         },
                         "required": [],
                         "type": "object"
+                      },
+                      "sequenceId": {
+                        "format": "uuid",
+                        "type": "string"
                       },
                       "sessionId": {
                         "type": "string"
@@ -2409,6 +2546,10 @@
                       "eventTimestampNs": {
                         "type": "string"
                       },
+                      "experienceId": {
+                        "format": "uuid",
+                        "type": "string"
+                      },
                       "geoCity": {
                         "type": "string"
                       },
@@ -2426,6 +2567,9 @@
                       },
                       "ipAddress": {
                         "type": "string"
+                      },
+                      "isGuest": {
+                        "type": "boolean"
                       },
                       "organizationId": {
                         "type": "string"
@@ -2478,6 +2622,10 @@
                         },
                         "required": [],
                         "type": "object"
+                      },
+                      "sequenceId": {
+                        "format": "uuid",
+                        "type": "string"
                       },
                       "sessionId": {
                         "type": "string"
@@ -2590,6 +2738,10 @@
                       "eventTimestampNs": {
                         "type": "string"
                       },
+                      "experienceId": {
+                        "format": "uuid",
+                        "type": "string"
+                      },
                       "geoCity": {
                         "type": "string"
                       },
@@ -2607,6 +2759,9 @@
                       },
                       "ipAddress": {
                         "type": "string"
+                      },
+                      "isGuest": {
+                        "type": "boolean"
                       },
                       "organizationId": {
                         "type": "string"
@@ -2659,6 +2814,10 @@
                         },
                         "required": [],
                         "type": "object"
+                      },
+                      "sequenceId": {
+                        "format": "uuid",
+                        "type": "string"
                       },
                       "sessionId": {
                         "type": "string"
@@ -2768,6 +2927,10 @@
                       "eventTimestampNs": {
                         "type": "string"
                       },
+                      "experienceId": {
+                        "format": "uuid",
+                        "type": "string"
+                      },
                       "geoCity": {
                         "type": "string"
                       },
@@ -2785,6 +2948,9 @@
                       },
                       "ipAddress": {
                         "type": "string"
+                      },
+                      "isGuest": {
+                        "type": "boolean"
                       },
                       "organizationId": {
                         "type": "string"
@@ -2837,6 +3003,10 @@
                         },
                         "required": [],
                         "type": "object"
+                      },
+                      "sequenceId": {
+                        "format": "uuid",
+                        "type": "string"
                       },
                       "sessionId": {
                         "type": "string"
@@ -2946,6 +3116,10 @@
                       "eventTimestampNs": {
                         "type": "string"
                       },
+                      "experienceId": {
+                        "format": "uuid",
+                        "type": "string"
+                      },
                       "geoCity": {
                         "type": "string"
                       },
@@ -2963,6 +3137,9 @@
                       },
                       "ipAddress": {
                         "type": "string"
+                      },
+                      "isGuest": {
+                        "type": "boolean"
                       },
                       "organizationId": {
                         "type": "string"
@@ -3015,6 +3192,10 @@
                         },
                         "required": [],
                         "type": "object"
+                      },
+                      "sequenceId": {
+                        "format": "uuid",
+                        "type": "string"
                       },
                       "sessionId": {
                         "type": "string"
@@ -3124,6 +3305,10 @@
                       "eventTimestampNs": {
                         "type": "string"
                       },
+                      "experienceId": {
+                        "format": "uuid",
+                        "type": "string"
+                      },
                       "geoCity": {
                         "type": "string"
                       },
@@ -3141,6 +3326,9 @@
                       },
                       "ipAddress": {
                         "type": "string"
+                      },
+                      "isGuest": {
+                        "type": "boolean"
                       },
                       "organizationId": {
                         "type": "string"
@@ -3193,6 +3381,10 @@
                         },
                         "required": [],
                         "type": "object"
+                      },
+                      "sequenceId": {
+                        "format": "uuid",
+                        "type": "string"
                       },
                       "sessionId": {
                         "type": "string"
@@ -3305,6 +3497,10 @@
                       "eventTimestampNs": {
                         "type": "string"
                       },
+                      "experienceId": {
+                        "format": "uuid",
+                        "type": "string"
+                      },
                       "geoCity": {
                         "type": "string"
                       },
@@ -3322,6 +3518,9 @@
                       },
                       "ipAddress": {
                         "type": "string"
+                      },
+                      "isGuest": {
+                        "type": "boolean"
                       },
                       "organizationId": {
                         "type": "string"
@@ -3374,6 +3573,10 @@
                         },
                         "required": [],
                         "type": "object"
+                      },
+                      "sequenceId": {
+                        "format": "uuid",
+                        "type": "string"
                       },
                       "sessionId": {
                         "type": "string"
@@ -3449,7 +3652,14 @@
                               "properties": {
                                 "input": {},
                                 "key": {
-                                  "type": "string"
+                                  "anyOf": [
+                                    {
+                                      "type": "string"
+                                    },
+                                    {
+                                      "type": "number"
+                                    }
+                                  ]
                                 },
                                 "origin": {
                                   "type": "string"
@@ -3634,6 +3844,10 @@
                         "eventTimestampNs": {
                           "type": "string"
                         },
+                        "experienceId": {
+                          "format": "uuid",
+                          "type": "string"
+                        },
                         "geoCity": {
                           "type": "string"
                         },
@@ -3651,6 +3865,9 @@
                         },
                         "ipAddress": {
                           "type": "string"
+                        },
+                        "isGuest": {
+                          "type": "boolean"
                         },
                         "organizationId": {
                           "type": "string"
@@ -3703,6 +3920,10 @@
                           },
                           "required": [],
                           "type": "object"
+                        },
+                        "sequenceId": {
+                          "format": "uuid",
+                          "type": "string"
                         },
                         "sessionId": {
                           "type": "string"
@@ -3802,6 +4023,10 @@
                         "eventTimestampNs": {
                           "type": "string"
                         },
+                        "experienceId": {
+                          "format": "uuid",
+                          "type": "string"
+                        },
                         "geoCity": {
                           "type": "string"
                         },
@@ -3819,6 +4044,9 @@
                         },
                         "ipAddress": {
                           "type": "string"
+                        },
+                        "isGuest": {
+                          "type": "boolean"
                         },
                         "organizationId": {
                           "type": "string"
@@ -3871,6 +4099,10 @@
                           },
                           "required": [],
                           "type": "object"
+                        },
+                        "sequenceId": {
+                          "format": "uuid",
+                          "type": "string"
                         },
                         "sessionId": {
                           "type": "string"
@@ -3970,6 +4202,10 @@
                         "eventTimestampNs": {
                           "type": "string"
                         },
+                        "experienceId": {
+                          "format": "uuid",
+                          "type": "string"
+                        },
                         "geoCity": {
                           "type": "string"
                         },
@@ -3987,6 +4223,9 @@
                         },
                         "ipAddress": {
                           "type": "string"
+                        },
+                        "isGuest": {
+                          "type": "boolean"
                         },
                         "organizationId": {
                           "type": "string"
@@ -4039,6 +4278,10 @@
                           },
                           "required": [],
                           "type": "object"
+                        },
+                        "sequenceId": {
+                          "format": "uuid",
+                          "type": "string"
                         },
                         "sessionId": {
                           "type": "string"
@@ -4153,6 +4396,10 @@
                         "eventTimestampNs": {
                           "type": "string"
                         },
+                        "experienceId": {
+                          "format": "uuid",
+                          "type": "string"
+                        },
                         "geoCity": {
                           "type": "string"
                         },
@@ -4170,6 +4417,9 @@
                         },
                         "ipAddress": {
                           "type": "string"
+                        },
+                        "isGuest": {
+                          "type": "boolean"
                         },
                         "organizationId": {
                           "type": "string"
@@ -4222,6 +4472,10 @@
                           },
                           "required": [],
                           "type": "object"
+                        },
+                        "sequenceId": {
+                          "format": "uuid",
+                          "type": "string"
                         },
                         "sessionId": {
                           "type": "string"
@@ -4339,6 +4593,10 @@
                         "eventTimestampNs": {
                           "type": "string"
                         },
+                        "experienceId": {
+                          "format": "uuid",
+                          "type": "string"
+                        },
                         "geoCity": {
                           "type": "string"
                         },
@@ -4356,6 +4614,9 @@
                         },
                         "ipAddress": {
                           "type": "string"
+                        },
+                        "isGuest": {
+                          "type": "boolean"
                         },
                         "organizationId": {
                           "type": "string"
@@ -4408,6 +4669,10 @@
                           },
                           "required": [],
                           "type": "object"
+                        },
+                        "sequenceId": {
+                          "format": "uuid",
+                          "type": "string"
                         },
                         "sessionId": {
                           "type": "string"
@@ -4525,6 +4790,10 @@
                         "eventTimestampNs": {
                           "type": "string"
                         },
+                        "experienceId": {
+                          "format": "uuid",
+                          "type": "string"
+                        },
                         "geoCity": {
                           "type": "string"
                         },
@@ -4542,6 +4811,9 @@
                         },
                         "ipAddress": {
                           "type": "string"
+                        },
+                        "isGuest": {
+                          "type": "boolean"
                         },
                         "organizationId": {
                           "type": "string"
@@ -4594,6 +4866,10 @@
                           },
                           "required": [],
                           "type": "object"
+                        },
+                        "sequenceId": {
+                          "format": "uuid",
+                          "type": "string"
                         },
                         "sessionId": {
                           "type": "string"
@@ -4696,6 +4972,10 @@
                         "eventTimestampNs": {
                           "type": "string"
                         },
+                        "experienceId": {
+                          "format": "uuid",
+                          "type": "string"
+                        },
                         "geoCity": {
                           "type": "string"
                         },
@@ -4713,6 +4993,9 @@
                         },
                         "ipAddress": {
                           "type": "string"
+                        },
+                        "isGuest": {
+                          "type": "boolean"
                         },
                         "organizationId": {
                           "type": "string"
@@ -4765,6 +5048,10 @@
                           },
                           "required": [],
                           "type": "object"
+                        },
+                        "sequenceId": {
+                          "format": "uuid",
+                          "type": "string"
                         },
                         "sessionId": {
                           "type": "string"
@@ -4870,6 +5157,10 @@
                         "eventTimestampNs": {
                           "type": "string"
                         },
+                        "experienceId": {
+                          "format": "uuid",
+                          "type": "string"
+                        },
                         "geoCity": {
                           "type": "string"
                         },
@@ -4887,6 +5178,9 @@
                         },
                         "ipAddress": {
                           "type": "string"
+                        },
+                        "isGuest": {
+                          "type": "boolean"
                         },
                         "organizationId": {
                           "type": "string"
@@ -4939,6 +5233,10 @@
                           },
                           "required": [],
                           "type": "object"
+                        },
+                        "sequenceId": {
+                          "format": "uuid",
+                          "type": "string"
                         },
                         "sessionId": {
                           "type": "string"
@@ -5086,6 +5384,10 @@
                         "eventTimestampNs": {
                           "type": "string"
                         },
+                        "experienceId": {
+                          "format": "uuid",
+                          "type": "string"
+                        },
                         "geoCity": {
                           "type": "string"
                         },
@@ -5103,6 +5405,9 @@
                         },
                         "ipAddress": {
                           "type": "string"
+                        },
+                        "isGuest": {
+                          "type": "boolean"
                         },
                         "organizationId": {
                           "type": "string"
@@ -5155,6 +5460,10 @@
                           },
                           "required": [],
                           "type": "object"
+                        },
+                        "sequenceId": {
+                          "format": "uuid",
+                          "type": "string"
                         },
                         "sessionId": {
                           "type": "string"
@@ -5251,6 +5560,10 @@
                         "eventTimestampNs": {
                           "type": "string"
                         },
+                        "experienceId": {
+                          "format": "uuid",
+                          "type": "string"
+                        },
                         "geoCity": {
                           "type": "string"
                         },
@@ -5268,6 +5581,9 @@
                         },
                         "ipAddress": {
                           "type": "string"
+                        },
+                        "isGuest": {
+                          "type": "boolean"
                         },
                         "organizationId": {
                           "type": "string"
@@ -5320,6 +5636,10 @@
                           },
                           "required": [],
                           "type": "object"
+                        },
+                        "sequenceId": {
+                          "format": "uuid",
+                          "type": "string"
                         },
                         "sessionId": {
                           "type": "string"
@@ -5385,9 +5705,6 @@
                         },
                         "eventProperties": {
                           "properties": {
-                            "experienceId": {
-                              "type": "string"
-                            },
                             "geoLat": {
                               "type": "number"
                             },
@@ -5401,9 +5718,6 @@
                               "type": "string"
                             },
                             "qrPayload": {
-                              "type": "string"
-                            },
-                            "sequenceId": {
                               "type": "string"
                             },
                             "timezone": {
@@ -5420,6 +5734,10 @@
                           "type": "string"
                         },
                         "eventTimestampNs": {
+                          "type": "string"
+                        },
+                        "experienceId": {
+                          "format": "uuid",
                           "type": "string"
                         },
                         "geoCity": {
@@ -5439,6 +5757,9 @@
                         },
                         "ipAddress": {
                           "type": "string"
+                        },
+                        "isGuest": {
+                          "type": "boolean"
                         },
                         "organizationId": {
                           "type": "string"
@@ -5491,6 +5812,10 @@
                           },
                           "required": [],
                           "type": "object"
+                        },
+                        "sequenceId": {
+                          "format": "uuid",
+                          "type": "string"
                         },
                         "sessionId": {
                           "type": "string"
@@ -5600,6 +5925,10 @@
                         "eventTimestampNs": {
                           "type": "string"
                         },
+                        "experienceId": {
+                          "format": "uuid",
+                          "type": "string"
+                        },
                         "geoCity": {
                           "type": "string"
                         },
@@ -5617,6 +5946,9 @@
                         },
                         "ipAddress": {
                           "type": "string"
+                        },
+                        "isGuest": {
+                          "type": "boolean"
                         },
                         "organizationId": {
                           "type": "string"
@@ -5669,6 +6001,10 @@
                           },
                           "required": [],
                           "type": "object"
+                        },
+                        "sequenceId": {
+                          "format": "uuid",
+                          "type": "string"
                         },
                         "sessionId": {
                           "type": "string"
@@ -5778,6 +6114,10 @@
                         "eventTimestampNs": {
                           "type": "string"
                         },
+                        "experienceId": {
+                          "format": "uuid",
+                          "type": "string"
+                        },
                         "geoCity": {
                           "type": "string"
                         },
@@ -5795,6 +6135,9 @@
                         },
                         "ipAddress": {
                           "type": "string"
+                        },
+                        "isGuest": {
+                          "type": "boolean"
                         },
                         "organizationId": {
                           "type": "string"
@@ -5847,6 +6190,10 @@
                           },
                           "required": [],
                           "type": "object"
+                        },
+                        "sequenceId": {
+                          "format": "uuid",
+                          "type": "string"
                         },
                         "sessionId": {
                           "type": "string"
@@ -5959,6 +6306,10 @@
                         "eventTimestampNs": {
                           "type": "string"
                         },
+                        "experienceId": {
+                          "format": "uuid",
+                          "type": "string"
+                        },
                         "geoCity": {
                           "type": "string"
                         },
@@ -5976,6 +6327,9 @@
                         },
                         "ipAddress": {
                           "type": "string"
+                        },
+                        "isGuest": {
+                          "type": "boolean"
                         },
                         "organizationId": {
                           "type": "string"
@@ -6028,6 +6382,10 @@
                           },
                           "required": [],
                           "type": "object"
+                        },
+                        "sequenceId": {
+                          "format": "uuid",
+                          "type": "string"
                         },
                         "sessionId": {
                           "type": "string"
@@ -6140,6 +6498,10 @@
                         "eventTimestampNs": {
                           "type": "string"
                         },
+                        "experienceId": {
+                          "format": "uuid",
+                          "type": "string"
+                        },
                         "geoCity": {
                           "type": "string"
                         },
@@ -6157,6 +6519,9 @@
                         },
                         "ipAddress": {
                           "type": "string"
+                        },
+                        "isGuest": {
+                          "type": "boolean"
                         },
                         "organizationId": {
                           "type": "string"
@@ -6209,6 +6574,10 @@
                           },
                           "required": [],
                           "type": "object"
+                        },
+                        "sequenceId": {
+                          "format": "uuid",
+                          "type": "string"
                         },
                         "sessionId": {
                           "type": "string"
@@ -6318,6 +6687,10 @@
                         "eventTimestampNs": {
                           "type": "string"
                         },
+                        "experienceId": {
+                          "format": "uuid",
+                          "type": "string"
+                        },
                         "geoCity": {
                           "type": "string"
                         },
@@ -6335,6 +6708,9 @@
                         },
                         "ipAddress": {
                           "type": "string"
+                        },
+                        "isGuest": {
+                          "type": "boolean"
                         },
                         "organizationId": {
                           "type": "string"
@@ -6387,6 +6763,10 @@
                           },
                           "required": [],
                           "type": "object"
+                        },
+                        "sequenceId": {
+                          "format": "uuid",
+                          "type": "string"
                         },
                         "sessionId": {
                           "type": "string"
@@ -6496,6 +6876,10 @@
                         "eventTimestampNs": {
                           "type": "string"
                         },
+                        "experienceId": {
+                          "format": "uuid",
+                          "type": "string"
+                        },
                         "geoCity": {
                           "type": "string"
                         },
@@ -6513,6 +6897,9 @@
                         },
                         "ipAddress": {
                           "type": "string"
+                        },
+                        "isGuest": {
+                          "type": "boolean"
                         },
                         "organizationId": {
                           "type": "string"
@@ -6565,6 +6952,10 @@
                           },
                           "required": [],
                           "type": "object"
+                        },
+                        "sequenceId": {
+                          "format": "uuid",
+                          "type": "string"
                         },
                         "sessionId": {
                           "type": "string"
@@ -6674,6 +7065,10 @@
                         "eventTimestampNs": {
                           "type": "string"
                         },
+                        "experienceId": {
+                          "format": "uuid",
+                          "type": "string"
+                        },
                         "geoCity": {
                           "type": "string"
                         },
@@ -6691,6 +7086,9 @@
                         },
                         "ipAddress": {
                           "type": "string"
+                        },
+                        "isGuest": {
+                          "type": "boolean"
                         },
                         "organizationId": {
                           "type": "string"
@@ -6743,6 +7141,10 @@
                           },
                           "required": [],
                           "type": "object"
+                        },
+                        "sequenceId": {
+                          "format": "uuid",
+                          "type": "string"
                         },
                         "sessionId": {
                           "type": "string"
@@ -6855,6 +7257,10 @@
                         "eventTimestampNs": {
                           "type": "string"
                         },
+                        "experienceId": {
+                          "format": "uuid",
+                          "type": "string"
+                        },
                         "geoCity": {
                           "type": "string"
                         },
@@ -6872,6 +7278,9 @@
                         },
                         "ipAddress": {
                           "type": "string"
+                        },
+                        "isGuest": {
+                          "type": "boolean"
                         },
                         "organizationId": {
                           "type": "string"
@@ -6924,6 +7333,10 @@
                           },
                           "required": [],
                           "type": "object"
+                        },
+                        "sequenceId": {
+                          "format": "uuid",
+                          "type": "string"
                         },
                         "sessionId": {
                           "type": "string"
@@ -7001,7 +7414,14 @@
                               "properties": {
                                 "input": {},
                                 "key": {
-                                  "type": "string"
+                                  "anyOf": [
+                                    {
+                                      "type": "string"
+                                    },
+                                    {
+                                      "type": "number"
+                                    }
+                                  ]
                                 },
                                 "origin": {
                                   "type": "string"
