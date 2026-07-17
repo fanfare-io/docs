@@ -240,7 +240,7 @@ function LinkPhoneForm() {
 
 ## Step 5: External Identity Linking
 
-Link consumers via your own authentication system (server-side):
+Link consumers via your own authentication system (server-side). For the full contract — including how Fanfare matches and consolidates external identities — see the [External Authentication](/guides/authentication/external-authentication) guide.
 
 ### Backend Implementation
 
@@ -262,8 +262,7 @@ export async function POST(request: Request) {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "X-Organization-Id": process.env.FANFARE_ORG_ID!,
-      "X-Secret-Key": process.env.FANFARE_SECRET_KEY!, // Secret key!
+      "Authorization": `Bearer ${process.env.FANFARE_SECRET_KEY!}`, // Secret key!
     },
     body: JSON.stringify({
       provider: "your-platform", // Your platform identifier
