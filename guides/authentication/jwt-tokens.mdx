@@ -37,7 +37,7 @@ Use JWT authentication when:
 
 ## Step 1: External Authentication Endpoint
 
-Create a backend endpoint to generate exchange codes:
+Create a backend endpoint to generate exchange codes. For the full authorize/exchange contract — including request fields, response shapes, and identity consolidation via `canonicalSubject` — see the [External Authentication](/guides/authentication/external-authentication) guide.
 
 ### Node.js/Express
 
@@ -48,7 +48,6 @@ import express from "express";
 const router = express.Router();
 
 const FANFARE_API_BASE_URL = "https://api.fanfare.io";
-const FANFARE_ORG_ID = process.env.FANFARE_ORG_ID!;
 const FANFARE_SECRET_KEY = process.env.FANFARE_SECRET_KEY!;
 
 interface ExternalAuthPayload {
@@ -86,8 +85,7 @@ router.post("/authorize", async (req, res) => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "X-Organization-Id": FANFARE_ORG_ID,
-        "X-Secret-Key": FANFARE_SECRET_KEY, // Server-side only!
+        "Authorization": `Bearer ${FANFARE_SECRET_KEY}`, // Server-side only!
       },
       body: JSON.stringify(payload),
     });
@@ -124,7 +122,6 @@ import os
 router = APIRouter()
 
 FANFARE_API_BASE_URL = "https://api.fanfare.io"
-FANFARE_ORG_ID = os.getenv("FANFARE_ORG_ID")
 FANFARE_SECRET_KEY = os.getenv("FANFARE_SECRET_KEY")
 
 class AuthResponse(BaseModel):
@@ -151,8 +148,7 @@ async def authorize_fanfare(user: User = Depends(get_current_user)):
             json=payload,
             headers={
                 "Content-Type": "application/json",
-                "X-Organization-Id": FANFARE_ORG_ID,
-                "X-Secret-Key": FANFARE_SECRET_KEY,
+                "Authorization": f"Bearer {FANFARE_SECRET_KEY}",
             }
         )
 
@@ -344,7 +340,7 @@ interface AdmissionGrantContext {
 // ❌ Don't do this
 const response = await fetch("/api/fanfare", {
   headers: {
-    "X-Secret-Key": "sk_live_xxx", // NEVER expose in client code
+    "Authorization": "Bearer sk_live_xxx", // NEVER expose a secret key in client code
   },
 });
 

@@ -147,6 +147,7 @@
             "pages": [
               "guides/authentication/anonymous-consumers",
               "guides/authentication/identified-consumers",
+              "guides/authentication/external-authentication",
               "guides/authentication/consumer-linking",
               "guides/authentication/jwt-tokens"
             ]

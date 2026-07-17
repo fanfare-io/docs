@@ -1,0 +1,287 @@
+# External Authentication Guide
+
+Learn how to turn users who are already signed in to your own authentication system into authenticated Fanfare consumers, without routing them through Fanfare OTP.
+
+## Overview
+
+External authentication lets an organization with its own identity system — Auth0, Okta, a homegrown login, or any other provider — vouch for a signed-in user and hand them a real Fanfare session. Fanfare trusts your backend's assertion instead of re-verifying the user itself, so there's no second sign-in step for your customers.
+
+**What you'll learn:**
+
+- The two-hop authorize/exchange flow
+- Requesting an exchange code from your backend
+- Exchanging the code for a Fanfare session in the browser
+- Consolidating multiple external identities onto one consumer with `canonicalSubject`
+
+**Complexity:** Advanced
+**Time to complete:** 30 minutes
+
+## Prerequisites
+
+- Fanfare account with API credentials, including a **secret key**
+- A backend server that can make outbound HTTPS requests and already verifies your users (an OIDC provider, session cookies, or equivalent)
+- Fanfare SDK installed and configured client-side
+
+## When to Use External Authentication
+
+Use external authentication when:
+
+- Your application already has its own login system, and you don't want to make users sign in twice
+- You want signed-in users to become authenticated Fanfare consumers (not guests) as soon as they land on a Fanfare-powered experience
+- You run your own identity consolidation — collapsing duplicate accounts by address, vendor signals, or another internal process — and want those consolidations reflected in Fanfare's consumer records
+
+If you don't have your own authentication system, use [Identified Consumers](/guides/authentication/identified-consumers) (email/phone OTP) instead.
+
+## How It Works
+
+External authentication is a two-hop exchange. Your backend proves who the user is; the browser redeems that proof for a session. Fanfare never sees or verifies the upstream identity token — your backend is the trust boundary.
+
+1. The user signs in to **your** system, however you normally authenticate them.
+2. Your backend verifies that sign-in (validates the OIDC `id_token`, checks a session cookie, etc.).
+3. Your backend calls Fanfare's `POST /auth/external/authorize`, authenticated with your **secret key**, asserting the user's identity.
+4. Fanfare finds-or-creates a consumer for that identity and returns a one-time **exchange code**.
+5. Your backend returns the exchange code to the browser.
+6. The browser exchanges the code for a standard Fanfare session — identical in shape to an OTP login.
+
+## Step 1: Authorize From Your Backend
+
+This call is server-to-server only. Verify your own user's session first, then assert their identity to Fanfare:
+
+```http
+POST /auth/external/authorize HTTP/1.1
+Host: consumer.fanfare.io
+Authorization: Bearer sk_live_xxxxxxxxxxxx
+Content-Type: application/json
+
+{
+  "provider": "auth0",
+  "issuer": "https://your-tenant.auth0.com/",
+  "subject": "auth0|64f1a2b3c4d5e6f7",
+  "canonicalSubject": "person_9f2c1e",
+  "claims": {
+    "email": "jamie@example.com",
+    "fullName": "Jamie Rivera"
+  }
+}
+```
+
+```typescript
+interface ExternalAuthorizeRequest {
+  provider: string; // Identity provider name, e.g. "auth0", "custom"
+  issuer: string; // Provider-scoped issuer — the OIDC `iss` claim, or an equivalent stable value
+  subject: string; // Stable per-user identifier at that provider — the OIDC `sub` claim
+  canonicalSubject?: string; // Optional: collapses this identity onto one consumer, see below (1-255 chars)
+  claims?: {
+    email?: string;
+    fullName?: string;
+    name?: string;
+    [key: string]: unknown; // Max 10,000 JSON characters total
+  };
+}
+```
+
+**Response:**
+
+```json
+{
+  "exchangeCode": "exc_01HXYZ123456789",
+  "expiresAt": "2026-07-16T18:32:10Z",
+  "resolution": "linked"
+}
+```
+
+`exchangeCode` is one-time-use and expires in **60 seconds**. Generate it on demand during the user's session bootstrap — never ahead of time or speculatively.
+
+`resolution` tells you what Fanfare did with the identity:
+
+| Resolution | Meaning |
+| --- | --- |
+| `created` | No matching identity or `canonicalSubject` was found — a new consumer was created. |
+| `existing` | This exact `(provider, issuer, subject)` identity was already known. |
+| `linked` | A new identity was attached to an existing consumer via `canonicalSubject`. |
+
+`claims` are profile hints, not source-of-truth writes. `email`, `fullName`, and `name` are recognized and used only to **backfill empty** fields on the consumer — Fanfare never overwrites a field that's already set.
+
+## Step 2: Exchange the Code in the Browser
+
+Your backend hands the exchange code to the browser (as part of a page load, an API response, whatever fits your app). The browser redeems it for a real session.
+
+With the SDK:
+
+```typescript
+await sdk.auth.exchangeExternal({ exchangeCode });
+```
+
+This installs the session automatically and, where the platform supports it, binds it to a device key via DPoP — you don't need to store or forward tokens yourself.
+
+Or directly over HTTP:
+
+```http
+POST /auth/external/exchange HTTP/1.1
+Host: consumer.fanfare.io
+X-Publishable-Key: pk_live_xxxxxxxxxxxx
+Content-Type: application/json
+
+{
+  "exchangeCode": "exc_01HXYZ123456789"
+}
+```
+
+**Response:** a standard Fanfare auth session — identical to what you'd get from OTP login:
+
+```json
+{
+  "session": {
+    "type": "authenticated",
+    "consumerId": "con_01HXYZ123456789",
+    "email": "jamie@example.com",
+    "expiresAt": "2026-07-16T19:32:10Z"
+  },
+  "accessToken": "eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9...",
+  "refreshToken": "eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9...",
+  "refreshTokenTtlSeconds": 2592000,
+  "beaconToken": "eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9..."
+}
+```
+
+## Identity Mapping
+
+Consumers are found-or-created by the unique triple `(provider, issuer, subject)`, scoped to your organization. The same `subject` from two different providers (or two different issuers under the same provider) always maps to two different identities.
+
+Fanfare does **not** auto-link identities by email or phone. Two different external identities that happen to share an email stay separate consumers unless you explicitly consolidate them with `canonicalSubject`.
+
+## Consolidating Consumers With `canonicalSubject`
+
+If you run your own identity consolidation — collapsing duplicate customer accounts by address, vendor signals, or another internal process into one canonical person — pass that person's identifier as `canonicalSubject`. It's org-scoped and must be stable for a given person (1-255 characters).
+
+All `authorize` calls that assert the same `canonicalSubject` resolve to the same Fanfare consumer:
+
+- The **first** call for a given `canonicalSubject` creates the consumer (`resolution: "created"`).
+- Later calls with a new `(provider, issuer, subject)` identity, asserting the same `canonicalSubject`, attach that identity to the existing consumer (`resolution: "linked"`).
+
+**This is deliberate consolidation, not a convenience.** Linked identities share one consumer — per-consumer purchase limits, entry limits, queue and waitlist positions, and order history are all shared across them. Someone who signs in through two different linked identities is, for every access-control purpose, one person.
+
+### Conflict Policy: The Account Identity Wins
+
+`canonicalSubject` only has effect the first time an identity is created. If an identity is already bound to a consumer and a later `authorize` call asserts a `canonicalSubject` that disagrees with what's on record — or one already claimed by a different consumer — Fanfare still authenticates as that identity's **existing** consumer. It never re-links or merges consumers implicitly; the disagreement is recorded for operational review.
+
+For example: your first `authorize` call for a user omits `canonicalSubject`, so Fanfare creates a standalone consumer for that identity. A later call for the same identity now asserts `canonicalSubject: "person_42"` — but the identity is already bound to its own consumer, so that consumer is who authenticates. The consumer is not retroactively moved under `person_42`.
+
+**Assert `canonicalSubject` from the first `authorize` call for a given identity.** Retroactive re-clustering does not move consumers that already exist.
+
+### Email Backfill Across Linked Identities
+
+If linked identities carry different emails, the consumer keeps the **first non-empty email** it was given. Each identity's own email is still preserved on that identity's record — linking doesn't overwrite or discard it, it just doesn't promote it to the consumer's primary email once one is already set.
+
+## Complete Example
+
+### Backend (Node.js)
+
+Verify your own session, then assert identity to Fanfare:
+
+```typescript
+// routes/fanfare-auth.ts
+const FANFARE_API_BASE_URL = "https://consumer.fanfare.io";
+const FANFARE_SECRET_KEY = process.env.FANFARE_SECRET_KEY!;
+
+export async function authorizeFanfareSession(request: Request): Promise<Response> {
+  // 1. Verify the user is authenticated in YOUR system.
+  // Fanfare trusts this assertion — it never re-verifies the upstream identity.
+  const user = await getVerifiedUser(request);
+  if (!user) {
+    return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401 });
+  }
+
+  // 2. Assert identity to Fanfare, server-to-server, with your secret key.
+  const response = await fetch(`${FANFARE_API_BASE_URL}/auth/external/authorize`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${FANFARE_SECRET_KEY}`,
+    },
+    body: JSON.stringify({
+      provider: "auth0",
+      issuer: user.issuer,
+      subject: user.sub,
+      canonicalSubject: user.canonicalPersonId,
+      claims: {
+        email: user.email,
+        fullName: user.name,
+      },
+    }),
+  });
+
+  if (!response.ok) {
+    return new Response(JSON.stringify({ error: "Failed to create exchange code" }), { status: 502 });
+  }
+
+  // 3. Hand the one-time exchange code to the browser. Nothing else from this
+  // response — and never the secret key itself — should reach the client.
+  const { exchangeCode, expiresAt } = await response.json();
+  return new Response(JSON.stringify({ exchangeCode, expiresAt }), {
+    headers: { "Content-Type": "application/json" },
+  });
+}
+```
+
+### Browser (React)
+
+```tsx
+import { useFanfare, useFanfareAuth } from "@fanfare-io/fanfare-sdk-react";
+import { useEffect } from "react";
+
+function useFanfareExternalAuth(isSignedIn: boolean) {
+  const fanfare = useFanfare();
+  const { isAuthenticated, isGuest } = useFanfareAuth();
+
+  useEffect(() => {
+    async function authenticate() {
+      // Only exchange when your app has a signed-in user and Fanfare
+      // doesn't already have an authenticated session for them.
+      if (!isSignedIn || (isAuthenticated && !isGuest)) return;
+
+      const res = await fetch("/api/fanfare-auth", { credentials: "include" });
+      if (!res.ok) return;
+
+      const { exchangeCode } = await res.json();
+      await fanfare.auth.exchangeExternal({ exchangeCode });
+    }
+
+    authenticate();
+  }, [isSignedIn, isAuthenticated, isGuest, fanfare]);
+}
+```
+
+## Security
+
+<Warning>
+  `POST /auth/external/authorize` requires your secret key and must only ever be called from your backend. Never call it from a browser, and never ship the secret key in client-side code.
+</Warning>
+
+- The exchange code is one-time-use with a 60-second TTL. Generate it during the user's session bootstrap, not ahead of time — a code minted early and cached is a code that's expired by the time you need it.
+- Fanfare performs no verification of the upstream identity token. Your backend is the trust boundary: verify your own provider's tokens or session before calling `authorize`.
+
+## Troubleshooting
+
+### Exchange Code Expired
+
+- Codes expire 60 seconds after `authorize` returns them
+- Generate the code immediately before exchanging it, not in advance
+- Check for network latency between your backend and the browser
+
+### Unexpected `resolution`
+
+- `resolution: "existing"` when you expected `"created"` means this `(provider, issuer, subject)` triple was already authorized before — that's expected on repeat sign-ins
+- A `canonicalSubject` that doesn't produce `"linked"` usually means the target identity already has its own consumer — see [Conflict Policy](#conflict-policy-the-account-identity-wins)
+
+### 401/403 From `authorize`
+
+- Confirm the key has the `sk_` prefix, not `pk_`
+- Confirm the key belongs to the organization you expect
+- Confirm the call is coming from your backend, not the browser — publishable keys cannot call `authorize`
+
+## What's Next
+
+- [Consumer Linking](/guides/authentication/consumer-linking) - Upgrade anonymous sessions to identified accounts
+- [JWT Tokens](/guides/authentication/jwt-tokens) - Validate admission grants during checkout
+- [Gates and Auth](/sdk/core/gates-and-auth) - Respond to the `authentication` gate from the SDK's journey contract
