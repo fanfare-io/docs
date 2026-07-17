@@ -47,7 +47,7 @@ import express from "express";
 
 const router = express.Router();
 
-const FANFARE_API_BASE_URL = "https://api.fanfare.io";
+const FANFARE_API_BASE_URL = "https://consumer.fanfare.io/api";
 const FANFARE_SECRET_KEY = process.env.FANFARE_SECRET_KEY!;
 
 interface ExternalAuthPayload {
@@ -121,7 +121,7 @@ import os
 
 router = APIRouter()
 
-FANFARE_API_BASE_URL = "https://api.fanfare.io"
+FANFARE_API_BASE_URL = "https://consumer.fanfare.io/api"
 FANFARE_SECRET_KEY = os.getenv("FANFARE_SECRET_KEY")
 
 class AuthResponse(BaseModel):

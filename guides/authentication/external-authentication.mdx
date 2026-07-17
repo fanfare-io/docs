@@ -38,7 +38,7 @@ External authentication is a two-hop exchange. Your backend proves who the user 
 
 1. The user signs in to **your** system, however you normally authenticate them.
 2. Your backend verifies that sign-in (validates the OIDC `id_token`, checks a session cookie, etc.).
-3. Your backend calls Fanfare's `POST /auth/external/authorize`, authenticated with your **secret key**, asserting the user's identity.
+3. Your backend calls Fanfare's `POST /api/auth/external/authorize`, authenticated with your **secret key**, asserting the user's identity.
 4. Fanfare finds-or-creates a consumer for that identity and returns a one-time **exchange code**.
 5. Your backend returns the exchange code to the browser.
 6. The browser exchanges the code for a standard Fanfare session — identical in shape to an OTP login.
@@ -48,7 +48,7 @@ External authentication is a two-hop exchange. Your backend proves who the user 
 This call is server-to-server only. Verify your own user's session first, then assert their identity to Fanfare:
 
 ```http
-POST /auth/external/authorize HTTP/1.1
+POST /api/auth/external/authorize HTTP/1.1
 Host: consumer.fanfare.io
 Authorization: Bearer sk_live_xxxxxxxxxxxx
 Content-Type: application/json
@@ -117,7 +117,7 @@ This installs the session automatically and, where the platform supports it, bin
 Or directly over HTTP:
 
 ```http
-POST /auth/external/exchange HTTP/1.1
+POST /api/auth/external/exchange HTTP/1.1
 Host: consumer.fanfare.io
 X-Publishable-Key: pk_live_xxxxxxxxxxxx
 Content-Type: application/json
@@ -181,7 +181,7 @@ Verify your own session, then assert identity to Fanfare:
 
 ```typescript
 // routes/fanfare-auth.ts
-const FANFARE_API_BASE_URL = "https://consumer.fanfare.io";
+const FANFARE_API_BASE_URL = "https://consumer.fanfare.io/api";
 const FANFARE_SECRET_KEY = process.env.FANFARE_SECRET_KEY!;
 
 export async function authorizeFanfareSession(request: Request): Promise<Response> {

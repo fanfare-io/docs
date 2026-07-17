@@ -258,7 +258,7 @@ export async function POST(request: Request) {
   }
 
   // 2. Create exchange code via Fanfare API (server-to-server)
-  const response = await fetch("https://api.fanfare.io/auth/external/authorize", {
+  const response = await fetch("https://consumer.fanfare.io/api/auth/external/authorize", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
