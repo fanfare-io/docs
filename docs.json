@@ -297,6 +297,7 @@
                   "api/openapi/admin-api.json GET /sequences/{sequenceId}",
                   "api/openapi/admin-api.json PUT /sequences/{sequenceId}",
                   "api/openapi/admin-api.json DELETE /sequences/{sequenceId}",
+                  "api/openapi/admin-api.json POST /sequences/{sequenceId}/access-code/send",
                   "api/openapi/admin-api.json GET /sequences/{sequenceId}/metrics",
                   "api/openapi/admin-api.json GET /sequences/{sequenceId}/order-limits",
                   "api/openapi/admin-api.json POST /sequences/{sequenceId}/order-limits",
@@ -309,6 +310,8 @@
                   "api/openapi/admin-api.json GET /sequences/{sequenceId}/products/{productId}",
                   "api/openapi/admin-api.json PUT /sequences/{sequenceId}/products/{productId}",
                   "api/openapi/admin-api.json DELETE /sequences/{sequenceId}/products/{productId}",
+                  "api/openapi/admin-api.json GET /sequences/{sequenceId}/variant-stock",
+                  "api/openapi/admin-api.json PUT /sequences/{sequenceId}/variant-stock",
                   "api/openapi/admin-api.json GET /sequences/{sequenceId}/waitlist",
                   "api/openapi/admin-api.json GET /sequences/{sequenceId}/waitlist/consumers",
                   "api/openapi/admin-api.json POST /sequences/{sequenceId}/waitlist/enter",
@@ -320,7 +323,6 @@
                   "api/openapi/admin-api.json GET /waitlists",
                   "api/openapi/admin-api.json POST /waitlists",
                   "api/openapi/admin-api.json GET /waitlists/{id}",
-                  "api/openapi/admin-api.json PUT /waitlists/{id}",
                   "api/openapi/admin-api.json DELETE /waitlists/{id}",
                   "api/openapi/admin-api.json GET /waitlists/{id}/consumers",
                   "api/openapi/admin-api.json GET /waitlists/{id}/export",
@@ -337,6 +339,14 @@
                   "api/openapi/admin-api.json GET /experience-pages/{id}",
                   "api/openapi/admin-api.json PUT /experience-pages/{id}",
                   "api/openapi/admin-api.json DELETE /experience-pages/{id}",
+                  "api/openapi/admin-api.json POST /experience-pages/{id}/blocks/{slotName}/actions/{actionName}",
+                  "api/openapi/admin-api.json GET /experience-pages/{id}/blocks/{slotName}/state",
+                  "api/openapi/admin-api.json GET /experience-pages/{id}/preview-config",
+                  "api/openapi/admin-api.json POST /experience-pages/{id}/preview-token",
+                  "api/openapi/admin-api.json GET /experience-pages/{id}/publication-status",
+                  "api/openapi/admin-api.json POST /experience-pages/{id}/publish",
+                  "api/openapi/admin-api.json GET /experience-pages/{id}/regions",
+                  "api/openapi/admin-api.json POST /experience-pages/use-template",
                   "api/openapi/admin-api.json GET /experiences",
                   "api/openapi/admin-api.json POST /experiences",
                   "api/openapi/admin-api.json GET /experiences/{id}",
@@ -476,7 +486,9 @@
                 "pages": [
                   "api/openapi/consumer-api.json GET /loyalty/balance",
                   "api/openapi/consumer-api.json GET /loyalty/expirations",
-                  "api/openapi/consumer-api.json GET /loyalty/history"
+                  "api/openapi/consumer-api.json GET /loyalty/history",
+                  "api/openapi/consumer-api.json GET /loyalty/pass",
+                  "api/openapi/consumer-api.json POST /loyalty/pass"
                 ]
               },
               {
