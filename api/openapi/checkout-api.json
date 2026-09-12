@@ -129,7 +129,6 @@
                           "path": {
                             "items": {
                               "properties": {
-                                "input": {},
                                 "key": {
                                   "anyOf": [
                                     {
@@ -150,15 +149,11 @@
                               "required": [
                                 "type",
                                 "origin",
-                                "input",
                                 "key"
                               ],
                               "type": "object"
                             },
                             "type": "array"
-                          },
-                          "received": {
-                            "type": "string"
                           },
                           "type": {
                             "type": "string"
@@ -168,7 +163,6 @@
                           "kind",
                           "type",
                           "expected",
-                          "received",
                           "message",
                           "path"
                         ],
@@ -326,7 +320,6 @@
                           "path": {
                             "items": {
                               "properties": {
-                                "input": {},
                                 "key": {
                                   "anyOf": [
                                     {
@@ -347,15 +340,11 @@
                               "required": [
                                 "type",
                                 "origin",
-                                "input",
                                 "key"
                               ],
                               "type": "object"
                             },
                             "type": "array"
-                          },
-                          "received": {
-                            "type": "string"
                           },
                           "type": {
                             "type": "string"
@@ -365,7 +354,6 @@
                           "kind",
                           "type",
                           "expected",
-                          "received",
                           "message",
                           "path"
                         ],
@@ -534,7 +522,6 @@
                           "path": {
                             "items": {
                               "properties": {
-                                "input": {},
                                 "key": {
                                   "anyOf": [
                                     {
@@ -555,15 +542,11 @@
                               "required": [
                                 "type",
                                 "origin",
-                                "input",
                                 "key"
                               ],
                               "type": "object"
                             },
                             "type": "array"
-                          },
-                          "received": {
-                            "type": "string"
                           },
                           "type": {
                             "type": "string"
@@ -573,7 +556,6 @@
                           "kind",
                           "type",
                           "expected",
-                          "received",
                           "message",
                           "path"
                         ],
