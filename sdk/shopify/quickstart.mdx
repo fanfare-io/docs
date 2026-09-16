@@ -49,13 +49,13 @@ proxy; that is the only required store fact.
 
 import { FanfareShopifyProvider } from "@fanfare-io/fanfare-sdk-shopify/react";
 
+// Hoisted so the config keeps one identity for the life of the page. The provider keys its
+// work on the values inside, so an inline literal is also safe — a constant is simply clearer.
+const SHOPIFY_CONFIG = { proxyBaseUrl: "https://shop.myshopify.com/apps/fanfare/api" };
+
 export function StorefrontProvider({ children }: { children: React.ReactNode }) {
   return (
-    <FanfareShopifyProvider
-      organizationId="org_abc123"
-      publishableKey="pk_live_..."
-      shopify={{ proxyBaseUrl: "https://shop.myshopify.com/apps/fanfare/api" }}
-    >
+    <FanfareShopifyProvider organizationId="org_abc123" publishableKey="pk_live_..." shopify={SHOPIFY_CONFIG}>
       {children}
     </FanfareShopifyProvider>
   );
@@ -68,23 +68,45 @@ mount — it never silently degrades.
 
 ## Resolve a product to an experience
 
-`useFanfareExperience(product)` maps a Shopify product to the experience it gates, or `null` when the
-product is not gated. Pass a `ShopifyProductRef` (`{ handle, id }`).
+`useFanfareExperience(product)` maps a Shopify product to the experience it gates. Pass a
+`ShopifyProductRef` (`{ handle, id }`); it returns a discriminated union you switch over.
 
 ```tsx
 import { useFanfareExperience } from "@fanfare-io/fanfare-sdk-shopify/react";
 
 function ProductPage({ product }: { product: { handle: string; id: string } }) {
-  const { experienceId, loading } = useFanfareExperience({ handle: product.handle, id: product.id });
+  const experience = useFanfareExperience({ handle: product.handle, id: product.id });
 
-  if (loading) return <Spinner />;
-  if (experienceId === null) return <NativePurchaseUI />; // not gated
-  return <GatedPurchaseUI experienceId={experienceId} />;
+  switch (experience.status) {
+    case "loading":
+      return <Spinner />;
+    case "gated":
+      return <GatedPurchaseUI experienceId={experience.experienceId} />;
+    case "ungated":
+      return <NativePurchaseUI />;
+    case "error":
+      // Fail open: gating is unknown, so the native buy path renders and Shopify's checkout validation still enforces; a drop page may choose to hold instead.
+      return <NativePurchaseUI />;
+  }
 }
 ```
 
-`experienceId === null` means *not gated* — render your native purchase UI. It is SSR-safe: any miss
-or failure yields `null`, never a throw.
+`loading` — the answer is still being resolved. A synchronous source (`static`, `map`, or a
+`metafield` source with the product preloaded) never produces it.
+
+`gated` — the product carries a live experience; `experienceId` is the one it maps to.
+
+`ungated` — the product carries no live experience; render your native purchase UI.
+
+`error` — the answer could not be determined; `error.reason` is the typed cause. A failure is never
+reported as `ungated`, and once a product has resolved, a later failure for the same product,
+`proxyBaseUrl`, and override presence keeps the last result rather than flashing back to `loading`.
+
+Pass `onResolutionError={(error) => report(error)}` to observe failed resolutions yourself;
+`error.lookupKey` is the product handle or id and `error.reason` is one of `"network" | "http" |
+"malformed" | "unavailable" | "override"`. Without it the SDK logs one `console.warn` per product and
+reason to the developer console — nothing is reported to Fanfare. Supplying a handler replaces the
+warn; the handler owns the signal.
 
 ### Metafield primitives
 
