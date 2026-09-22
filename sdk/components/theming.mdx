@@ -90,3 +90,233 @@ Nested themes shallow-merge over parent themes. This lets you set a site-level b
 
 Variants change presentation, not state or behavior.
 
+## Styling hooks
+
+Every element the SDK renders that is worth styling carries a `data-slot` attribute, so a host stylesheet can target it without depending on a class name. This is the complete set the package emits.
+
+<Note>
+  This table mirrors `docs/STYLING.md` inside `@fanfare-io/fanfare-sdk-react`. The in-package file ships with the code it describes and wins any conflict with this page.
+</Note>
+
+| `data-slot`                   | What it wraps                                                                                                                                             |
+| ----------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `access-code-form`            | The access-code entry panel                                                                                                                               |
+| `access-code-form-countdown`  | The countdown above the access-code form                                                                                                                  |
+| `access-code-form-heading`    | The access-code form's title and description block                                                                                                        |
+| `access-code-input`           | The access-code field                                                                                                                                     |
+| `alert-panel`                 | An inline alert; `data-tone` carries its intent                                                                                                           |
+| `appointment-booking-details` | The confirmed booking's date, time and location block                                                                                                     |
+| `appointment-day-tabs`        | The day selector above the appointment slot grid                                                                                                          |
+| `appointment-module`          | The appointment sequence panel                                                                                                                            |
+| `appointment-slot-grid`       | The grid of bookable times for the chosen day                                                                                                             |
+| `auction-cta`                 | The auction's primary action button                                                                                                                       |
+| `auction-ledger`              | The auction ledger's row stack                                                                                                                            |
+| `auction-module`              | The auction sequence panel                                                                                                                                |
+| `auth-form`                   | The email/phone sign-in panel                                                                                                                             |
+| `auth-form-countdown`         | The countdown inside the sign-in panel                                                                                                                    |
+| `auth-form-heading`           | The sign-in form's title and description block                                                                                                            |
+| `auth-form-resend`            | The "resend code" row                                                                                                                                     |
+| `auth-form-success-icon`      | The confirmation mark shown once sign-in succeeds                                                                                                         |
+| `auth-input`                  | The sign-in identifier field group                                                                                                                        |
+| `auth-input-field`            | The sign-in identifier input element                                                                                                                      |
+| `auth-input-header`           | The row holding the identifier's label and mode toggle                                                                                                    |
+| `auth-input-label`            | The identifier field's label                                                                                                                              |
+| `auth-input-toggle`           | The email/phone mode toggle                                                                                                                               |
+| `badge`                       | A status badge                                                                                                                                            |
+| `bid-chip`                    | An auction quick-pick amount; `data-chip` is `minimum`, `plus-one` or `plus-two`                                                                          |
+| `button`                      | Any SDK button                                                                                                                                            |
+| `button-content`              | A button's label, inside the button                                                                                                                       |
+| `button-spinner`              | A button's loading spinner                                                                                                                                |
+| `button-status`               | A button's transient success or failure mark                                                                                                              |
+| `card`                        | A card built directly, not through a panel — a panel root publishes its own `data-slot`, so the stable marker for any card surface is `data-fanfare-card` |
+| `card-content`                | A card's content region                                                                                                                                   |
+| `card-description`            | A card's description line                                                                                                                                 |
+| `card-footer`                 | A card's footer region                                                                                                                                    |
+| `card-header`                 | A card's header region                                                                                                                                    |
+| `card-title`                  | A card's title                                                                                                                                            |
+| `challenge-gate`              | The human-verification panel                                                                                                                              |
+| `challenge-gate-countdown`    | The countdown inside the verification panel                                                                                                               |
+| `challenge-gate-heading`      | The verification panel's title and description block                                                                                                      |
+| `checkout-processing-panel`   | The panel shown while a payment is being confirmed                                                                                                        |
+| `consequence`                 | The line under the CTA stating what pressing it will do                                                                                                   |
+| `countdown`                   | A countdown root; `data-layout`, `data-tone`, `data-cells`, `data-format`, `data-past` and `data-paused` carry its state                                  |
+| `countdown-cells`             | The cells layout's unit row                                                                                                                               |
+| `countdown-digit`             | A single numeral, when `cells="digit"`                                                                                                                    |
+| `countdown-inline`            | The inline layout's text run                                                                                                                              |
+| `countdown-separator`         | The separator between inline units                                                                                                                        |
+| `countdown-unit`              | One unit cell — its numerals and label                                                                                                                    |
+| `countdown-unit-digits`       | A unit cell's numerals                                                                                                                                    |
+| `countdown-unit-label`        | A unit cell's label                                                                                                                                       |
+| `degraded-indicator`          | The notice shown when live updates have fallen back to polling                                                                                            |
+| `draw-module`                 | The draw sequence panel                                                                                                                                   |
+| `email-input`                 | The email field                                                                                                                                           |
+| `ended-module`                | The panel shown once an experience has closed                                                                                                             |
+| `entry-selection`             | The product pick made at entry                                                                                                                            |
+| `error-view`                  | The error panel                                                                                                                                           |
+| `experience-widget`           | The widget root; `data-fanfare-variant`, `data-align` and `data-size` carry its presentation                                                              |
+| `expiry-paused-notice`        | The caption shown while a payment deadline is held                                                                                                        |
+| `fade-presence`               | A fade wrapper around content that appears and disappears                                                                                                 |
+| `fanfare-logo`                | The Fanfare mark                                                                                                                                          |
+| `footer-brand`                | The default panel footer's "Powered by Fanfare" line                                                                                                      |
+| `granted-detail`              | The granted panel's monospaced detail line — a code or reference                                                                                          |
+| `granted-panel`               | The panel shown once entry is granted                                                                                                                     |
+| `granted-reveal-hero`         | The granted panel's revealed hero image                                                                                                                   |
+| `granted-selection`           | The granted panel's pick surface                                                                                                                          |
+| `info-panel`                  | An inline informational block                                                                                                                             |
+| `input-error`                 | A field's error message                                                                                                                                   |
+| `input-field`                 | A text input element                                                                                                                                      |
+| `input-label`                 | A field's label                                                                                                                                           |
+| `input-wrapper`               | A field's label, input and error, as one group                                                                                                            |
+| `journey-gate`                | The placeholder shown while a journey stage resolves                                                                                                      |
+| `ledger-label`                | A ledger row's label column                                                                                                                               |
+| `ledger-row`                  | One ledger row                                                                                                                                            |
+| `ledger-value`                | A ledger row's value column                                                                                                                               |
+| `loading-spinner`             | The spinner inside the widget's loading state                                                                                                             |
+| `loading-view`                | The widget's loading state                                                                                                                                |
+| `otp-input`                   | The one-time-code field group                                                                                                                             |
+| `otp-input-digit`             | One digit box of the one-time code                                                                                                                        |
+| `otp-input-digits`            | The row of digit boxes                                                                                                                                    |
+| `otp-input-error`             | The one-time code's error message                                                                                                                         |
+| `outbid-banner`               | The notice that a bid has been beaten                                                                                                                     |
+| `outcome-action`              | The outcome panel's action button                                                                                                                         |
+| `outcome-panel`               | The panel stating how an entry resolved                                                                                                                   |
+| `panel-body`                  | A panel's main content region                                                                                                                             |
+| `panel-description`           | A panel heading's description                                                                                                                             |
+| `panel-footer`                | A panel's footer row                                                                                                                                      |
+| `panel-header`                | A panel's heading block                                                                                                                                   |
+| `panel-layout`                | A panel's outer card                                                                                                                                      |
+| `panel-stack`                 | A panel's padded stack of heading and body slots                                                                                                          |
+| `panel-title`                 | A panel heading's title                                                                                                                                   |
+| `payment-collection-panel`    | The embedded payment step                                                                                                                                 |
+| `phone-input`                 | The phone-number field                                                                                                                                    |
+| `pre-auth-hold-explainer`     | The line explaining a card hold's amount                                                                                                                  |
+| `product-description`         | A product row's description                                                                                                                               |
+| `product-price`               | A product row's price                                                                                                                                     |
+| `product-selector`            | The product picker                                                                                                                                        |
+| `product-selector-row`        | One product row in the picker                                                                                                                             |
+| `product-thumb`               | A product row's thumbnail image                                                                                                                           |
+| `product-title`               | A product row's name                                                                                                                                      |
+| `progress`                    | A progress indicator, track and label together                                                                                                            |
+| `progress-bar`                | A progress indicator's filled portion                                                                                                                     |
+| `progress-label`              | A progress indicator's percentage label                                                                                                                   |
+| `progress-track`              | A progress indicator's track                                                                                                                              |
+| `queue-module`                | The queue sequence panel                                                                                                                                  |
+| `queue-paused`                | The notice shown while queue admissions are paused                                                                                                        |
+| `receipt-panel`               | The post-payment receipt                                                                                                                                  |
+| `recorded-selection`          | A pick already recorded, with its change affordance                                                                                                       |
+| `selection-summary`           | The one-line summary of the current pick; `data-state` carries how settled it is                                                                          |
+| `skeleton`                    | A placeholder standing in for a value still loading                                                                                                       |
+| `spinner`                     | A spinner                                                                                                                                                 |
+| `stage-steps`                 | The step indicator across a multi-stage flow                                                                                                              |
+| `start-view`                  | The pre-entry panel                                                                                                                                       |
+| `stat-label`                  | A statistic's label — the queue's wait estimate                                                                                                           |
+| `stat-value`                  | A statistic's value — the queue's wait estimate                                                                                                           |
+| `timed-release-module`        | The timed-release sequence panel                                                                                                                          |
+| `transition`                  | A motion wrapper around content entering or leaving                                                                                                       |
+| `unit-pips`                   | The Dutch auction's remaining-unit pips                                                                                                                   |
+| `upcoming-module`             | The panel shown before an experience opens                                                                                                                |
+| `upgrade-offer`               | The upgrade prompt rendered beside a granted entry                                                                                                        |
+| `variant-run-grid`            | The grid of variant options for the chosen product                                                                                                        |
+| `waitlist-view`               | The waitlist panel                                                                                                                                        |
+
+The two adapters emit the same hooks apart from a handful of surfaces one of them does not render. React alone emits `appointment-booking-details`, `button-status`, `degraded-indicator`, `queue-paused` and `upgrade-offer`. Solid alone emits `web-component-error`, the message rendered when the custom element cannot mount.
+
+Several elements also carry a companion `data-*` attribute a stylesheet can select on:
+
+| Attribute              | Where                                                                                                                                           |
+| ---------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| `data-fanfare-variant` | The packaged variant in force                                                                                                                   |
+| `data-fanfare-scheme`  | The theme's colour scheme — `light`, `dark` or `system`, where `system` follows the visitor's `prefers-color-scheme`                              |
+| `data-fanfare-card`    | Every card surface, whatever `data-slot` the panel built on it publishes                                                                        |
+| `data-elevated`        | On a card surface built with `variant="elevated"`                                                                                               |
+| `data-tone`            | An element's intent — `success`, `warning`, `danger`, a countdown's urgency, and a ledger row's `default`, `muted`, `live`, `danger` or `success` |
+| `data-size`            | The widget's `size`, and a component's own size scale                                                                                           |
+| `data-layout`          | A countdown's `cells` or `inline` layout                                                                                                        |
+| `data-cells`           | A countdown's `unit` or `digit` numeral granularity                                                                                             |
+| `data-format`          | A countdown's `labelled` or `clock` spelling                                                                                                    |
+| `data-chip`            | Which step a bid chip offers                                                                                                                    |
+| `data-past`            | On a countdown whose target has passed                                                                                                          |
+| `data-paused`          | On a countdown held at its last value                                                                                                           |
+| `data-align`           | The widget's `start` or `center` alignment                                                                                                      |
+
+## Design tokens
+
+Beyond the colour and font fields a `BrandTheme` carries, the SDK declares geometry, elevation and tone tokens on `.fanfare-themed`. Override any of them in your own stylesheet on that element; a value set on an ancestor is shadowed by the SDK's own declaration and has no effect. Both adapters declare the same set.
+
+| Custom property                      | Default                                                        | What it drives                                                                                                               |
+| ------------------------------------ | -------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| `--ff-widget-max-width`              | `24rem`                                                        | The widget root's maximum width                                                                                              |
+| `--ff-panel-max-height`              | `24rem`                                                        | The height a `capHeight` panel clamps to                                                                                     |
+| `--ff-numeral-advance`               | `0.6`                                                          | The advance width of one digit as a fraction of the font size, used to fit countdown numerals                                |
+| `--ff-stat-min`                      | `1.5rem`                                                       | Floor of a stat value's fitted font size                                                                                     |
+| `--ff-stat-scale`                    | `9cqi`                                                         | A stat value's font size as a share of the widget's width                                                                    |
+| `--ff-stat-max`                      | `2.25rem`                                                      | Ceiling of a stat value's fitted font size                                                                                   |
+| `--ff-stat-weight`                   | `700`                                                          | Font weight of a stat value                                                                                                  |
+| `--ff-title-min`                     | `1rem`                                                         | Floor of a panel title's fitted font size                                                                                    |
+| `--ff-title-scale`                   | `6cqi`                                                         | A panel title's font size as a share of the widget's width                                                                   |
+| `--ff-title-max`                     | `1.25rem`                                                      | Ceiling of a panel title's fitted font size                                                                                  |
+| `--ff-title-weight`                  | `600`                                                          | Font weight of a panel title                                                                                                 |
+| `--ff-countdown-cell-gap`            | `0.75rem`                                                      | Gap between countdown unit cells                                                                                             |
+| `--ff-countdown-cell-padding`        | `0`                                                            | Padding inside a countdown unit cell                                                                                         |
+| `--ff-countdown-cell-radius`         | `0`                                                            | Corner radius of a countdown unit cell                                                                                       |
+| `--ff-countdown-cell-border-width`   | `0px`                                                          | Border width of a countdown unit cell                                                                                        |
+| `--ff-countdown-cell-bg`             | `transparent`                                                  | Background of a countdown unit cell                                                                                          |
+| `--ff-countdown-cell-shadow`         | `none`                                                         | Shadow on a countdown unit cell                                                                                              |
+| `--ff-countdown-cell-shadow-hover`   | `var(--ff-countdown-cell-shadow)`                              | Shadow on a hovered countdown unit cell, on pointer devices                                                                  |
+| `--ff-countdown-numeral-color`       | `var(--ff-color-foreground)`                                   | Colour of a countdown's numerals                                                                                             |
+| `--ff-countdown-label-color`         | `var(--ff-color-muted-foreground)`                             | Colour of a unit cell's label                                                                                                |
+| `--ff-countdown-label-size`          | `0.625rem`                                                     | Font size of a unit cell's label                                                                                             |
+| `--ff-countdown-label-order`         | `1`                                                            | Flex order of the label inside its cell — `0` puts it above the numerals                                                     |
+| `--ff-countdown-separator-glyph`     | `"/"`                                                          | Glyph drawn between inline countdown units                                                                                   |
+| `--ff-countdown-separator-display`   | `inline`                                                       | Whether the inline separator renders                                                                                         |
+| `--ff-countdown-separator-color`     | `var(--ff-color-muted-foreground)`                             | Colour of the inline separator                                                                                               |
+| `--ff-countdown-inline-size`         | `inherit`                                                      | Font size of the inline countdown run                                                                                        |
+| `--ff-countdown-inline-weight`       | `600`                                                          | Font weight of the inline countdown run                                                                                      |
+| `--ff-countdown-inline-tracking`     | `0`                                                            | Letter spacing of the inline countdown run                                                                                   |
+| `--ff-countdown-numeral-min`         | `1.25rem`                                                      | Floor of the fitted numeral size                                                                                             |
+| `--ff-countdown-numeral-max`         | `2.5rem`                                                       | Ceiling of the fitted numeral size                                                                                           |
+| `--ff-countdown-reserve-outer`       | `2.5rem`                                                       | Width the panel's own padding takes out of the numeral fit                                                                   |
+| `--ff-countdown-reserve-cell`        | `0rem`                                                         | Width each cell's padding and border take out of the fit                                                                     |
+| `--ff-countdown-reserve-gap`         | `3rem`                                                         | Width each gap and separator take out of the fit                                                                             |
+| `--ff-countdown-tone-warning-color`  | `var(--ff-color-warning)`                                      | Numeral colour at warning urgency                                                                                            |
+| `--ff-countdown-tone-critical-color` | `var(--ff-color-danger)`                                       | Numeral colour at critical urgency                                                                                           |
+| `--ff-countdown-tone-critical-bg`    | `transparent`                                                  | Cell background at critical urgency, under `retro`                                                                           |
+| `--ff-countdown-tone-critical-fg`    | `inherit`                                                      | Cell foreground at critical urgency, under `retro`                                                                           |
+| `--ff-panel-gap`                     | `1.25rem`                                                      | Gap between the rows of a panel's stack and body                                                                             |
+| `--ff-panel-padding`                 | `1.25rem`                                                      | Padding around a panel's stack                                                                                               |
+| `--ff-card-shadow`                   | `none`                                                         | Shadow on every card surface, panels included; the Solid adapter's `clean` card is shadowless by design and does not read it |
+| `--ff-card-shadow-hover`             | `var(--ff-card-shadow)`                                        | Shadow on a hovered card surface, on pointer devices                                                                         |
+| `--ff-card-shadow-elevated`          | Tailwind's `shadow-lg` value                                   | Shadow on a card built with `variant="elevated"`; each packaged variant points it at its own resting elevation               |
+| `--ff-card-shadow-elevated-hover`    | `var(--ff-card-shadow-elevated)`                               | Shadow on a hovered `elevated` card, on pointer devices                                                                      |
+| `--ff-progress-shadow`               | `none`                                                         | Shadow on a progress track                                                                                                   |
+| `--ff-progress-bar-shadow`           | `none`                                                         | Shadow on a progress bar's filled portion                                                                                    |
+| `--ff-loading-shadow`                | `none`                                                         | Shadow on the loading spinner                                                                                                |
+| `--ff-button-shadow`                 | `0 0 #0000`                                                    | Shadow on a button at rest                                                                                                   |
+| `--ff-button-shadow-hover`           | `var(--ff-button-shadow)`                                      | Shadow on a hovered button                                                                                                   |
+| `--ff-button-shadow-active`          | `var(--ff-button-shadow)`                                      | Shadow on a pressed button                                                                                                   |
+| `--ff-button-shadow-primary`         | `var(--ff-button-shadow)`                                      | Resting shadow of the primary button variant                                                                                 |
+| `--ff-input-shadow`                  | `0 0 #0000`                                                    | Shadow on a text input                                                                                                       |
+| `--ff-input-shadow-focus`            | `var(--ff-input-shadow)`                                       | Shadow on a focused text input, focus ring included                                                                          |
+| `--ff-otp-shadow`                    | `0 0 #0000`                                                    | Shadow on a one-time-code digit box                                                                                          |
+| `--ff-otp-shadow-focus`              | `var(--ff-otp-shadow)`                                         | Shadow on a focused digit box, focus ring included                                                                           |
+| `--ff-otp-shadow-focus-error`        | `var(--ff-otp-shadow-focus)`                                   | Shadow on a focused digit box carrying an error                                                                              |
+| `--ff-row-gap`                       | `0.75rem`                                                      | Gap between a product row's columns                                                                                          |
+| `--ff-row-padding`                   | `0.75rem`                                                      | Padding inside a product row                                                                                                 |
+| `--ff-row-radius`                    | `0.375rem`                                                     | Corner radius of a product row                                                                                               |
+| `--ff-row-thumb-size`                | `2.75rem`                                                      | Side length of a product row's thumbnail                                                                                     |
+| `--ff-row-thumb-size-narrow`         | `2.5rem`                                                       | Side length of that thumbnail once the picker's container is under 400px                                                     |
+| `--ff-ledger-row-padding`            | `0.375rem`                                                     | Block padding of a ledger row                                                                                                |
+| `--ff-ledger-border-color`           | `color-mix(in oklab, var(--ff-color-border) 40%, transparent)` | Colour of the rule under a ledger row                                                                                        |
+| `--ff-ledger-tone-default`           | `var(--ff-color-foreground)`                                   | Ledger row colour at the `default` tone                                                                                      |
+| `--ff-ledger-tone-muted`             | `var(--ff-color-muted)`                                        | Ledger row colour at the `muted` tone                                                                                        |
+| `--ff-ledger-tone-live`              | `var(--ff-color-primary)`                                      | Ledger row colour at the `live` tone                                                                                         |
+| `--ff-ledger-tone-danger`            | `var(--ff-color-danger)`                                       | Ledger row colour at the `danger` tone                                                                                       |
+| `--ff-ledger-tone-success`           | `var(--ff-color-success)`                                      | Ledger row colour at the `success` tone                                                                                      |
+
+Three things to know before overriding a shadow token.
+
+`--ff-button-shadow`, `--ff-input-shadow` and `--ff-otp-shadow` — and their state companions — are composed with the focus ring in a single shadow list, so each must hold a shadow value. `none` invalidates the whole list and takes the focus ring with it; write `0 0 #0000` to remove the shadow instead.
+
+The button, input and one-time-code shadow tokens are given a visible value by the `rounded` variant alone. Under `default`, `retro` and `clean` they resolve to the transparent default, so only your own override shows there.
+
+Every shadow token holds a plain value. Tailwind's shadow-colour composition (`--tw-shadow-color`) does not recolour them — override the token itself instead.
