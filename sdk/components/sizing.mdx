@@ -1,0 +1,72 @@
+---
+title: Sizing
+description: How the widget takes its width, and what the host must provide.
+---
+
+<Note>
+  This page describes the latest published SDK. For the version you have installed, read `docs/STYLING.md` inside `@fanfare-io/fanfare-sdk-react` or `@fanfare-io/fanfare-sdk-solid` — the in-package file ships with the code it describes and wins any conflict with this page.
+</Note>
+
+## Width
+
+The widget root fills the width its host gives it, up to `--ff-widget-max-width` (default `24rem`).
+
+`--ff-widget-max-width` is a CSS custom property, not a `BrandTheme` field. To move the maximum for every widget on the page, override it in your own stylesheet on `.fanfare-themed`. The SDK declares the default on that element, so a value set on an ancestor is shadowed and has no effect.
+
+```css
+.fanfare-themed {
+  --ff-widget-max-width: 32rem;
+}
+```
+
+For a single widget, use the `size` prop instead.
+
+## `align` and `size`
+
+The root is start-aligned inside the host's container. Pass `align="center"` to centre it.
+
+```tsx
+<ExperienceWidget experienceId="exp_123" align="center" size="wide" />
+```
+
+`size` overrides the maximum for one widget. Omit it to keep the custom property's value.
+
+| `size` | Maximum width |
+| --- | --- |
+| `compact` | `20rem` |
+| `regular` | `24rem` |
+| `wide` | `36rem` |
+
+## Components adapt to the widget, not the viewport
+
+The root is an inline-size container named `widget`, so the components inside it lay themselves out against the widget's own width rather than the viewport's. A widget in a narrow sidebar and one in a wide content column look different at the same viewport size, which is why a narrow widget on a wide page still reads correctly.
+
+## The container must be named `widget`
+
+A module rendered on its own — outside `ExperienceWidget` — is neither capped nor containered. The host supplies both: a maximum width, and an inline-size container **named `widget`** on the element that wraps the module.
+
+```css
+.my-module-wrapper {
+  width: 100%;
+  max-width: 24rem;
+  container-type: inline-size;
+  container-name: widget;
+}
+```
+
+The name matters. Every layout the SDK adapts by container query asks for the `widget` container by name, so an unnamed container — or none at all — leaves those layouts in their narrow form: the auction's bid chips stay stacked one per row instead of three across, its ledger stays a single column instead of two, and its unit pips do not render.
+
+## The intrinsic-width caveat
+
+An inline-size container contributes no intrinsic width, so a box that is sized from its content collapses when it holds one. That affects a flex or grid item sized `auto`, an inline-block, a floated box, and anything set to `width: max-content`.
+
+The widget's own themed wrapper is full-width, so a plain flex **row** item no longer collapses. A content-sized wrapper around the widget still does — including your own `ThemeProvider` when it is the flex or grid item.
+
+Two remedies, both on the host's side:
+
+- Wrap `<ExperienceWidget>` in an element you own and give it `width: 100%` — or `flex: 1` plus `min-width: 0` in a flex row.
+- Target `.fanfare-themed` in your own stylesheet and set the width there.
+
+## Height
+
+Panels are not height-capped by default, so the widget grows with its content and the host owns any scroll region it wants around it. A few dense surfaces still scroll internally — the appointment slot grid, for instance — but the widget as a whole does not impose a maximum height.

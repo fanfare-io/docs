@@ -94,6 +94,7 @@
               "sdk/components/overview",
               "sdk/components/react",
               "sdk/components/theming",
+              "sdk/components/sizing",
               "sdk/components/slots",
               "sdk/components/i18n",
               "sdk/components/web-components"
