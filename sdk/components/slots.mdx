@@ -54,8 +54,83 @@ The `granted` slot's `grant` prop is the grant **token string** (`grant?: string
 | `expired` | A previous admission is no longer usable. |
 | `ended` | The experience or sequence has a terminal outcome. Also rendered for phase `"unavailable"` (a non-terminal placeholder) for convenience. |
 | `error` | The widget cannot continue without recovery. |
+| `paymentCollection` | A payment has to be collected: a pre-auth entry or re-entry, or a granted internal at-end settlement with a resolved selection. |
+| `checkoutProcessing` | A submitted payment is in flight. |
+| `receipt` | A checkout has completed. |
 
 Slot props include the current `snapshot`, `view`, and `error` where relevant, plus state-specific callbacks such as `onStart`, `onEnter`, `onLeave`, or `onRetry`.
+
+## Checkout slots
+
+### `paymentCollection`
+
+Every arm carries `savedPaymentMethods`, `onEnter` (submits the pre-auth entry or confirms the at-end checkout), `isEntering`, `paymentProvider?` (the processor's client configuration as the server supplied it — absent when it could not be read), `pendingAction?` (present while the processor waits on an out-of-band step such as a bank challenge), and `onRetryPaymentConfig?` (re-reads the consumer's journeys so a missing configuration can arrive; it is the panel's only recovery, since the value is a prop).
+
+`intent` discriminates the three audiences:
+
+| `intent` | Meaning | Arm-specific props |
+| --- | --- | --- |
+| `"enter"` | Collects the authorization hold before first entry. | `preAuthAmount`, `preAuthCurrencyCode` |
+| `"reenter"` | Collects the hold again after one failed or expired while the drop is still open. | `preAuthAmount`, `preAuthCurrencyCode` |
+| `"checkout"` | Collects after a granted internal at-end win. | `onResume`, `expiresAt?`, `expiryPaused` |
+
+The checkout arm carries no hold amount, and the pre-auth arms do not expose `onResume`.
+
+#### The claim window
+
+The checkout arm alone carries the claim window:
+
+- `expiresAt` — the grant expiry as a **milliseconds epoch**: the deadline the claim window counts down to.
+- `expiryPaused` — `true` while the deadline is the server's alone, so the SDK is not enforcing it. A pending bank action, or an internal at-end settlement in progress, puts the window here.
+
+A custom `paymentCollection` slot should count down to `expiresAt`, and when `expiryPaused` becomes true it should **freeze the timer at its last value and caption why** — never hide it and never keep ticking a limit nobody is enforcing. The `Countdown` primitive's `paused` prop does exactly this: it holds the value, runs no interval, and falls silent.
+
+```tsx
+<ExperienceWidget
+  experienceId="exp_123"
+  slots={{
+    paymentCollection: (props) =>
+      props.intent === "checkout" ? (
+        <section>
+          {props.expiresAt ? (
+            <Countdown
+              targetDate={props.expiresAt}
+              layout="inline"
+              format="clock"
+              tone="auto"
+              paused={props.expiryPaused}
+            />
+          ) : null}
+          {props.expiryPaused ? <p>Confirming with your bank…</p> : null}
+          <PayPanel onSubmit={props.onEnter} busy={props.isEntering} />
+        </section>
+      ) : (
+        <HoldPanel
+          amount={props.preAuthAmount}
+          currency={props.preAuthCurrencyCode}
+          onSubmit={props.onEnter}
+        />
+      ),
+  }}
+/>
+```
+
+When a journey ends carrying both a completed checkout and a re-entry opportunity, `paymentCollection` wins: the consumer is shown the live opportunity rather than the past receipt.
+
+### `checkoutProcessing`
+
+Rendered while a submitted payment is settling. It receives the shared props only. The default panel announces itself once to assistive technology.
+
+### `receipt`
+
+Rendered when a checkout has completed. Its props are discriminated by `kind`:
+
+| `kind` | Props |
+| --- | --- |
+| `"grant"` | `checkout`, `admissionGrant` |
+| `"purchase"` | `checkout` |
+
+A Fanfare-managed payment is terminal: it produces a receipt, never an admission credential. The `"purchase"` arm therefore has no `admissionGrant` at all, and a slot that reads `props.admissionGrant` without narrowing on `kind` does not type-check.
 
 Inside the `enterable` and `participating` slots the slot's `sequence` is a routed `SequenceView`; participating views expose their live data as the `display$` atom (not `state$`). Subscribe to it (for example with `useNanostore`) to render real-time fields such as queue position.
 

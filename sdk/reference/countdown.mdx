@@ -1,0 +1,149 @@
+---
+title: Countdown
+description: The countdown primitive the widget uses for every time display.
+---
+
+`Countdown` is a public export of the React and web-component adapters. Every consumer-facing time the widget shows — a drop opening, an auction closing, a claim window — is rendered by it, and you can use it directly in your own UI.
+
+```tsx
+import { Countdown } from "@fanfare-io/fanfare-sdk-react";
+
+<Countdown targetDate={opensAt} size="hero" tone="auto" />;
+```
+
+<Warning>
+  **Breaking change.** The `layout` values `"swiss"` and `"compact"` were renamed to `"cells"` and `"inline"`. Update any call site that passed the old names — they are no longer accepted.
+</Warning>
+
+## Props
+
+| Prop | Type | Default | Notes |
+| --- | --- | --- | --- |
+| `targetDate` | `Date \| string \| number` | — | The deadline to count down to. |
+| `layout` | `"cells" \| "inline"` | `"cells"` | `cells` renders one box per time unit; `inline` renders a single line that fits inside a sentence, a ledger row or a button. |
+| `cells` | `"unit" \| "digit"` | `"unit"` | Numeral granularity under `layout="cells"`: one text node per unit, or one animated box per digit. |
+| `format` | `"labelled" \| "clock"` | `"labelled"` | How the time is spelled wherever it is written as one line. `labelled` renders `14m 57s`; `clock` renders `02:00` or `1:15:17`. |
+| `size` | `"default" \| "hero"` | `"default"` | `hero` is the large monospace treatment used as an urgency driver. Applies to `layout="cells"`. |
+| `tone` | `"calm" \| "warning" \| "critical" \| "auto"` | `"calm"` | Presentational urgency, published as `data-tone` and coloured from the tone tokens. |
+| `paused` | `boolean` | `false` | Holds the last rendered value. |
+| `showDays` | `boolean` | `true` | Whether days appear. |
+| `showHours` | `boolean` | `true` | Whether hours appear. |
+| `showMinutes` | `boolean` | `true` | Whether minutes appear. |
+| `showSeconds` | `boolean` | `true` | Whether seconds appear. |
+| `expiredLabel` | `string` | — | Rendered in place of the timer once the target has passed. |
+| `onComplete` | `() => void` | — | Called once when the countdown reaches zero. |
+| `className` | `string` | — | Merged onto the root element. |
+
+A unit you hide keeps no value of its own and its magnitude carries into the next unit that is shown, so hiding hours turns `1h 5m` into `65` minutes.
+
+## `format="clock"`
+
+The clock spelling is used in three places: the `inline` layout, the narrow fallback the `cells` layout swaps to when the widget is under `18rem` wide, and — always, whatever `format` says — the string assistive technology is given.
+
+The rule has four clauses:
+
+- Minutes and seconds are always part of a clock, whatever `showMinutes` and `showSeconds` say. An `mm:ss` shape is what choosing this format asks for.
+- The rendered units run from the most significant unit still holding a value down to seconds, and never shorter than minutes-and-seconds.
+- Padding is a two-digit minimum, never a truncation.
+- The leading unit is unpadded, unless it is minutes — which stay two-digit so the display never changes width.
+
+| Time remaining | Rendered |
+| --- | --- |
+| 45 seconds | `00:45` |
+| 90 seconds | `01:30` |
+| 90 minutes | `1:30:00` |
+| 26 hours | `1:02:00:00` |
+| 90 minutes with `showHours={false}` | `90:00` |
+
+## `tone="auto"`
+
+`auto` resolves the tone from the time remaining, re-read on every tick:
+
+| Remaining | Resolved tone |
+| --- | --- |
+| Under 60 seconds | `critical` |
+| Under 5 minutes | `warning` |
+| Otherwise | `calm` |
+
+## `paused`
+
+A paused countdown runs no interval, never calls `onComplete`, and stops announcing — its live region falls silent. On resume it re-reads the clock rather than continuing from the value it held.
+
+Pause a countdown when the deadline is no longer yours to enforce. Freeze and caption it; do not hide it.
+
+## Accessibility
+
+The visual layouts are `aria-hidden`. One visually-hidden sibling carries `role="timer"`, so exactly one live region exists whatever the container width makes visible, and whether or not the target has passed. That region always reads the clock spelling.
+
+Once the target passes: with `expiredLabel`, the component renders that label muted and silences the live region; without one, it renders zeros at reduced opacity and marks the root `data-past`.
+
+## The server-anchored clock
+
+Pass `serverNow` — a server-minted ISO timestamp — to `FanfareProvider`, and every countdown beneath it counts against the server's clock rather than the device's. The web component takes the same value as the `server-now` attribute.
+
+```tsx
+<FanfareProvider
+  organizationId="org_123"
+  publishableKey="pk_live_123"
+  ssr
+  serverNow={serverNowIso}
+>
+  <ExperienceWidget experienceId="exp_123" />
+</FanfareProvider>
+```
+
+```html
+<fanfare-experience-widget
+  experience-id="exp_123"
+  server-now="2026-01-01T00:00:00.000Z"
+></fanfare-experience-widget>
+```
+
+With a clock in scope the countdown is deterministic on the server and on the client's first paint, so it renders into server markup and hydrates cleanly, then advances on a fixed offset from the anchor. Without one, the value derives from device time and the component renders nothing until after mount.
+
+## Tokens
+
+The countdown's geometry, colour, label placement, separator and inline type come from `--ff-countdown-*` custom properties declared on `.fanfare-themed`. Override any of them in your own stylesheet.
+
+| Token | Default |
+| --- | --- |
+| `--ff-countdown-cell-gap` | `0.75rem` |
+| `--ff-countdown-cell-padding` | `0` |
+| `--ff-countdown-cell-radius` | `0` |
+| `--ff-countdown-cell-border-width` | `0px` |
+| `--ff-countdown-cell-bg` | `transparent` |
+| `--ff-countdown-cell-shadow` | `none` |
+| `--ff-countdown-numeral-color` | `var(--ff-color-foreground)` |
+| `--ff-countdown-label-color` | `var(--ff-color-muted-foreground)` |
+| `--ff-countdown-label-size` | `0.625rem` |
+| `--ff-countdown-label-order` | `1` |
+| `--ff-countdown-separator-glyph` | `"/"` |
+| `--ff-countdown-separator-display` | `inline` |
+| `--ff-countdown-separator-color` | `var(--ff-color-muted-foreground)` |
+| `--ff-countdown-inline-size` | `inherit` |
+| `--ff-countdown-inline-weight` | `600` |
+| `--ff-countdown-inline-tracking` | `0` |
+| `--ff-countdown-numeral-min` | `1.25rem` |
+| `--ff-countdown-numeral-max` | `2.5rem` |
+| `--ff-countdown-reserve-outer` | `2.5rem` |
+| `--ff-countdown-reserve-cell` | `0rem` |
+| `--ff-countdown-reserve-gap` | `3rem` |
+| `--ff-countdown-tone-warning-color` | `var(--ff-color-warning)` |
+| `--ff-countdown-tone-critical-color` | `var(--ff-color-danger)` |
+| `--ff-countdown-tone-critical-bg` | `transparent` |
+| `--ff-countdown-tone-critical-fg` | `inherit` |
+
+The numeral size is fitted to the container between `numeral-min` and `numeral-max`. The `reserve-*` tokens name the horizontal space the numerals cannot have — the panel's own padding, plus each cell's padding and border and each gap's width and separator glyph.
+
+### Variant overrides
+
+Each packaged variant overrides part of the set from its own `[data-fanfare-variant]` block, so a token you do not set follows the variant.
+
+| Variant | Overrides |
+| --- | --- |
+| `default` | None. |
+| `retro` | `cell-padding` `0.5rem 0.75rem`, `cell-border-width` `2px`, `cell-bg` `var(--ff-color-background)`, `cell-shadow` `3px 3px 0 var(--ff-color-foreground)`, `separator-display` `none`, `inline-weight` `800`, `reserve-cell` `1.75rem`, `reserve-gap` `1rem`, `tone-critical-bg` `#ff3a00`, `tone-critical-fg` `#ffffff`. |
+| `rounded` | `cell-radius` `14px`, `cell-padding` `0.75rem 1rem`, `cell-border-width` `1px`, `cell-bg` `var(--ff-color-background)`, `cell-shadow` `0 2px 12px -3px rgba(0, 0, 0, 0.08)`, `separator-display` `none`, `inline-weight` `600`, `reserve-cell` `2.125rem`, `reserve-gap` `1rem`. |
+| `clean` | `cell-gap` `0.125rem`, `inline-weight` `500`, `inline-tracking` `0.02em`, `reserve-gap` `2rem`. |
+
+`size="hero"` overrides the set again, in every variant: `numeral-max` becomes `3.5rem`, `separator-display` becomes `none`, and `reserve-gap` becomes `1rem`. Hero cells carry no separator in any variant — four unit labels plus three separators need more width than the widget has before a digit is drawn.
