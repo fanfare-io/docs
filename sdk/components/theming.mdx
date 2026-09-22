@@ -90,7 +90,7 @@ Four layers decide what a component actually renders, each able to override the 
 
 The rule that follows: **a theme field you set outranks the variant's token for that field, and a field you leave unset lets the variant decide.** Setting `primary` under the `retro` variant gives you your primary and retro's everything else. It is also why the Fanfare admin saves only the fields a merchant actually changed — an untouched field is stored as no value at all, so it falls through to the variant.
 
-One cascade detail is worth knowing before writing CSS against a themed widget. Layers 1 and 2 are stylesheet rules, so your own stylesheet outranks them — that is how overriding a token such as `--ff-widget-max-width` on `.fanfare-themed` works. Layer 3 is different: theme fields are emitted as *inline* custom properties, which outrank stylesheet rules. To change a field your theme already sets, change the theme rather than the CSS, or mark your rule `!important`.
+One cascade detail is worth knowing before writing CSS against a themed widget. Layers 1 and 2 are ordinary stylesheet rules, so your own stylesheet can override them given enough specificity or a later load order — that is how overriding a token such as `--ff-widget-max-width` on `.fanfare-themed` works. Layer 3 is different in kind: theme fields are emitted as *inline* custom properties, and inline declarations outrank stylesheet rules however specific. To change a field your theme already sets, change the theme rather than the CSS, or mark your rule `!important`.
 
 ## Variants
 

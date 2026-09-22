@@ -44,7 +44,7 @@ By default the SDK fetches nothing: an embed's page owns its own font delivery a
 ```
 
 ```html
-<fanfare-experience experience-id="exp_123" load-fonts></fanfare-experience>
+<fanfare-experience-widget experience-id="exp_123" load-fonts></fanfare-experience-widget>
 ```
 
 With it on, the widget requests the Google Fonts stylesheet for each family it needs:
@@ -82,7 +82,9 @@ Either way, allow the font origins in your content policy — see [Content Secur
 
 ### 3. Your own site, with a licensed or custom font
 
-The SDK will not fetch it. Self-host the font, declare it with your own `@font-face`, and set `fontFamily` (and `fontHeading`) to its family name so the widget's text uses it.
+Fanfare has no copy of your font, so it cannot deliver it. Self-host the font, declare it with your own `@font-face`, and set `fontFamily` (and `fontHeading`) to its family name so the widget's text uses it.
+
+Leave `loadFonts` off for this case: with it on, the widget asks Google Fonts for a family that is not there and the request fails silently, spending a round trip for nothing.
 
 ```tsx
 <ExperienceWidget
