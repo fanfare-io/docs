@@ -79,6 +79,19 @@ export function BrandedLaunchArea() {
 
 Nested themes shallow-merge over parent themes. This lets you set a site-level brand theme and override a single widget when needed.
 
+## Precedence
+
+Four layers decide what a component actually renders, each able to override the one before it:
+
+1. **The SDK's `@theme` defaults** — the platform baseline for every token.
+2. **The variant's token block** — `[data-fanfare-variant="…"]`, where each packaged variant sets its own colours, fonts and component tokens.
+3. **Your theme** — the fields a `BrandTheme` sets, emitted as CSS custom properties on the widget's `.fanfare-themed` element.
+4. **Your own CSS** — rules you write against `.fanfare-themed` or anything inside it.
+
+The rule that follows: **a theme field you set outranks the variant's token for that field, and a field you leave unset lets the variant decide.** Setting `primary` under the `retro` variant gives you your primary and retro's everything else. It is also why the Fanfare admin saves only the fields a merchant actually changed — an untouched field is stored as no value at all, so it falls through to the variant.
+
+One cascade detail is worth knowing before writing CSS against a themed widget. Layers 1 and 2 are stylesheet rules, so your own stylesheet outranks them — that is how overriding a token such as `--ff-widget-max-width` on `.fanfare-themed` works. Layer 3 is different: theme fields are emitted as *inline* custom properties, which outrank stylesheet rules. To change a field your theme already sets, change the theme rather than the CSS, or mark your rule `!important`.
+
 ## Variants
 
 | Variant | Use when |
