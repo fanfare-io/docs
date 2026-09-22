@@ -23,10 +23,82 @@ type BrandTheme = {
   logoUrl?: string;
   headerImageUrl?: string;
   variant?: "default" | "retro" | "rounded" | "clean";
+  colorScheme?: "light" | "dark" | "system";
 };
 ```
 
 Use theme values for presentation only. Do not use variants or theme fields to control access behavior.
+
+## Colour scheme
+
+`colorScheme` decides whether a widget renders light, dark, or follows the visitor's device. It defaults to `light`, so an integration that sets nothing keeps the light palette.
+
+```tsx
+<ExperienceWidget experienceId="exp_123" theme={{ colorScheme: "system" }} />
+```
+
+| Value | What it does |
+| --- | --- |
+| `light` | Pins the light palette, whatever the device says. |
+| `dark` | Pins the dark palette, whatever the device says. |
+| `system` | Follows the visitor's `prefers-color-scheme`. |
+
+The themed root publishes the value as `data-fanfare-scheme`, alongside `data-fanfare-variant`. That attribute is the selector to write your own scheme-aware CSS against:
+
+```css
+.fanfare-themed[data-fanfare-scheme="dark"] .my-surrounding-chrome {
+  border-color: #3a3d45;
+}
+```
+
+### Each variant has its own dark palette
+
+Dark is not one palette applied to four variants. `default`, `retro`, `rounded` and `clean` each carry their own dark colours, and `rounded` and `clean` also restate the elevation tokens that only read correctly against a dark ground. A variant keeps its character in either scheme.
+
+Fonts, radii and gaps are unchanged by scheme.
+
+### The nearest provider decides
+
+A nested `ThemeProvider`'s scheme is its own, not its parent's. A provider that sets `colorScheme: "light"` inside a dark one renders light, and everything inside it resolves light — the scheme tokens are keyed to each themed root's own attribute rather than inherited from an outer one.
+
+```tsx
+<ThemeProvider theme={{ colorScheme: "dark" }}>
+  <ExperienceWidget experienceId="exp_123" />
+  <ThemeProvider theme={{ colorScheme: "light" }}>
+    {/* Renders light, inside a dark parent. */}
+    <ExperienceWidget experienceId="exp_456" />
+  </ThemeProvider>
+</ThemeProvider>
+```
+
+A provider that sets no scheme of its own inherits the one above it and republishes it on its own root.
+
+### Colours you set apply in both schemes
+
+A `BrandTheme` colour field pins its token. Set `primary`, and that primary is your primary in light and in dark alike — the scheme decides only the tokens you left unset. If a colour you set does not carry against a dark ground, pin a scheme rather than expecting the SDK to adjust the colour.
+
+### The card field follows a live flip
+
+Under `system` the resolved palette can change while the widget is mounted — the visitor switches their device to dark mid-checkout. The widget's own styles repaint themselves, and the Stripe Card Element, which draws inside Stripe's iframe and cannot see the page's CSS, is restyled explicitly on that flip. The element is updated in place, so a card already being typed into is not discarded.
+
+<Warning>
+  **Breaking change: a `.dark` class on the host is no longer read.** The SDK's dark styling is keyed to `data-fanfare-scheme` — set through `colorScheme` — and nothing else. If your page toggles a `.dark` class to drive its own dark mode, mirror it onto the widget by passing `colorScheme`, or pass `system` and let both follow the device.
+</Warning>
+
+### The admin control
+
+Merchants set the same field from the Fanfare admin's brand settings, under **Color Scheme**: **Light**, **Dark** or **Match device**.
+
+### Types
+
+`ColorScheme` and the `ColorSchemes` value list are exported for hosts that build their own control:
+
+```ts
+import { ColorSchemes, type ColorScheme } from "@fanfare-io/fanfare-sdk-core/theme";
+
+// ColorSchemes: readonly ["light", "dark", "system"]
+const options: readonly ColorScheme[] = ColorSchemes;
+```
 
 ## Theme a widget
 
