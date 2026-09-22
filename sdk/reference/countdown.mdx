@@ -82,16 +82,21 @@ Once the target passes: with `expiredLabel`, the component renders that label mu
 Pass `serverNow` — a server-minted ISO timestamp — to `FanfareProvider`, and every countdown beneath it counts against the server's clock rather than the device's. The web component takes the same value as the `server-now` attribute.
 
 ```tsx
-<FanfareProvider config={config} serverNow={serverNowIso}>
+<FanfareProvider
+  organizationId="org_123"
+  publishableKey="pk_live_123"
+  ssr
+  serverNow={serverNowIso}
+>
   <ExperienceWidget experienceId="exp_123" />
 </FanfareProvider>
 ```
 
 ```html
-<fanfare-experience
+<fanfare-experience-widget
   experience-id="exp_123"
   server-now="2026-01-01T00:00:00.000Z"
-></fanfare-experience>
+></fanfare-experience-widget>
 ```
 
 With a clock in scope the countdown is deterministic on the server and on the client's first paint, so it renders into server markup and hydrates cleanly, then advances on a fixed offset from the anchor. Without one, the value derives from device time and the component renders nothing until after mount.
