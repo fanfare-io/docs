@@ -119,7 +119,8 @@
             "pages": [
               "sdk/reference/configuration",
               "sdk/reference/types",
-              "sdk/reference/testing"
+              "sdk/reference/testing",
+              "sdk/reference/countdown"
             ]
           }
         ]
