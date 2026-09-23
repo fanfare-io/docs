@@ -1,0 +1,52 @@
+---
+title: Content Security Policy
+description: The directives a page embedding the widget needs.
+---
+
+If your page sends a `Content-Security-Policy` header, it has to permit what the widget loads. This page lists the directives derived from the SDK and from the policy Fanfare-hosted pages send, and marks separately the ones that come from Stripe's own guidance and still need confirming against a live checkout.
+
+## The Fanfare-hosted policy
+
+Fanfare-hosted experience pages send this policy. It is the closest thing to a reference implementation: it is strict, it is the one Fanfare runs, and every origin in it is one the widget genuinely needs.
+
+| Directive | Value |
+| --- | --- |
+| `default-src` | `'none'` |
+| `script-src` | `'self' https://js.stripe.com https://*.js.stripe.com` |
+| `connect-src` | `'self' <consumer API origin> <beacon origin> https://api.stripe.com` |
+| `img-src` | `'self' data: <media assets host>` |
+| `font-src` | `'self' data: <media assets host>` |
+| `style-src` | `'self' 'unsafe-inline'` |
+| `frame-src` | `https://js.stripe.com https://*.js.stripe.com https://hooks.stripe.com` |
+| `frame-ancestors` | The origins configured for the organization, or `'none'` |
+| `base-uri` | `'none'` |
+| `form-action` | `'self'` |
+
+## What each origin is for
+
+**Stripe.** Fanfare-managed checkout collects the card in your document, so Stripe's own runtime has to load: Stripe.js comes from `js.stripe.com`, the card field and its per-request frames come from `*.js.stripe.com`, the 3-D Secure challenge is a frame on `hooks.stripe.com`, and the client calls `api.stripe.com`. Stripe Hosted Checkout, Connect embedded components, and the Address Element's Maps origins are **not** loaded, so they need no allowance.
+
+**Your Fanfare origins.** `connect-src` must allow the consumer API origin and the beacon origin your integration is configured with. These are your own values — the hosted policy interpolates them rather than hard-coding them.
+
+**`style-src 'unsafe-inline'`.** The widget's motion animations render inline style attributes and inject `<style>` elements. CSP offers no nonce or hash path that covers dynamic style *attributes*, so this relaxation is required. It is scoped to styles only: script execution stays gated by `script-src`, which never carries `'unsafe-inline'`.
+
+## Fonts
+
+The font origins are needed **only when `loadFonts` is on**. If you load your fonts yourself, or self-host them, allow your own origins instead and skip these.
+
+| Directive | Value | Source |
+| --- | --- | --- |
+| `style-src` | `https://fonts.googleapis.com` | The SDK requests the Google Fonts `css2` stylesheet from this origin. |
+| `font-src` | `https://fonts.gstatic.com` | **To verify.** The font files that stylesheet references are served from Google's font host; confirm the exact origin against a live load before relying on it. |
+
+See [Fonts](/sdk/components/fonts) for what `loadFonts` requests and when.
+
+## To verify
+
+These are not derivable from the SDK, which names only Stripe's script URL. They come from Stripe's published CSP guidance and should be confirmed against a real checkout before you rely on them:
+
+- `frame-src` for any Stripe runtime frame beyond those listed above.
+- `connect-src` for any Stripe endpoint beyond `api.stripe.com`.
+- Any Stripe fraud-signal host, such as `m.stripe.network`.
+
+If a payment fails on your page with a CSP violation in the console, the blocked origin in that report is the authoritative answer.

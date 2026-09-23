@@ -94,6 +94,7 @@
               "sdk/components/overview",
               "sdk/components/react",
               "sdk/components/theming",
+              "sdk/components/fonts",
               "sdk/components/slots",
               "sdk/components/i18n",
               "sdk/components/web-components"
@@ -119,7 +120,8 @@
             "pages": [
               "sdk/reference/configuration",
               "sdk/reference/types",
-              "sdk/reference/testing"
+              "sdk/reference/testing",
+              "sdk/reference/content-security-policy"
             ]
           }
         ]

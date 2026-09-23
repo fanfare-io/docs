@@ -1,0 +1,100 @@
+---
+title: Fonts
+description: How a font reaches a storefront, and who fetches it.
+---
+
+<Note>
+  This page describes the latest published SDK. For the version you have installed, read `docs/STYLING.md` inside `@fanfare-io/fanfare-sdk-react` or `@fanfare-io/fanfare-sdk-solid`.
+</Note>
+
+## The two theme fields
+
+`BrandTheme` carries two typography fields, and each sets one CSS custom property:
+
+| Field | Variable |
+| --- | --- |
+| `fontFamily` | `--ff-font-sans` |
+| `fontHeading` | `--ff-font-heading` |
+
+The value the SDK emits is not the bare family name. A single family is quoted and followed by the generic fallback stack for its category, so text is readable before the webfont arrives and readable without it:
+
+| Category | Fallback stack |
+| --- | --- |
+| Sans Serif | `ui-sans-serif, system-ui, sans-serif` |
+| Serif | `ui-serif, Georgia, serif` |
+| Display | `ui-sans-serif, system-ui, sans-serif` |
+| Monospace | `ui-monospace, SFMono-Regular, Menlo, monospace` |
+| Handwriting | `cursive` |
+
+So `fontFamily: "Playfair Display"` emits `"Playfair Display", ui-serif, Georgia, serif`.
+
+Two kinds of value pass through untouched instead:
+
+- **A stack you composed yourself.** A value containing a comma is treated as the host's own stack and is emitted verbatim. Use this when you want a specific fallback.
+- **A generic family or CSS-wide keyword** — `serif`, `system-ui`, `inherit` and the rest. These name no family at all, so quoting one or appending a stack would change what the browser renders.
+
+A family the SDK does not recognise is quoted and given the Sans Serif stack. If your font is a serif or a monospace, pass a comma-separated stack instead so its fallback matches.
+
+## `loadFonts`
+
+By default the SDK fetches nothing: an embed's page owns its own font delivery and its own content policy. Opt in with the `loadFonts` prop (React) or the `load-fonts` attribute (web component).
+
+```tsx
+<ExperienceWidget experienceId="exp_123" loadFonts />
+```
+
+```html
+<fanfare-experience-widget experience-id="exp_123" load-fonts></fanfare-experience-widget>
+```
+
+With it on, the widget requests the Google Fonts stylesheet for each family it needs:
+
+- The **body face** — your theme's `fontFamily`, or the active variant's own face when the theme names none.
+- The **heading face** — your theme's `fontHeading`, when it is set and differs from the body face.
+- The variant's **monospace face**, where it has one: it carries the hero numerals whatever text face the theme names.
+
+The variants' own faces are: `default` and `rounded` use Inter; `clean` uses Figtree with Inconsolata for mono; `retro` uses Inconsolata for both.
+
+How the request behaves:
+
+- **One `<link>` per family per page.** A family already requested is not requested again, and a family the browser resolves on its own — a platform UI face, a CSS generic — is never requested at all.
+- **Non-blocking.** The stylesheet is inserted for print only and promoted to every medium once it has loaded, so a slow or unreachable font origin never holds first paint.
+- **Silent on failure.** A failed request removes its own link and is never retried. The theme's fallback stack carries the text.
+- **Fetched after mount only.** Server rendering has no document, and the first paint shows the fallback stack rather than waiting on a third-party origin.
+
+The request asks for exactly the weights the family publishes, because the Google Fonts endpoint rejects a whole request that names a weight the family lacks. A family outside the SDK's catalogue is requested without a weight axis.
+
+## The three cases
+
+### 1. A Fanfare-hosted page
+
+Nothing to do. The hosted page delivers the theme's fonts for you.
+
+<Note>
+  This applies from the release in which hosted pages run the font loader. Before that, a hosted page renders the theme's fallback stacks.
+</Note>
+
+### 2. Your own site, with a font from the catalogue
+
+The families the Fanfare admin font picker offers are the ones the SDK knows how to fetch. Either pass `loadFonts` and let the widget request the stylesheet, or load the font yourself the way you load the rest of your site's typography — a `<link>` in your document head, or your own `@font-face` rules. If you load it yourself, leave `loadFonts` off.
+
+Either way, allow the font origins in your content policy — see [Content Security Policy](/sdk/reference/content-security-policy).
+
+### 3. Your own site, with a licensed or custom font
+
+Fanfare has no copy of your font, so it cannot deliver it. Self-host the font, declare it with your own `@font-face`, and set `fontFamily` (and `fontHeading`) to its family name so the widget's text uses it.
+
+Leave `loadFonts` off for this case: with it on, the widget asks Google Fonts for a family that is not there and the request fails silently, spending a round trip for nothing.
+
+```tsx
+<ExperienceWidget
+  experienceId="exp_123"
+  theme={{ fontFamily: "Founders Grotesk, ui-sans-serif, system-ui, sans-serif" }}
+/>
+```
+
+Passing a full stack here is worth doing: it tells the browser what to render while your font loads, and what to render if it fails.
+
+<Note>
+  The SDK never uploads, hosts, or proxies font files. It either points the browser at Google Fonts for a catalogue family, or uses the family name you gave it and leaves delivery to you.
+</Note>
