@@ -63,6 +63,10 @@
                             "type": "number"
                           },
                           "pageType": {
+                            "enum": [
+                              "hosted",
+                              "embed"
+                            ],
                             "type": "string"
                           },
                           "postalCode": {
@@ -2117,768 +2121,6 @@
                         "type": "string"
                       },
                       "eventName": {
-                        "const": "messageSent"
-                      },
-                      "eventProperties": {
-                        "properties": {
-                          "channel": {
-                            "enum": [
-                              "email",
-                              "sms"
-                            ],
-                            "type": "string"
-                          },
-                          "consumerId": {
-                            "type": "string"
-                          },
-                          "geoLat": {
-                            "type": "number"
-                          },
-                          "geoLng": {
-                            "type": "number"
-                          },
-                          "messageId": {
-                            "type": "string"
-                          },
-                          "postalCode": {
-                            "type": "string"
-                          },
-                          "priority": {
-                            "type": "string"
-                          },
-                          "template": {
-                            "type": "string"
-                          },
-                          "timezone": {
-                            "type": "string"
-                          }
-                        },
-                        "required": [],
-                        "type": "object"
-                      },
-                      "eventSchemaVersion": {
-                        "type": "string"
-                      },
-                      "eventTimestamp": {
-                        "type": "string"
-                      },
-                      "eventTimestampNs": {
-                        "type": "string"
-                      },
-                      "experienceId": {
-                        "format": "uuid",
-                        "type": "string"
-                      },
-                      "geoCity": {
-                        "type": "string"
-                      },
-                      "geoCountry": {
-                        "type": "string"
-                      },
-                      "geoLatitude": {
-                        "type": "number"
-                      },
-                      "geoLongitude": {
-                        "type": "number"
-                      },
-                      "geoRegion": {
-                        "type": "string"
-                      },
-                      "ipAddress": {
-                        "type": "string"
-                      },
-                      "isGuest": {
-                        "type": "boolean"
-                      },
-                      "organizationId": {
-                        "type": "string"
-                      },
-                      "osName": {
-                        "type": "string"
-                      },
-                      "osVersion": {
-                        "type": "string"
-                      },
-                      "pagePath": {
-                        "type": "string"
-                      },
-                      "pageTitle": {
-                        "type": "string"
-                      },
-                      "pageUrl": {
-                        "type": "string"
-                      },
-                      "platform": {
-                        "type": "string"
-                      },
-                      "receivedTimestamp": {
-                        "type": "string"
-                      },
-                      "receivedTimestampNs": {
-                        "type": "string"
-                      },
-                      "referrerUrl": {
-                        "type": "string"
-                      },
-                      "referringDomain": {
-                        "type": "string"
-                      },
-                      "screenName": {
-                        "type": "string"
-                      },
-                      "segments": {
-                        "properties": {
-                          "rfm": {
-                            "enum": [
-                              "CHAMPIONS",
-                              "LOYAL",
-                              "AT_RISK",
-                              "NEW",
-                              "LOST"
-                            ],
-                            "type": "string"
-                          }
-                        },
-                        "required": [],
-                        "type": "object"
-                      },
-                      "sequenceId": {
-                        "format": "uuid",
-                        "type": "string"
-                      },
-                      "sessionId": {
-                        "type": "string"
-                      },
-                      "userAgent": {
-                        "type": "string"
-                      },
-                      "userId": {
-                        "type": "string"
-                      },
-                      "utmCampaign": {
-                        "type": "string"
-                      },
-                      "utmContent": {
-                        "type": "string"
-                      },
-                      "utmMedium": {
-                        "type": "string"
-                      },
-                      "utmSource": {
-                        "type": "string"
-                      },
-                      "utmTerm": {
-                        "type": "string"
-                      }
-                    },
-                    "required": [
-                      "organizationId",
-                      "eventId",
-                      "eventName",
-                      "eventTimestamp"
-                    ],
-                    "type": "object"
-                  },
-                  {
-                    "properties": {
-                      "anonymousId": {
-                        "type": "string"
-                      },
-                      "appVersion": {
-                        "type": "string"
-                      },
-                      "beaconRequestId": {
-                        "type": "string"
-                      },
-                      "browserName": {
-                        "type": "string"
-                      },
-                      "browserVersion": {
-                        "type": "string"
-                      },
-                      "consumerId": {
-                        "type": "string"
-                      },
-                      "deviceType": {
-                        "type": "string"
-                      },
-                      "eventId": {
-                        "type": "string"
-                      },
-                      "eventName": {
-                        "const": "messageDelivered"
-                      },
-                      "eventProperties": {
-                        "properties": {
-                          "channel": {
-                            "enum": [
-                              "email",
-                              "sms"
-                            ],
-                            "type": "string"
-                          },
-                          "consumerId": {
-                            "type": "string"
-                          },
-                          "geoLat": {
-                            "type": "number"
-                          },
-                          "geoLng": {
-                            "type": "number"
-                          },
-                          "messageId": {
-                            "type": "string"
-                          },
-                          "postalCode": {
-                            "type": "string"
-                          },
-                          "priority": {
-                            "type": "string"
-                          },
-                          "template": {
-                            "type": "string"
-                          },
-                          "timezone": {
-                            "type": "string"
-                          }
-                        },
-                        "required": [],
-                        "type": "object"
-                      },
-                      "eventSchemaVersion": {
-                        "type": "string"
-                      },
-                      "eventTimestamp": {
-                        "type": "string"
-                      },
-                      "eventTimestampNs": {
-                        "type": "string"
-                      },
-                      "experienceId": {
-                        "format": "uuid",
-                        "type": "string"
-                      },
-                      "geoCity": {
-                        "type": "string"
-                      },
-                      "geoCountry": {
-                        "type": "string"
-                      },
-                      "geoLatitude": {
-                        "type": "number"
-                      },
-                      "geoLongitude": {
-                        "type": "number"
-                      },
-                      "geoRegion": {
-                        "type": "string"
-                      },
-                      "ipAddress": {
-                        "type": "string"
-                      },
-                      "isGuest": {
-                        "type": "boolean"
-                      },
-                      "organizationId": {
-                        "type": "string"
-                      },
-                      "osName": {
-                        "type": "string"
-                      },
-                      "osVersion": {
-                        "type": "string"
-                      },
-                      "pagePath": {
-                        "type": "string"
-                      },
-                      "pageTitle": {
-                        "type": "string"
-                      },
-                      "pageUrl": {
-                        "type": "string"
-                      },
-                      "platform": {
-                        "type": "string"
-                      },
-                      "receivedTimestamp": {
-                        "type": "string"
-                      },
-                      "receivedTimestampNs": {
-                        "type": "string"
-                      },
-                      "referrerUrl": {
-                        "type": "string"
-                      },
-                      "referringDomain": {
-                        "type": "string"
-                      },
-                      "screenName": {
-                        "type": "string"
-                      },
-                      "segments": {
-                        "properties": {
-                          "rfm": {
-                            "enum": [
-                              "CHAMPIONS",
-                              "LOYAL",
-                              "AT_RISK",
-                              "NEW",
-                              "LOST"
-                            ],
-                            "type": "string"
-                          }
-                        },
-                        "required": [],
-                        "type": "object"
-                      },
-                      "sequenceId": {
-                        "format": "uuid",
-                        "type": "string"
-                      },
-                      "sessionId": {
-                        "type": "string"
-                      },
-                      "userAgent": {
-                        "type": "string"
-                      },
-                      "userId": {
-                        "type": "string"
-                      },
-                      "utmCampaign": {
-                        "type": "string"
-                      },
-                      "utmContent": {
-                        "type": "string"
-                      },
-                      "utmMedium": {
-                        "type": "string"
-                      },
-                      "utmSource": {
-                        "type": "string"
-                      },
-                      "utmTerm": {
-                        "type": "string"
-                      }
-                    },
-                    "required": [
-                      "organizationId",
-                      "eventId",
-                      "eventName",
-                      "eventTimestamp"
-                    ],
-                    "type": "object"
-                  },
-                  {
-                    "properties": {
-                      "anonymousId": {
-                        "type": "string"
-                      },
-                      "appVersion": {
-                        "type": "string"
-                      },
-                      "beaconRequestId": {
-                        "type": "string"
-                      },
-                      "browserName": {
-                        "type": "string"
-                      },
-                      "browserVersion": {
-                        "type": "string"
-                      },
-                      "consumerId": {
-                        "type": "string"
-                      },
-                      "deviceType": {
-                        "type": "string"
-                      },
-                      "eventId": {
-                        "type": "string"
-                      },
-                      "eventName": {
-                        "const": "messageBounced"
-                      },
-                      "eventProperties": {
-                        "properties": {
-                          "bounceType": {
-                            "type": "string"
-                          },
-                          "channel": {
-                            "enum": [
-                              "email",
-                              "sms"
-                            ],
-                            "type": "string"
-                          },
-                          "consumerId": {
-                            "type": "string"
-                          },
-                          "geoLat": {
-                            "type": "number"
-                          },
-                          "geoLng": {
-                            "type": "number"
-                          },
-                          "messageId": {
-                            "type": "string"
-                          },
-                          "postalCode": {
-                            "type": "string"
-                          },
-                          "priority": {
-                            "type": "string"
-                          },
-                          "template": {
-                            "type": "string"
-                          },
-                          "timezone": {
-                            "type": "string"
-                          }
-                        },
-                        "required": [],
-                        "type": "object"
-                      },
-                      "eventSchemaVersion": {
-                        "type": "string"
-                      },
-                      "eventTimestamp": {
-                        "type": "string"
-                      },
-                      "eventTimestampNs": {
-                        "type": "string"
-                      },
-                      "experienceId": {
-                        "format": "uuid",
-                        "type": "string"
-                      },
-                      "geoCity": {
-                        "type": "string"
-                      },
-                      "geoCountry": {
-                        "type": "string"
-                      },
-                      "geoLatitude": {
-                        "type": "number"
-                      },
-                      "geoLongitude": {
-                        "type": "number"
-                      },
-                      "geoRegion": {
-                        "type": "string"
-                      },
-                      "ipAddress": {
-                        "type": "string"
-                      },
-                      "isGuest": {
-                        "type": "boolean"
-                      },
-                      "organizationId": {
-                        "type": "string"
-                      },
-                      "osName": {
-                        "type": "string"
-                      },
-                      "osVersion": {
-                        "type": "string"
-                      },
-                      "pagePath": {
-                        "type": "string"
-                      },
-                      "pageTitle": {
-                        "type": "string"
-                      },
-                      "pageUrl": {
-                        "type": "string"
-                      },
-                      "platform": {
-                        "type": "string"
-                      },
-                      "receivedTimestamp": {
-                        "type": "string"
-                      },
-                      "receivedTimestampNs": {
-                        "type": "string"
-                      },
-                      "referrerUrl": {
-                        "type": "string"
-                      },
-                      "referringDomain": {
-                        "type": "string"
-                      },
-                      "screenName": {
-                        "type": "string"
-                      },
-                      "segments": {
-                        "properties": {
-                          "rfm": {
-                            "enum": [
-                              "CHAMPIONS",
-                              "LOYAL",
-                              "AT_RISK",
-                              "NEW",
-                              "LOST"
-                            ],
-                            "type": "string"
-                          }
-                        },
-                        "required": [],
-                        "type": "object"
-                      },
-                      "sequenceId": {
-                        "format": "uuid",
-                        "type": "string"
-                      },
-                      "sessionId": {
-                        "type": "string"
-                      },
-                      "userAgent": {
-                        "type": "string"
-                      },
-                      "userId": {
-                        "type": "string"
-                      },
-                      "utmCampaign": {
-                        "type": "string"
-                      },
-                      "utmContent": {
-                        "type": "string"
-                      },
-                      "utmMedium": {
-                        "type": "string"
-                      },
-                      "utmSource": {
-                        "type": "string"
-                      },
-                      "utmTerm": {
-                        "type": "string"
-                      }
-                    },
-                    "required": [
-                      "organizationId",
-                      "eventId",
-                      "eventName",
-                      "eventTimestamp"
-                    ],
-                    "type": "object"
-                  },
-                  {
-                    "properties": {
-                      "anonymousId": {
-                        "type": "string"
-                      },
-                      "appVersion": {
-                        "type": "string"
-                      },
-                      "beaconRequestId": {
-                        "type": "string"
-                      },
-                      "browserName": {
-                        "type": "string"
-                      },
-                      "browserVersion": {
-                        "type": "string"
-                      },
-                      "consumerId": {
-                        "type": "string"
-                      },
-                      "deviceType": {
-                        "type": "string"
-                      },
-                      "eventId": {
-                        "type": "string"
-                      },
-                      "eventName": {
-                        "const": "messageComplained"
-                      },
-                      "eventProperties": {
-                        "properties": {
-                          "channel": {
-                            "enum": [
-                              "email",
-                              "sms"
-                            ],
-                            "type": "string"
-                          },
-                          "complaintType": {
-                            "type": "string"
-                          },
-                          "consumerId": {
-                            "type": "string"
-                          },
-                          "geoLat": {
-                            "type": "number"
-                          },
-                          "geoLng": {
-                            "type": "number"
-                          },
-                          "messageId": {
-                            "type": "string"
-                          },
-                          "postalCode": {
-                            "type": "string"
-                          },
-                          "priority": {
-                            "type": "string"
-                          },
-                          "template": {
-                            "type": "string"
-                          },
-                          "timezone": {
-                            "type": "string"
-                          }
-                        },
-                        "required": [],
-                        "type": "object"
-                      },
-                      "eventSchemaVersion": {
-                        "type": "string"
-                      },
-                      "eventTimestamp": {
-                        "type": "string"
-                      },
-                      "eventTimestampNs": {
-                        "type": "string"
-                      },
-                      "experienceId": {
-                        "format": "uuid",
-                        "type": "string"
-                      },
-                      "geoCity": {
-                        "type": "string"
-                      },
-                      "geoCountry": {
-                        "type": "string"
-                      },
-                      "geoLatitude": {
-                        "type": "number"
-                      },
-                      "geoLongitude": {
-                        "type": "number"
-                      },
-                      "geoRegion": {
-                        "type": "string"
-                      },
-                      "ipAddress": {
-                        "type": "string"
-                      },
-                      "isGuest": {
-                        "type": "boolean"
-                      },
-                      "organizationId": {
-                        "type": "string"
-                      },
-                      "osName": {
-                        "type": "string"
-                      },
-                      "osVersion": {
-                        "type": "string"
-                      },
-                      "pagePath": {
-                        "type": "string"
-                      },
-                      "pageTitle": {
-                        "type": "string"
-                      },
-                      "pageUrl": {
-                        "type": "string"
-                      },
-                      "platform": {
-                        "type": "string"
-                      },
-                      "receivedTimestamp": {
-                        "type": "string"
-                      },
-                      "receivedTimestampNs": {
-                        "type": "string"
-                      },
-                      "referrerUrl": {
-                        "type": "string"
-                      },
-                      "referringDomain": {
-                        "type": "string"
-                      },
-                      "screenName": {
-                        "type": "string"
-                      },
-                      "segments": {
-                        "properties": {
-                          "rfm": {
-                            "enum": [
-                              "CHAMPIONS",
-                              "LOYAL",
-                              "AT_RISK",
-                              "NEW",
-                              "LOST"
-                            ],
-                            "type": "string"
-                          }
-                        },
-                        "required": [],
-                        "type": "object"
-                      },
-                      "sequenceId": {
-                        "format": "uuid",
-                        "type": "string"
-                      },
-                      "sessionId": {
-                        "type": "string"
-                      },
-                      "userAgent": {
-                        "type": "string"
-                      },
-                      "userId": {
-                        "type": "string"
-                      },
-                      "utmCampaign": {
-                        "type": "string"
-                      },
-                      "utmContent": {
-                        "type": "string"
-                      },
-                      "utmMedium": {
-                        "type": "string"
-                      },
-                      "utmSource": {
-                        "type": "string"
-                      },
-                      "utmTerm": {
-                        "type": "string"
-                      }
-                    },
-                    "required": [
-                      "organizationId",
-                      "eventId",
-                      "eventName",
-                      "eventTimestamp"
-                    ],
-                    "type": "object"
-                  },
-                  {
-                    "properties": {
-                      "anonymousId": {
-                        "type": "string"
-                      },
-                      "appVersion": {
-                        "type": "string"
-                      },
-                      "beaconRequestId": {
-                        "type": "string"
-                      },
-                      "browserName": {
-                        "type": "string"
-                      },
-                      "browserVersion": {
-                        "type": "string"
-                      },
-                      "consumerId": {
-                        "type": "string"
-                      },
-                      "deviceType": {
-                        "type": "string"
-                      },
-                      "eventId": {
-                        "type": "string"
-                      },
-                      "eventName": {
                         "const": "messageClicked"
                       },
                       "eventProperties": {
@@ -3446,18 +2688,357 @@
                         "type": "string"
                       },
                       "eventName": {
-                        "const": "messageFailed"
+                        "const": "experienceEntered"
                       },
                       "eventProperties": {
                         "properties": {
-                          "channel": {
-                            "enum": [
-                              "email",
-                              "sms"
-                            ],
+                          "geoLat": {
+                            "type": "number"
+                          },
+                          "geoLng": {
+                            "type": "number"
+                          },
+                          "postalCode": {
                             "type": "string"
                           },
-                          "consumerId": {
+                          "timezone": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [],
+                        "type": "object"
+                      },
+                      "eventSchemaVersion": {
+                        "type": "string"
+                      },
+                      "eventTimestamp": {
+                        "type": "string"
+                      },
+                      "eventTimestampNs": {
+                        "type": "string"
+                      },
+                      "experienceId": {
+                        "format": "uuid",
+                        "type": "string"
+                      },
+                      "geoCity": {
+                        "type": "string"
+                      },
+                      "geoCountry": {
+                        "type": "string"
+                      },
+                      "geoLatitude": {
+                        "type": "number"
+                      },
+                      "geoLongitude": {
+                        "type": "number"
+                      },
+                      "geoRegion": {
+                        "type": "string"
+                      },
+                      "ipAddress": {
+                        "type": "string"
+                      },
+                      "isGuest": {
+                        "type": "boolean"
+                      },
+                      "organizationId": {
+                        "type": "string"
+                      },
+                      "osName": {
+                        "type": "string"
+                      },
+                      "osVersion": {
+                        "type": "string"
+                      },
+                      "pagePath": {
+                        "type": "string"
+                      },
+                      "pageTitle": {
+                        "type": "string"
+                      },
+                      "pageUrl": {
+                        "type": "string"
+                      },
+                      "platform": {
+                        "type": "string"
+                      },
+                      "receivedTimestamp": {
+                        "type": "string"
+                      },
+                      "receivedTimestampNs": {
+                        "type": "string"
+                      },
+                      "referrerUrl": {
+                        "type": "string"
+                      },
+                      "referringDomain": {
+                        "type": "string"
+                      },
+                      "screenName": {
+                        "type": "string"
+                      },
+                      "segments": {
+                        "properties": {
+                          "rfm": {
+                            "enum": [
+                              "CHAMPIONS",
+                              "LOYAL",
+                              "AT_RISK",
+                              "NEW",
+                              "LOST"
+                            ],
+                            "type": "string"
+                          }
+                        },
+                        "required": [],
+                        "type": "object"
+                      },
+                      "sequenceId": {
+                        "format": "uuid",
+                        "type": "string"
+                      },
+                      "sessionId": {
+                        "type": "string"
+                      },
+                      "userAgent": {
+                        "type": "string"
+                      },
+                      "userId": {
+                        "type": "string"
+                      },
+                      "utmCampaign": {
+                        "type": "string"
+                      },
+                      "utmContent": {
+                        "type": "string"
+                      },
+                      "utmMedium": {
+                        "type": "string"
+                      },
+                      "utmSource": {
+                        "type": "string"
+                      },
+                      "utmTerm": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "organizationId",
+                      "eventId",
+                      "eventName",
+                      "eventTimestamp"
+                    ],
+                    "type": "object"
+                  },
+                  {
+                    "properties": {
+                      "anonymousId": {
+                        "type": "string"
+                      },
+                      "appVersion": {
+                        "type": "string"
+                      },
+                      "beaconRequestId": {
+                        "type": "string"
+                      },
+                      "browserName": {
+                        "type": "string"
+                      },
+                      "browserVersion": {
+                        "type": "string"
+                      },
+                      "consumerId": {
+                        "type": "string"
+                      },
+                      "deviceType": {
+                        "type": "string"
+                      },
+                      "eventId": {
+                        "type": "string"
+                      },
+                      "eventName": {
+                        "const": "experienceLeft"
+                      },
+                      "eventProperties": {
+                        "properties": {
+                          "geoLat": {
+                            "type": "number"
+                          },
+                          "geoLng": {
+                            "type": "number"
+                          },
+                          "postalCode": {
+                            "type": "string"
+                          },
+                          "timezone": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [],
+                        "type": "object"
+                      },
+                      "eventSchemaVersion": {
+                        "type": "string"
+                      },
+                      "eventTimestamp": {
+                        "type": "string"
+                      },
+                      "eventTimestampNs": {
+                        "type": "string"
+                      },
+                      "experienceId": {
+                        "format": "uuid",
+                        "type": "string"
+                      },
+                      "geoCity": {
+                        "type": "string"
+                      },
+                      "geoCountry": {
+                        "type": "string"
+                      },
+                      "geoLatitude": {
+                        "type": "number"
+                      },
+                      "geoLongitude": {
+                        "type": "number"
+                      },
+                      "geoRegion": {
+                        "type": "string"
+                      },
+                      "ipAddress": {
+                        "type": "string"
+                      },
+                      "isGuest": {
+                        "type": "boolean"
+                      },
+                      "organizationId": {
+                        "type": "string"
+                      },
+                      "osName": {
+                        "type": "string"
+                      },
+                      "osVersion": {
+                        "type": "string"
+                      },
+                      "pagePath": {
+                        "type": "string"
+                      },
+                      "pageTitle": {
+                        "type": "string"
+                      },
+                      "pageUrl": {
+                        "type": "string"
+                      },
+                      "platform": {
+                        "type": "string"
+                      },
+                      "receivedTimestamp": {
+                        "type": "string"
+                      },
+                      "receivedTimestampNs": {
+                        "type": "string"
+                      },
+                      "referrerUrl": {
+                        "type": "string"
+                      },
+                      "referringDomain": {
+                        "type": "string"
+                      },
+                      "screenName": {
+                        "type": "string"
+                      },
+                      "segments": {
+                        "properties": {
+                          "rfm": {
+                            "enum": [
+                              "CHAMPIONS",
+                              "LOYAL",
+                              "AT_RISK",
+                              "NEW",
+                              "LOST"
+                            ],
+                            "type": "string"
+                          }
+                        },
+                        "required": [],
+                        "type": "object"
+                      },
+                      "sequenceId": {
+                        "format": "uuid",
+                        "type": "string"
+                      },
+                      "sessionId": {
+                        "type": "string"
+                      },
+                      "userAgent": {
+                        "type": "string"
+                      },
+                      "userId": {
+                        "type": "string"
+                      },
+                      "utmCampaign": {
+                        "type": "string"
+                      },
+                      "utmContent": {
+                        "type": "string"
+                      },
+                      "utmMedium": {
+                        "type": "string"
+                      },
+                      "utmSource": {
+                        "type": "string"
+                      },
+                      "utmTerm": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "organizationId",
+                      "eventId",
+                      "eventName",
+                      "eventTimestamp"
+                    ],
+                    "type": "object"
+                  },
+                  {
+                    "properties": {
+                      "anonymousId": {
+                        "type": "string"
+                      },
+                      "appVersion": {
+                        "type": "string"
+                      },
+                      "beaconRequestId": {
+                        "type": "string"
+                      },
+                      "browserName": {
+                        "type": "string"
+                      },
+                      "browserVersion": {
+                        "type": "string"
+                      },
+                      "consumerId": {
+                        "type": "string"
+                      },
+                      "deviceType": {
+                        "type": "string"
+                      },
+                      "eventId": {
+                        "type": "string"
+                      },
+                      "eventName": {
+                        "const": "sequenceGranted"
+                      },
+                      "eventProperties": {
+                        "properties": {
+                          "distributionType": {
+                            "enum": [
+                              "queue",
+                              "draw",
+                              "auction",
+                              "timed_release"
+                            ],
                             "type": "string"
                           },
                           "geoLat": {
@@ -3466,19 +3047,743 @@
                           "geoLng": {
                             "type": "number"
                           },
-                          "messageId": {
+                          "postalCode": {
+                            "type": "string"
+                          },
+                          "timezone": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [],
+                        "type": "object"
+                      },
+                      "eventSchemaVersion": {
+                        "type": "string"
+                      },
+                      "eventTimestamp": {
+                        "type": "string"
+                      },
+                      "eventTimestampNs": {
+                        "type": "string"
+                      },
+                      "experienceId": {
+                        "format": "uuid",
+                        "type": "string"
+                      },
+                      "geoCity": {
+                        "type": "string"
+                      },
+                      "geoCountry": {
+                        "type": "string"
+                      },
+                      "geoLatitude": {
+                        "type": "number"
+                      },
+                      "geoLongitude": {
+                        "type": "number"
+                      },
+                      "geoRegion": {
+                        "type": "string"
+                      },
+                      "ipAddress": {
+                        "type": "string"
+                      },
+                      "isGuest": {
+                        "type": "boolean"
+                      },
+                      "organizationId": {
+                        "type": "string"
+                      },
+                      "osName": {
+                        "type": "string"
+                      },
+                      "osVersion": {
+                        "type": "string"
+                      },
+                      "pagePath": {
+                        "type": "string"
+                      },
+                      "pageTitle": {
+                        "type": "string"
+                      },
+                      "pageUrl": {
+                        "type": "string"
+                      },
+                      "platform": {
+                        "type": "string"
+                      },
+                      "receivedTimestamp": {
+                        "type": "string"
+                      },
+                      "receivedTimestampNs": {
+                        "type": "string"
+                      },
+                      "referrerUrl": {
+                        "type": "string"
+                      },
+                      "referringDomain": {
+                        "type": "string"
+                      },
+                      "screenName": {
+                        "type": "string"
+                      },
+                      "segments": {
+                        "properties": {
+                          "rfm": {
+                            "enum": [
+                              "CHAMPIONS",
+                              "LOYAL",
+                              "AT_RISK",
+                              "NEW",
+                              "LOST"
+                            ],
+                            "type": "string"
+                          }
+                        },
+                        "required": [],
+                        "type": "object"
+                      },
+                      "sequenceId": {
+                        "format": "uuid",
+                        "type": "string"
+                      },
+                      "sessionId": {
+                        "type": "string"
+                      },
+                      "userAgent": {
+                        "type": "string"
+                      },
+                      "userId": {
+                        "type": "string"
+                      },
+                      "utmCampaign": {
+                        "type": "string"
+                      },
+                      "utmContent": {
+                        "type": "string"
+                      },
+                      "utmMedium": {
+                        "type": "string"
+                      },
+                      "utmSource": {
+                        "type": "string"
+                      },
+                      "utmTerm": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "organizationId",
+                      "eventId",
+                      "eventName",
+                      "eventTimestamp"
+                    ],
+                    "type": "object"
+                  },
+                  {
+                    "properties": {
+                      "anonymousId": {
+                        "type": "string"
+                      },
+                      "appVersion": {
+                        "type": "string"
+                      },
+                      "beaconRequestId": {
+                        "type": "string"
+                      },
+                      "browserName": {
+                        "type": "string"
+                      },
+                      "browserVersion": {
+                        "type": "string"
+                      },
+                      "consumerId": {
+                        "type": "string"
+                      },
+                      "deviceType": {
+                        "type": "string"
+                      },
+                      "eventId": {
+                        "type": "string"
+                      },
+                      "eventName": {
+                        "const": "sequenceEnded"
+                      },
+                      "eventProperties": {
+                        "properties": {
+                          "denialReason": {
+                            "enum": [
+                              "missing_distribution",
+                              "not_queued",
+                              "not_entered",
+                              "not_participating",
+                              "ended",
+                              "floor_unsold",
+                              "QUEUE_CLOSED",
+                              "DRAW_CLOSED",
+                              "DRAW_COMPLETED",
+                              "RELEASE_CLOSED",
+                              "BOT_DETECTED",
+                              "VALIDATION_LIMIT_REACHED",
+                              "ORDER_LIMIT_EXCEEDED",
+                              "ADMISSION_EXPIRED",
+                              "TOKEN_EXPIRED",
+                              "NO_SELECTABLE_PRODUCT",
+                              "STOCK_CONSTRAINED"
+                            ],
+                            "type": "string"
+                          },
+                          "distributionType": {
+                            "enum": [
+                              "queue",
+                              "draw",
+                              "auction",
+                              "timed_release",
+                              "appointment"
+                            ],
+                            "type": "string"
+                          },
+                          "geoLat": {
+                            "type": "number"
+                          },
+                          "geoLng": {
+                            "type": "number"
+                          },
+                          "outcome": {
+                            "enum": [
+                              "won",
+                              "lost",
+                              "completed",
+                              "denied",
+                              "left",
+                              "expired",
+                              "closed",
+                              "cancelled",
+                              "no_show"
+                            ],
                             "type": "string"
                           },
                           "postalCode": {
                             "type": "string"
                           },
-                          "priority": {
+                          "timezone": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [],
+                        "type": "object"
+                      },
+                      "eventSchemaVersion": {
+                        "type": "string"
+                      },
+                      "eventTimestamp": {
+                        "type": "string"
+                      },
+                      "eventTimestampNs": {
+                        "type": "string"
+                      },
+                      "experienceId": {
+                        "format": "uuid",
+                        "type": "string"
+                      },
+                      "geoCity": {
+                        "type": "string"
+                      },
+                      "geoCountry": {
+                        "type": "string"
+                      },
+                      "geoLatitude": {
+                        "type": "number"
+                      },
+                      "geoLongitude": {
+                        "type": "number"
+                      },
+                      "geoRegion": {
+                        "type": "string"
+                      },
+                      "ipAddress": {
+                        "type": "string"
+                      },
+                      "isGuest": {
+                        "type": "boolean"
+                      },
+                      "organizationId": {
+                        "type": "string"
+                      },
+                      "osName": {
+                        "type": "string"
+                      },
+                      "osVersion": {
+                        "type": "string"
+                      },
+                      "pagePath": {
+                        "type": "string"
+                      },
+                      "pageTitle": {
+                        "type": "string"
+                      },
+                      "pageUrl": {
+                        "type": "string"
+                      },
+                      "platform": {
+                        "type": "string"
+                      },
+                      "receivedTimestamp": {
+                        "type": "string"
+                      },
+                      "receivedTimestampNs": {
+                        "type": "string"
+                      },
+                      "referrerUrl": {
+                        "type": "string"
+                      },
+                      "referringDomain": {
+                        "type": "string"
+                      },
+                      "screenName": {
+                        "type": "string"
+                      },
+                      "segments": {
+                        "properties": {
+                          "rfm": {
+                            "enum": [
+                              "CHAMPIONS",
+                              "LOYAL",
+                              "AT_RISK",
+                              "NEW",
+                              "LOST"
+                            ],
+                            "type": "string"
+                          }
+                        },
+                        "required": [],
+                        "type": "object"
+                      },
+                      "sequenceId": {
+                        "format": "uuid",
+                        "type": "string"
+                      },
+                      "sessionId": {
+                        "type": "string"
+                      },
+                      "userAgent": {
+                        "type": "string"
+                      },
+                      "userId": {
+                        "type": "string"
+                      },
+                      "utmCampaign": {
+                        "type": "string"
+                      },
+                      "utmContent": {
+                        "type": "string"
+                      },
+                      "utmMedium": {
+                        "type": "string"
+                      },
+                      "utmSource": {
+                        "type": "string"
+                      },
+                      "utmTerm": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "organizationId",
+                      "eventId",
+                      "eventName",
+                      "eventTimestamp"
+                    ],
+                    "type": "object"
+                  },
+                  {
+                    "properties": {
+                      "anonymousId": {
+                        "type": "string"
+                      },
+                      "appVersion": {
+                        "type": "string"
+                      },
+                      "beaconRequestId": {
+                        "type": "string"
+                      },
+                      "browserName": {
+                        "type": "string"
+                      },
+                      "browserVersion": {
+                        "type": "string"
+                      },
+                      "consumerId": {
+                        "type": "string"
+                      },
+                      "deviceType": {
+                        "type": "string"
+                      },
+                      "eventId": {
+                        "type": "string"
+                      },
+                      "eventName": {
+                        "const": "distributionEntered"
+                      },
+                      "eventProperties": {
+                        "properties": {
+                          "distributionType": {
+                            "enum": [
+                              "queue",
+                              "draw",
+                              "auction",
+                              "timed_release",
+                              "appointment"
+                            ],
                             "type": "string"
                           },
-                          "retryCount": {
+                          "geoLat": {
                             "type": "number"
                           },
-                          "template": {
+                          "geoLng": {
+                            "type": "number"
+                          },
+                          "postalCode": {
+                            "type": "string"
+                          },
+                          "timezone": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [],
+                        "type": "object"
+                      },
+                      "eventSchemaVersion": {
+                        "type": "string"
+                      },
+                      "eventTimestamp": {
+                        "type": "string"
+                      },
+                      "eventTimestampNs": {
+                        "type": "string"
+                      },
+                      "experienceId": {
+                        "format": "uuid",
+                        "type": "string"
+                      },
+                      "geoCity": {
+                        "type": "string"
+                      },
+                      "geoCountry": {
+                        "type": "string"
+                      },
+                      "geoLatitude": {
+                        "type": "number"
+                      },
+                      "geoLongitude": {
+                        "type": "number"
+                      },
+                      "geoRegion": {
+                        "type": "string"
+                      },
+                      "ipAddress": {
+                        "type": "string"
+                      },
+                      "isGuest": {
+                        "type": "boolean"
+                      },
+                      "organizationId": {
+                        "type": "string"
+                      },
+                      "osName": {
+                        "type": "string"
+                      },
+                      "osVersion": {
+                        "type": "string"
+                      },
+                      "pagePath": {
+                        "type": "string"
+                      },
+                      "pageTitle": {
+                        "type": "string"
+                      },
+                      "pageUrl": {
+                        "type": "string"
+                      },
+                      "platform": {
+                        "type": "string"
+                      },
+                      "receivedTimestamp": {
+                        "type": "string"
+                      },
+                      "receivedTimestampNs": {
+                        "type": "string"
+                      },
+                      "referrerUrl": {
+                        "type": "string"
+                      },
+                      "referringDomain": {
+                        "type": "string"
+                      },
+                      "screenName": {
+                        "type": "string"
+                      },
+                      "segments": {
+                        "properties": {
+                          "rfm": {
+                            "enum": [
+                              "CHAMPIONS",
+                              "LOYAL",
+                              "AT_RISK",
+                              "NEW",
+                              "LOST"
+                            ],
+                            "type": "string"
+                          }
+                        },
+                        "required": [],
+                        "type": "object"
+                      },
+                      "sequenceId": {
+                        "format": "uuid",
+                        "type": "string"
+                      },
+                      "sessionId": {
+                        "type": "string"
+                      },
+                      "userAgent": {
+                        "type": "string"
+                      },
+                      "userId": {
+                        "type": "string"
+                      },
+                      "utmCampaign": {
+                        "type": "string"
+                      },
+                      "utmContent": {
+                        "type": "string"
+                      },
+                      "utmMedium": {
+                        "type": "string"
+                      },
+                      "utmSource": {
+                        "type": "string"
+                      },
+                      "utmTerm": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "organizationId",
+                      "eventId",
+                      "eventName",
+                      "eventTimestamp"
+                    ],
+                    "type": "object"
+                  },
+                  {
+                    "properties": {
+                      "anonymousId": {
+                        "type": "string"
+                      },
+                      "appVersion": {
+                        "type": "string"
+                      },
+                      "beaconRequestId": {
+                        "type": "string"
+                      },
+                      "browserName": {
+                        "type": "string"
+                      },
+                      "browserVersion": {
+                        "type": "string"
+                      },
+                      "consumerId": {
+                        "type": "string"
+                      },
+                      "deviceType": {
+                        "type": "string"
+                      },
+                      "eventId": {
+                        "type": "string"
+                      },
+                      "eventName": {
+                        "const": "waitlistEntered"
+                      },
+                      "eventProperties": {
+                        "properties": {
+                          "geoLat": {
+                            "type": "number"
+                          },
+                          "geoLng": {
+                            "type": "number"
+                          },
+                          "postalCode": {
+                            "type": "string"
+                          },
+                          "timezone": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [],
+                        "type": "object"
+                      },
+                      "eventSchemaVersion": {
+                        "type": "string"
+                      },
+                      "eventTimestamp": {
+                        "type": "string"
+                      },
+                      "eventTimestampNs": {
+                        "type": "string"
+                      },
+                      "experienceId": {
+                        "format": "uuid",
+                        "type": "string"
+                      },
+                      "geoCity": {
+                        "type": "string"
+                      },
+                      "geoCountry": {
+                        "type": "string"
+                      },
+                      "geoLatitude": {
+                        "type": "number"
+                      },
+                      "geoLongitude": {
+                        "type": "number"
+                      },
+                      "geoRegion": {
+                        "type": "string"
+                      },
+                      "ipAddress": {
+                        "type": "string"
+                      },
+                      "isGuest": {
+                        "type": "boolean"
+                      },
+                      "organizationId": {
+                        "type": "string"
+                      },
+                      "osName": {
+                        "type": "string"
+                      },
+                      "osVersion": {
+                        "type": "string"
+                      },
+                      "pagePath": {
+                        "type": "string"
+                      },
+                      "pageTitle": {
+                        "type": "string"
+                      },
+                      "pageUrl": {
+                        "type": "string"
+                      },
+                      "platform": {
+                        "type": "string"
+                      },
+                      "receivedTimestamp": {
+                        "type": "string"
+                      },
+                      "receivedTimestampNs": {
+                        "type": "string"
+                      },
+                      "referrerUrl": {
+                        "type": "string"
+                      },
+                      "referringDomain": {
+                        "type": "string"
+                      },
+                      "screenName": {
+                        "type": "string"
+                      },
+                      "segments": {
+                        "properties": {
+                          "rfm": {
+                            "enum": [
+                              "CHAMPIONS",
+                              "LOYAL",
+                              "AT_RISK",
+                              "NEW",
+                              "LOST"
+                            ],
+                            "type": "string"
+                          }
+                        },
+                        "required": [],
+                        "type": "object"
+                      },
+                      "sequenceId": {
+                        "format": "uuid",
+                        "type": "string"
+                      },
+                      "sessionId": {
+                        "type": "string"
+                      },
+                      "userAgent": {
+                        "type": "string"
+                      },
+                      "userId": {
+                        "type": "string"
+                      },
+                      "utmCampaign": {
+                        "type": "string"
+                      },
+                      "utmContent": {
+                        "type": "string"
+                      },
+                      "utmMedium": {
+                        "type": "string"
+                      },
+                      "utmSource": {
+                        "type": "string"
+                      },
+                      "utmTerm": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "organizationId",
+                      "eventId",
+                      "eventName",
+                      "eventTimestamp"
+                    ],
+                    "type": "object"
+                  },
+                  {
+                    "properties": {
+                      "anonymousId": {
+                        "type": "string"
+                      },
+                      "appVersion": {
+                        "type": "string"
+                      },
+                      "beaconRequestId": {
+                        "type": "string"
+                      },
+                      "browserName": {
+                        "type": "string"
+                      },
+                      "browserVersion": {
+                        "type": "string"
+                      },
+                      "consumerId": {
+                        "type": "string"
+                      },
+                      "deviceType": {
+                        "type": "string"
+                      },
+                      "eventId": {
+                        "type": "string"
+                      },
+                      "eventName": {
+                        "const": "waitlistLeft"
+                      },
+                      "eventProperties": {
+                        "properties": {
+                          "geoLat": {
+                            "type": "number"
+                          },
+                          "geoLng": {
+                            "type": "number"
+                          },
+                          "postalCode": {
                             "type": "string"
                           },
                           "timezone": {
@@ -3650,7 +3955,6 @@
                           "path": {
                             "items": {
                               "properties": {
-                                "input": {},
                                 "key": {
                                   "anyOf": [
                                     {
@@ -3671,15 +3975,11 @@
                               "required": [
                                 "type",
                                 "origin",
-                                "input",
                                 "key"
                               ],
                               "type": "object"
                             },
                             "type": "array"
-                          },
-                          "received": {
-                            "type": "string"
                           },
                           "type": {
                             "type": "string"
@@ -3689,7 +3989,6 @@
                           "kind",
                           "type",
                           "expected",
-                          "received",
                           "message",
                           "path"
                         ],
@@ -3823,6 +4122,10 @@
                               "type": "number"
                             },
                             "pageType": {
+                              "enum": [
+                                "hosted",
+                                "embed"
+                              ],
                               "type": "string"
                             },
                             "postalCode": {
@@ -5877,768 +6180,6 @@
                           "type": "string"
                         },
                         "eventName": {
-                          "const": "messageSent"
-                        },
-                        "eventProperties": {
-                          "properties": {
-                            "channel": {
-                              "enum": [
-                                "email",
-                                "sms"
-                              ],
-                              "type": "string"
-                            },
-                            "consumerId": {
-                              "type": "string"
-                            },
-                            "geoLat": {
-                              "type": "number"
-                            },
-                            "geoLng": {
-                              "type": "number"
-                            },
-                            "messageId": {
-                              "type": "string"
-                            },
-                            "postalCode": {
-                              "type": "string"
-                            },
-                            "priority": {
-                              "type": "string"
-                            },
-                            "template": {
-                              "type": "string"
-                            },
-                            "timezone": {
-                              "type": "string"
-                            }
-                          },
-                          "required": [],
-                          "type": "object"
-                        },
-                        "eventSchemaVersion": {
-                          "type": "string"
-                        },
-                        "eventTimestamp": {
-                          "type": "string"
-                        },
-                        "eventTimestampNs": {
-                          "type": "string"
-                        },
-                        "experienceId": {
-                          "format": "uuid",
-                          "type": "string"
-                        },
-                        "geoCity": {
-                          "type": "string"
-                        },
-                        "geoCountry": {
-                          "type": "string"
-                        },
-                        "geoLatitude": {
-                          "type": "number"
-                        },
-                        "geoLongitude": {
-                          "type": "number"
-                        },
-                        "geoRegion": {
-                          "type": "string"
-                        },
-                        "ipAddress": {
-                          "type": "string"
-                        },
-                        "isGuest": {
-                          "type": "boolean"
-                        },
-                        "organizationId": {
-                          "type": "string"
-                        },
-                        "osName": {
-                          "type": "string"
-                        },
-                        "osVersion": {
-                          "type": "string"
-                        },
-                        "pagePath": {
-                          "type": "string"
-                        },
-                        "pageTitle": {
-                          "type": "string"
-                        },
-                        "pageUrl": {
-                          "type": "string"
-                        },
-                        "platform": {
-                          "type": "string"
-                        },
-                        "receivedTimestamp": {
-                          "type": "string"
-                        },
-                        "receivedTimestampNs": {
-                          "type": "string"
-                        },
-                        "referrerUrl": {
-                          "type": "string"
-                        },
-                        "referringDomain": {
-                          "type": "string"
-                        },
-                        "screenName": {
-                          "type": "string"
-                        },
-                        "segments": {
-                          "properties": {
-                            "rfm": {
-                              "enum": [
-                                "CHAMPIONS",
-                                "LOYAL",
-                                "AT_RISK",
-                                "NEW",
-                                "LOST"
-                              ],
-                              "type": "string"
-                            }
-                          },
-                          "required": [],
-                          "type": "object"
-                        },
-                        "sequenceId": {
-                          "format": "uuid",
-                          "type": "string"
-                        },
-                        "sessionId": {
-                          "type": "string"
-                        },
-                        "userAgent": {
-                          "type": "string"
-                        },
-                        "userId": {
-                          "type": "string"
-                        },
-                        "utmCampaign": {
-                          "type": "string"
-                        },
-                        "utmContent": {
-                          "type": "string"
-                        },
-                        "utmMedium": {
-                          "type": "string"
-                        },
-                        "utmSource": {
-                          "type": "string"
-                        },
-                        "utmTerm": {
-                          "type": "string"
-                        }
-                      },
-                      "required": [
-                        "organizationId",
-                        "eventId",
-                        "eventName",
-                        "eventTimestamp"
-                      ],
-                      "type": "object"
-                    },
-                    {
-                      "properties": {
-                        "anonymousId": {
-                          "type": "string"
-                        },
-                        "appVersion": {
-                          "type": "string"
-                        },
-                        "beaconRequestId": {
-                          "type": "string"
-                        },
-                        "browserName": {
-                          "type": "string"
-                        },
-                        "browserVersion": {
-                          "type": "string"
-                        },
-                        "consumerId": {
-                          "type": "string"
-                        },
-                        "deviceType": {
-                          "type": "string"
-                        },
-                        "eventId": {
-                          "type": "string"
-                        },
-                        "eventName": {
-                          "const": "messageDelivered"
-                        },
-                        "eventProperties": {
-                          "properties": {
-                            "channel": {
-                              "enum": [
-                                "email",
-                                "sms"
-                              ],
-                              "type": "string"
-                            },
-                            "consumerId": {
-                              "type": "string"
-                            },
-                            "geoLat": {
-                              "type": "number"
-                            },
-                            "geoLng": {
-                              "type": "number"
-                            },
-                            "messageId": {
-                              "type": "string"
-                            },
-                            "postalCode": {
-                              "type": "string"
-                            },
-                            "priority": {
-                              "type": "string"
-                            },
-                            "template": {
-                              "type": "string"
-                            },
-                            "timezone": {
-                              "type": "string"
-                            }
-                          },
-                          "required": [],
-                          "type": "object"
-                        },
-                        "eventSchemaVersion": {
-                          "type": "string"
-                        },
-                        "eventTimestamp": {
-                          "type": "string"
-                        },
-                        "eventTimestampNs": {
-                          "type": "string"
-                        },
-                        "experienceId": {
-                          "format": "uuid",
-                          "type": "string"
-                        },
-                        "geoCity": {
-                          "type": "string"
-                        },
-                        "geoCountry": {
-                          "type": "string"
-                        },
-                        "geoLatitude": {
-                          "type": "number"
-                        },
-                        "geoLongitude": {
-                          "type": "number"
-                        },
-                        "geoRegion": {
-                          "type": "string"
-                        },
-                        "ipAddress": {
-                          "type": "string"
-                        },
-                        "isGuest": {
-                          "type": "boolean"
-                        },
-                        "organizationId": {
-                          "type": "string"
-                        },
-                        "osName": {
-                          "type": "string"
-                        },
-                        "osVersion": {
-                          "type": "string"
-                        },
-                        "pagePath": {
-                          "type": "string"
-                        },
-                        "pageTitle": {
-                          "type": "string"
-                        },
-                        "pageUrl": {
-                          "type": "string"
-                        },
-                        "platform": {
-                          "type": "string"
-                        },
-                        "receivedTimestamp": {
-                          "type": "string"
-                        },
-                        "receivedTimestampNs": {
-                          "type": "string"
-                        },
-                        "referrerUrl": {
-                          "type": "string"
-                        },
-                        "referringDomain": {
-                          "type": "string"
-                        },
-                        "screenName": {
-                          "type": "string"
-                        },
-                        "segments": {
-                          "properties": {
-                            "rfm": {
-                              "enum": [
-                                "CHAMPIONS",
-                                "LOYAL",
-                                "AT_RISK",
-                                "NEW",
-                                "LOST"
-                              ],
-                              "type": "string"
-                            }
-                          },
-                          "required": [],
-                          "type": "object"
-                        },
-                        "sequenceId": {
-                          "format": "uuid",
-                          "type": "string"
-                        },
-                        "sessionId": {
-                          "type": "string"
-                        },
-                        "userAgent": {
-                          "type": "string"
-                        },
-                        "userId": {
-                          "type": "string"
-                        },
-                        "utmCampaign": {
-                          "type": "string"
-                        },
-                        "utmContent": {
-                          "type": "string"
-                        },
-                        "utmMedium": {
-                          "type": "string"
-                        },
-                        "utmSource": {
-                          "type": "string"
-                        },
-                        "utmTerm": {
-                          "type": "string"
-                        }
-                      },
-                      "required": [
-                        "organizationId",
-                        "eventId",
-                        "eventName",
-                        "eventTimestamp"
-                      ],
-                      "type": "object"
-                    },
-                    {
-                      "properties": {
-                        "anonymousId": {
-                          "type": "string"
-                        },
-                        "appVersion": {
-                          "type": "string"
-                        },
-                        "beaconRequestId": {
-                          "type": "string"
-                        },
-                        "browserName": {
-                          "type": "string"
-                        },
-                        "browserVersion": {
-                          "type": "string"
-                        },
-                        "consumerId": {
-                          "type": "string"
-                        },
-                        "deviceType": {
-                          "type": "string"
-                        },
-                        "eventId": {
-                          "type": "string"
-                        },
-                        "eventName": {
-                          "const": "messageBounced"
-                        },
-                        "eventProperties": {
-                          "properties": {
-                            "bounceType": {
-                              "type": "string"
-                            },
-                            "channel": {
-                              "enum": [
-                                "email",
-                                "sms"
-                              ],
-                              "type": "string"
-                            },
-                            "consumerId": {
-                              "type": "string"
-                            },
-                            "geoLat": {
-                              "type": "number"
-                            },
-                            "geoLng": {
-                              "type": "number"
-                            },
-                            "messageId": {
-                              "type": "string"
-                            },
-                            "postalCode": {
-                              "type": "string"
-                            },
-                            "priority": {
-                              "type": "string"
-                            },
-                            "template": {
-                              "type": "string"
-                            },
-                            "timezone": {
-                              "type": "string"
-                            }
-                          },
-                          "required": [],
-                          "type": "object"
-                        },
-                        "eventSchemaVersion": {
-                          "type": "string"
-                        },
-                        "eventTimestamp": {
-                          "type": "string"
-                        },
-                        "eventTimestampNs": {
-                          "type": "string"
-                        },
-                        "experienceId": {
-                          "format": "uuid",
-                          "type": "string"
-                        },
-                        "geoCity": {
-                          "type": "string"
-                        },
-                        "geoCountry": {
-                          "type": "string"
-                        },
-                        "geoLatitude": {
-                          "type": "number"
-                        },
-                        "geoLongitude": {
-                          "type": "number"
-                        },
-                        "geoRegion": {
-                          "type": "string"
-                        },
-                        "ipAddress": {
-                          "type": "string"
-                        },
-                        "isGuest": {
-                          "type": "boolean"
-                        },
-                        "organizationId": {
-                          "type": "string"
-                        },
-                        "osName": {
-                          "type": "string"
-                        },
-                        "osVersion": {
-                          "type": "string"
-                        },
-                        "pagePath": {
-                          "type": "string"
-                        },
-                        "pageTitle": {
-                          "type": "string"
-                        },
-                        "pageUrl": {
-                          "type": "string"
-                        },
-                        "platform": {
-                          "type": "string"
-                        },
-                        "receivedTimestamp": {
-                          "type": "string"
-                        },
-                        "receivedTimestampNs": {
-                          "type": "string"
-                        },
-                        "referrerUrl": {
-                          "type": "string"
-                        },
-                        "referringDomain": {
-                          "type": "string"
-                        },
-                        "screenName": {
-                          "type": "string"
-                        },
-                        "segments": {
-                          "properties": {
-                            "rfm": {
-                              "enum": [
-                                "CHAMPIONS",
-                                "LOYAL",
-                                "AT_RISK",
-                                "NEW",
-                                "LOST"
-                              ],
-                              "type": "string"
-                            }
-                          },
-                          "required": [],
-                          "type": "object"
-                        },
-                        "sequenceId": {
-                          "format": "uuid",
-                          "type": "string"
-                        },
-                        "sessionId": {
-                          "type": "string"
-                        },
-                        "userAgent": {
-                          "type": "string"
-                        },
-                        "userId": {
-                          "type": "string"
-                        },
-                        "utmCampaign": {
-                          "type": "string"
-                        },
-                        "utmContent": {
-                          "type": "string"
-                        },
-                        "utmMedium": {
-                          "type": "string"
-                        },
-                        "utmSource": {
-                          "type": "string"
-                        },
-                        "utmTerm": {
-                          "type": "string"
-                        }
-                      },
-                      "required": [
-                        "organizationId",
-                        "eventId",
-                        "eventName",
-                        "eventTimestamp"
-                      ],
-                      "type": "object"
-                    },
-                    {
-                      "properties": {
-                        "anonymousId": {
-                          "type": "string"
-                        },
-                        "appVersion": {
-                          "type": "string"
-                        },
-                        "beaconRequestId": {
-                          "type": "string"
-                        },
-                        "browserName": {
-                          "type": "string"
-                        },
-                        "browserVersion": {
-                          "type": "string"
-                        },
-                        "consumerId": {
-                          "type": "string"
-                        },
-                        "deviceType": {
-                          "type": "string"
-                        },
-                        "eventId": {
-                          "type": "string"
-                        },
-                        "eventName": {
-                          "const": "messageComplained"
-                        },
-                        "eventProperties": {
-                          "properties": {
-                            "channel": {
-                              "enum": [
-                                "email",
-                                "sms"
-                              ],
-                              "type": "string"
-                            },
-                            "complaintType": {
-                              "type": "string"
-                            },
-                            "consumerId": {
-                              "type": "string"
-                            },
-                            "geoLat": {
-                              "type": "number"
-                            },
-                            "geoLng": {
-                              "type": "number"
-                            },
-                            "messageId": {
-                              "type": "string"
-                            },
-                            "postalCode": {
-                              "type": "string"
-                            },
-                            "priority": {
-                              "type": "string"
-                            },
-                            "template": {
-                              "type": "string"
-                            },
-                            "timezone": {
-                              "type": "string"
-                            }
-                          },
-                          "required": [],
-                          "type": "object"
-                        },
-                        "eventSchemaVersion": {
-                          "type": "string"
-                        },
-                        "eventTimestamp": {
-                          "type": "string"
-                        },
-                        "eventTimestampNs": {
-                          "type": "string"
-                        },
-                        "experienceId": {
-                          "format": "uuid",
-                          "type": "string"
-                        },
-                        "geoCity": {
-                          "type": "string"
-                        },
-                        "geoCountry": {
-                          "type": "string"
-                        },
-                        "geoLatitude": {
-                          "type": "number"
-                        },
-                        "geoLongitude": {
-                          "type": "number"
-                        },
-                        "geoRegion": {
-                          "type": "string"
-                        },
-                        "ipAddress": {
-                          "type": "string"
-                        },
-                        "isGuest": {
-                          "type": "boolean"
-                        },
-                        "organizationId": {
-                          "type": "string"
-                        },
-                        "osName": {
-                          "type": "string"
-                        },
-                        "osVersion": {
-                          "type": "string"
-                        },
-                        "pagePath": {
-                          "type": "string"
-                        },
-                        "pageTitle": {
-                          "type": "string"
-                        },
-                        "pageUrl": {
-                          "type": "string"
-                        },
-                        "platform": {
-                          "type": "string"
-                        },
-                        "receivedTimestamp": {
-                          "type": "string"
-                        },
-                        "receivedTimestampNs": {
-                          "type": "string"
-                        },
-                        "referrerUrl": {
-                          "type": "string"
-                        },
-                        "referringDomain": {
-                          "type": "string"
-                        },
-                        "screenName": {
-                          "type": "string"
-                        },
-                        "segments": {
-                          "properties": {
-                            "rfm": {
-                              "enum": [
-                                "CHAMPIONS",
-                                "LOYAL",
-                                "AT_RISK",
-                                "NEW",
-                                "LOST"
-                              ],
-                              "type": "string"
-                            }
-                          },
-                          "required": [],
-                          "type": "object"
-                        },
-                        "sequenceId": {
-                          "format": "uuid",
-                          "type": "string"
-                        },
-                        "sessionId": {
-                          "type": "string"
-                        },
-                        "userAgent": {
-                          "type": "string"
-                        },
-                        "userId": {
-                          "type": "string"
-                        },
-                        "utmCampaign": {
-                          "type": "string"
-                        },
-                        "utmContent": {
-                          "type": "string"
-                        },
-                        "utmMedium": {
-                          "type": "string"
-                        },
-                        "utmSource": {
-                          "type": "string"
-                        },
-                        "utmTerm": {
-                          "type": "string"
-                        }
-                      },
-                      "required": [
-                        "organizationId",
-                        "eventId",
-                        "eventName",
-                        "eventTimestamp"
-                      ],
-                      "type": "object"
-                    },
-                    {
-                      "properties": {
-                        "anonymousId": {
-                          "type": "string"
-                        },
-                        "appVersion": {
-                          "type": "string"
-                        },
-                        "beaconRequestId": {
-                          "type": "string"
-                        },
-                        "browserName": {
-                          "type": "string"
-                        },
-                        "browserVersion": {
-                          "type": "string"
-                        },
-                        "consumerId": {
-                          "type": "string"
-                        },
-                        "deviceType": {
-                          "type": "string"
-                        },
-                        "eventId": {
-                          "type": "string"
-                        },
-                        "eventName": {
                           "const": "messageClicked"
                         },
                         "eventProperties": {
@@ -7206,18 +6747,357 @@
                           "type": "string"
                         },
                         "eventName": {
-                          "const": "messageFailed"
+                          "const": "experienceEntered"
                         },
                         "eventProperties": {
                           "properties": {
-                            "channel": {
-                              "enum": [
-                                "email",
-                                "sms"
-                              ],
+                            "geoLat": {
+                              "type": "number"
+                            },
+                            "geoLng": {
+                              "type": "number"
+                            },
+                            "postalCode": {
                               "type": "string"
                             },
-                            "consumerId": {
+                            "timezone": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [],
+                          "type": "object"
+                        },
+                        "eventSchemaVersion": {
+                          "type": "string"
+                        },
+                        "eventTimestamp": {
+                          "type": "string"
+                        },
+                        "eventTimestampNs": {
+                          "type": "string"
+                        },
+                        "experienceId": {
+                          "format": "uuid",
+                          "type": "string"
+                        },
+                        "geoCity": {
+                          "type": "string"
+                        },
+                        "geoCountry": {
+                          "type": "string"
+                        },
+                        "geoLatitude": {
+                          "type": "number"
+                        },
+                        "geoLongitude": {
+                          "type": "number"
+                        },
+                        "geoRegion": {
+                          "type": "string"
+                        },
+                        "ipAddress": {
+                          "type": "string"
+                        },
+                        "isGuest": {
+                          "type": "boolean"
+                        },
+                        "organizationId": {
+                          "type": "string"
+                        },
+                        "osName": {
+                          "type": "string"
+                        },
+                        "osVersion": {
+                          "type": "string"
+                        },
+                        "pagePath": {
+                          "type": "string"
+                        },
+                        "pageTitle": {
+                          "type": "string"
+                        },
+                        "pageUrl": {
+                          "type": "string"
+                        },
+                        "platform": {
+                          "type": "string"
+                        },
+                        "receivedTimestamp": {
+                          "type": "string"
+                        },
+                        "receivedTimestampNs": {
+                          "type": "string"
+                        },
+                        "referrerUrl": {
+                          "type": "string"
+                        },
+                        "referringDomain": {
+                          "type": "string"
+                        },
+                        "screenName": {
+                          "type": "string"
+                        },
+                        "segments": {
+                          "properties": {
+                            "rfm": {
+                              "enum": [
+                                "CHAMPIONS",
+                                "LOYAL",
+                                "AT_RISK",
+                                "NEW",
+                                "LOST"
+                              ],
+                              "type": "string"
+                            }
+                          },
+                          "required": [],
+                          "type": "object"
+                        },
+                        "sequenceId": {
+                          "format": "uuid",
+                          "type": "string"
+                        },
+                        "sessionId": {
+                          "type": "string"
+                        },
+                        "userAgent": {
+                          "type": "string"
+                        },
+                        "userId": {
+                          "type": "string"
+                        },
+                        "utmCampaign": {
+                          "type": "string"
+                        },
+                        "utmContent": {
+                          "type": "string"
+                        },
+                        "utmMedium": {
+                          "type": "string"
+                        },
+                        "utmSource": {
+                          "type": "string"
+                        },
+                        "utmTerm": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "organizationId",
+                        "eventId",
+                        "eventName",
+                        "eventTimestamp"
+                      ],
+                      "type": "object"
+                    },
+                    {
+                      "properties": {
+                        "anonymousId": {
+                          "type": "string"
+                        },
+                        "appVersion": {
+                          "type": "string"
+                        },
+                        "beaconRequestId": {
+                          "type": "string"
+                        },
+                        "browserName": {
+                          "type": "string"
+                        },
+                        "browserVersion": {
+                          "type": "string"
+                        },
+                        "consumerId": {
+                          "type": "string"
+                        },
+                        "deviceType": {
+                          "type": "string"
+                        },
+                        "eventId": {
+                          "type": "string"
+                        },
+                        "eventName": {
+                          "const": "experienceLeft"
+                        },
+                        "eventProperties": {
+                          "properties": {
+                            "geoLat": {
+                              "type": "number"
+                            },
+                            "geoLng": {
+                              "type": "number"
+                            },
+                            "postalCode": {
+                              "type": "string"
+                            },
+                            "timezone": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [],
+                          "type": "object"
+                        },
+                        "eventSchemaVersion": {
+                          "type": "string"
+                        },
+                        "eventTimestamp": {
+                          "type": "string"
+                        },
+                        "eventTimestampNs": {
+                          "type": "string"
+                        },
+                        "experienceId": {
+                          "format": "uuid",
+                          "type": "string"
+                        },
+                        "geoCity": {
+                          "type": "string"
+                        },
+                        "geoCountry": {
+                          "type": "string"
+                        },
+                        "geoLatitude": {
+                          "type": "number"
+                        },
+                        "geoLongitude": {
+                          "type": "number"
+                        },
+                        "geoRegion": {
+                          "type": "string"
+                        },
+                        "ipAddress": {
+                          "type": "string"
+                        },
+                        "isGuest": {
+                          "type": "boolean"
+                        },
+                        "organizationId": {
+                          "type": "string"
+                        },
+                        "osName": {
+                          "type": "string"
+                        },
+                        "osVersion": {
+                          "type": "string"
+                        },
+                        "pagePath": {
+                          "type": "string"
+                        },
+                        "pageTitle": {
+                          "type": "string"
+                        },
+                        "pageUrl": {
+                          "type": "string"
+                        },
+                        "platform": {
+                          "type": "string"
+                        },
+                        "receivedTimestamp": {
+                          "type": "string"
+                        },
+                        "receivedTimestampNs": {
+                          "type": "string"
+                        },
+                        "referrerUrl": {
+                          "type": "string"
+                        },
+                        "referringDomain": {
+                          "type": "string"
+                        },
+                        "screenName": {
+                          "type": "string"
+                        },
+                        "segments": {
+                          "properties": {
+                            "rfm": {
+                              "enum": [
+                                "CHAMPIONS",
+                                "LOYAL",
+                                "AT_RISK",
+                                "NEW",
+                                "LOST"
+                              ],
+                              "type": "string"
+                            }
+                          },
+                          "required": [],
+                          "type": "object"
+                        },
+                        "sequenceId": {
+                          "format": "uuid",
+                          "type": "string"
+                        },
+                        "sessionId": {
+                          "type": "string"
+                        },
+                        "userAgent": {
+                          "type": "string"
+                        },
+                        "userId": {
+                          "type": "string"
+                        },
+                        "utmCampaign": {
+                          "type": "string"
+                        },
+                        "utmContent": {
+                          "type": "string"
+                        },
+                        "utmMedium": {
+                          "type": "string"
+                        },
+                        "utmSource": {
+                          "type": "string"
+                        },
+                        "utmTerm": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "organizationId",
+                        "eventId",
+                        "eventName",
+                        "eventTimestamp"
+                      ],
+                      "type": "object"
+                    },
+                    {
+                      "properties": {
+                        "anonymousId": {
+                          "type": "string"
+                        },
+                        "appVersion": {
+                          "type": "string"
+                        },
+                        "beaconRequestId": {
+                          "type": "string"
+                        },
+                        "browserName": {
+                          "type": "string"
+                        },
+                        "browserVersion": {
+                          "type": "string"
+                        },
+                        "consumerId": {
+                          "type": "string"
+                        },
+                        "deviceType": {
+                          "type": "string"
+                        },
+                        "eventId": {
+                          "type": "string"
+                        },
+                        "eventName": {
+                          "const": "sequenceGranted"
+                        },
+                        "eventProperties": {
+                          "properties": {
+                            "distributionType": {
+                              "enum": [
+                                "queue",
+                                "draw",
+                                "auction",
+                                "timed_release"
+                              ],
                               "type": "string"
                             },
                             "geoLat": {
@@ -7226,19 +7106,743 @@
                             "geoLng": {
                               "type": "number"
                             },
-                            "messageId": {
+                            "postalCode": {
+                              "type": "string"
+                            },
+                            "timezone": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [],
+                          "type": "object"
+                        },
+                        "eventSchemaVersion": {
+                          "type": "string"
+                        },
+                        "eventTimestamp": {
+                          "type": "string"
+                        },
+                        "eventTimestampNs": {
+                          "type": "string"
+                        },
+                        "experienceId": {
+                          "format": "uuid",
+                          "type": "string"
+                        },
+                        "geoCity": {
+                          "type": "string"
+                        },
+                        "geoCountry": {
+                          "type": "string"
+                        },
+                        "geoLatitude": {
+                          "type": "number"
+                        },
+                        "geoLongitude": {
+                          "type": "number"
+                        },
+                        "geoRegion": {
+                          "type": "string"
+                        },
+                        "ipAddress": {
+                          "type": "string"
+                        },
+                        "isGuest": {
+                          "type": "boolean"
+                        },
+                        "organizationId": {
+                          "type": "string"
+                        },
+                        "osName": {
+                          "type": "string"
+                        },
+                        "osVersion": {
+                          "type": "string"
+                        },
+                        "pagePath": {
+                          "type": "string"
+                        },
+                        "pageTitle": {
+                          "type": "string"
+                        },
+                        "pageUrl": {
+                          "type": "string"
+                        },
+                        "platform": {
+                          "type": "string"
+                        },
+                        "receivedTimestamp": {
+                          "type": "string"
+                        },
+                        "receivedTimestampNs": {
+                          "type": "string"
+                        },
+                        "referrerUrl": {
+                          "type": "string"
+                        },
+                        "referringDomain": {
+                          "type": "string"
+                        },
+                        "screenName": {
+                          "type": "string"
+                        },
+                        "segments": {
+                          "properties": {
+                            "rfm": {
+                              "enum": [
+                                "CHAMPIONS",
+                                "LOYAL",
+                                "AT_RISK",
+                                "NEW",
+                                "LOST"
+                              ],
+                              "type": "string"
+                            }
+                          },
+                          "required": [],
+                          "type": "object"
+                        },
+                        "sequenceId": {
+                          "format": "uuid",
+                          "type": "string"
+                        },
+                        "sessionId": {
+                          "type": "string"
+                        },
+                        "userAgent": {
+                          "type": "string"
+                        },
+                        "userId": {
+                          "type": "string"
+                        },
+                        "utmCampaign": {
+                          "type": "string"
+                        },
+                        "utmContent": {
+                          "type": "string"
+                        },
+                        "utmMedium": {
+                          "type": "string"
+                        },
+                        "utmSource": {
+                          "type": "string"
+                        },
+                        "utmTerm": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "organizationId",
+                        "eventId",
+                        "eventName",
+                        "eventTimestamp"
+                      ],
+                      "type": "object"
+                    },
+                    {
+                      "properties": {
+                        "anonymousId": {
+                          "type": "string"
+                        },
+                        "appVersion": {
+                          "type": "string"
+                        },
+                        "beaconRequestId": {
+                          "type": "string"
+                        },
+                        "browserName": {
+                          "type": "string"
+                        },
+                        "browserVersion": {
+                          "type": "string"
+                        },
+                        "consumerId": {
+                          "type": "string"
+                        },
+                        "deviceType": {
+                          "type": "string"
+                        },
+                        "eventId": {
+                          "type": "string"
+                        },
+                        "eventName": {
+                          "const": "sequenceEnded"
+                        },
+                        "eventProperties": {
+                          "properties": {
+                            "denialReason": {
+                              "enum": [
+                                "missing_distribution",
+                                "not_queued",
+                                "not_entered",
+                                "not_participating",
+                                "ended",
+                                "floor_unsold",
+                                "QUEUE_CLOSED",
+                                "DRAW_CLOSED",
+                                "DRAW_COMPLETED",
+                                "RELEASE_CLOSED",
+                                "BOT_DETECTED",
+                                "VALIDATION_LIMIT_REACHED",
+                                "ORDER_LIMIT_EXCEEDED",
+                                "ADMISSION_EXPIRED",
+                                "TOKEN_EXPIRED",
+                                "NO_SELECTABLE_PRODUCT",
+                                "STOCK_CONSTRAINED"
+                              ],
+                              "type": "string"
+                            },
+                            "distributionType": {
+                              "enum": [
+                                "queue",
+                                "draw",
+                                "auction",
+                                "timed_release",
+                                "appointment"
+                              ],
+                              "type": "string"
+                            },
+                            "geoLat": {
+                              "type": "number"
+                            },
+                            "geoLng": {
+                              "type": "number"
+                            },
+                            "outcome": {
+                              "enum": [
+                                "won",
+                                "lost",
+                                "completed",
+                                "denied",
+                                "left",
+                                "expired",
+                                "closed",
+                                "cancelled",
+                                "no_show"
+                              ],
                               "type": "string"
                             },
                             "postalCode": {
                               "type": "string"
                             },
-                            "priority": {
+                            "timezone": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [],
+                          "type": "object"
+                        },
+                        "eventSchemaVersion": {
+                          "type": "string"
+                        },
+                        "eventTimestamp": {
+                          "type": "string"
+                        },
+                        "eventTimestampNs": {
+                          "type": "string"
+                        },
+                        "experienceId": {
+                          "format": "uuid",
+                          "type": "string"
+                        },
+                        "geoCity": {
+                          "type": "string"
+                        },
+                        "geoCountry": {
+                          "type": "string"
+                        },
+                        "geoLatitude": {
+                          "type": "number"
+                        },
+                        "geoLongitude": {
+                          "type": "number"
+                        },
+                        "geoRegion": {
+                          "type": "string"
+                        },
+                        "ipAddress": {
+                          "type": "string"
+                        },
+                        "isGuest": {
+                          "type": "boolean"
+                        },
+                        "organizationId": {
+                          "type": "string"
+                        },
+                        "osName": {
+                          "type": "string"
+                        },
+                        "osVersion": {
+                          "type": "string"
+                        },
+                        "pagePath": {
+                          "type": "string"
+                        },
+                        "pageTitle": {
+                          "type": "string"
+                        },
+                        "pageUrl": {
+                          "type": "string"
+                        },
+                        "platform": {
+                          "type": "string"
+                        },
+                        "receivedTimestamp": {
+                          "type": "string"
+                        },
+                        "receivedTimestampNs": {
+                          "type": "string"
+                        },
+                        "referrerUrl": {
+                          "type": "string"
+                        },
+                        "referringDomain": {
+                          "type": "string"
+                        },
+                        "screenName": {
+                          "type": "string"
+                        },
+                        "segments": {
+                          "properties": {
+                            "rfm": {
+                              "enum": [
+                                "CHAMPIONS",
+                                "LOYAL",
+                                "AT_RISK",
+                                "NEW",
+                                "LOST"
+                              ],
+                              "type": "string"
+                            }
+                          },
+                          "required": [],
+                          "type": "object"
+                        },
+                        "sequenceId": {
+                          "format": "uuid",
+                          "type": "string"
+                        },
+                        "sessionId": {
+                          "type": "string"
+                        },
+                        "userAgent": {
+                          "type": "string"
+                        },
+                        "userId": {
+                          "type": "string"
+                        },
+                        "utmCampaign": {
+                          "type": "string"
+                        },
+                        "utmContent": {
+                          "type": "string"
+                        },
+                        "utmMedium": {
+                          "type": "string"
+                        },
+                        "utmSource": {
+                          "type": "string"
+                        },
+                        "utmTerm": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "organizationId",
+                        "eventId",
+                        "eventName",
+                        "eventTimestamp"
+                      ],
+                      "type": "object"
+                    },
+                    {
+                      "properties": {
+                        "anonymousId": {
+                          "type": "string"
+                        },
+                        "appVersion": {
+                          "type": "string"
+                        },
+                        "beaconRequestId": {
+                          "type": "string"
+                        },
+                        "browserName": {
+                          "type": "string"
+                        },
+                        "browserVersion": {
+                          "type": "string"
+                        },
+                        "consumerId": {
+                          "type": "string"
+                        },
+                        "deviceType": {
+                          "type": "string"
+                        },
+                        "eventId": {
+                          "type": "string"
+                        },
+                        "eventName": {
+                          "const": "distributionEntered"
+                        },
+                        "eventProperties": {
+                          "properties": {
+                            "distributionType": {
+                              "enum": [
+                                "queue",
+                                "draw",
+                                "auction",
+                                "timed_release",
+                                "appointment"
+                              ],
                               "type": "string"
                             },
-                            "retryCount": {
+                            "geoLat": {
                               "type": "number"
                             },
-                            "template": {
+                            "geoLng": {
+                              "type": "number"
+                            },
+                            "postalCode": {
+                              "type": "string"
+                            },
+                            "timezone": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [],
+                          "type": "object"
+                        },
+                        "eventSchemaVersion": {
+                          "type": "string"
+                        },
+                        "eventTimestamp": {
+                          "type": "string"
+                        },
+                        "eventTimestampNs": {
+                          "type": "string"
+                        },
+                        "experienceId": {
+                          "format": "uuid",
+                          "type": "string"
+                        },
+                        "geoCity": {
+                          "type": "string"
+                        },
+                        "geoCountry": {
+                          "type": "string"
+                        },
+                        "geoLatitude": {
+                          "type": "number"
+                        },
+                        "geoLongitude": {
+                          "type": "number"
+                        },
+                        "geoRegion": {
+                          "type": "string"
+                        },
+                        "ipAddress": {
+                          "type": "string"
+                        },
+                        "isGuest": {
+                          "type": "boolean"
+                        },
+                        "organizationId": {
+                          "type": "string"
+                        },
+                        "osName": {
+                          "type": "string"
+                        },
+                        "osVersion": {
+                          "type": "string"
+                        },
+                        "pagePath": {
+                          "type": "string"
+                        },
+                        "pageTitle": {
+                          "type": "string"
+                        },
+                        "pageUrl": {
+                          "type": "string"
+                        },
+                        "platform": {
+                          "type": "string"
+                        },
+                        "receivedTimestamp": {
+                          "type": "string"
+                        },
+                        "receivedTimestampNs": {
+                          "type": "string"
+                        },
+                        "referrerUrl": {
+                          "type": "string"
+                        },
+                        "referringDomain": {
+                          "type": "string"
+                        },
+                        "screenName": {
+                          "type": "string"
+                        },
+                        "segments": {
+                          "properties": {
+                            "rfm": {
+                              "enum": [
+                                "CHAMPIONS",
+                                "LOYAL",
+                                "AT_RISK",
+                                "NEW",
+                                "LOST"
+                              ],
+                              "type": "string"
+                            }
+                          },
+                          "required": [],
+                          "type": "object"
+                        },
+                        "sequenceId": {
+                          "format": "uuid",
+                          "type": "string"
+                        },
+                        "sessionId": {
+                          "type": "string"
+                        },
+                        "userAgent": {
+                          "type": "string"
+                        },
+                        "userId": {
+                          "type": "string"
+                        },
+                        "utmCampaign": {
+                          "type": "string"
+                        },
+                        "utmContent": {
+                          "type": "string"
+                        },
+                        "utmMedium": {
+                          "type": "string"
+                        },
+                        "utmSource": {
+                          "type": "string"
+                        },
+                        "utmTerm": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "organizationId",
+                        "eventId",
+                        "eventName",
+                        "eventTimestamp"
+                      ],
+                      "type": "object"
+                    },
+                    {
+                      "properties": {
+                        "anonymousId": {
+                          "type": "string"
+                        },
+                        "appVersion": {
+                          "type": "string"
+                        },
+                        "beaconRequestId": {
+                          "type": "string"
+                        },
+                        "browserName": {
+                          "type": "string"
+                        },
+                        "browserVersion": {
+                          "type": "string"
+                        },
+                        "consumerId": {
+                          "type": "string"
+                        },
+                        "deviceType": {
+                          "type": "string"
+                        },
+                        "eventId": {
+                          "type": "string"
+                        },
+                        "eventName": {
+                          "const": "waitlistEntered"
+                        },
+                        "eventProperties": {
+                          "properties": {
+                            "geoLat": {
+                              "type": "number"
+                            },
+                            "geoLng": {
+                              "type": "number"
+                            },
+                            "postalCode": {
+                              "type": "string"
+                            },
+                            "timezone": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [],
+                          "type": "object"
+                        },
+                        "eventSchemaVersion": {
+                          "type": "string"
+                        },
+                        "eventTimestamp": {
+                          "type": "string"
+                        },
+                        "eventTimestampNs": {
+                          "type": "string"
+                        },
+                        "experienceId": {
+                          "format": "uuid",
+                          "type": "string"
+                        },
+                        "geoCity": {
+                          "type": "string"
+                        },
+                        "geoCountry": {
+                          "type": "string"
+                        },
+                        "geoLatitude": {
+                          "type": "number"
+                        },
+                        "geoLongitude": {
+                          "type": "number"
+                        },
+                        "geoRegion": {
+                          "type": "string"
+                        },
+                        "ipAddress": {
+                          "type": "string"
+                        },
+                        "isGuest": {
+                          "type": "boolean"
+                        },
+                        "organizationId": {
+                          "type": "string"
+                        },
+                        "osName": {
+                          "type": "string"
+                        },
+                        "osVersion": {
+                          "type": "string"
+                        },
+                        "pagePath": {
+                          "type": "string"
+                        },
+                        "pageTitle": {
+                          "type": "string"
+                        },
+                        "pageUrl": {
+                          "type": "string"
+                        },
+                        "platform": {
+                          "type": "string"
+                        },
+                        "receivedTimestamp": {
+                          "type": "string"
+                        },
+                        "receivedTimestampNs": {
+                          "type": "string"
+                        },
+                        "referrerUrl": {
+                          "type": "string"
+                        },
+                        "referringDomain": {
+                          "type": "string"
+                        },
+                        "screenName": {
+                          "type": "string"
+                        },
+                        "segments": {
+                          "properties": {
+                            "rfm": {
+                              "enum": [
+                                "CHAMPIONS",
+                                "LOYAL",
+                                "AT_RISK",
+                                "NEW",
+                                "LOST"
+                              ],
+                              "type": "string"
+                            }
+                          },
+                          "required": [],
+                          "type": "object"
+                        },
+                        "sequenceId": {
+                          "format": "uuid",
+                          "type": "string"
+                        },
+                        "sessionId": {
+                          "type": "string"
+                        },
+                        "userAgent": {
+                          "type": "string"
+                        },
+                        "userId": {
+                          "type": "string"
+                        },
+                        "utmCampaign": {
+                          "type": "string"
+                        },
+                        "utmContent": {
+                          "type": "string"
+                        },
+                        "utmMedium": {
+                          "type": "string"
+                        },
+                        "utmSource": {
+                          "type": "string"
+                        },
+                        "utmTerm": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "organizationId",
+                        "eventId",
+                        "eventName",
+                        "eventTimestamp"
+                      ],
+                      "type": "object"
+                    },
+                    {
+                      "properties": {
+                        "anonymousId": {
+                          "type": "string"
+                        },
+                        "appVersion": {
+                          "type": "string"
+                        },
+                        "beaconRequestId": {
+                          "type": "string"
+                        },
+                        "browserName": {
+                          "type": "string"
+                        },
+                        "browserVersion": {
+                          "type": "string"
+                        },
+                        "consumerId": {
+                          "type": "string"
+                        },
+                        "deviceType": {
+                          "type": "string"
+                        },
+                        "eventId": {
+                          "type": "string"
+                        },
+                        "eventName": {
+                          "const": "waitlistLeft"
+                        },
+                        "eventProperties": {
+                          "properties": {
+                            "geoLat": {
+                              "type": "number"
+                            },
+                            "geoLng": {
+                              "type": "number"
+                            },
+                            "postalCode": {
                               "type": "string"
                             },
                             "timezone": {
@@ -7412,7 +8016,6 @@
                           "path": {
                             "items": {
                               "properties": {
-                                "input": {},
                                 "key": {
                                   "anyOf": [
                                     {
@@ -7433,15 +8036,11 @@
                               "required": [
                                 "type",
                                 "origin",
-                                "input",
                                 "key"
                               ],
                               "type": "object"
                             },
                             "type": "array"
-                          },
-                          "received": {
-                            "type": "string"
                           },
                           "type": {
                             "type": "string"
@@ -7451,7 +8050,6 @@
                           "kind",
                           "type",
                           "expected",
-                          "received",
                           "message",
                           "path"
                         ],
