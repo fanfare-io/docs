@@ -81,13 +81,15 @@ _Caption: Configure how winners are selected_
 | **Entry Capacity** | `capacity` | No | Maximum draw entries. |
 | **Admission Window** | `admissionExpirationSeconds` | No | How long selected winners have to continue. |
 | **Continue Selecting** | `continueSelectingUntilCompleted` | No | Continue replacement selection until the configured winner count completes, when supported for the launch. |
-| **Loyalty-Biased Selection** | `loyaltyBiasEnabled` | No | Optionally gives loyal or engaged entrants improved opportunity. Off by default. |
+| **Fanfair loyalty prioritisation** | `loyaltyBiasEnabled` | No | Optionally weights randomized entry order by loyalty points. Off by default. |
 
 Winner selection is separate from product allocation. Draw configuration decides which eligible consumers are selected as winners; product allocation decides what product a selected consumer receives.
 
-### Loyalty-Biased Selection
+### Fanfair Loyalty Prioritisation
 
-Use loyalty-biased selection when loyalty or engagement should influence opportunity for a specific draw experience. This setting is optional and off by default.
+Turn on **Bias toward loyal consumers** to enable [Fanfair](/concepts/loyalty#fanfair-loyalty-prioritisation) for this draw. The setting is optional and off by default.
+
+Loyalty points weight the randomized order stored when entrants join. Selection follows that order subject to eligibility, available stock, and the draw's configuration. Points use a capped weight with diminishing returns; that ordering weight is not a multiplier on winning probability.
 
 When enabled:
 

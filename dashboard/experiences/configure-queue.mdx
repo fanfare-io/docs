@@ -43,7 +43,7 @@ _Caption: The queue creation form with all configuration options_
 | **Queue Capacity** | `capacity` | No | Maximum consumers allowed in the queue. |
 | **Max Admissions** | `maxAdmissions` | No | Maximum consumers who can be admitted. |
 | **Admission Window** | `admissionExpirationSeconds` | No | How long admitted consumers have to continue. |
-| **Loyalty-Biased Admission** | `loyaltyBiasEnabled` | No | Optionally gives loyal or engaged consumers improved opportunity. Off by default. |
+| **Fanfair loyalty prioritisation** | `loyaltyBiasEnabled` | No | Optionally weights pre-open randomized entry order by loyalty points. Off by default. |
 
 ### Timing Window
 
@@ -106,9 +106,11 @@ _Caption: Set timeouts to keep the queue moving_
 
 ## Advanced Queue Options
 
-### Loyalty-Biased Admission
+### Fanfair Loyalty Prioritisation
 
-Use loyalty-biased admission when loyalty or engagement should influence opportunity for a specific queue experience. This setting is optional and off by default.
+Turn on **Bias toward loyal consumers** to enable [Fanfair](/concepts/loyalty#fanfair-loyalty-prioritisation) for this queue. The setting is optional and off by default.
+
+Before opening, entrants receive randomized order weighted by their loyalty points at entry. After opening, new entrants join in first-in, first-out order behind the pre-open entrants; their points do not reorder them.
 
 When enabled:
 

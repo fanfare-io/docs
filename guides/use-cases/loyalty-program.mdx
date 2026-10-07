@@ -51,9 +51,11 @@ Use audiences when loyalty should affect access or segmentation. Common patterns
 
 Attach those audiences to experiences the same way you would use other audience segments. Loyalty determines point state; audiences determine who qualifies for a customer group.
 
-## Step 4: Configure Loyalty-Biased Experiences
+## Step 4: Configure Fanfair
 
-For queues and draws, decide whether the experience should also recognize loyalty during admission or selection. This setting is optional, configured per experience, and off by default.
+For each queue or draw, turn on **Bias toward loyal consumers** if loyalty should influence randomized entry order. [Fanfair](/concepts/loyalty#fanfair-loyalty-prioritisation) names this existing optional setting, controlled by `loyaltyBiasEnabled` and off by default.
+
+Queues weight pre-open randomized order by loyalty points; new entries after opening join first-in, first-out. Draws weight the randomized order stored at entry. Neither mechanism guarantees admission or selection.
 
 Use it when loyal or highly engaged consumers should have improved opportunity without a guaranteed result. Keep customer messaging qualitative:
 
