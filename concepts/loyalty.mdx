@@ -6,7 +6,7 @@ A Fanfare loyalty program gives each consumer a points balance that can grow thr
 
 Use loyalty when you want rewards to reflect real customer participation across experiences, purchases, messaging, and other engagement. Use audiences when you want those balances to drive access decisions, such as member-only launches or tiered early access.
 
-Loyalty can also inform queue admission or draw selection when an experience-level loyalty setting is enabled. This is optional and off by default. When enabled, Fanfare can give more engaged or loyal consumers improved opportunity in the queue or draw, while still preserving non-guaranteed outcomes for every participant.
+Fanfair is Fanfare's name for the existing optional loyalty prioritisation in queues and draws. It uses the distribution's `loyaltyBiasEnabled` setting, which is off by default. Enabling Fanfair does not create a separate program or change how points are earned.
 
 ## Core Model
 
@@ -66,16 +66,21 @@ Loyalty fields can be used with audiences to create tiers and targeted access gr
 
 Loyalty audiences are still audiences: they determine who qualifies for a segment, while the loyalty program determines how points are earned, deducted, expired, and displayed.
 
-## Loyalty-Biased Experiences
+## Fanfair Loyalty Prioritisation
 
-For queue and draw experiences, you can choose whether loyalty should influence queue admission or draw selection opportunity. Use this when your promotion should recognize engagement without creating a guaranteed entitlement.
+Enable **Bias toward loyal consumers**, beside the **Fairness provided by Fanfair** documentation link, in a queue or draw's configuration. The existing `loyaltyBiasEnabled` flag controls this setting for each distribution.
 
-| Experience | Customer-facing behavior |
+| Distribution | How Fanfair works |
 | --- | --- |
-| Queue | Loyal or highly engaged consumers may receive improved opportunity to be admitted, but admission is not guaranteed. |
-| Draw | Loyal or highly engaged entrants may receive improved opportunity to be selected, but winning is not guaranteed. |
+| Queue, before opening | Entrants receive randomized order weighted by loyalty points. More points increase priority weight, with diminishing returns and a cap. Admission is not guaranteed. |
+| Queue, after opening | New entrants join in first-in, first-out order behind the pre-open entrants. Loyalty points do not reorder these new entries. |
+| Draw | Loyalty points weight the randomized order stored when entrants join. Selection proceeds through that order subject to eligibility, available stock, and the draw's configuration. Winning is not guaranteed. |
 
-Keep public copy qualitative. For queues with loyalty bias enabled, avoid precise numeric positions such as "you are #42 in line"; use progress or status language such as "you're in line" and "watch for your access window." For draws, avoid promising a fixed chance or outcome. Teams should review legal, fairness, and promotion rules before using loyalty-biased queue admission or draw selection, especially for regulated promotions.
+The weight uses the consumer's points available at entry. It is an ordering weight, not a stated multiplier on winning probability. Changing points later does not continuously reorder an existing entry.
+
+When the flag is false, pre-open queue order and draw order use neutral randomization; post-open queue entries remain first-in, first-out. The standard SDK widget shows **“Fairness provided by Fanfair”** beneath the Enter button only when the current queue or draw explicitly reports `loyaltyBiasEnabled: true`. A false or missing flag shows no Fanfair claim. The line appears only on the Enter panel; automatic or custom entry flows may skip it. The existing **Powered by Fanfare** footer stays the same.
+
+Keep customer copy qualitative. For queues with Fanfair enabled, use status language such as "you're in line" rather than a precise numeric position. For draws, confirm entry and outcome timing without promising fixed odds, equal odds, or a guaranteed outcome. Fanfair does not override eligibility rules or reserve admission for every participant.
 
 ## Where To Configure
 
