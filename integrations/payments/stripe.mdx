@@ -142,26 +142,26 @@ All Stripe webhooks are verified using HMAC-SHA256 signatures:
 const event = await stripe.webhooks.constructEventAsync(body, signature, webhookSecret);
 ```
 
-## Platform Fees
+## Fanfare Checkout Fees
 
 ### How Fees Work
 
-Fanfare charges a platform fee on each transaction processed through connected Stripe accounts:
+Fanfare takes a percentage of each paid order processed through Fanfare checkout:
 
-- The fee percentage is set at the organization level
-- Fees are automatically deducted from the transaction amount
-- The remaining amount goes to your Stripe account
+- The rate depends on your Fanfare plan and the experience type: one rate for draws, queues and auctions, and a lower rate for timed releases
+- Fanfare's fee is collected as a Stripe application fee on each paid order, and the rest settles to your Stripe account
+- Stripe's processing fees are charged directly to your Stripe account at your Stripe rates
 
-### Viewing Your Fee Rate
+See [Pricing](/dashboard/billing/pricing) for each plan's rates, worked examples, and how refunds, disputes and payouts work.
+
+### Viewing Your Rates
 
 1. Navigate to **Settings** > **Payments**
-2. Your current platform fee rate is displayed
-3. The effective rate may differ based on your subscription plan
+2. Your current Fanfare checkout rates are displayed
 
-<Callout type="info">
-  **Note**: Platform fee rates are determined by your Fanfare subscription plan and cannot be modified directly in the
-  settings.
-</Callout>
+<Info>
+  Your rates come from your Fanfare plan. Enterprise rates are negotiated with Fanfare and can't be changed in settings.
+</Info>
 
 ## Disconnecting
 

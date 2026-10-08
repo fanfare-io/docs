@@ -1,0 +1,105 @@
+---
+title: Pricing
+description: Fanfare plans, what each plan includes, and the Fanfare checkout fee on paid orders
+---
+Fanfare pricing has two parts: a plan subscription, and a percentage Fanfare takes on each paid order processed through Fanfare checkout. Stripe bills its own processing fees directly to your Stripe account.
+
+## Plans
+
+| Plan           | Price        | Fanfare checkout: draws, queues, auctions | Fanfare checkout: timed releases |
+| -------------- | ------------ | ----------------------------------------- | -------------------------------- |
+| **Starter**    | $0           | 3.5%                                      | 1.75%                            |
+| **Growth**     | $199/month   | 2.75%                                     | 1.25%                            |
+| **Pro**        | $799/month   | 2.25%                                     | 1.0%                             |
+| **Enterprise** | Custom quote | Negotiated                                | Negotiated                       |
+
+Each plan has one rate per experience type, with no fixed per-order component.
+
+## Features by Plan
+
+Each plan includes everything in the plan before it.
+
+| Feature                                                          | Starter | Growth | Pro | Enterprise |
+| ---------------------------------------------------------------- | :-----: | :----: | :-: | :--------: |
+| Timed releases, queues, draws and auctions                       | ✓       | ✓      | ✓   | ✓          |
+| Waitlists                                                        | ✓       | ✓      | ✓   | ✓          |
+| Appointments                                                     |         | ✓      | ✓   | ✓          |
+| Hosted experience pages (create, publish, custom domains)        |         | ✓      | ✓   | ✓          |
+| Design Studio templates                                          |         | ✓      | ✓   | ✓          |
+| Audiences (create, import, sync, membership rules)               |         | ✓      | ✓   | ✓          |
+| Marketing integrations (Klaviyo, Mailchimp, SendGrid, Instagram) |         | ✓      | ✓   | ✓          |
+| Loyalty tiers                                                    |         |        | ✓   | ✓          |
+| Wallet passes                                                    |         |        | ✓   | ✓          |
+
+<Note>
+Plans control what you can create and publish. They never limit consumers entering a live experience, the notifications consumers receive, or pages and experiences you have already published. If you move to a lower plan, existing experiences, pages and integrations keep working, and you can still unpublish, archive, delete or disconnect them. Creating, publishing or editing a feature outside your new plan requires upgrading.
+</Note>
+
+## Fanfare Checkout Fees
+
+When a consumer pays through Fanfare checkout, Fanfare takes a percentage of the order value. The rate depends on your plan and the experience type:
+
+- **Draws, queues and auctions** use the standard rate.
+- **Timed releases** use the timed release rate.
+- **Appointments** don't take payment through Fanfare checkout, so no fee applies.
+
+The fee is calculated on the order total and rounded to the nearest cent. It is collected as a Stripe application fee on each paid order, so the rest of the payment settles to your Stripe account.
+
+### Stripe Processing
+
+Stripe charges its processing fees, and any fees for Radar, 3D Secure or disputes, directly to your Stripe account at your Stripe rates. Fanfare's fee is separate from Stripe's. See [Stripe pricing](https://stripe.com/pricing) for Stripe's current rates.
+
+### Examples
+
+| Order | Experience     | Plan    | Rate  | Fanfare fee |
+| ----- | -------------- | ------- | ----- | ----------- |
+| $100  | Draw           | Starter | 3.5%  | $3.50       |
+| $100  | Timed release  | Starter | 1.75% | $1.75       |
+| $100  | Draw           | Pro     | 2.25% | $2.25       |
+
+Stripe's processing fee for each order is charged to your Stripe account in addition to the Fanfare fee.
+
+### When Your Plan Changes
+
+The rate is fixed when a consumer starts paying for an order. If your plan changes during a live experience, orders already in progress keep the rate they started with, and later orders use the new plan's rate.
+
+## Refunds
+
+| Refund                                                                                   | Fanfare fee |
+| ---------------------------------------------------------------------------------------- | ----------- |
+| You refund an order (a return, a goodwill gesture, a partial refund)                     | Kept        |
+| You refund a payment from your own Stripe Dashboard (connected existing Stripe accounts) | Kept        |
+| Fanfare refunds a held payment because no sale happened                                  | Returned    |
+
+When you refund an order, Fanfare keeps its fee, the same way Stripe keeps its processing fee. When Fanfare releases a held payment because the consumer did not win or the purchase was voided, no sale happened, so the fee is returned with the refund.
+
+If you believe a fee should be returned in another case, contact [billing@fanfare.io](mailto:billing@fanfare.io). Fee returns outside these cases are reviewed case by case, and you can't reverse the fee from your own Stripe Dashboard.
+
+## Disputes
+
+Stripe charges its dispute fee to your Stripe account. If you lose a dispute, Fanfare keeps its fee on the order.
+
+## Payouts
+
+Payouts follow your Stripe payout schedule. If you use Instant Payouts, Stripe charges its Instant Payout fee to your Stripe account.
+
+## Enterprise
+
+Enterprise plans include every feature and negotiated checkout rates. Contact [sales@fanfare.io](mailto:sales@fanfare.io) to discuss your requirements.
+
+## Shopify
+
+<Info>
+Fanfare for Shopify is billed through Shopify — details at launch.
+</Info>
+
+## Related Guides
+
+<CardGroup cols={2}>
+  <Card title="Billing Overview" icon="credit-card" href="/dashboard/billing/overview">
+    Manage your subscription and payment methods
+  </Card>
+  <Card title="Settings" icon="gear" href="/dashboard/settings/overview">
+    Set up payments and view your checkout rates
+  </Card>
+</CardGroup>

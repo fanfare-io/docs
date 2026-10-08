@@ -631,7 +631,8 @@
           {
             "group": "Billing",
             "pages": [
-              "dashboard/billing/overview"
+              "dashboard/billing/overview",
+              "dashboard/billing/pricing"
             ]
           }
         ]
