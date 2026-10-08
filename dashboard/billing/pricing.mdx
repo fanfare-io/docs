@@ -73,6 +73,8 @@ The rate is fixed when a consumer starts paying for an order. If your plan chang
 
 When you refund an order, Fanfare keeps its fee, the same way Stripe keeps its processing fee. When Fanfare releases a held payment because the consumer did not win or the purchase was voided, no sale happened, so the fee is returned with the refund.
 
+If you refund part of a payment and Fanfare later refunds the rest because no sale happened, Stripe returns the whole Fanfare fee on that payment, including the share Fanfare kept on your earlier refund.
+
 If you believe a fee should be returned in another case, contact [billing@fanfare.io](mailto:billing@fanfare.io). Fee returns outside these cases are reviewed case by case, and you can't reverse the fee from your own Stripe Dashboard.
 
 ## Disputes
