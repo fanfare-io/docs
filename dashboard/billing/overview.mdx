@@ -1,152 +1,94 @@
 ---
 title: Billing Overview
-description: Manage your subscription, usage, and payment methods
+description: Manage your Fanfare plan, payment method, and invoices
 ---
-The Billing section allows you to manage your Fanfare subscription, monitor usage, update payment methods, and view your billing history.
+The Billing section is where you manage your Fanfare plan, keep your payment method current, and download invoices.
 
 ## Accessing Billing
 
-Navigate to **Billing** in the sidebar to view your subscription and usage details. The route is `/app/billing`.
+Navigate to **Billing** in the sidebar to view your plan and payment details. The route is `/app/billing`.
 
 {/* IMAGE_PLACEHOLDER
 Type: screenshot
 Page: /app/billing
-Shows: Billing page with current plan and usage metrics
-Annotations: Label the plan card, usage section, and management options
-Alt text: "Billing page showing current plan, usage metrics, and management options"
+Shows: Billing page with the current plan card, plans section, and payment and invoices section
+Annotations: Label the plan card, the plans section, and the payment and invoices section
+Alt text: "Billing page showing the current plan, available plans, and payment details"
 */}
 
 
-_Caption: The billing page shows your subscription details and usage_
+_Caption: The billing page shows your plan, the plans you can switch to, and your payment details_
 
 ## Current Plan
 
 ### Plan Information
 
-The main card displays your current subscription:
+The current plan card shows:
 
-| Information        | Description                    |
-| ------------------ | ------------------------------ |
-| **Plan Name**      | Your subscription tier         |
-| **Price**          | Monthly or annual cost         |
-| **Status**         | Active, Trial, Cancelled, etc. |
-| **Billing Period** | Current billing cycle dates    |
+| Information        | Description                                                  |
+| ------------------ | ------------------------------------------------------------ |
+| **Plan Name**      | Starter, Growth, Pro or Enterprise                           |
+| **Status**         | Trial, Active, Past due, Ends on a date, Cancelled            |
+| **Date**           | When your trial ends, your plan renews, or your access ends  |
 
 {/* IMAGE_PLACEHOLDER
 Type: screenshot
 Page: /app/billing
 Shows: Current plan card with details
-Annotations: Highlight plan name and price
-Alt text: "Current plan card showing Pro Plan at $99/month"
+Annotations: Highlight plan name and status
+Alt text: "Current plan card showing the Growth plan"
 */}
 
 
-_Caption: View your current subscription details_
+_Caption: View your current plan_
 
 ### Plan Tiers
 
-| Plan           | Price     | Entries/Month | Features                    |
-| -------------- | --------- | ------------- | --------------------------- |
-| **Free**       | $0        | 100           | Basic features              |
-| **Basic**      | $29/month | 10,000        | Standard features           |
-| **Pro**        | $99/month | 100,000       | Advanced features           |
-| **Enterprise** | Custom    | Unlimited     | Custom features and support |
+| Plan           | Price      |
+| -------------- | ---------- |
+| **Starter**    | $0         |
+| **Growth**     | $199/month |
+| **Pro**        | $799/month |
+| **Enterprise** | Custom     |
+
+Paid plans are billed monthly. See [Pricing](/dashboard/billing/pricing) for what each plan includes and its Fanfare checkout rates.
 
 ### Trial Period
 
-If you're on a trial:
+A new organization that signs up for Growth or Pro, billed through Fanfare, starts with a 5-day trial of that plan. During the trial:
 
-| Information        | Description                |
-| ------------------ | -------------------------- |
-| **Trial Ends**     | Date when trial expires    |
-| **Upgrade Prompt** | Link to choose a paid plan |
-| **Trial Features** | Access to all Pro features |
+| Information        | Description                                                                         |
+| ------------------ | ----------------------------------------------------------------------------------- |
+| **Features**       | Everything in the plan you're trialling, at that plan's Fanfare checkout rates      |
+| **Payment method** | Not required to start; add one before the trial ends to keep the plan               |
+| **Plan changes**   | Need a payment method on file                                                       |
+| **Trial ends**     | With a payment method, the plan continues and the first charge is made; without one, the subscription is cancelled and the organization moves to Starter |
 
-{/* IMAGE_PLACEHOLDER
-Type: screenshot
-Page: /app/billing
-Shows: Trial banner with countdown
-Annotations: Highlight days remaining and upgrade button
-Alt text: "Trial banner showing 14 days remaining with upgrade option"
-*/}
-
-
-_Caption: Trial information shows when your trial ends_
-
-## Usage Metrics
-
-### Usage Overview
-
-Track your consumption against plan limits:
-
-| Metric                   | Description                        |
-| ------------------------ | ---------------------------------- |
-| **Total Entries**        | All experience entries this period |
-| **Queue Entries**        | Queue-specific entries             |
-| **Draw Entries**         | Draw/lottery entries               |
-| **Auction Entries**      | Auction bids                       |
-| **Appointment Bookings** | Appointments scheduled             |
+Enterprise plans have no trial.
 
 {/* IMAGE_PLACEHOLDER
 Type: screenshot
 Page: /app/billing
-Shows: Usage breakdown cards with progress bars
-Annotations: Highlight usage percentages and limits
-Alt text: "Usage breakdown showing entries by type with progress toward limits"
+Shows: Current plan card in the trial state with the trial end date
+Annotations: Highlight the trial end date and the add payment method button
+Alt text: "Current plan card showing the trial end date and an add payment method button"
 */}
 
 
-_Caption: Monitor usage across different entry types_
-
-### Usage Progress
-
-Progress bars show consumption relative to limits:
-
-| Progress Level | Color  | Action Needed                   |
-| -------------- | ------ | ------------------------------- |
-| **0-75%**      | Green  | Normal usage                    |
-| **75-90%**     | Yellow | Consider upgrading              |
-| **90-100%**    | Red    | Near limit, upgrade recommended |
-| **100%+**      | Red    | At limit, may be throttled      |
-
-### Detailed Usage
-
-For more detailed usage analytics:
-
-1. Click **Detailed Usage**
-2. View usage by time period
-3. See trends and projections
-4. Export usage data
-
-{/* IMAGE_PLACEHOLDER
-Type: screenshot
-Page: /app/billing/usage
-Shows: Detailed usage charts by metric
-Annotations: Highlight the time period selector and charts
-Alt text: "Detailed usage page with charts showing entry volume over time"
-*/}
-
-
-_Caption: View detailed usage analytics and trends_
+_Caption: The plan card shows when your trial ends_
 
 ## Billing Management
 
 ### Payment Methods
 
-Manage your payment methods:
-
-| Action           | Description                  |
-| ---------------- | ---------------------------- |
-| **View Current** | See card on file             |
-| **Update Card**  | Change payment method        |
-| **Add Backup**   | Add secondary payment method |
+The **Payment & invoices** section shows the card on file, its expiry, and your next invoice. Click **Add payment method** or **Update payment method** to change the card in Stripe's billing portal.
 
 {/* IMAGE_PLACEHOLDER
 Type: screenshot
 Page: /app/billing
-Shows: Payment method section showing card details
-Annotations: Highlight last 4 digits and manage button
-Alt text: "Payment method showing Visa ending in 4242 with manage option"
+Shows: Payment and invoices section showing card details
+Annotations: Highlight last 4 digits and the update button
+Alt text: "Payment method showing Visa ending in 4242 with update option"
 */}
 
 
@@ -154,81 +96,65 @@ _Caption: View and manage your payment method_
 
 ### Managing Payment via Stripe
 
-Payment management is handled through Stripe's secure portal:
+Payment details are handled through Stripe's secure billing portal:
 
-1. Click **Manage** on the billing page
-2. Redirected to Stripe billing portal
-3. Update card, view invoices, etc.
+1. Click **Open billing portal** on the billing page
+2. You're redirected to Stripe's billing portal
+3. Update your card or billing details, or download invoices
 4. Return to Fanfare when done
-
-### Billing Portal Features
-
-Through the Stripe portal you can:
-
-| Feature                 | Description                |
-| ----------------------- | -------------------------- |
-| **Update Card**         | Change your payment method |
-| **View Invoices**       | Download past invoices     |
-| **Billing History**     | See all transactions       |
-| **Cancel Subscription** | Cancel your plan           |
 
 ## Changing Plans
 
-### Upgrading
+### Upgrading or Downgrading
 
-To upgrade to a higher tier:
+To switch plans:
 
-1. Click **View All Plans**
-2. Select the desired plan
-3. Confirm the upgrade
-4. New limits apply immediately
+1. Go to the **Plans** section of the billing page
+2. Click **Upgrade to** or **Switch to** on the plan you want
+3. Choose when the change takes effect
+4. Review the proration details and click **Confirm Change**
 
-### Downgrading
+For Enterprise, click **Contact sales**.
 
-To downgrade to a lower tier:
+### When Changes Apply
 
-1. Click **View All Plans**
-2. Select the lower plan
-3. Downgrade takes effect at period end
-4. Current period maintains existing limits
+| Option                             | When Applied                                                       |
+| ---------------------------------- | ------------------------------------------------------------------ |
+| **Change immediately**             | Now, with a prorated credit for unused time and a charge for the new plan |
+| **Change at end of billing period** | At your next renewal                                              |
 
-### Plan Changes
-
-| Change Type      | When Applied                  |
-| ---------------- | ----------------------------- |
-| **Upgrade**      | Immediately, pro-rated        |
-| **Downgrade**    | End of current billing period |
-| **Cancellation** | End of current billing period |
+A new plan's features and Fanfare checkout rates apply from the moment the change takes effect. When you move to a lower plan, existing experiences, pages and integrations keep working; see [Pricing](/dashboard/billing/pricing) for what each plan lets you create and publish.
 
 ## Subscription Status
 
 ### Status Types
 
-| Status        | Description                  |
-| ------------- | ---------------------------- |
-| **Active**    | Subscription is current      |
-| **Trialing**  | On free trial period         |
-| **Past Due**  | Payment failed, grace period |
-| **Cancelled** | Will not renew               |
-| **Expired**   | No longer active             |
+| Status        | Description                                          | Plan in effect     |
+| ------------- | ---------------------------------------------------- | ------------------ |
+| **Trial**     | Trial of a paid plan                                 | The trialled plan  |
+| **Active**    | Subscription is current                              | Your plan          |
+| **Past Due**  | A payment failed                                     | Your plan          |
+| **Cancelled** | The subscription has ended                           | Starter            |
+| **Pending**   | The subscription is still being set up               | Starter            |
+| **Inactive**  | The subscription is inactive; contact support        | Starter            |
+
+The plan in effect sets both the features you can use and your Fanfare checkout rates.
 
 ### Past Due Status
 
 If your payment fails:
 
-1. You receive email notification
-2. Grace period begins
-3. Update payment method
-4. Service continues during grace
+1. The billing page shows that your last payment didn't go through
+2. Your plan stays in effect
+3. Update your payment method to settle the invoice
 
 ### Cancelled Status
 
-After cancellation:
+After a cancellation takes effect:
 
-1. Access continues until period end
-2. Download any needed data
-3. Reactivate anytime before expiry
-4. Plan converts to Free after expiry
+1. Your organization moves to Starter
+2. Your settings and data stay in place
+3. Reactivate on a paid plan at any time
 
 ## Invoices and Receipts
 
@@ -237,8 +163,8 @@ After cancellation:
 Access your invoice history:
 
 1. Go to Billing
-2. Click **Manage** to open portal
-3. View invoices in Stripe portal
+2. Click **Open billing portal**
+3. View invoices in Stripe's billing portal
 4. Download PDF invoices
 
 ### Invoice Contents
@@ -258,9 +184,10 @@ Access your invoice history:
 To cancel:
 
 1. Go to Billing
-2. Click **Cancel Subscription**
-3. Complete cancellation flow
-4. Confirm the cancellation
+2. Click **Cancel subscription**
+3. Choose a reason and, optionally, share feedback
+4. Choose when to cancel
+5. Click **Confirm Cancellation**
 
 {/* IMAGE_PLACEHOLDER
 Type: screenshot
@@ -273,77 +200,59 @@ Alt text: "Subscription cancellation option with cancel button"
 
 _Caption: Cancel your subscription from the billing page_
 
-### Cancellation Flow
+### Cancellation Timing
 
-The cancellation process includes:
+| Option                        | What Happens                                              |
+| ----------------------------- | --------------------------------------------------------- |
+| **Cancel at end of period**   | Your plan stays in effect until the current period ends   |
+| **Cancel immediately**        | Your plan ends now                                        |
 
-1. Reason selection
-2. Retention offers
-3. Confirmation
-4. Final confirmation email
-
-### After Cancellation
-
-| What Happens           | Timing                |
-| ---------------------- | --------------------- |
-| **Access continues**   | Until period end      |
-| **No further charges** | Immediate             |
-| **Data retained**      | 30 days after expiry  |
-| **Can reactivate**     | Anytime before expiry |
+Either way, no refund is made for the current period, and once the cancellation takes effect your organization moves to Starter.
 
 ## Reactivation
 
-### Reactivating a Cancelled Subscription
+### Before the Period Ends
 
-If you've cancelled but want to continue:
+If you scheduled a cancellation and want to keep your plan, click **Keep subscription** on the billing page.
 
-1. Go to Billing
-2. Click **Reactivate**
-3. Confirm reactivation
-4. Subscription continues as normal
+### After Cancellation
 
-### Reactivating an Expired Subscription
-
-If your subscription has expired:
+If your subscription has been cancelled:
 
 1. Go to Billing
-2. Choose a plan
-3. Enter payment method
-4. Start new subscription
+2. Click **Reactivate**, or choose a plan in the **Plans** section
+3. Update your payment method if prompted
+4. Confirm reactivation; the new plan is charged from that day
 
 ## Shopify Billing
 
-If you're using Fanfare through Shopify:
+If you installed the Fanfare app from the Shopify App Store:
 
-| Feature          | Shopify Handling            |
-| ---------------- | --------------------------- |
-| **Billing**      | Through Shopify app charges |
-| **Payment**      | Via your Shopify account    |
-| **Invoices**     | Available in Shopify admin  |
-| **Cancellation** | Uninstall app in Shopify    |
+| Feature          | Shopify Handling                              |
+| ---------------- | --------------------------------------------- |
+| **Billing**      | Your Fanfare plan is on your Shopify invoice  |
+| **Plan changes** | From the Fanfare app in your Shopify admin    |
+| **Invoices**     | Available in Shopify admin                    |
+| **Cancellation** | In your Shopify admin                         |
 
 <Info>
-Shopify users manage billing through their Shopify admin, not directly in Fanfare.
+The billing page shows your Shopify-billed plan, but plan changes and payment details are managed in your Shopify admin, not in Fanfare.
 </Info>
 
-## Platform Fees
+## Fanfare Checkout Fees
 
-When using Stripe Connect for payments:
+When consumers pay through Fanfare checkout:
 
-| Fee Type         | Description               |
-| ---------------- | ------------------------- |
-| **Platform Fee** | Fanfare's transaction fee |
-| **Stripe Fees**  | Stripe's processing fees  |
-| **Net Revenue**  | Your earnings after fees  |
+| Fee             | Description                                                                |
+| --------------- | -------------------------------------------------------------------------- |
+| **Fanfare fee** | A percentage of each paid order, set by your plan and the experience type |
+| **Stripe fees** | Stripe's processing fees, charged directly to your Stripe account          |
+
+Fanfare checkout fees apply only to payments taken through Fanfare checkout, not to orders consumers pay for through Shopify's own checkout. Fanfare checkout currently takes payments in US dollars, for organizations whose Stripe account is based in the United States.
+
+See [Pricing](/dashboard/billing/pricing) for the rate on each plan, worked examples, and how refunds and disputes affect fees.
 
 ## Best Practices
-
-### Managing Usage
-
-1. **Monitor regularly** - Check usage weekly
-2. **Set alerts** - Get notified at thresholds
-3. **Plan for growth** - Upgrade before hitting limits
-4. **Review trends** - Understand usage patterns
 
 ### Billing Hygiene
 
@@ -368,15 +277,7 @@ When using Stripe Connect for payments:
 3. Try different browser
 4. Contact support
 
-### Usage Doesn't Match
-
-1. Check time period selected
-2. Verify metric definitions
-3. Compare with analytics
-4. Contact support if discrepancy
-
 ## Related Guides
 
-- [Settings](/dashboard/settings/overview) - Organization settings
-- [Analytics](/dashboard/analytics/overview) - Usage analytics
-- [Payments Settings](/dashboard/settings/integrations) - Payment configuration
+- [Pricing](/dashboard/billing/pricing) - Plans, features and Fanfare checkout fees
+- [Settings](/dashboard/settings/overview) - Organization and payment settings
