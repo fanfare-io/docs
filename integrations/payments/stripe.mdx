@@ -1,49 +1,45 @@
 ---
 title: "Stripe Integration"
-description: "Accept payments for auctions, pre-orders, and premium experiences with Stripe Connect"
+description: "Take payments through Fanfare checkout with a Stripe account that Fanfare sets up for you, or one you already have"
 ---
 
 ## Overview
 
-The Stripe integration enables payment processing for Fanfare experiences using Stripe Connect. This allows organizations to:
+Fanfare checkout takes consumer payments for draws, queues, auctions and timed releases through Stripe Connect. Payments settle to your organization's own Stripe account, and Fanfare takes its fee as an application fee on each payment.
 
-- Accept payments for auction wins
-- Process pre-order charges for queue and draw winners
-- Manage subscription billing for Fanfare itself
-- Split payments between the platform and connected accounts
+There are two ways to set up your Stripe account:
+
+| Setup path                               | How it works                                                                                                                                                                    | Where you manage the account                                        |
+| ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| **Set up payments**                      | Fanfare creates and manages a Stripe account for your organization. You give Stripe your business and bank details in Stripe-hosted onboarding. You pay Stripe's fees on the account. | Account, payout and payment screens embedded in **Settings** > **Payments** |
+| **Connect an existing Stripe account**   | You connect a Stripe account you already own by signing in to Stripe and authorizing Fanfare (OAuth).                                                                            | Your own Stripe Dashboard                                           |
 
 ## Prerequisites
 
-Before setting up the Stripe integration, you need:
-
-- A Stripe account (Standard or Express Connect account)
-- Stripe account must have charges enabled
-- Business verification completed in Stripe
+- Fanfare checkout currently takes payments in US dollars, for organizations whose Stripe account is based in the United States.
+- Stripe must have the business details it asks for before the account can take payments and pay out.
 
 ## How It Works
 
-Fanfare uses Stripe Connect in **Standard** mode, which means:
-
-1. Your organization connects an existing Stripe account to Fanfare
-2. Fanfare creates charges on behalf of your connected account
-3. Platform fees are automatically deducted from each transaction
-4. Payouts go directly to your Stripe account's bank account
+1. Your organization sets up or connects a Stripe account in **Settings** > **Payments**
+2. A consumer pays through Fanfare checkout, and the payment is made on your Stripe account
+3. Fanfare's fee is collected as a Stripe application fee on each payment
+4. Stripe charges its processing fees to your Stripe account at your Stripe rates
+5. Payouts go to your bank account on your Stripe payout schedule
 
 ```
 ┌─────────────┐     ┌─────────────┐     ┌─────────────┐
-│  Consumer   │────▶│   Fanfare   │────▶│   Stripe    │
-│  Payment    │     │   Platform  │     │   Connect   │
+│  Consumer   │────▶│   Fanfare   │────▶│ Your Stripe │
+│  payment    │     │  checkout   │     │   account   │
 └─────────────┘     └─────────────┘     └─────────────┘
-                           │                    │
-                           │   Platform Fee     │
-                           │◀──────────────────▶│
-                           │                    │
-                           │                    ▼
-                           │            ┌─────────────┐
-                           │            │    Your     │
-                           └───────────▶│   Stripe    │
-                                        │   Account   │
-                                        └─────────────┘
+                           ▲                    │
+                           │   Application fee  │
+                           └────────────────────┤
+                                                ▼
+                                         ┌─────────────┐
+                                         │ Your bank   │
+                                         │ (payouts)   │
+                                         └─────────────┘
 ```
 
 ## Setup
@@ -51,94 +47,83 @@ Fanfare uses Stripe Connect in **Standard** mode, which means:
 ### Step 1: Navigate to Payment Settings
 
 1. Go to **Settings** > **Payments** in the Fanfare admin
-2. You'll see the Stripe Connect card
+2. You'll see the **Stripe account** card
 
-### Step 2: Connect Your Stripe Account
+### Step 2a: Set Up Payments
 
-1. Click **Connect with Stripe**
-2. You'll be redirected to Stripe's OAuth flow
-3. Log in to your Stripe account (or create one)
+1. Click **Set up payments**
+2. Fanfare creates a Stripe account for your organization and opens Stripe-hosted onboarding
+3. Enter your business, identity and bank details
+4. You're returned to Fanfare
+
+If you leave onboarding before it's finished, click **Continue setup** to pick up where you left off.
+
+### Step 2b: Connect an Existing Stripe Account
+
+1. Click **Connect an existing Stripe account**
+2. You're redirected to Stripe
+3. Sign in to your Stripe account
 4. Authorize Fanfare to access your account
-5. You'll be redirected back to Fanfare
+5. You're redirected back to Fanfare
 
 ### Step 3: Verify Connection
 
-After connecting, you'll see:
+After setup, the Stripe account card shows:
 
-- Your Stripe account ID
-- Account display name
-- Connection status (Active, Pending, or Error)
-- Charges enabled status
-- Payouts enabled status
+- Account name and account ID
+- Email and country
+- The account's status: Active, Action needed or Setup not finished
 
-<Callout type="warning">
-  **Account Verification**: If your Stripe account requires additional verification, charges may be disabled until you
-  complete the verification in your Stripe dashboard.
-</Callout>
+<Warning>
+  **Account Verification**: If Stripe needs more information, payments or payouts can pause until you provide it.
+</Warning>
 
 ## Connection Status
 
 ### Status Indicators
 
-| Status           | Description                                         |
-| ---------------- | --------------------------------------------------- |
-| **Active**       | Account is fully connected and can process payments |
-| **Pending**      | Account connected but awaiting verification         |
-| **Error**        | Connection issue that needs attention               |
-| **Disconnected** | Account has been disconnected from Fanfare          |
+| Status                 | Description                                                    |
+| ---------------------- | -------------------------------------------------------------- |
+| **Active**             | The account can take payments                                  |
+| **Action needed**      | Stripe needs more information; payments or payouts can pause   |
+| **Setup not finished** | Stripe hasn't received the account's details yet               |
 
-### Charges Enabled
+### Providing What Stripe Asks For
 
-If charges are disabled:
+| Setup path                             | Where to update details                                                     |
+| -------------------------------------- | --------------------------------------------------------------------------- |
+| **Set up payments**                    | The embedded account screens in **Settings** > **Payments**                 |
+| **Connect an existing Stripe account** | Your Stripe Dashboard; click **Open Stripe Dashboard** on the Stripe account card |
 
-1. Log in to your Stripe dashboard
-2. Complete any pending verification requirements
-3. Fanfare will automatically update the status via webhooks
+Fanfare updates the status automatically when Stripe reports a change.
 
-### Payouts Enabled
+### Managing a Fanfare-Created Account
 
-If payouts are disabled:
+For an account created with **Set up payments**, **Settings** > **Payments** embeds Stripe's screens for:
 
-1. Add a bank account in your Stripe dashboard
-2. Complete identity verification if required
-3. Status updates automatically via webhooks
+- **Account and bank details**
+- **Payouts**, including your payout schedule and Instant Payouts
+- **Payments and disputes**
+
+Refunds and captures are made by Fanfare, not from these screens.
 
 ## Webhooks
 
-Fanfare automatically receives updates from Stripe via webhooks:
-
-### Subscription Events
-
-| Event                           | Description              |
-| ------------------------------- | ------------------------ |
-| `customer.subscription.created` | New subscription created |
-| `customer.subscription.updated` | Subscription modified    |
-| `customer.subscription.deleted` | Subscription cancelled   |
-| `customer.subscription.paused`  | Subscription paused      |
-| `customer.subscription.resumed` | Subscription resumed     |
-
-### Payment Events
-
-| Event                           | Description                 |
-| ------------------------------- | --------------------------- |
-| `invoice.paid`                  | Invoice successfully paid   |
-| `invoice.payment_failed`        | Payment attempt failed      |
-| `payment_intent.succeeded`      | One-time payment successful |
-| `payment_intent.payment_failed` | One-time payment failed     |
-
-### Connect Account Events
+Fanfare receives updates from Stripe through webhooks, including:
 
 | Event                              | Description                       |
 | ---------------------------------- | --------------------------------- |
 | `account.updated`                  | Connected account details changed |
 | `account.application.deauthorized` | Account disconnected from Fanfare |
+| `payment_intent.succeeded`         | A payment succeeded               |
+| `payment_intent.payment_failed`    | A payment attempt failed          |
+| `charge.dispute.created`           | A consumer disputed a payment     |
 
 ### Webhook Security
 
-All Stripe webhooks are verified using HMAC-SHA256 signatures:
+All Stripe webhooks are verified using their signatures:
 
 ```typescript
-// Webhook signature verification
 const event = await stripe.webhooks.constructEventAsync(body, signature, webhookSecret);
 ```
 
@@ -168,19 +153,18 @@ See [Pricing](/dashboard/billing/pricing) for each plan's rates, worked examples
 To disconnect your Stripe account:
 
 1. Go to **Settings** > **Payments**
-2. Click **Disconnect** on the Stripe card
+2. Click **Disconnect** on the Stripe account card
 3. Confirm the disconnection
 
-<Callout type="warning">
-  **Warning**: Disconnecting will prevent any new charges from being processed. Existing subscriptions may be affected.
-</Callout>
+<Warning>
+  **Warning**: Disconnecting stops Fanfare checkout from taking payments until you set up payments again.
+</Warning>
 
 ### What Happens When You Disconnect
 
-- No new charges can be processed through Fanfare
-- Existing refunds can still be processed directly in Stripe
+- No new payments can be taken through Fanfare checkout
 - Historical transaction data remains in Fanfare
-- You can reconnect at any time with the same or different account
+- Your organization stays tied to the same Stripe account; to use a different Stripe account, contact support
 
 ## API Reference
 
@@ -205,9 +189,25 @@ GET /api/payment-providers/stripe/status
 }
 ```
 
-### Initiate Connection
+### Start Fanfare-Created Account Onboarding
 
-Get the OAuth URL to start the connection flow.
+Create the organization's Fanfare-created Stripe account, or reuse it, and get a Stripe-hosted onboarding link.
+
+```bash
+POST /api/payment-providers/stripe/onboarding-link
+```
+
+**Response:**
+
+```json
+{
+  "url": "https://connect.stripe.com/setup/..."
+}
+```
+
+### Connect an Existing Account
+
+Get the OAuth URL to connect an existing Stripe account.
 
 ```bash
 GET /api/payment-providers/stripe/auth/url
@@ -243,10 +243,10 @@ DELETE /api/payment-providers/stripe
 
 When a consumer wins an auction:
 
-1. Consumer receives winning notification with payment link
+1. Consumer receives a winning notification with a payment link
 2. Consumer enters payment details
-3. Charge is created on the connected Stripe account
-4. Platform fee is deducted
+3. The payment is made on your Stripe account
+4. Fanfare's application fee is collected
 5. Order is marked as paid
 
 ### Queue/Draw Winner Payments
@@ -258,41 +258,17 @@ For experiences with pre-set pricing:
 3. Time limit enforced for checkout completion
 4. Inventory released if payment not completed
 
-{/* TODO: MISSING_FUNCTIONALITY
-Feature: Automatic payment capture for pre-authorized amounts
-Expected behavior: Option to pre-authorize and capture later
-Current state: Direct charge only - no authorization/capture flow
-*/}
-
-## Testing
-
-### Test Mode
-
-For testing, use Stripe test mode credentials:
-
-1. Toggle to test mode in your Stripe dashboard
-2. Connect using test mode OAuth
-3. Use Stripe test cards for transactions
-
-### Test Card Numbers
-
-| Card               | Description        |
-| ------------------ | ------------------ |
-| `4242424242424242` | Successful payment |
-| `4000000000000002` | Declined payment   |
-| `4000000000009995` | Insufficient funds |
-
 ## Troubleshooting
 
 ### Common Issues
 
-**"Charges not enabled" warning**
+**"Action needed" on the Stripe account card**
 
-Your Stripe account requires verification.
+Stripe needs more information before the account can keep taking payments or paying out.
 
-- Log in to Stripe dashboard
-- Complete pending verification steps
-- Wait for Stripe to review (usually 1-2 business days)
+- **Set up payments**: provide the details in the embedded account screens in **Settings** > **Payments**
+- **Connected existing account**: complete the pending steps in your Stripe Dashboard
+- Wait for Stripe to review them
 
 **OAuth callback error**
 
@@ -302,29 +278,16 @@ The connection flow was interrupted.
 - Check that browser cookies are enabled
 - Try clearing cache and reconnecting
 
-**Webhook events not processing**
+**"This organization is tied to a different Stripe account"**
 
-Webhooks may not be reaching Fanfare.
-
-- Verify the webhook endpoint in Stripe dashboard
-- Check webhook signing secret matches
-- Review Stripe webhook logs for delivery failures
+Each organization uses one Stripe account. Connect the account your organization already uses, or contact support.
 
 **Account disconnected unexpectedly**
 
-The account owner may have revoked access.
+The account owner may have revoked Fanfare's access from their Stripe Dashboard.
 
-- Reconnect from Settings > Payments
+- Reconnect from **Settings** > **Payments**
 - Contact Stripe support if issue persists
-
-### Checking Webhook Delivery
-
-In your Stripe dashboard:
-
-1. Go to **Developers** > **Webhooks**
-2. Find the Fanfare endpoint
-3. Check recent delivery attempts
-4. Review any failed deliveries
 
 ## Security
 
@@ -348,15 +311,14 @@ In your Stripe dashboard:
 
 ## Limitations
 
-| Limitation            | Description                                    |
-| --------------------- | ---------------------------------------------- |
-| Standard Connect only | Express and Custom account types not supported |
-| Single account        | One Stripe account per organization            |
-| Currency              | Determined by connected account settings       |
-| Country availability  | Subject to Stripe's country availability       |
+| Limitation         | Description                                                                         |
+| ------------------ | ----------------------------------------------------------------------------------- |
+| Single account     | One Stripe account per organization                                                 |
+| Currency & country | Payments in US dollars, for organizations whose Stripe account is based in the United States |
 
 ## Related Resources
 
+- [Pricing](/dashboard/billing/pricing)
 - [Auction Payments](/dashboard/experiences/configure-auction)
 - [Order Management](/guides/checkout-integration/order-completion)
 - [Stripe Connect Documentation](https://stripe.com/docs/connect)
