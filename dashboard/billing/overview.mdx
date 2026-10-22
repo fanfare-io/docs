@@ -228,16 +228,21 @@ If your subscription has been cancelled:
 
 If you installed the Fanfare app from the Shopify App Store:
 
-| Feature          | Shopify Handling                              |
-| ---------------- | --------------------------------------------- |
-| **Billing**      | Your Fanfare plan is on your Shopify invoice  |
-| **Plan changes** | From the Fanfare app in your Shopify admin    |
-| **Invoices**     | Available in Shopify admin                    |
-| **Cancellation** | In your Shopify admin                         |
+| Feature          | Shopify Handling                                                                                   |
+| ---------------- | -------------------------------------------------------------------------------------------------- |
+| **Billing**      | Your Fanfare plan and Fanfare's cut on orders paid through Shopify's checkout are on your Shopify invoice |
+| **Plan changes** | On Shopify's plan page, which opens from the Fanfare app in your Shopify admin                     |
+| **Usage**        | The Usage page in the Fanfare app shows the cut recorded for each billing cycle                    |
+| **Invoices**     | Available in Shopify admin                                                                         |
+| **Cancellation** | In your Shopify admin                                                                              |
 
 <Info>
-The billing page shows your Shopify-billed plan, but plan changes and payment details are managed in your Shopify admin, not in Fanfare.
+The billing page shows your Shopify-billed plan. You change it on Shopify's plan page, and payment details are managed in your Shopify admin, not in Fanfare.
 </Info>
+
+When a consumer buys through a Fanfare experience and pays through Shopify's own checkout, Fanfare's cut is the rate for your plan and the experience type, the same rate as the Fanfare checkout fee. Shopify bills it as usage on your Shopify invoice. For a store whose currency is not US dollars, the cut is calculated on your store-currency sales and converted to USD at the daily reference rate on the order's paid date.\*
+
+\* paid date in UTC; each date's rate is fixed before that date begins.
 
 ## Fanfare Checkout Fees
 
@@ -248,7 +253,7 @@ When consumers pay through Fanfare checkout:
 | **Fanfare fee** | A percentage of each paid order, set by your plan and the experience type |
 | **Stripe fees** | Stripe's processing fees, charged directly to your Stripe account          |
 
-Fanfare checkout fees apply only to payments taken through Fanfare checkout, not to orders consumers pay for through Shopify's own checkout. Fanfare checkout currently takes payments in US dollars, for organizations whose Stripe account is based in the United States.
+Fanfare checkout fees apply to payments taken through Fanfare checkout. Orders from a Fanfare experience that consumers pay for through Shopify's own checkout carry Fanfare's cut instead, billed on your Shopify invoice (see [Shopify Billing](#shopify-billing)). Fanfare checkout currently takes payments in US dollars, for organizations whose Stripe account is based in the United States.
 
 See [Pricing](/dashboard/billing/pricing) for the rate on each plan, worked examples, and how refunds and disputes affect fees.
 
