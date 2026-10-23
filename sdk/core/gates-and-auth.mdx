@@ -229,7 +229,7 @@ Each organization has a verification mode, `botMitigation.mode`:
 | --- | --- |
 | `required` (default) | Every eligible consumer must pass the verification before entering, unless they have already passed it on this device. |
 | `risk_based` | Only consumers that Fanfare assesses as above low risk are challenged. |
-| `off` | No consumer is challenged. Admission grants are marked as exempt from verification. |
+| `off` | No consumer is challenged. |
 
 A pass is tied to the device key that earned it. A second tab in the same browser finds the pass, and a different browser does not.
 
@@ -237,7 +237,7 @@ A pass is tied to the device key that earned it. A second tab in the same browse
 
 Native apps cannot present the verification yet, so a native consumer stalls at the `bot_check` gate. An organization that serves native apps needs `mode: "off"` until native apps can present it.
 
-A mode change applies from the next routing call. Admission grants already issued keep their own lifetime, up to 15 minutes.
+A mode change applies from the next routing call. Consumers already cleared keep access until it expires, up to 15 minutes.
 
 ### Change the mode
 
