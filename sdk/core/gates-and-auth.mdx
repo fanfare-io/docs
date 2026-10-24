@@ -1,6 +1,6 @@
 ---
 title: Gates and Auth
-description: Handle authentication, access codes, and additional verification with the public journey contract.
+description: Handle authentication, external sign-in, device-bound sessions, access codes, and additional verification with the public journey contract.
 ---
 
 When a journey is `gated`, Fanfare is telling your application that the consumer must complete a public requirement before the journey can continue.
@@ -52,7 +52,7 @@ if (!auth.isAuthenticated) {
 }
 ```
 
-If your organization has its own authentication system, you can clear the `authentication` gate without OTP by exchanging a code your backend requests on the user's behalf — see [External Authentication](/guides/authentication/external-authentication).
+If your organization has its own authentication system, you can clear the `authentication` gate without OTP by exchanging a code your backend requests on the user's behalf — see [External Authentication](/guides/authentication/external-authentication) and [External sign-in](#external-sign-in) below. Every session is bound to the browser's device key; see [Device-bound sessions](#device-bound-sessions).
 
 ## Access codes
 
@@ -70,6 +70,140 @@ async function submitAccessCode(accessCode: string) {
 
 If the code is invalid, the journey may remain gated. Keep the consumer on the access-code UI and let the next `view$` value drive the message.
 
+## External sign-in
+
+If your organization has its own sign-in, three parties take part: the shopper's browser, your backend, and Fanfare. Your backend vouches for the shopper and obtains a one-time exchange code, and the browser redeems it for a session. The code is bound to the shopper's device key, so only the browser that started the sign-in can redeem it. Anyone who intercepts the code cannot use it, because they cannot sign with the shopper's key.
+
+1. **Read the thumbprint.** Before navigating to sign-in, the page reads the thumbprint (`jkt`) of the browser's device key.
+2. **Relay it to your backend.** The page sends the `jkt` to your own login route. Keep it on your backend, for example in the short-lived httpOnly cookie that already carries your `state` and PKCE verifier, and clear the cookie after the callback. Send it only to your own backend, never in a URL that reaches the identity provider.
+3. **Authorize with the `jkt`.** After your backend verifies the shopper's identity, it calls `POST /auth/external/authorize` with your secret key and the `jkt`. Fanfare returns an exchange code that is valid for 60 seconds.
+4. **Exchange in the browser.** The browser calls `sdk.auth.exchangeExternal({ exchangeCode })`. The SDK signs the request with the same device key, and Fanfare issues a session bound to that key.
+
+External sign-in needs `@fanfare-io/fanfare-sdk-core` and, for Shopify, `@fanfare-io/fanfare-sdk-shopify` at version `0.28.0` or later.
+
+### Read the thumbprint in the browser
+
+```ts
+import { getDeviceKeyThumbprint } from "@fanfare-io/fanfare-sdk-core/admission-proof";
+
+async function startSignIn() {
+  const jkt = await getDeviceKeyThumbprint();
+  window.location.assign(`/api/sign-in?jkt=${encodeURIComponent(jkt)}`);
+}
+```
+
+`getDeviceKeyThumbprint()` needs no SDK instance or provider, so it works from a sign-in link rendered anywhere on the page. It returns the SHA-256 JWK thumbprint of the key the SDK signs with, as 43 base64url characters, and creates the key on first use. Call it in the browser, from an event handler or an effect, never during server rendering.
+
+The function is exported from the `@fanfare-io/fanfare-sdk-core/admission-proof` subpath. The React and Solid packages do not re-export it, so add `@fanfare-io/fanfare-sdk-core` as a direct dependency of your app.
+
+When the browser has no device key that outlives the page, the call throws a `FanfareError` with the code `ADMISSION_PROOF_UNAVAILABLE`. `details.reason` says why:
+
+| `details.reason` | Meaning |
+| --- | --- |
+| `unsupported` | There is no `window` or WebCrypto: server rendering, or a page that is not a secure context. |
+| `tab_local_key` | The browser blocks the storage the key needs, so the SDK keeps the key in memory for this tab only. It would not survive the redirect to your sign-in. |
+| `key_error` | WebCrypto could not create the key. |
+
+When the call throws, do not start the external sign-in. Offer email or phone sign-in instead.
+
+### Authorize from your backend
+
+`jkt` is a required field of `POST /auth/external/authorize`. Add it to the request body described in [External Authentication](/guides/authentication/external-authentication):
+
+```json
+{
+  "provider": "auth0",
+  "issuer": "https://your-tenant.auth0.com/",
+  "subject": "auth0|64f1a2b3c4d5e6f7",
+  "jkt": "E9Gx2kZ0yq5oV3rN7sT1wU4aB8cD6fHjLmPqRtVxYzA"
+}
+```
+
+A request with a missing `jkt`, or one that is not exactly 43 base64url characters, gets a 400 validation error and no exchange code.
+
+The Shopify helpers take it as a required `jkt` option:
+
+```ts
+import { authorizeShopifyIdentity } from "@fanfare-io/fanfare-sdk-shopify/auth";
+
+const { exchangeCode } = await authorizeShopifyIdentity(identity, {
+  secretKey,
+  canonicalSubject,
+  jkt, // the thumbprint your login route stored for this sign-in
+});
+```
+
+`verifyAndAuthorizeShopifySession` takes the same option. A missing or malformed `jkt` throws `ShopifyAuthConfigurationError` before any request is sent. That is a defect in your own server's configuration, not a failed sign-in by the shopper, so surface it to your error reporting rather than to the shopper.
+
+### Exchange the code
+
+```ts
+await sdk.auth.exchangeExternal({ exchangeCode });
+```
+
+Fanfare compares the key that signed the exchange request with the `jkt` given at authorize.
+
+| Situation | Response |
+| --- | --- |
+| Signed by the key that matches the `jkt` | 200 with a session bound to that key. |
+| Signed by a different key, for example another browser or another origin | 401 `INVALID_CREDENTIALS`. The code is not used up, so the correct browser can still redeem it within its 60 seconds. |
+| No valid proof on the request | 401 `DPOP_PROOF_REQUIRED`. The SDK always signs, so this appears only with a custom client. |
+| Code expired or already redeemed | 401 `INVALID_CREDENTIALS`. |
+
+### Limits
+
+- **The key belongs to one origin.** `www.example.com` and `example.com` have different keys. A sign-in that starts on one and finishes on the other is refused at the exchange, so read the thumbprint and call `exchangeExternal` on the same origin.
+- **Storage-blocked browsers cannot use external sign-in.** The in-memory key such a browser falls back to does not survive the redirect, so `getDeviceKeyThumbprint()` throws `tab_local_key`. Guest sessions and email or phone sign-in still work in that browser.
+
+## Device-bound sessions
+
+Every consumer session is bound to a key pair that the SDK generates in the browser. The private key is non-extractable and stays on the device. The SDK signs requests with it, sending a DPoP proof in the `DPoP` header. A session token copied off the device does not work elsewhere, because a request that carries it must be signed by the key the session was created with.
+
+With the SDK there is nothing to configure. The SDK signs:
+
+- every request that carries a session token;
+- session creation: guest sessions, OTP verification and the external sign-in exchange;
+- session refresh.
+
+Requests authenticated with your secret key are not signed. An integration that calls the consumer API directly instead of through the SDK must sign these requests itself. A proof names the HTTP method, the URL, a unique id and the time of signing, and Fanfare accepts it within about a minute of its own clock. Use the SDK where you can.
+
+<Note>
+  Device-bound sessions need `@fanfare-io/fanfare-sdk-core`, `@fanfare-io/fanfare-sdk-react`, `@fanfare-io/fanfare-sdk-solid` and `@fanfare-io/fanfare-sdk-shopify` at version `0.28.0` or later. Older versions send unsigned requests. They cannot create a session, and Fanfare refuses their requests that carry one. Upgrade the packages together.
+</Note>
+
+### Error codes
+
+Two 401 codes belong to device binding. Custom error handlers that switch on error codes should treat both as authentication failures.
+
+| Code | When | What the SDK does |
+| --- | --- | --- |
+| `DPOP_PROOF_INVALID` | A request that carries a session has a missing, malformed, expired or replayed proof, or a proof signed by a key other than the session's. Verifying a bot check without the session's key returns it too. | Reads the server time from the response, signs again and replays the request once. A second refusal goes through normal re-authentication. |
+| `DPOP_PROOF_REQUIRED` | A session creation, meaning guest, OTP verification or external exchange, arrives without a valid proof. Nothing is created and no OTP attempt is used. | If the device clock was off, signs again with corrected time and retries once. Otherwise the error surfaces, and the widget offers no Retry because it would fail the same way. |
+
+A refresh signed by a key other than the one its refresh token was issued to returns 401 `INVALID_REFRESH_TOKEN`, and the SDK starts a clean re-authentication.
+
+### Keys and tabs
+
+- **One key per origin.** The SDK keeps the key in the browser's IndexedDB and serializes its creation across tabs, so every tab of an origin signs with the same key. A second tab receives the session from the first and keeps working.
+- **Storage-blocked browsers.** When IndexedDB cannot hold the key, the SDK keeps a non-extractable key in memory instead. The session lasts until the tab closes, and a reload starts a new guest session. Two such tabs are two separate guests.
+- **No WebCrypto.** A device without `crypto.subtle`, such as a page served over plain HTTP, cannot sign. The SDK throws `ADMISSION_PROOF_UNAVAILABLE`, sends nothing and gets no session, guest or authenticated. Widgets show no Retry, because it cannot succeed. Serve pages over HTTPS.
+
+### Native apps
+
+The iOS and Android SDKs carry the signing changes in source, but they have no release pipeline yet and are unsupported until one exists.
+
+### Rate limits and overload
+
+Session creation, OTP verification, experience routing and `GET /consumers/me` are rate limited per client. These responses are not specific to device binding, but custom clients see them:
+
+| Response | Meaning | What to do |
+| --- | --- | --- |
+| 429 `RATE_LIMITED` | A per-client limit was reached. | The SDK retries on its own when `Retry-After` is 30 seconds or less. A longer limit surfaces as an error, and the consumer retries later. |
+| 503 `OVERLOADED` | A Fanfare task is shedding load. | Retry. The SDK retries 5xx responses. |
+| 413 | The request body is over the size limit: 64 KB, or 16 KB on `/auth` routes. | No consumer route sends bodies that large. |
+
+A client that sends sustained, very high request volumes from one IP address can also be blocked before its requests reach Fanfare. That response carries no CORS headers, so a browser reports a network error instead of a status code, and the SDK does not retry mutations that fail this way.
+
 ## Additional verification
 
 For additional verification, render the verification experience your Fanfare contact has enabled for your account. When the user completes it, verify the challenge result and reroute.
@@ -86,3 +220,54 @@ async function completeVerification(challengeId: string, token: string) {
 ```
 
 Keep verification copy generic. The integration should not expose why a verification step appeared or how Fanfare evaluates access.
+
+### Verification mode
+
+Each organization has a verification mode, `botMitigation.mode`:
+
+| Mode | Behavior |
+| --- | --- |
+| `required` (default) | Every eligible consumer must pass the verification before entering, unless they have already passed it on this device. |
+| `risk_based` | Only consumers that Fanfare assesses as above low risk are challenged. |
+| `off` | No consumer is challenged. |
+
+A pass is tied to the device key that earned it. A second tab in the same browser finds the pass, and a different browser does not.
+
+`off` applies to the whole organization, web consumers included. A client cannot claim an exemption for itself.
+
+Native apps cannot present the verification yet, so a native consumer stalls at the `bot_check` gate. An organization that serves native apps needs `mode: "off"` until native apps can present it.
+
+A mode change applies from the next routing call. Consumers already cleared keep access until it expires, up to 15 minutes.
+
+### Change the mode
+
+Verification mode is part of the organization's settings. An authenticated organization administrator changes it with `PUT /settings` on the Admin API (`https://admin.fanfare.io/api`), or your Fanfare contact can change it for you. The request replaces the whole `botMitigation` object, so send every field:
+
+```http
+PUT /settings HTTP/1.1
+Host: admin.fanfare.io
+Content-Type: application/json
+
+{
+  "botMitigation": {
+    "enabled": true,
+    "mode": "off",
+    "challengeThreshold": 0.7,
+    "blockThreshold": 0.9,
+    "enabledChallengeTypes": ["turnstile_managed"]
+  }
+}
+```
+
+Settings you leave out of the request are unchanged. Verification only runs while `enabled` is `true`. To restore protection, send the same request with `"mode": "required"`. A stored setting without a `mode` resolves to `required`.
+
+### When verification is unavailable
+
+If Fanfare cannot verify a token because the verification service is unreachable, slow or answering with errors, `sdk.challenges.verify` fails with 503 `SERVICE_UNAVAILABLE` and a `Retry-After: 5` header. The check fails closed: the consumer is not let through. The failure does not use up one of the consumer's attempts, so the same token can be submitted again after the delay. If an outage lasts, setting `mode` to `off` is the operator's lever.
+
+### Frame and widget behavior
+
+- **Use the `iframeUrl` exactly as the gate returns it.** The frame posts its result only to the origin of the page that requested the challenge, and it ignores any `parentOrigin` query parameter you add. A frame for an expired or unknown challenge, or one that was created without an `Origin` header (a native WebView), renders a page that posts nothing.
+- **Second tab.** If another tab already solved the check, the React and Solid experience widgets reroute once instead of showing an error panel. Version `0.28.0` or later is required.
+- **Retry after expiry.** When a challenge has expired, the Retry button in the React and Solid widgets fetches a fresh challenge. Older versions keep showing "Verification unavailable" until the shopper refreshes the page, so use version `0.28.0` or later.
+- **Check again after entry.** A passed check lasts about an hour. If a consumer who has already entered (queued, in a draw, bidding or waitlisted) needs a fresh check to keep their access current, the React and Solid widgets show it over the current view, and the consumer keeps their place. While the consumer is in checkout, it appears only if an action that needs it is refused, which happens only on access-code or audience sequences. Headless integrations read `view.recheck`: render its `challenge`, verify the token with `sdk.challenges.verify`, then call `view.recheck.complete()`. Version `0.28.0` or later is required.
