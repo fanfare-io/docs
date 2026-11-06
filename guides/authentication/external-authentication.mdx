@@ -58,6 +58,7 @@ Content-Type: application/json
   "issuer": "https://your-tenant.auth0.com/",
   "subject": "auth0|64f1a2b3c4d5e6f7",
   "canonicalSubject": "person_9f2c1e",
+  "jkt": "E9Gx2kZ0yq5oV3rN7sT1wU4aB8cD6fHjLmPqRtVxYzA",
   "claims": {
     "email": "jamie@example.com",
     "fullName": "Jamie Rivera"
@@ -71,6 +72,7 @@ interface ExternalAuthorizeRequest {
   issuer: string; // Provider-scoped issuer — the OIDC `iss` claim, or an equivalent stable value
   subject: string; // Stable per-user identifier at that provider — the OIDC `sub` claim
   canonicalSubject?: string; // Optional: collapses this identity onto one consumer, see below (1-255 chars)
+  jkt: string; // The browser's device-key thumbprint from getDeviceKeyThumbprint(): 43 base64url characters
   claims?: {
     email?: string;
     fullName?: string;
@@ -79,6 +81,8 @@ interface ExternalAuthorizeRequest {
   };
 }
 ```
+
+`jkt` is required. The exchange code is bound to the device key it names, so only the browser that holds that key can redeem it. Your frontend reads the thumbprint with `getDeviceKeyThumbprint()` before sign-in starts and relays it to your backend. A request with a missing `jkt`, or one that is not 43 base64url characters, gets a 400 validation error and no exchange code. See [External sign-in](/sdk/core/gates-and-auth#external-sign-in) for how to read and relay it.
 
 **Response:**
 
