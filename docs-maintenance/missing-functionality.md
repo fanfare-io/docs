@@ -8,8 +8,8 @@ This is a repository maintenance inventory for docs that are missing, marked as 
 
 | Category | Count |
 | --- | ---: |
-| Files with `TODO: MISSING_FUNCTIONALITY`, `Coming Soon`, or `coming soon` | 35 |
-| Missing/coming-soon markers | 100 |
+| Files with `TODO: MISSING_FUNCTIONALITY`, `Coming Soon`, or `coming soon` | 34 |
+| Missing/coming-soon markers | 98 |
 | Files with stale SDK/API pattern hits | 34 |
 | Stale SDK/API pattern hits | 186 |
 
@@ -38,7 +38,6 @@ rg -n "@fanfare/(react|sdk|solid)|@waitify-io/fanfare-sdk|cdn\\.fanfare\\.io/sdk
 | Landing pages | `landing-pages/**` | Decide which landing-page features are real now, then replace coming-soon pages with supported workflows or remove public pages |
 | Third-party integrations | `integrations/analytics/**`, `integrations/marketing/**`, `integrations/webhooks/**`, `integrations/social/**`, `integrations/e-commerce/woocommerce.mdx` | Split by provider family; avoid publishing implementation claims until each provider path is confirmed |
 | Payments | `integrations/payments/paypal.mdx`, `integrations/payments/stripe.mdx` | Confirm supported payment integration surface and replace placeholders with real setup steps |
-| Messaging | `integrations/messaging/sendgrid.mdx` | Confirm messaging provider support and whether docs should describe direct integration or webhook-driven integration |
 | SDK examples | `guides/integration-patterns/**`, `guides/use-cases/**`, `guides/authentication/**` | Refresh examples against the current SDK docs; prioritize package names and `JourneyView` before polishing |
 | Dashboard integrations settings | `dashboard/settings/integrations.mdx` | Replace placeholder integrations UI once current settings surface is confirmed |
 
@@ -67,7 +66,6 @@ rg -n "@fanfare/(react|sdk|solid)|@waitify-io/fanfare-sdk|cdn\\.fanfare\\.io/sdk
 | 2 | `integrations/marketing/hubspot.mdx` |
 | 2 | `integrations/marketing/klaviyo.mdx` |
 | 2 | `integrations/marketing/mailchimp.mdx` |
-| 2 | `integrations/messaging/sendgrid.mdx` |
 | 2 | `integrations/payments/paypal.mdx` |
 | 2 | `integrations/social/facebook.mdx` |
 | 2 | `integrations/social/instagram.mdx` |
@@ -214,8 +212,6 @@ rg -n "@fanfare/(react|sdk|solid)|@waitify-io/fanfare-sdk|cdn\\.fanfare\\.io/sdk
 | `dashboard/settings/integrations.mdx:40` | dashboard | / **HubSpot** / CRM / Coming Soon / | align settings UI docs with supported integrations |
 | `dashboard/settings/integrations.mdx:41` | dashboard | / **Salesforce** / CRM / Coming Soon / | align settings UI docs with supported integrations |
 | `dashboard/settings/integrations.mdx:52` | dashboard | / **Coming Soon** / Not yet available / | align settings UI docs with supported integrations |
-| `integrations/messaging/sendgrid.mdx:8` | integrations | TODO: MISSING_FUNCTIONALITY marker | confirm provider support; rewrite as supported setup or roadmap |
-| `integrations/messaging/sendgrid.mdx:14` | integrations | <Callout type="warning">**Coming Soon**: SendGrid integration is planned for a future release.</Callout> | confirm provider support; rewrite as supported setup or roadmap |
 | `integrations/webhooks/make.mdx:8` | integrations | TODO: MISSING_FUNCTIONALITY marker | confirm provider support; rewrite as supported setup or roadmap |
 | `integrations/webhooks/make.mdx:14` | integrations | <Callout type="warning">**Coming Soon**: The Make integration is under development.</Callout> | confirm provider support; rewrite as supported setup or roadmap |
 | `integrations/webhooks/zapier.mdx:8` | integrations | TODO: MISSING_FUNCTIONALITY marker | confirm provider support; rewrite as supported setup or roadmap |
