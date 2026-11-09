@@ -29,7 +29,6 @@
           {
             "group": "Messaging",
             "pages": [
-              "integrations/messaging/sendgrid",
               "integrations/messaging/twilio",
               "integrations/messaging/resend"
             ]

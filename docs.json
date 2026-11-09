@@ -242,7 +242,6 @@
                   "api/openapi/admin-api.json GET /audiences/groups/{groupId}/members",
                   "api/openapi/admin-api.json POST /audiences/import/klaviyo",
                   "api/openapi/admin-api.json POST /audiences/import/mailchimp",
-                  "api/openapi/admin-api.json POST /audiences/import/sendgrid",
                   "api/openapi/admin-api.json POST /audiences/loyalty-tiers",
                   "api/openapi/admin-api.json PUT /audiences/loyalty-tiers/{groupId}"
                 ]
