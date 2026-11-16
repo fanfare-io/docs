@@ -167,6 +167,7 @@
             "group": "Platform Integrations",
             "pages": [
               "guides/platform-integrations/shopify",
+              "guides/platform-integrations/shopify-storefront-setup",
               "guides/platform-integrations/woocommerce",
               "guides/platform-integrations/custom-platform"
             ]

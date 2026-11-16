@@ -82,69 +82,11 @@ const experience = await fanfareAdmin.experiences.create({
 });
 ```
 
-## Step 2: Theme App Extension
+## Step 2: Storefront Setup
 
-The Fanfare Shopify app includes a theme app extension for easy embedding.
+The app is not live on your storefront until its checkout rule is on and the **Fanfare Product Widget** block is on your product template. The widget takes the place of your buy buttons while a product has a live experience; products without one keep your theme's normal buy buttons.
 
-### Adding to Product Pages
-
-1. Open **Online Store** > **Themes** > **Customize**
-2. Navigate to your product template
-3. Add the **Fanfare Experience** block
-4. Configure the block settings:
-
-| Setting           | Description                    |
-| ----------------- | ------------------------------ |
-| Experience Source | Product metafield or manual ID |
-| Display Mode      | Inline, modal, or full-page    |
-| Auto-redirect     | Redirect to cart on admission  |
-| Show countdown    | Display time remaining         |
-
-### Block Configuration (Liquid)
-
-```liquid
-{% comment %} sections/fanfare-experience.liquid {% endcomment %}
-{% schema %}
-{
-  "name": "Fanfare Experience",
-  "settings": [
-    {
-      "type": "text",
-      "id": "experience_id",
-      "label": "Experience ID",
-      "info": "Leave blank to use product metafield"
-    },
-    {
-      "type": "select",
-      "id": "display_mode",
-      "label": "Display Mode",
-      "options": [
-        { "value": "inline", "label": "Inline" },
-        { "value": "modal", "label": "Modal" },
-        { "value": "fullpage", "label": "Full Page" }
-      ],
-      "default": "inline"
-    },
-    {
-      "type": "checkbox",
-      "id": "auto_redirect",
-      "label": "Auto-redirect to cart on admission",
-      "default": true
-    }
-  ]
-}
-{% endschema %}
-
-<div
-  id="fanfare-experience-{{ section.id }}"
-  class="fanfare-experience"
-  data-experience-id="{{ section.settings.experience_id | default: product.metafields.fanfare.experience_id }}"
-  data-display-mode="{{ section.settings.display_mode }}"
-  data-auto-redirect="{{ section.settings.auto_redirect }}"
-  data-product-id="{{ product.id }}"
-  data-variant-id="{{ product.selected_or_first_available_variant.id }}"
-></div>
-```
+Follow [Shopify Storefront Setup](/guides/platform-integrations/shopify-storefront-setup) for both steps, the block's settings, and how to restyle the widget. In the app, **Settings → Storefront setup** shows the status of each step.
 
 ## Step 3: JavaScript Integration
 
