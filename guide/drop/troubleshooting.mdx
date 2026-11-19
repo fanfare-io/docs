@@ -1,0 +1,166 @@
+---
+title: Troubleshooting a live drop
+description: What causes the problems operators and customers report while a drop is live, what you can do about each one now, and where the full rule is explained.
+---
+
+Use this page when something goes wrong while a drop is running. Most changes you make during a drop reach customers as soon as you save: see [Change things mid-drop](/guide/drop/live-controls). Deactivate cannot be undone: see [Stop a drop](/guide/drop/deactivate).
+
+You are looking at the experience in the admin while it is **Live**. A sequence is one way in to an experience, and Fanfare places each customer in exactly one.
+
+## Customers can't get in
+
+{/* image: guide-drop-troubleshooting-access-unavailable */}
+
+<AccordionGroup>
+  <Accordion title="'Access unavailable': 'This experience is for members of a specific group.'">
+    The customer is signed in but is not in the audience of any sequence that would take them. Signing in again does not help. Check that they are a member, and that the audience's first build has finished: an audience that reads **Not built yet**, **Building**, **Queued** or **Build failed** admits nobody. See [Audiences and access codes](/concepts/audiences) and [Sequences and routing](/concepts/sequences).
+  </Accordion>
+  <Accordion title="'No current access window'">
+    The sequence the customer was placed in has no open or upcoming window. Check that sequence's distributions and their schedule. See [Sequences and routing](/concepts/sequences) and [What your customers see](/guide/drop/what-customers-see).
+  </Accordion>
+  <Accordion title="Customers land in the wrong sequence, such as members seeing the public draw">
+    An open sequence always comes before an upcoming one, whatever the priority numbers. Among sequences in the same state, one the customer can enter right away wins over one that still needs sign-in or a code, and after that the lower priority number wins. Priority follows the order you created sequences in and cannot be changed in the admin. Also check that the members are signed in: Fanfare cannot tell a member who has not signed in. See [Sequences and routing](/concepts/sequences).
+  </Accordion>
+  <Accordion title="'Invalid access code'">
+    The customer typed a code that does not match the sequence's current code. If you changed the code, the old one stops working straight away for anyone who has not yet got in. Give customers the current code, or set the old one again on the sequence's **Access** tab. Turning the code off does not cause this message: it removes only the code, and the sequence's audience and sign-in still apply. Access codes are not case-sensitive, so capitalisation is not the cause. See [Add and gate sequences](/guide/create/sequences).
+  </Accordion>
+  <Accordion title="Guests are asked to sign in and see no 'Continue as guest'">
+    Guest entry is offered only when the sequence has no audience and every open or scheduled distribution in it has **Allow guest access** on. An auction or appointment that is open or scheduled never allows guests, so it makes the whole sequence ask for sign-in. See [Sequences and routing](/concepts/sequences).
+  </Accordion>
+  <Accordion title="'Too many failed verification attempts. Please try again later.'">
+    The customer failed the verification check too often. They can try again after the time the widget shows beside "Blocked until". There is nothing to change in the admin.
+  </Accordion>
+</AccordionGroup>
+
+## Nobody is being let in
+
+{/* image: guide-drop-troubleshooting-paused-queue */}
+
+<AccordionGroup>
+  <Accordion title="The queue shows a Paused badge">
+    Someone paused the queue. Customers already in line keep their place, but nobody new is let in. Select **Resume queue** in the menu on the queue's card to go back to the rate it had. See [Change things mid-drop](/guide/drop/live-controls).
+  </Accordion>
+  <Accordion title="Nobody is let in, but there is no Paused badge and no Resume queue">
+    **Admit rate** was set to 0 in **Edit**. Setting **Admit rate** to 0 is not a pause, so there is no rate to resume to. Open **Edit** on the queue's card and set **Admit rate** back. See [Change things mid-drop](/guide/drop/live-controls).
+  </Accordion>
+  <Accordion title="Customers in the queue see 'Entry is paused. Your place in line is saved.'">
+    The queue has no unit it can let anyone in to right now: every unit still on sale is held by a customer in checkout, or the sequence's stock is not ready yet. The line moves again when a checkout lapses or when you add units with **Move units**. Once everything has sold, customers see "Everything claimed" instead. To check the stock, open the sequence's **Stock** card. "Not counting yet", "Counting is paused" or "Held: stock" there means the stock is not ready, and the card names the cause where it can, with the fix, such as **Resolve** for an over-allocated size. A sequence with more than 256 size combinations also lets nobody in: see the next section. If nothing on the card explains it, contact support. See [Stock](/concepts/stock) and [Change things mid-drop](/guide/drop/live-controls).
+  </Accordion>
+</AccordionGroup>
+
+## Sold out sooner than expected
+
+<AccordionGroup>
+  <Accordion title="A size shows sold out at or soon after opening">
+    For a size whose stock Fanfare manages, a size nobody gave a number starts at 0 and opens sold out. Once a drop is live, a size can only go up: add units with **Move units**, from **Unassigned** or another sequence, or raise the size in **Edit allocations** by up to the experience's unassigned units. A sequence that offers more than 256 size combinations refuses new customers with "More than 256 size combinations: new shoppers are refused". It needs fewer products or sizes, but the sequence's products cannot change while a distribution in it is open, settling or still holding entrants. See [Allocate stock to a drop](/guide/create/stock-allocation) and [Change things mid-drop](/guide/drop/live-controls).
+  </Accordion>
+  <Accordion title="A draw's winner count changed on its own">
+    Moving units into a draw's sequence raises its winner count, and moving units out lowers it, while the draw is still selecting winners. See [Change things mid-drop](/guide/drop/live-controls).
+  </Accordion>
+</AccordionGroup>
+
+## Customers got in but did not buy
+
+<AccordionGroup>
+  <Accordion title="A customer's time to pay ran out">
+    Their payment window lapsed. The expiry email and text say they can enter again, but a draw never picks the same winner twice, and a lapsed English auction win stays unsold. The widget shows what is possible. A card hold placed early lasts about a week, and a customer whose hold expires before they are selected loses their allocation. See [What your customers see](/guide/drop/what-customers-see) and [Admission and the payment window](/concepts/admission-and-payment).
+  </Accordion>
+</AccordionGroup>
+
+## Customers did not get a message
+
+<AccordionGroup>
+  <Accordion title="A guest who won or was let in heard nothing">
+    Guests get no messages at all. A guest finds out only if they have the page open. See [What your customers see](/guide/drop/what-customers-see).
+  </Accordion>
+  <Accordion title="A customer joined the waitlist and got no confirmation">
+    Customers who join a waitlist themselves get no confirmation. Only people you add in the admin do. See [Invites, waitlist and access-code sends](/guide/create/invites-and-waitlist).
+  </Accordion>
+  <Accordion title="The 'opens soon' email showed a name such as 'Queue 2'">
+    The message uses the distribution's name exactly as you typed it in the admin. See [Invites, waitlist and access-code sends](/guide/create/invites-and-waitlist).
+  </Accordion>
+</AccordionGroup>
+
+## The numbers look wrong
+
+<AccordionGroup>
+  <Accordion title="Live now is much bigger than the queue, or Waiting in queue reads 0 for a draw">
+    **Live now** adds people in line for a queue to everyone who has entered so far for every other type. Only queues have a live screen of their own, so a draw, auction, timed release or appointment shows **Waiting in queue** as 0. Read **Entrants** for those. See [Watch a live drop](/guide/drop/watch-live).
+  </Accordion>
+  <Accordion title="Entries on Home does not match Entrants, or Paid orders includes refunds">
+    **Entries** on **Home** (the page titled **Dashboard**) counts every entry, so one customer who enters three distributions counts three times. **Entrants** on **Performance** counts different customers. **Paid orders** also counts fully refunded orders. See [Read your results](/guide/learn/performance).
+  </Accordion>
+  <Accordion title="The figures stopped updating">
+    On **Home**, auto-refresh turns itself off after an error and reads **Auto-refresh Off**: select it to turn it back on, or select **Refresh**. The live screens pause while the browser tab is hidden and catch up when you return to it. See [Read your results](/guide/learn/performance) and [Watch a live drop](/guide/drop/watch-live).
+  </Accordion>
+</AccordionGroup>
+
+## You can't change something
+
+<AccordionGroup>
+  <Accordion title="Save is greyed out or refused, or a setting shows Locked">
+    Some settings lock when a distribution opens, and a closed distribution's schedule cannot move. **Save** also stays greyed out while a field fails its check, such as a window that overlaps another distribution in the sequence. See [Change things mid-drop](/guide/drop/live-controls) and [What locks, and when](/concepts/what-locks-when).
+  </Accordion>
+  <Accordion title="'Publishing is frozen' when you republish the hosted page">
+    Republishing a live page is frozen from shortly before a distribution opens until it closes, or, for a distribution with no close time, until shortly after it opens. You can override it by typing PUBLISH and selecting **Override freeze and publish**, which changes the page customers are looking at. See [Build and publish the hosted page](/guide/create/hosted-page).
+  </Accordion>
+  <Accordion title="An audience rule change or Refresh now has no effect">
+    While a distribution in a sequence the audience gates is taking entries, a **Dynamic** audience that has already been built is **Held**: full rebuilds wait, **Refresh now** is refused, and a rule change reaches the whole list when the drop closes, though a customer whose own details change is re-checked straight away. There is no hold while any distribution taking entries is a queue, timed release or appointment with no **Closes**. See [Audiences and access codes](/concepts/audiences).
+  </Accordion>
+</AccordionGroup>
+
+## After you stopped something
+
+<AccordionGroup>
+  <Accordion title="You deactivated one sequence and the public page shows the whole experience as ended">
+    Deactivating any one distribution or sequence shows the whole experience as ended on your public page, and there is no way to keep it open for the others. See [Stop a drop](/guide/drop/deactivate).
+  </Accordion>
+  <Accordion title="'Deactivated, but the change has not reached every live page yet. Deactivate again to finish it.'">
+    Deactivate again. Delete is also refused for a while after Deactivate, even though the button looks available: about 90 minutes with the default payment window. Wait and try again. See [Stop a drop](/guide/drop/deactivate).
+  </Accordion>
+</AccordionGroup>
+
+## On Shopify
+
+Everything above applies in the Fanfare app in Shopify, where appointments are not offered. These problems are specific to Shopify.
+
+<AccordionGroup>
+  <Accordion title="Someone bought a protected product without going through the drop">
+    Either storefront setup is not finished, or the Fanfare checkout rule is turned off or has **Allow all customers to complete checkout** ticked: see [Storefront setup](/guide/shopify/storefront-setup). Or the product's protection did not update after a save: see the "Experience saved, but Shopify gating could not be updated for…" entry below.
+  </Accordion>
+  <Accordion title="'Please claim access to this product before adding it to your cart', or 'These products can't be purchased together — please check out separately'">
+    The checkout rule refused the purchase. The first means the customer did not get access through your experience, for example they used a direct cart link or a quick-add button, or their payment window has ended: send them to the product page. The second means the cart holds products from more than one experience: they check out each separately. See [Checkout protection](/guide/shopify/checkout-protection).
+  </Accordion>
+  <Accordion title="'Experience saved, but Shopify gating could not be updated for…' stays on screen">
+    The experience saved, but protection on the listed products, shown by Shopify product ID, did not update, so they may be unprotected. In the experience's settings window, save again to retry. After creating an experience, see [When protection did not update](/guide/shopify/checkout-protection#when-protection-did-not-update) instead.
+  </Accordion>
+  <Accordion title="The product still cannot be bought normally after the drop ended">
+    A product stays protected until you delete the experience or remove the product from it. Deactivate does not release it. See [Checkout protection](/guide/shopify/checkout-protection).
+  </Accordion>
+  <Accordion title="Home shows no experiences although you have some">
+    If Fanfare cannot confirm your sign-in when **Home** loads, Home shows the **Quick Actions** cards as if you had no experiences, instead of an error. Open **Experiences** to check that they are there. **Refresh** on Home does not reload the list: reload the page instead.
+  </Accordion>
+  <Accordion title="You refunded or cancelled an order in Shopify and Fanfare still shows it as paid">
+    Refunding, cancelling or editing an order in Shopify does not change Fanfare's copy of it or its numbers. See [Orders with Shopify checkout](/guide/shopify/orders).
+  </Accordion>
+</AccordionGroup>
+
+## Related
+
+<CardGroup>
+  <Card title="Change things mid-drop" href="/guide/drop/live-controls">
+    Pause a queue, edit a live setting, move units.
+  </Card>
+  <Card title="Watch a live drop" href="/guide/drop/watch-live">
+    What each live number means.
+  </Card>
+  <Card title="What your customers see" href="/guide/drop/what-customers-see">
+    Every screen and message from the customer's side.
+  </Card>
+  <Card title="Stop a drop" href="/guide/drop/deactivate">
+    Deactivate and Delete.
+  </Card>
+  <Card title="Before doors open" href="/guide/drop/preflight">
+    What to check before a drop opens.
+  </Card>
+</CardGroup>

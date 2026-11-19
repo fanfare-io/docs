@@ -1,0 +1,95 @@
+---
+title: Shopify Storefront Setup
+description: The two steps that connect the Fanfare app to your Shopify storefront, and how to adjust the product widget
+---
+
+Installing the Fanfare app is not the whole setup. Before you run a drop, two things must be true:
+
+1. **Checkout protection is on.** A checkout rule that runs on Shopify's servers refuses any checkout of a protected product that did not come through your experience.
+2. **The product widget is on your theme.** A theme block shows the queue, draw, countdown or auction on the product page, in place of the buy buttons.
+
+You need both. Once a product is in an experience, even a Draft one, checkout protection refuses ordinary checkouts of it whether or not the widget is on your theme. Without the widget, customers can neither buy the product the normal way nor take part in your drop. Without checkout protection, customers can buy the product without going through your drop.
+
+In the Fanfare app, **Settings → Storefront setup** shows the live status of both and links straight to the right place in Shopify admin. **Home** shows what is left until both are done.
+
+## Before you start
+
+- The Fanfare app is installed on your store.
+- You can edit your store's checkout settings and its published theme.
+
+## Step 1: Turn on checkout protection
+
+Checkout protection is a Shopify checkout rule called **Fanfare checkout validation**. Without it, customers can buy a protected product without going through your drop. Fanfare adds the rule and turns it on when you install the app, so on most stores this step is already done. Follow the steps below if **Storefront setup** shows it as **Not turned on** or **Turned off**.
+
+1. In Shopify admin, open **Settings → Checkout** and scroll to **Checkout rules**.
+2. If **Fanfare checkout validation** is not listed, select **Add rule** and choose it. If it is listed, open it.
+3. Select **Turn on**.
+4. Leave **Allow all customers to complete checkout** unticked, then select **Save**.
+
+<Warning>
+  Leave **Allow all customers to complete checkout** unticked. Ticking it makes Fanfare treat checkout protection as off.
+</Warning>
+
+Go back to the Fanfare app. **Storefront setup** rechecks when you return to it and shows **On**.
+
+Fanfare never changes a rule you have edited. If you turn the rule off, it stays off until you turn it back on.
+
+## Step 2: Add the product widget to your theme
+
+The **Fanfare Product Widget** is a block for your product template.
+
+1. In the Fanfare app, open **Settings → Storefront setup** and select **Add to product page**. The theme editor opens on your product template with the block ready to place.
+2. Drag the block to where your buy buttons sit, usually just below the price.
+3. Select **Save**.
+
+To add it by hand instead: open **Online Store → Themes → Customize**, switch to a product template, select **Add block** in the product information section, and choose **Fanfare Product Widget** under **Apps**.
+
+If your store uses more than one product template, add the block to each template that sells a protected product.
+
+### What the widget changes on the page
+
+While a product is in an experience, whatever the experience's status and including before the drop opens and after it has ended, the widget hides:
+
+- your **Add to cart** and **Buy it now** buttons
+- express checkout buttons, such as Shop Pay and Apple Pay
+- the variant and quantity pickers
+
+A customer who gets access picks their variant inside the widget and goes straight to checkout. The product title, price, images and description stay as they are.
+
+A product that is in no experience is untouched: the widget shows nothing and your theme's normal buy buttons appear.
+
+## Adjust the widget
+
+### Look and feel
+
+Colours, fonts, button shape and wording are set in the Fanfare app under **Design Studio**, not in the theme editor, so every experience on your store matches. If you set no brand font, the widget uses your theme's font.
+
+### Block settings
+
+The block has two settings in the theme editor.
+
+| Setting                   | What it does                                                                                                                                         |
+| ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Product**               | The product whose experience the block shows. It defaults to the product whose page the block is on. Pick another to feature a product elsewhere.     |
+| **Product Form Selector** | The CSS selector of your theme's buy-button area, which the widget hides while the product is in an experience. The default, `.product-form`, fits Shopify's themes. |
+
+### Preview before a drop
+
+In the theme editor the block shows a preview panel with a **Hide product form** toggle. Use it to see exactly what customers will and will not see while the product is in an experience.
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="My buy buttons still show on a product in an experience">
+    Your theme's buy-button area does not match the **Product Form Selector**. Ask your theme's developer or provider for the selector of the element that wraps your buy buttons, then enter it in the block's **Product Form Selector** setting in the theme editor. To hide several elements, separate their selectors with commas. Use the **Hide product form** toggle in the block's preview to check that the buy buttons are hidden before the drop.
+  </Accordion>
+  <Accordion title="Storefront setup shows 'Couldn't check'">
+    Fanfare could not read that setting from Shopify. Select **Check again**. If the product widget stays at **Couldn't check**, Fanfare may be missing permission to read your themes, and opening the app does not ask you to approve it. Check in the theme editor that the block is on your product template, and contact Fanfare support to restore the permission.
+  </Accordion>
+  <Accordion title="The widget is on the theme but shows nothing">
+    That is expected for a product that is in no experience. Add the product to an experience in the Fanfare app; the widget appears whatever the experience's status. If it still shows nothing, check that no "Shopify gating could not be updated" message appeared when you saved the experience: see [Checkout protection](/guide/shopify/checkout-protection).
+  </Accordion>
+  <Accordion title="Customers reach checkout and are refused">
+    Checkout protection refuses a protected product that was added to the cart outside the widget, for example through a direct cart link or a quick-add button elsewhere in your theme. Send customers to the product page, where the widget runs.
+  </Accordion>
+</AccordionGroup>

@@ -1,0 +1,145 @@
+---
+title: Orders with Shopify checkout
+description: How orders paid through Shopify checkout reach Fanfare, what you can do with them there, and how to fix one that is missing or out of step.
+---
+
+When your customers pay through Shopify checkout, Shopify takes the money and Shopify holds the order. Fanfare keeps its own copy of the orders placed through an experience, so you can see your drop's sales next to everything else that happened in it. Use this page to check which orders reach Fanfare, what you can do with them there, and how to bring in an order that did not arrive.
+
+## How orders arrive
+
+When a customer gets access through your experience and pays in Shopify checkout, the paid order appears in **Orders** in the Fanfare app on its own. Only orders placed through a Fanfare experience arrive. An order for the same product bought some other way never reaches Fanfare.
+
+<Note>
+  Point-of-sale orders, draft orders and orders that were not placed from an online cart never arrive in Fanfare, even for a product in an experience.
+</Note>
+
+Some orders that did go through your experience still do not arrive:
+
+- A product in the order has not been brought into Fanfare, for example an extra product the customer added beside the one from your experience.
+- The customer bought more units than the experience allows.
+- The customer paid a price other than the one Fanfare offered, or paid after that offer expired. An auction winner who pays a price other than the winning one is one example. The auction checkout rules are on [Checkout protection](/guide/shopify/checkout-protection).
+
+Nothing is refunded automatically: refund these orders in Shopify if you need to. Fanfare's fee can still be charged on an order it turned away because a product was missing from Fanfare. If you try to [import](#import-a-paid-order-that-did-not-arrive) an order paid at a price or quantity the experience did not allow, Fanfare refuses it with a message asking you to contact support.
+
+## Read a Shopify order in Fanfare
+
+A Shopify order looks like any other order in Fanfare. At the foot of its **Payment** card it shows **Vendor** as Shopify, the **External order ID** (the order's ID in Shopify), a **Sync status**, which reads Synced for an order that arrived from Shopify checkout, and when it was **Last synced**. **View source** opens the order in Shopify admin. To list only Shopify orders, open the filter that reads **All sources** on **Orders** and choose Shopify.
+
+The order list, its filters and the order page in general are covered in [Orders](/guide/learn/orders).
+
+{/* image: shopify-orders-detail-source */}
+
+## Refunds and cancellations
+
+<Warning>
+  Fanfare offers no Refund or Cancel on a Shopify order: refund or cancel it in Shopify. Cancelling, refunding or editing an order in Shopify does not change the order in Fanfare, so Fanfare's copy and its numbers keep showing the order as it was first paid.
+</Warning>
+
+Refunding or cancelling an order in Shopify does not return Fanfare's fee on it: the fee stays on your Shopify bill.
+
+For a Shopify-managed product, Shopify keeps the stock count and Fanfare copies it, so Fanfare's count follows the count in Shopify. See [Products from Shopify](/guide/shopify/products).
+
+## Import a paid order that did not arrive
+
+If a paid order that went through your experience is missing from **Orders**, you can bring it in by hand from the order in Shopify admin.
+
+### Before you start
+
+The import works only when all of these are true:
+
+- The order is paid in full in Shopify and has not been refunded, even in part.
+- The customer placed it through a Fanfare experience.
+- The order was not created by Fanfare.
+- Your store is connected to Fanfare.
+- Every product in the order is a variant that Fanfare has synced from Shopify and that is still active. Custom items without a product are ignored.
+
+### Steps
+
+1. In Shopify admin, open the order and choose **Import order into Fanfare** from its actions.
+2. Select **Open import page**. This opens Fanfare. It does not import anything yet.
+3. On **Import Shopify order**, check that **Shopify order ID** is filled in, then select **Import order**.
+4. When the import succeeds, Fanfare shows **Order imported**. Select **View Fanfare order** to open it.
+
+If the order is already in Fanfare, importing it again does not make a second copy: Fanfare shows **Order imported**, and **View Fanfare order** opens the order that was already there.
+
+<Note>
+  The **Import Shopify order** page has no link in the Fanfare app's menus. Open it from the order's **Import order into Fanfare** action in Shopify admin. The same action is described with the other Fanfare actions in Shopify admin on [Fanfare inside Shopify admin](/guide/shopify/in-shopify-admin).
+</Note>
+
+{/* image: shopify-orders-import-action */}
+
+{/* image: shopify-orders-import-page */}
+
+### When the import fails
+
+If Fanfare cannot import the order, it shows **Order not imported** with one reason. The ones you are most likely to see:
+
+| Message | What to do |
+| --- | --- |
+| This Shopify order is not paid and cannot be imported. | If the order is still awaiting payment, wait until it is paid in Shopify, then import it again. An order that has been refunded in Shopify, even in part, cannot be imported. |
+| This order did not pass through a Fanfare gate and cannot be imported. | The order was not placed from your online store's cart (for example a point-of-sale or draft order), so it cannot have gone through your experience. Fanfare does not take this order. |
+| No eligible Fanfare gate grant was found for this order. | Fanfare has no record of this order's customer getting access through your experience, so it cannot take the order. |
+| This order originated in Fanfare and cannot be imported back into Fanfare. | The order is already in Fanfare. Find it in **Orders**. |
+| Reconnect this Shopify store before importing an order. | Reconnect your store (see [Install and choose a plan](/guide/shopify/install-and-plans)), then import again. |
+| At least one Shopify line is not mapped to an active Fanfare variant. Sync the product before importing this order. | Find which product in the order is missing from Fanfare or out of date. If it is in **Products**, open it and select **Sync from Shopify**. If it is not, start creating an experience, pick the product in Shopify's picker and confirm, then leave without saving: the product stays in **Products** (see [Products from Shopify](/guide/shopify/products)). Do not save an experience just to bring a product in: that protects the product and blocks its ordinary checkout. Then import again. |
+| A Shopify variant is linked to a different Fanfare product. Sync the product before importing this order. | Sync the product from Shopify, then import again. |
+| Shopify could not find an order with this ID. | Start again from the order's **Import order into Fanfare** action in Shopify admin. |
+| Shopify is temporarily limiting requests. Try again. / The order could not be imported right now. Try again. | Wait a moment and select **Import order** again. |
+
+Messages that ask you to contact support mean Fanfare could not settle the order on its own. Contact support rather than retrying.
+
+## The Shopify order card on a Fanfare order
+
+An order created in Fanfare, rather than brought in from Shopify, has a **Shopify order** card below the order. Only an order paid through Fanfare checkout can be pushed to Shopify. Fanfare checkout is not available in the Fanfare app in Shopify, so the card is useful only if your organisation also takes payments with Fanfare checkout outside it. When Fanfare checkout takes the payment for an order, Fanfare creates the matching Shopify order on its own if the order meets the conditions below. If your store is disconnected at that moment, Fanfare waits for you to reconnect it, for up to a day from when it was disconnected. The card is for the orders that did not go through.
+
+The card shows one of four states:
+
+| The card says | Button |
+| --- | --- |
+| This Fanfare order has not been pushed to Shopify. | **Push to Shopify** creates the matching Shopify order. |
+| Fanfare is checking Shopify for the matching order. | **Check Shopify** looks again. |
+| This order is linked to a Shopify order. | **View in Shopify** opens it in Shopify admin. |
+| Reconnect this Shopify store before pushing the order. | **Push to Shopify** is greyed out until you reconnect the store. |
+
+A push works only when your store is connected and all of these are true of the order:
+
+- It was paid in full through Fanfare checkout and has not been cancelled or refunded.
+- It has no shipping address, no shipping, tax, duties or discount, and no item that needs shipping.
+- It has at most 250 lines, and its total equals the sum of its lines.
+- Every line is a product variant synced from Shopify.
+- It is in your store's currency.
+
+Otherwise Fanfare shows a short message saying the push failed. Most reasons share the same message, "This Fanfare order is no longer eligible to push to Shopify.", so check the order against the conditions above.
+
+<Note>
+  If a push ends with "Fanfare could not confirm whether Shopify created this order. Contact support before trying again.", do not push again. Use **Check Shopify**, and contact support if the card does not move to linked.
+</Note>
+
+{/* image: shopify-orders-push-panel */}
+
+## Fees
+
+Fanfare's fee on an order paid through Shopify checkout is charged on your Shopify bill. You can see these fees under **Usage**: see [Billing and usage](/guide/account/billing), and for the rates, [Payments and fees](/guide/account/payments).
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="A paid order is missing from Fanfare">
+    Check how the order was placed. Point-of-sale and draft orders never arrive, and neither does an order the customer placed without going through your experience. An order that includes a product Fanfare does not have, or that was paid at a price or quantity the experience did not allow, does not arrive either. If the customer did buy through your experience, [import the order](#import-a-paid-order-that-did-not-arrive) from Shopify admin. The import message tells you what to fix, or asks you to contact support.
+  </Accordion>
+  <Accordion title="Fanfare asks you to reconnect the store">
+    Messages such as "Reconnect this Shopify store before importing an order." mean Fanfare has lost its connection to your store, which can happen when the app's permissions change. Reconnect it as described in [Install and choose a plan](/guide/shopify/install-and-plans), then try again.
+  </Accordion>
+  <Accordion title="The order total does not match its lines">
+    A Shopify order's total can differ from the sum of its lines. The **Order total** is the figure to go by.
+  </Accordion>
+</AccordionGroup>
+
+## Related
+
+<CardGroup>
+  <Card title="Orders" href="/guide/learn/orders">Read the order list and the order page.</Card>
+  <Card title="Checkout protection" href="/guide/shopify/checkout-protection">How Shopify checkout refuses customers who did not get access.</Card>
+  <Card title="Fanfare inside Shopify admin" href="/guide/shopify/in-shopify-admin">The Fanfare block and actions on Shopify product and order pages.</Card>
+  <Card title="Billing and usage" href="/guide/account/billing">Where Fanfare's fees on Shopify orders appear.</Card>
+</CardGroup>

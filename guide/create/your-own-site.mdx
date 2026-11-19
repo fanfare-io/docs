@@ -1,0 +1,79 @@
+---
+title: Run it on your own site
+description: Put the Fanfare widget on a page of your own website, what to hand your developer, and what changes when you do not publish a hosted page.
+---
+
+Customers can enter an experience on a page Fanfare hosts for you (Growth plan and above), on a page of your own website, or on both. On your own site, your developer adds the Fanfare widget to the page. It is the same widget that sits inside the hosted page, and it shows every distribution type: queue, draw, auction, timed release and appointment. Unless your developer sets it to start on its own, customers on your site first see a **Get started** button that the hosted page skips. A hosted page is optional, so an experience can run on your own site alone. To build a hosted page as well, see [Build and publish the hosted page](/guide/create/hosted-page).
+
+## Before you start
+
+- You have created the experience.
+- You have a developer who can edit your website.
+
+## Give your developer what they need
+
+1. In the Fanfare admin, open **Settings → API Keys**.
+2. Send your developer the two values under **Your credentials**: the **Organization ID** and the **Publishable key**. Each row has a copy button.
+3. Point them to the **Quick start** card on the same page. Its snippets are already filled in with your organisation's values, and **Read the SDK docs** opens the developer documentation.
+4. Tell them which experience to show: open the experience in the Fanfare admin and send them its ID, the code that follows /app/experiences/ in the browser address, up to the next /. The **Quick start** snippet uses an example experience, which your developer must replace with yours.
+
+<Frame caption="Your developer needs the Organization ID, the Publishable key and the experience to show.">
+  <img src="/images/guide/guide-create-your-own-site-credentials.webp" alt="The API Keys page, with the Quick start card above and the Your credentials card below, listing the Organization ID and the Publishable key, each with a copy button. The Publishable key row is ringed." />
+</Frame>
+
+Any member of your team can see these values. How your developer installs and sets up the widget is covered in the [SDK docs](https://docs.fanfare.io/sdk/components/react).
+
+<Warning>
+On a draw, timed release or auction whose sequence is set to **Customer Picks**, customers pick their product when they enter. A widget on your own site needs SDK 0.20.0 or later to show that pick. An older version cannot show it, so entry from your site is refused. Ask your developer which version your site runs. The hosted page is not affected. See [Add and gate sequences](/guide/create/sequences).
+</Warning>
+
+Never put the secret key on your website: it is for your own server only and must stay out of the browser. See [API keys and embedding](/guide/account/developer).
+
+## What the widget looks like on your site
+
+- Your brand applies on your site once the customer has entered the experience. Screens shown before that, such as **Get started** and sign-in, use your brand only if your developer passes it to the widget. See [Set your brand](/guide/create/brand).
+- The experience's widget design applies wherever the widget appears, on your site and on the hosted page, as long as your developer does not set a starting style of their own. The **Quick start** snippet sets the **Rounded** starting style, so ask your developer to remove it if you want your design's own. See [Templates and widget designs](/guide/create/templates). Choosing a design other than your organisation's default needs the Growth plan or above.
+- The experience's colour overrides, set on its **Design** tab under **Experience colours**, apply on your site too. See [Brand, templates and designs](/concepts/design).
+- Your developer can also style the widget from your site. That styling wins over your brand, the widget design and the experience's colours.
+- Your brand fonts show on your site only if your site loads those fonts or your developer turns on the widget's font loading, which the **Quick start** snippet already does. See [Set your brand](/guide/create/brand).
+
+{/* image: guide-create-your-own-site-widget */}
+
+## If you do not publish a hosted page
+
+Several things that link to the hosted page behave differently. The same happens if your hosted page is published but your organisation's drop-page address is not active, because Fanfare then has no link to the page. This is the address Fanfare serves your hosted pages from, not your own website's domain.
+
+- Invites do not send, because there is no page to send people to. The invite shows **Needs an experience page link**, and its card on the sequence shows **Needs link**. See [Invites, waitlist and access-code sends](/guide/create/invites-and-waitlist).
+- Access-code emails go out without their button to the page. See [Invites, waitlist and access-code sends](/guide/create/invites-and-waitlist).
+- Social posts and texts that would carry a link to the page go out without it, and the Discord server event is skipped. See [Announcements](/guide/create/announcements).
+- Messages that send customers to buy (a win, their turn in a queue, a payment reminder, an outbid notice) link to the product's page on your store instead. If the product has no **Product URL**, they go out without a link. See [Add products](/guide/create/products).
+
+## Showing the hosted page inside your site
+
+If you publish a hosted page and want to show it inside a page of your own site in a frame, an admin must list your site's address under **Settings → Embedding**. In the Fanfare admin, that setting controls framing only: it does not affect the widget or your developer's access to Fanfare. See [API keys and embedding](/guide/account/developer).
+
+## Check it before the drop
+
+- Preview the widget's states on the experience's **Design** tab, in the **Widget** card. See [Templates and widget designs](/guide/create/templates).
+- See what customers see at each stage, from before it opens to after it ends, in [What your customers see](/guide/drop/what-customers-see).
+
+## On Shopify
+
+On a Shopify store, the widget goes on your product pages as a block in your theme, added from **Settings → Storefront setup** in the Fanfare app in Shopify. Protection also needs Fanfare's checkout rule turned on. See [Storefront setup](/guide/shopify/storefront-setup) and [Checkout protection](/guide/shopify/checkout-protection). The **Embedding** page differs in the Fanfare app in Shopify: once you list a site, only the listed sites and your store's own domains can reach Fanfare from the browser. On the **API Keys** page there, anyone using the app can rotate the secret key. See [API keys and embedding](/guide/account/developer).
+
+## Related
+
+<CardGroup cols={2}>
+  <Card title="Build and publish the hosted page" href="/guide/create/hosted-page">
+    Run the experience on a page Fanfare hosts.
+  </Card>
+  <Card title="Templates and widget designs" href="/guide/create/templates">
+    Choose and preview the widget design.
+  </Card>
+  <Card title="API keys and embedding" href="/guide/account/developer">
+    Credentials, the secret key and framing.
+  </Card>
+  <Card title="What your customers see" href="/guide/drop/what-customers-see">
+    The widget at each stage of a drop.
+  </Card>
+</CardGroup>

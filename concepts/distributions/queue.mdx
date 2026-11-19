@@ -1,222 +1,123 @@
 ---
-title: Queue Distribution
-description: Virtual waiting lines for high-demand launches
+title: Queue
+description: How a queue lets customers in to your drop in order, at a pace you set, and what happens to the people still waiting when stock runs out.
 ---
-A **Queue** is a virtual waiting line that manages high demand by giving consumers controlled access over time. By default, queues are first-come, first-served and work well for launches where fairness means "first in line gets access first."
 
-Queues can also optionally use loyalty-biased admission. When enabled for a specific experience, Fanfare can give more loyal or engaged consumers improved opportunity to be admitted while still preserving non-guaranteed outcomes. The setting is off by default.
+import { QueueAdmissionFigure } from "/snippets/figures/queue-admission.jsx";
 
-## How Queues Work
+A queue lets customers in to your experience in order, at a steady pace you choose, so your checkout is never hit by everyone at once. The admin describes it as "Admit people in order at a steady rate." Choose a queue when demand will outstrip stock and you want "first come, first served": everyone who wants in joins a line, and Fanfare lets them through a set number per minute until the stock is gone or the queue closes.
 
-When consumers join a standard queue, they're assigned a position and wait for their turn:
+A queue is one of the five distributions a sequence can run (a sequence is one way in to an experience). Two neighbours are worth comparing before you choose:
 
-![Queue flow diagram showing consumers join, wait, reach the front, and receive checkout access.](/images/concepts/distributions/queue-flow.webp)
+- A [draw](/concepts/distributions/draw) picks winners at random from everyone who enters, so arriving early gives no advantage.
+- A [timed release](/concepts/distributions/timed-release) opens to everyone at once at a set time, with no line and no pacing.
 
-## The Consumer Experience
+The full comparison is in [Distributions](/concepts/distributions/overview).
 
-1. **Join** — Consumer enters the queue and receives either a position number or qualitative progress messaging
-2. **Wait** — Progress updates in real time as the line moves forward
-3. **Get access** — When they reach the front, they're notified they can checkout
-4. **Complete purchase** — Limited time window to finish their purchase
+## How a queue orders people
 
-## Consumer Journey
+A queue has two parts: a short waiting room before it opens, and a line after it opens.
 
-![Queue consumer journey showing not in line, in queue, access granted, and complete.](/images/concepts/distributions/queue-journey.webp)
+1. **The waiting room opens 5 minutes before Opens.** Customers can join from then, but nobody is let in before the **Opens** time.
+2. **At Opens, everyone in the waiting room is put in a random order, once.** Arriving 4 minutes early gives no advantage over arriving 10 seconds early. The admin calls this the "pre-open entry lottery".
+3. **After Opens, it is first in, first out.** Anyone who arrives after **Opens** joins the back of the line, behind everyone from the waiting room. From there, people are let in by order of arrival.
 
-## When to Use Queues
+<Note>
+  Customers waiting when the queue opens are shuffled, not ordered by arrival. If you tell customers to "be there early", being there in the 5 minutes before **Opens** gives them a random place among the early arrivals, ahead of everyone who comes later, not a place at the very front.
+</Note>
 
-| Scenario          | Why Queue Works                                |
-| ----------------- | ---------------------------------------------- |
-| Product launches  | First in line gets access first                |
-| Event ticketing   | Orderly flow prevents site overload            |
-| Flash sales       | Manages traffic while rewarding early arrivers |
-| Limited inventory | Ensures fair, ordered access to scarce items   |
-| High-demand drops | Prevents site crashes by throttling access     |
+With **Automatic entry** on, customers are entered as soon as they reach the queue, without pressing **Enter queue**; the waiting-room shuffle still applies. See [Admission and the payment window](/concepts/admission-and-payment).
 
-## Configuration Options
+<QueueAdmissionFigure />
 
-### Admission Rate
+### Loyalty bias weights only the waiting room
 
-How many consumers per minute receive access to checkout.
+**Bias toward loyal consumers** lets customers' loyalty points weight the shuffle at **Opens**: a customer with more points tends to land nearer the front. It is a weight, not a guarantee, and it never changes the order of anyone who arrives after **Opens**; that part of the line stays first in, first out. Guests count as having no points. The switch can only be turned on while your loyalty programme is running, and loyalty programmes are available on Pro and above. How the weight is worked out, and which points balance counts, is on [Loyalty and Fanfair](/concepts/loyalty).
 
-| Rate       | Result                                  |
-| ---------- | --------------------------------------- |
-| 50/minute  | About 1 consumer per second gets access |
-| 100/minute | About 1.7 consumers per second          |
-| 200/minute | About 3.3 consumers per second          |
+While bias is on and customers can still enter, the queue shows "Fairness provided by Fanfair". Bias changes nothing else customers see in the queue.
 
-**Tips for setting admission rate:**
+## How fast people get in
 
-- Match your checkout system's capacity
-- Too high = checkout overwhelmed
-- Too low = unnecessary waiting
+**Admit rate** is the most people the queue lets in per minute. It sets the pace, not the total: a queue keeps letting people in until its stock runs out or it closes. Set it to what your checkout can handle.
 
-### Queue Capacity
+A low admit rate keeps checkout calm, but customers wait longer before they are let in. The defaults and limits for **Admit rate** are in [Set up a queue](/guide/create/queue). You can change it while the queue is live, and the new rate applies from the next minute: see [Change things mid-drop](/guide/drop/live-controls).
 
-Maximum consumers allowed in the queue at once.
+## What getting in means
 
-- **Set a limit** when you want to manage server load or set expectations
-- **Leave unlimited** when you want to accept everyone and let them wait
+When a customer reaches the front, they are admitted: they get a payment window to check out. For a queue the payment window is always 30 minutes, and it cannot be changed in the admin. When Fanfare counts your stock, each admitted customer holds one unit until they buy or their payment window lapses. What a payment window is, and what happens when one lapses, is on [Admission and the payment window](/concepts/admission-and-payment).
 
-### Total Admissions
+The same page covers two related rules:
 
-Maximum total consumers who can receive access.
+- Payment collection locks when the queue's waiting room is about to open, about 5½ minutes before **Opens**. After that, the only way to change it is to deactivate the queue and create a new one.
+- A queue cannot pre-authorise a card while customers still have a product to choose.
 
-- **Set a limit** when inventory is fixed (e.g., 500 items available)
-- **Leave unlimited** when you want continuous access until closing time
+## When stock runs out while people wait
 
-### Access Window Duration
+Nobody waiting in the line is turned away when stock runs out. What they see depends on whether anyone is still checking out.
 
-How long consumers have to complete checkout after receiving access.
+**Every unit is taken, but some customers are still checking out.** The line stops moving, and waiting customers see "Entry is paused. Your place in line is saved." If a payment window lapses without a purchase, its unit comes back and the line moves again. Where else units come from is on [Stock](/concepts/stock).
 
-| Duration      | Best for                                 |
-| ------------- | ---------------------------------------- |
-| 5-10 minutes  | Simple purchases, saved payment methods  |
-| 15-20 minutes | Multiple items, entering payment details |
-| 30 minutes    | Complex purchases, high-value items      |
+**Every unit has sold and nobody is still checking out.** Waiting customers see "Everything claimed" and "Right now · you keep your place". The line moves again if more stock is added. Refunding an order does not, on its own, bring its unit back to the line.
 
-### Loyalty-Biased Admission
+A customer who arrives in the first case joins the back of the line. A customer who arrives in the second case is not added to the line. They see "Sold out right now" with a **Try again** button, which works if more stock is added while the queue is open. Once the queue has closed, that becomes a plain "Sold out".
 
-Enable loyalty-biased admission only when your launch should recognize loyalty or engagement as part of the queue experience. It does not guarantee access and should not be described as a fixed place in line.
+When the queue closes, nobody still waiting gets in, and their panel changes to "Not selected" with "You weren't selected this time." Customers admitted before **Closes** keep their payment window and can still check out after the queue closes.
 
-When this setting is enabled:
+## Pausing
 
-- Use qualitative progress messaging instead of precise numeric queue positions.
-- Avoid copy that promises a loyal consumer will be admitted.
-- Review promotion, fairness, and eligibility language before launch.
+A paused queue lets nobody through, but customers in the line keep their place and new customers can still join at the back. While it is paused, waiting customers see no wait estimate. The "Entry is paused" message is about stock running out, not about your pause. How to pause and resume, and how pausing differs from setting **Admit rate** to 0 in the admin, is in [Change things mid-drop](/guide/drop/live-controls).
 
-## What Consumers See
+## A queue's status in the admin
 
-### While Waiting
+A queue's status chip, on its own row and on the sequence header and the experience's sequence card, shows **Scheduled** until its **Opens** time, including the 5-minute waiting room when customers can already join, then **Live** from **Opens**, and **Ended** after **Closes**. On the sequence's **Distributions** card, a queue that has not opened yet shows "Opens" followed by its opening time, or **Upcoming**. A queue you deactivate before it closes shows **Ended early**. On these chips a queue has no settling phase: once it closes, it shows **Ended**.
 
-- Their current position in line, or qualitative progress language when loyalty-biased admission is enabled
-- Estimated wait time
-- Real-time updates as the line moves
+If you deactivate a queue, people still in the line do not get in, and admitted customers who have not started checking out lose their admission. Customers already checking out can finish paying within their payment window. See [Stop a drop](/guide/drop/deactivate).
 
-### When It's Their Turn
+Distribution windows in one sequence cannot overlap, so a sequence runs one queue at a time: see [Distributions](/concepts/distributions/overview).
 
-- Notification that they can proceed
-- Time remaining to complete purchase
-- Clear call-to-action to checkout
+## What customers see
 
-### If They Take Too Long
+- **Before the waiting room opens:** a "Coming Soon" countdown and, if the sequence has a waitlist, "Notify me when the queue opens" (signed-out customers see "Sign in to get notified").
+- **From 5 minutes before Opens:** "Queue Open" with "Enter queue". Customers who join now see no wait estimate until the queue opens.
+- **Waiting:** "You're in the Queue" with an "Estimated wait" and a band such as "Up next", "Near the front" or "In the line". The standard widget never shows a numbered place in line.
+- **Admitted:** "You're in" with "Continue to checkout" and a countdown to the end of their payment window.
+- **Payment window lapses:** "Access expired", with "Rejoin queue" while the queue is still open; after it closes, "Ended".
+- **Stock runs out or the queue closes:** see [When stock runs out while people wait](#when-stock-runs-out-while-people-wait).
 
-- Warning as time runs low
-- Notification when access expires
-- Option to rejoin (if the queue is still open)
+Guests (when **Allow guest access** is on) get no emails or texts and can come back only in the same browser: see [Customers and identity](/concepts/customers). Every stage and message is on [What your customers see](/guide/drop/what-customers-see).
 
-## Configuration Examples
+<Frame caption="Customers see an estimated wait and a band, never a numbered place in line.">
+  <img src="/images/guide/concepts-distributions-queue-waiting.webp" alt="A customer's queue panel reading &quot;You're in the Queue&quot;, with an estimated wait of about a minute, the note &quot;Almost there&quot;, and a Leave queue button, and no numbered position." />
+</Frame>
 
-### Product Launch
+## Worked example: the members' queue
 
-High-demand sneaker drop with limited inventory:
+Northbound Supply Co. runs "Phantom Stitch Anorak Drop". Its first sequence, Inner Circle Early Access, runs a queue that opens at 10:00 and closes at 11:00, with **Admit rate** set to 200 and 400 anoraks in its stock.
+| Time | What happens |
+| --- | --- |
+| 09:55 | The waiting room opens. Members start joining. Nobody is let in yet, and those who join see no wait estimate. |
+| 09:57 | A member joins. By 10:00, 600 members are waiting. |
+| 10:00 | The queue opens. The 600 are shuffled once into a random order; arriving at 09:57 gave no edge over arriving at 09:59. Up to 200 are let in each minute from now on. |
+| About 10:02 | 400 customers have been let in and all 400 anoraks are held by customers checking out. The line stops, and the 200 still waiting see "Entry is paused. Your place in line is saved." |
+| 10:05 | Another member joins, at the back, behind everyone still waiting. Admitted customers are still checking out, so the member is added to the line and also sees "Entry is paused. Your place in line is saved." |
+| About 10:30 onwards | Admitted customers who did not buy within their 30-minute payment window lose their admission. Each anorak that comes back lets the line move again, in order. |
+| 11:00 | The queue closes. |
 
-```
-Queue Settings:
-├── Admission rate: 100/minute
-├── Total admissions: 500 (matches inventory)
-├── Access window: 10 minutes
-└── Allow guests: Yes
-```
-
-### Event Ticketing
-
-Concert tickets going on sale:
-
-```
-Queue Settings:
-├── Admission rate: 200/minute (handle high volume)
-├── Queue capacity: 50,000 (manage expectations)
-├── Access window: 15 minutes (time to select seats)
-└── Allow guests: No (need account for tickets)
-```
-
-### Flash Sale
-
-Time-limited sale with steady access:
-
-```
-Queue Settings:
-├── Open time: 9:00 AM
-├── Close time: 12:00 PM
-├── Admission rate: 50/minute
-├── Total admissions: Unlimited
-└── Access window: 5 minutes
-```
-
-## Why Consumers Might Not Get In
-
-| Reason            | What Happened             | Consumer Message                                |
-| ----------------- | ------------------------- | ----------------------------------------------- |
-| Queue full        | Queue reached capacity    | "Queue is at capacity. Try again later."        |
-| Queue closed      | Outside open hours        | "This queue is currently closed."               |
-| Already purchased | Hit their order limit     | "You've already purchased the maximum allowed." |
-| Access expired    | Took too long at checkout | "Your checkout window has expired."             |
-
-## Best Practices
-
-### 1. Set the Right Admission Rate
-
-Match your checkout capacity. If your checkout can handle 2 purchases per second, an admission rate of 100/minute leaves headroom for abandoned carts.
-
-### 2. Configure Appropriate Time Windows
-
-Balance urgency with fairness:
-
-- Too short = frustrated consumers who can't complete in time
-- Too long = people holding spots they won't use
-
-### 3. Communicate Clearly
-
-Show consumers:
-
-- Their position and estimated wait for first-come, first-served queues
-- Qualitative progress or status messaging for queues with loyalty-biased admission enabled
-- What happens when it's their turn
-- How long they'll have to complete
-
-### 4. Handle Capacity Gracefully
-
-When the queue fills up:
-
-- Show a clear message about capacity
-- Offer a waitlist as an alternative
-- Give expected reopening times
-
-## Common Patterns
-
-### Rolling Queue
-
-Continuously accepts and admits consumers over a longer period:
-
-- Open for an extended time (days or weeks)
-- Steady admission rate
-- No total admission limit
-- Limited queue capacity to manage expectations
-
-### Burst Queue
-
-Handles launch-day spikes:
-
-- Short open window (30 minutes to a few hours)
-- Higher admission rate
-- Set total admissions to match inventory
-- Unlimited queue capacity to accept everyone
-
-### Recycling Expired Spots
-
-When consumers don't complete checkout:
-
-- Their spot can be recycled
-- Next person in line gets access sooner
-- Helps ensure all inventory sells
-
-## Related Concepts
-
-- [Distributions Overview](/concepts/distributions/overview) — Common distribution concepts
-- [Draw Distribution](/concepts/distributions/lottery) — Random selection alternative
-- [Auction Distribution](/concepts/distributions/auction) — Competitive bidding
-- [Appointment Distribution](/concepts/distributions/appointment) — Time-slot booking
-- [Timed Release Distribution](/concepts/distributions/instant) — Instant access at scheduled time
-- [Waitlist Distribution](/concepts/distributions/exclusive) — Interest capture and notifications
-- [Audiences](/concepts/audiences) — Tiered access for different consumer groups
+If the shop had turned on **Bias toward loyal consumers**, members with more points would tend to land nearer the front of the 10:00 shuffle. The 10:05 arrival's place would be the same either way.
+
+## Related
+
+<CardGroup>
+  <Card title="Set up a queue" href="/guide/create/queue">
+    Every queue setting, its default, and when it locks.
+  </Card>
+  <Card title="Change things mid-drop" href="/guide/drop/live-controls">
+    Pause and resume a queue, and change its admit rate while it is live.
+  </Card>
+  <Card title="Admission and the payment window" href="/concepts/admission-and-payment">
+    What admission gives a customer, payment collection, and automatic entry.
+  </Card>
+  <Card title="Watch a live drop" href="/guide/drop/watch-live">
+    Follow a queue's numbers as the drop happens.
+  </Card>
+</CardGroup>

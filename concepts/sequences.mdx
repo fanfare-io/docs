@@ -1,0 +1,136 @@
+---
+title: Sequences and routing
+description: How a sequence gives one group of customers its own way in to an experience, and how Fanfare decides which sequence each customer gets.
+---
+
+import { SequencesRoutingFigure } from "/snippets/figures/sequences-routing.jsx";
+
+A sequence is one way in to an experience. An experience needs at least one before anyone can get in, and you add more when different customers should get in at different times, on different terms, or from a different share of the stock. When a customer opens your experience, Fanfare places them in exactly one sequence. Which one depends on what is open right now, the priority of each sequence, and whether the customer can pass its gates.
+
+## What a sequence holds
+
+The experience holds the products on offer, the time zone, the branding and the page. Everything about how one group of customers gets in belongs to a sequence:
+
+- Who can enter: an optional audience and an optional shared access code.
+- Its own distributions (queue, draw, auction, timed release or appointment), run one after another.
+- Its own share of each product's stock. Units are not shared across sequences.
+- Whether customers choose their product (**Customer Picks**) or are assigned one by weight (**Mystery Box**), when the experience has two or more products.
+- Order limits.
+- A waitlist. Every sequence has one.
+- A priority, shown as a chip such as P1. A lower number is offered first.
+
+The **Sequences** card on the experience's **Overview** lists them in priority order, with each one's audience (or **Everyone**), access code and distributions.
+
+<Frame caption="Sequences are listed in priority order. The lower number is offered first.">
+  <img src="/images/guide/concepts-sequences-overview-card.webp" alt="The Sequences card on an experience's Overview, listing sequences in priority order with P1, P2 and P3 chips, each row showing its audience (or Everyone) and its distributions." />
+</Frame>
+
+## When you need more than one
+
+One sequence is enough when everyone gets in the same way: one set of rules for who can enter, one share of the stock, and one distribution at a time.
+
+Add a sequence when:
+
+- A group should get in on different terms. For example, an audience of your best customers, or anyone holding a code you handed out at an event.
+- A group should have its own stock. Each sequence sells only its own units.
+- You want two distributions running at the same time. Distribution windows inside one sequence cannot overlap, and a distribution with no close time blocks every later one in that sequence. Back-to-back windows are fine; overlapping ones need separate sequences.
+
+The steps are in [Add and gate sequences](/guide/create/sequences). Each new sequence needs its own stock: see [Allocate stock to a drop](/guide/create/stock-allocation).
+
+## How Fanfare chooses a sequence for a customer
+
+The **Sequences** card sums up the rule: "In priority order. A visitor goes to the first open sequence they can enter, or the first upcoming one when none is open. Equal priorities go to the one that opens first." Every time a customer arrives, Fanfare applies three tests in this order.
+
+1. What is open. Sequences with a distribution open right now come first. Then sequences with a distribution scheduled to open. Then sequences with nothing open or scheduled: no distributions yet, or all of them ended or deactivated.
+2. Priority. Within each of those groups, the lowest number comes first: P1 before P2. Equal priorities go to the sequence that opens first.
+3. The customer. Sequences the customer cannot enter at all are skipped. Fanfare takes the first group that has any sequence the customer can enter or could unlock by passing a gate. In that group, a sequence they can enter now wins. If every one needs a gate, the customer sees one gate, and a gate that does not need a full sign-in (an access code, or a sign-in screen that offers "Continue as guest") is shown ahead of one that does.
+
+<Warning>
+  Open beats scheduled, whatever the priority numbers. If a lower-priority sequence opens before your early-access sequence, every customer who can enter it, including your best customers, is placed in it until the early-access sequence opens. To let a group in first, give its sequence the earlier window, not only the lower number.
+</Warning>
+
+<Warning>
+  Priority is set when you create the sequence and cannot be changed in the admin. Each new sequence gets the next number after the existing ones, so the order you create sequences in is the order they are offered in. Create the most exclusive or earliest sequence first.
+</Warning>
+
+A customer already placed in an open sequence can still move up. If an open sequence with a higher priority asks for an access code, they see a "Have an access code?" link. A right code moves them up. A wrong one leaves them where they are.
+
+<SequencesRoutingFigure />
+
+## The gates a customer can meet
+
+A sequence can ask a customer to sign in, to enter an access code, to be in an audience, or any combination. Every condition you set must be met.
+
+| Gate | What the customer does | When it applies |
+| --- | --- | --- |
+| Sign-in | Enters their email or phone and types the one-time code sent to them. | Always on a sequence with an audience. Also whenever an open or scheduled distribution in the sequence does not allow guests (auctions and appointments never do), and whenever nothing in the sequence is open or scheduled. Joining a waitlist always needs sign-in. |
+| Guest entry | Selects "Continue as guest" on the sign-in screen. | Only when the sequence has a distribution open or scheduled, every one of them allows guests, and the sequence has no audience. |
+| Access code | Types the code and selects "Submit". | When the sequence has a **Shared access code**. |
+| Audience | Nothing extra: Fanfare checks membership once they have signed in. | When the sequence has an audience. |
+
+### Access codes
+
+- Access codes are not case-sensitive: a customer can type the code in capitals, lowercase or a mix. **Generate** creates a code for you.
+- With both an audience and a code set, a customer must be a signed-in member and also enter the code. Either one alone is not enough.
+- Changing the code applies to new attempts at once, but a customer who already got past the gate with the old one can still enter for a short while, and anyone already in keeps their place. Clearing the code removes the code gate; any audience requirement still applies.
+- **Send code** on the sequence's **Access** tab sends the code, by email or text, to everyone on the sequence's waitlist. A sent message cannot be recalled.
+
+### Audiences
+
+- A signed-in customer who is not in the audience is never shown the sequence and is never asked for anything. Fanfare skips it and tries the next one.
+- An audience admits no one until its first build has finished.
+- While a distribution in a sequence it gates is taking entries, a **Dynamic** audience is held: full rebuilds wait until the drop closes, but a customer whose own details change is re-checked against the latest saved rules straight away. See [Audiences and access codes](/concepts/audiences).
+- Choosing an audience you already have for a sequence works on every plan, so a sequence keeps its audience after a downgrade. Creating and changing audiences depends on your plan.
+- Giving a sequence an audience also sets up an invite email to its members. See [Invites, waitlist and access-code sends](/guide/create/invites-and-waitlist) before the drop.
+
+<Note>
+  Choosing an audience for a sequence turns off guest entry on every queue, draw and timed release in it. Removing the audience later does not turn guest entry back on: you have to turn it on again in each distribution's settings.
+</Note>
+
+## When no sequence will take a customer
+
+- Every sequence the customer could reach refuses them: they see "Access unavailable". When the refusal is because of an audience, the message reads "This experience is for members of a specific group."; otherwise "This experience isn't available to you."
+- The sequence they are placed in has no distributions yet: they see "No current access window".
+- Everything has ended: a customer who is not signed in is asked to sign in, and sees when the drop ended with "Entered? Sign in to see your result."
+
+## Worked example: members first, then a public draw
+
+Northbound Supply Co. is selling the Phantom Stitch Anorak. The experience "Phantom Stitch Anorak Drop" has two sequences, created in this order:
+
+1. Inner Circle Early Access (P1): gated by an audience of their best customers, running a queue from 10:00 to 11:00.
+2. Public Draw (P2): no audience, no code, running a draw that takes entries from 11:00, with guest entry allowed.
+
+| Time | Customer | Placed in | What they see |
+| --- | --- | --- | --- |
+| Before 10:00 | Signed-in member | Inner Circle Early Access | Its countdown and waitlist |
+| Before 10:00 | Signed-in non-member | Public Draw | Its countdown and waitlist |
+| Before 10:00 | Not signed in | Public Draw's gate | Sign-in, with "Continue as guest". Members who sign in are moved to Inner Circle Early Access. |
+| 10:00 to 11:00 | Signed-in member | Inner Circle Early Access | The queue |
+| 10:00 to 11:00 | Signed-in non-member | Public Draw | Its countdown and waitlist |
+| 10:00 to 11:00 | Not signed in, or a guest | Inner Circle Early Access's gate | Sign-in, with no guest option |
+| From 11:00 | Anyone | Public Draw | The draw, members included. A customer who is not signed in first sees sign-in with "Continue as guest". |
+
+Two things this shows. During the members' hour, everyone who is not signed in is asked to sign in, because the open members' sequence beats the scheduled public one. And from 11:00, members land in the Public Draw like everyone else, because Inner Circle Early Access has closed. If the members' queue had stayed open past 11:00, members would still be placed in it, because both sequences would be open and P1 comes first.
+
+## On Shopify
+
+The Fanfare app in Shopify does not offer appointments, so a sequence there runs queues, draws, auctions and timed releases.
+
+The Fanfare product widget on your Shopify product pages runs the same customer journey, so customers are placed in a sequence and meet its gates in the same way.
+
+## Related
+
+<CardGroup>
+  <Card title="Add and gate sequences" href="/guide/create/sequences">
+    Create a sequence, set its audience and access code, product selection and order limits.
+  </Card>
+  <Card title="Distributions" href="/concepts/distributions/overview">
+    The five distribution types and how their windows work.
+  </Card>
+  <Card title="Audiences and access codes" href="/concepts/audiences">
+    Who may enter a sequence, and how audiences are built.
+  </Card>
+  <Card title="Stock" href="/concepts/stock">
+    How stock is split across sequences.
+  </Card>
+</CardGroup>
