@@ -27,7 +27,138 @@
   "navigation": {
     "tabs": [
       {
-        "tab": "Documentation",
+        "tab": "User guide",
+        "groups": [
+          {
+            "group": "Start here",
+            "pages": [
+              "guide/start/welcome",
+              "guide/start/your-first-drop",
+              "guide/start/your-first-drop-on-shopify",
+              "guide/start/tour-of-the-admin",
+              "guide/start/plans"
+            ]
+          },
+          {
+            "group": "How Fanfare works",
+            "pages": [
+              "concepts/overview",
+              "concepts/experiences",
+              "concepts/sequences",
+              {
+                "group": "Distributions",
+                "pages": [
+                  "concepts/distributions/overview",
+                  "concepts/distributions/queue",
+                  "concepts/distributions/draw",
+                  "concepts/distributions/auction",
+                  "concepts/distributions/timed-release",
+                  "concepts/distributions/appointment"
+                ]
+              },
+              "concepts/waitlists",
+              "concepts/admission-and-payment",
+              "concepts/stock",
+              "concepts/audiences",
+              "concepts/customers",
+              "concepts/loyalty",
+              "concepts/design",
+              "concepts/checkout-options",
+              "concepts/what-locks-when"
+            ]
+          },
+          {
+            "group": "Create: design it",
+            "pages": [
+              "guide/create/products",
+              "guide/create/stock",
+              "guide/create/experiences",
+              "guide/create/sequences",
+              "guide/create/stock-allocation",
+              "guide/create/queue",
+              "guide/create/draw",
+              "guide/create/auction",
+              "guide/create/timed-release",
+              "guide/create/appointment",
+              "guide/create/locations",
+              "guide/create/audiences"
+            ]
+          },
+          {
+            "group": "Create: stage it",
+            "pages": [
+              "guide/create/brand",
+              "guide/create/templates",
+              "guide/create/hosted-page",
+              "guide/create/your-own-site"
+            ]
+          },
+          {
+            "group": "Create: hype it",
+            "pages": [
+              "guide/create/announcements",
+              "guide/create/invites-and-waitlist",
+              "guide/create/email-sender"
+            ]
+          },
+          {
+            "group": "Drop: run it live",
+            "pages": [
+              "guide/drop/preflight",
+              "guide/drop/watch-live",
+              "guide/drop/live-controls",
+              "guide/drop/deactivate",
+              "guide/drop/what-customers-see",
+              "guide/drop/troubleshooting"
+            ]
+          },
+          {
+            "group": "Learn: after the sellout",
+            "pages": [
+              "guide/learn/performance",
+              "guide/learn/orders",
+              "guide/learn/customers",
+              "guide/learn/loyalty",
+              "guide/learn/next-drop"
+            ]
+          },
+          {
+            "group": "Account",
+            "pages": [
+              "guide/account/organization",
+              "guide/account/team",
+              "guide/account/payments",
+              "guide/account/billing",
+              "guide/account/integrations",
+              "guide/account/developer"
+            ]
+          },
+          {
+            "group": "Shopify",
+            "pages": [
+              "guide/shopify/overview",
+              "guide/shopify/install-and-plans",
+              "guide/shopify/storefront-setup",
+              "guide/shopify/products",
+              "guide/shopify/checkout-protection",
+              "guide/shopify/orders",
+              "guide/shopify/in-shopify-admin"
+            ]
+          },
+          {
+            "group": "Reference",
+            "pages": [
+              "guide/reference/glossary",
+              "guide/reference/cannot-be-undone",
+              "guide/reference/statuses",
+              "guide/reference/limits",
+              "guide/reference/faq"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Developers",
         "groups": [
           {
             "group": "Getting Started",
@@ -43,27 +174,9 @@
             ]
           },
           {
-            "group": "Core Concepts",
+            "group": "Developer concepts",
             "pages": [
-              "concepts/overview",
-              "concepts/experiences",
-              "concepts/audiences",
-              "concepts/consumers",
-              "concepts/loyalty",
-              "concepts/products",
               "concepts/real-time"
-            ]
-          },
-          {
-            "group": "Distribution Types",
-            "pages": [
-              "concepts/distributions/overview",
-              "concepts/distributions/queue",
-              "concepts/distributions/lottery",
-              "concepts/distributions/auction",
-              "concepts/distributions/appointment",
-              "concepts/distributions/instant",
-              "concepts/distributions/exclusive"
             ]
           }
         ]
@@ -167,7 +280,6 @@
             "group": "Platform Integrations",
             "pages": [
               "guides/platform-integrations/shopify",
-              "guides/platform-integrations/shopify-storefront-setup",
               "guides/platform-integrations/woocommerce",
               "guides/platform-integrations/custom-platform"
             ]
@@ -561,83 +673,6 @@
         ]
       },
       {
-        "tab": "Dashboard",
-        "groups": [
-          {
-            "group": "Getting Started",
-            "pages": [
-              "dashboard/overview",
-              "dashboard/getting-started"
-            ]
-          },
-          {
-            "group": "Experiences",
-            "pages": [
-              "dashboard/experiences/overview",
-              "dashboard/experiences/create-experience",
-              "dashboard/experiences/configure-queue",
-              "dashboard/experiences/configure-auction",
-              "dashboard/experiences/configure-lottery",
-              "dashboard/experiences/configure-appointment",
-              "dashboard/experiences/configure-timed-release",
-              "dashboard/experiences/configure-waitlist",
-              "dashboard/experiences/experience-lifecycle",
-              "dashboard/experiences/experience-analytics"
-            ]
-          },
-          {
-            "group": "Audiences",
-            "pages": [
-              "dashboard/audiences/overview",
-              "dashboard/audiences/create-audience",
-              "dashboard/audiences/membership-rules",
-              "dashboard/audiences/import-consumers"
-            ]
-          },
-          {
-            "group": "Consumers",
-            "pages": [
-              "dashboard/consumers/overview",
-              "dashboard/consumers/consumer-details",
-              "dashboard/consumers/consumer-activity"
-            ]
-          },
-          {
-            "group": "Loyalty",
-            "pages": [
-              "dashboard/loyalty/overview",
-              "dashboard/loyalty/configuration",
-              "dashboard/loyalty/points-management"
-            ]
-          },
-          {
-            "group": "Settings",
-            "pages": [
-              "dashboard/settings/overview",
-              "dashboard/settings/organization",
-              "dashboard/settings/team-members",
-              "dashboard/settings/api-keys",
-              "dashboard/settings/integrations",
-              "dashboard/settings/branding"
-            ]
-          },
-          {
-            "group": "Analytics",
-            "pages": [
-              "dashboard/analytics/overview",
-              "dashboard/analytics/reports"
-            ]
-          },
-          {
-            "group": "Billing",
-            "pages": [
-              "dashboard/billing/overview",
-              "dashboard/billing/pricing"
-            ]
-          }
-        ]
-      },
-      {
         "tab": "Resources",
         "groups": [
           {
@@ -754,5 +789,159 @@
     "params": {
       "expanded": "closed"
     }
-  }
+  },
+  "redirects": [
+    {
+      "source": "/dashboard/overview",
+      "destination": "/guide/start/tour-of-the-admin"
+    },
+    {
+      "source": "/dashboard/getting-started",
+      "destination": "/guide/start/your-first-drop"
+    },
+    {
+      "source": "/dashboard/analytics/overview",
+      "destination": "/guide/learn/performance"
+    },
+    {
+      "source": "/dashboard/analytics/reports",
+      "destination": "/guide/learn/performance"
+    },
+    {
+      "source": "/dashboard/audiences/overview",
+      "destination": "/concepts/audiences"
+    },
+    {
+      "source": "/dashboard/audiences/create-audience",
+      "destination": "/guide/create/audiences"
+    },
+    {
+      "source": "/dashboard/audiences/import-consumers",
+      "destination": "/guide/create/audiences"
+    },
+    {
+      "source": "/dashboard/audiences/membership-rules",
+      "destination": "/guide/create/audiences"
+    },
+    {
+      "source": "/dashboard/billing/overview",
+      "destination": "/guide/account/billing"
+    },
+    {
+      "source": "/dashboard/billing/pricing",
+      "destination": "/guide/start/plans"
+    },
+    {
+      "source": "/dashboard/consumers/overview",
+      "destination": "/concepts/customers"
+    },
+    {
+      "source": "/dashboard/consumers/consumer-details",
+      "destination": "/guide/learn/customers"
+    },
+    {
+      "source": "/dashboard/consumers/consumer-activity",
+      "destination": "/guide/learn/customers"
+    },
+    {
+      "source": "/dashboard/experiences/overview",
+      "destination": "/concepts/experiences"
+    },
+    {
+      "source": "/dashboard/experiences/create-experience",
+      "destination": "/guide/create/experiences"
+    },
+    {
+      "source": "/dashboard/experiences/configure-queue",
+      "destination": "/guide/create/queue"
+    },
+    {
+      "source": "/dashboard/experiences/configure-lottery",
+      "destination": "/guide/create/draw"
+    },
+    {
+      "source": "/dashboard/experiences/configure-auction",
+      "destination": "/guide/create/auction"
+    },
+    {
+      "source": "/dashboard/experiences/configure-appointment",
+      "destination": "/guide/create/appointment"
+    },
+    {
+      "source": "/dashboard/experiences/configure-timed-release",
+      "destination": "/guide/create/timed-release"
+    },
+    {
+      "source": "/dashboard/experiences/configure-waitlist",
+      "destination": "/concepts/waitlists"
+    },
+    {
+      "source": "/dashboard/experiences/experience-analytics",
+      "destination": "/guide/learn/performance"
+    },
+    {
+      "source": "/dashboard/experiences/experience-lifecycle",
+      "destination": "/concepts/what-locks-when"
+    },
+    {
+      "source": "/dashboard/loyalty/overview",
+      "destination": "/concepts/loyalty"
+    },
+    {
+      "source": "/dashboard/loyalty/configuration",
+      "destination": "/guide/learn/loyalty"
+    },
+    {
+      "source": "/dashboard/loyalty/points-management",
+      "destination": "/guide/learn/loyalty"
+    },
+    {
+      "source": "/dashboard/settings/overview",
+      "destination": "/guide/account/organization"
+    },
+    {
+      "source": "/dashboard/settings/organization",
+      "destination": "/guide/account/organization"
+    },
+    {
+      "source": "/dashboard/settings/team-members",
+      "destination": "/guide/account/team"
+    },
+    {
+      "source": "/dashboard/settings/api-keys",
+      "destination": "/guide/account/developer"
+    },
+    {
+      "source": "/dashboard/settings/branding",
+      "destination": "/guide/create/brand"
+    },
+    {
+      "source": "/dashboard/settings/integrations",
+      "destination": "/guide/account/integrations"
+    },
+    {
+      "source": "/concepts/consumers",
+      "destination": "/concepts/customers"
+    },
+    {
+      "source": "/concepts/products",
+      "destination": "/guide/create/products"
+    },
+    {
+      "source": "/concepts/distributions/lottery",
+      "destination": "/concepts/distributions/draw"
+    },
+    {
+      "source": "/concepts/distributions/instant",
+      "destination": "/concepts/distributions/timed-release"
+    },
+    {
+      "source": "/concepts/distributions/exclusive",
+      "destination": "/concepts/waitlists"
+    },
+    {
+      "source": "/guides/platform-integrations/shopify-storefront-setup",
+      "destination": "/guide/shopify/storefront-setup"
+    }
+  ]
 }

@@ -1,0 +1,104 @@
+---
+title: Customers and identity
+description: Who counts as a customer in Fanfare, how a customer record is created, and what changes when you let customers in as guests instead of asking them to sign in.
+---
+
+A customer is a person on record in your organisation. Each customer has an email address, a phone number or both, their marketing opt-outs, a loyalty balance, and value and engagement figures that Fanfare works out from what they do. You see them under **Customers** in the Fanfare admin. Not everyone who takes part in a drop becomes a customer: someone who enters as a guest is never listed under **Customers** and leaves no email or phone number, although their entry and any order they place are still recorded against the drop. Whether you allow guests is the main identity decision you make, and it changes what those people hear from you and whether they can come back.
+
+## One person, one record
+
+Fanfare keeps one record per person in your organisation: an email address belongs to one customer, and so does a phone number. When you add or import a number without a country code, Fanfare reads it as a number in your organisation's country.
+
+## How a customer record is created
+
+A record is created in any of these ways:
+
+- The customer signs in. On your experience they enter their email or phone and type the one-time code Fanfare sends them. The record can be created before they finish signing in, so your list can include people who never finished.
+- You add them, under **Customers → Add Customer**. You need an email address; the name, phone, **Status** and **Lifetime points** are optional. **Lifetime points** sets only their lifetime total: their points balance, which loyalty bias uses, starts at zero.
+- You import a CSV file into an audience. Rows that match no existing customer create new ones. See [Build audiences](/guide/create/audiences) for the steps and columns.
+- You add them to a sequence's waitlist with **Add person**. If no customer has that email address, one is created.
+- Your developers create them through the Fanfare API. See [API keys and embedding](/guide/account/developer).
+
+### What an import does to customers you already have
+
+A CSV row is matched to an existing customer by email or by phone. A matched customer is updated from the row, not left alone:
+
+- Their name, phone number and lifetime points are replaced by the values in the file, where the file has them.
+- Their metadata is replaced as a whole, not merged.
+- If the phone number changes, the customer loses their marketing SMS consent and their phone is no longer marked as verified.
+- An email address is filled in only if the customer had none.
+
+Customers created by a CSV import start opted out of marketing SMS.
+
+<Warning>
+  A CSV import overwrites the details of every customer it matches. There is no undo. An empty cell leaves that detail as it is, so before you import, clear the name, phone, points and metadata cells for anyone whose current details you want to keep.
+</Warning>
+
+## Signed-in customers and guests
+
+When a customer opens your experience, they are either signed in or a guest. There is nothing in between: Fanfare has no "registered" or "verified only" level.
+
+| | Signed in | Guest |
+| --- | --- | --- |
+| How they get in | Enter their email or phone, then the one-time code sent to them. | Select "Continue as guest" on the sign-in screen. |
+| Where they can take part | Any distribution, and any sequence they qualify for. | Queues, draws and timed releases that have **Allow guest access** on, in a sequence with no audience. Never in auctions or appointments, and never on a waitlist. |
+| Messages from Fanfare | Fanfare's automatic emails and texts, such as a draw result or the notice that their payment window has opened. | None. Guests leave no email or phone number. |
+| Coming back later | From any device, by signing in again, to see where they stand. They must still finish a queue, draw or timed-release purchase in the browser they entered from; an auction win can be finished from any device. | Only from the same browser. |
+| Loyalty | Earn points, and their balance counts towards loyalty bias. | Never earn points, and count as zero points for loyalty bias. |
+| In **Customers** | Listed. | Not listed. |
+
+Guest access is a per-distribution switch, **Allow guest access**, on queues, draws and timed releases (in the create wizard, **Anyone, as a guest**). Even with it on, a sequence offers guest entry only when every open or scheduled distribution in it allows guests and the sequence has no audience. Giving a sequence an audience turns guest entry off. The full rules are in [Sequences and routing](/concepts/sequences), and the setting is in [Add and gate sequences](/guide/create/sequences) and each type's setup page, such as [Set up a queue](/guide/create/queue).
+
+<Warning>
+  Guests get no messages at all: no "you're through", no notice that their payment window has opened or closed, and no draw result. A guest who closes the page or switches device can miss their turn and is never told. Turn on **Allow guest access** only where you accept that some guests will lose a place they earned.
+</Warning>
+
+While a guest is entering or taking part in a queue, draw or timed release, Fanfare reminds them: "Keep this page open. As a guest you won't get emails or texts." A guest leaves no email address or phone number, so expect more duplicate or throwaway entries than with sign-in. Turn on **Allow guest access** only where you accept that. What a customer sees at the sign-in screen, stage by stage, is in [What your customers see](/guide/drop/what-customers-see).
+
+## Verified email and phone
+
+An email address or phone number is marked verified, with a check mark in **Customers**, once the customer has signed in with a code sent to it. Customers you add with **Add Customer** or **Add person**, and customers created by an import, start unverified.
+
+## What you can and cannot do with a customer record
+
+On a customer's profile you can see their details, value, engagement, audiences and drop history, and adjust their loyalty points when your loyalty programme is on and your plan includes Loyalty. The profile and its figures are explained in [Customer profiles](/guide/learn/customers).
+
+{/* image: concepts-customers-profile */}
+
+There is no form for editing a customer's name, email address or phone number: a CSV import that matches the customer is the only way the admin changes their name or phone. You also cannot delete a customer or restore one you have archived.
+
+**Archive** removes a customer from your list for good, and the same email or phone cannot be added again. Archiving does not stop the person signing in and taking part in your drops; they no longer appear in **Customers**. See [Customer profiles](/guide/learn/customers) before you archive anyone.
+
+A customer also has a **Status** of **Active** or **Inactive**, which you choose when you add them and which shows on their profile. Customers created any other way are **Active**. **Status** does not stop a customer signing in or taking part in your drops, and you cannot build an audience on it.
+
+## Worked example: a member and a guest at the same drop
+
+Northbound Supply Co.'s "Phantom Stitch Anorak Drop" has two sequences, as in the example on [Sequences and routing](/concepts/sequences): Inner Circle Early Access, gated by the "Inner Circle" audience and running a queue from 10:00 to 11:00, and Public Draw, open to everyone and taking entries from 11:00. Suppose **Allow guest access** is on for the draw.
+
+Maya Chen is in "Inner Circle". At 10:05 she enters her email and the code Fanfare sends her. She is placed in the Inner Circle queue. When her turn comes, Fanfare emails her "You're through: complete your purchase". She entered on her phone, so she completes her purchase on her phone: a queue place can only be paid for in the browser she entered from.
+
+A visitor who does not want to sign in arrives at 10:20. The members' queue is open, so they see the sign-in screen with no guest option. At 11:15 they come back, select "Continue as guest" and enter the Public Draw. If they are drawn, nobody emails or texts them: they find out only by returning to the page in the same browser before their payment window closes. They earn no points and never appear in **Customers**.
+
+## On Shopify
+
+Customers, profiles and archiving work the same way in the Fanfare app in Shopify. On your Shopify storefront, though, everyone who visits starts as a guest. Where **Allow guest access** is on, they enter as guests without seeing the sign-in screen, and get no emails or texts unless they select "Sign In" before entering.
+
+## Related
+
+<CardGroup>
+  <Card title="Customer profiles" href="/guide/learn/customers">
+    The profile, its figures, and archiving a customer.
+  </Card>
+  <Card title="Sequences and routing" href="/concepts/sequences">
+    Which gates a sequence puts in front of a customer.
+  </Card>
+  <Card title="Build audiences" href="/guide/create/audiences">
+    CSV import steps and columns.
+  </Card>
+  <Card title="Loyalty and Fanfair" href="/concepts/loyalty">
+    Points and loyalty bias.
+  </Card>
+  <Card title="Announcements" href="/guide/create/announcements">
+    Marketing SMS opt-in and the messages customers receive.
+  </Card>
+</CardGroup>

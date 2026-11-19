@@ -1,0 +1,105 @@
+---
+title: FAQ
+description: Short answers to the questions operators ask most about how Fanfare behaves, each with a link to the page that explains it in full.
+---
+
+Each answer links to the page that covers it in full. For the meaning of a term, see the [Glossary](/guide/reference/glossary); for problems mid-drop, see [Troubleshooting a live drop](/guide/drop/troubleshooting).
+
+## Setting up a drop
+
+### How do I publish or launch my experience?
+
+There is no launch step. An experience is **Scheduled** as soon as a distribution has a future opening time, and **Live** the moment that distribution opens. Selecting **Create experience** schedules the drop. See [Experiences](/concepts/experiences), and [Status reference](/guide/reference/statuses) for every status.
+
+### Why did my drop open as soon as I created it?
+
+The wizard's **Opens At** starts at the next minute, and there is no separate publish step to stop it. If you select **Create experience** without changing it, the drop opens almost at once. Set the opening time before you go on. See [Create an experience](/guide/create/experiences).
+
+### How do I make one sequence come before another?
+
+A sequence is one way in to an experience. Priority follows the order you create sequences, lowest number first, and cannot be changed in the admin, so create the earliest or most exclusive one first. An open sequence beats a scheduled one whatever the numbers, so also give it the earlier window. See [Sequences and routing](/concepts/sequences).
+
+### Can one sequence run a queue and then a draw?
+
+Yes. A sequence can hold any mix of distributions, run one after another. Their windows cannot overlap, though back-to-back windows are fine. To run two distributions at the same time, put them in two sequences. See [Distributions](/concepts/distributions/overview).
+
+### Do I need to add a waitlist, and does it catch people when my queue is full?
+
+Every sequence except one that runs only appointments already has one; there is nothing to set up. It takes sign-ups only while nothing in the sequence is live and something is still to come (or nothing is scheduled yet), and only from signed-in customers. So it is not an overflow list for a busy queue. See [Waitlists](/concepts/waitlists).
+
+### Are access codes case-sensitive?
+
+No. Access codes are not case-sensitive: a customer can type the code in capitals, lowercase or a mix. See [Sequences and routing](/concepts/sequences).
+
+### Why can't members of my audience get in?
+
+An audience admits nobody until its first build has finished, so check that it reads **Live** before the sequence opens. Members must also sign in: a sequence with an audience always asks for it. See [Audiences and access codes](/concepts/audiences).
+
+### Can customers enter without an account?
+
+Only in queues, draws and timed releases with **Allow guest access** on, and only while every live or scheduled distribution in that sequence allows guests. A sequence with an audience never admits guests. Guests get no emails or texts, so one who closes the page can miss their turn without being told. See [Customers and identity](/concepts/customers).
+
+### Can I switch a product to Fanfare-managed later?
+
+No. **Stock management** is fixed when the product is created. If you chose wrongly, the only way out is to create the product again with the right choice. If your organisation takes payment outside Fanfare, every product you create is **Not managed**. See [Add products](/guide/create/products).
+
+## During a drop
+
+### Can I pause a drop?
+
+Only a queue, with **Pause queue** and **Resume queue** in the queue card's menu. An **Admit rate** of 0 also lets nobody new in, but the queue is not marked as paused and **Resume queue** cannot bring back its old rate. **Deactivate** is not a pause: it ends things for good. See [Change things mid-drop](/guide/drop/live-controls) and [Things that cannot be undone](/guide/reference/cannot-be-undone).
+
+### What can I still change once it is live?
+
+Most settings, and a save on a live distribution reaches customers straight away, with no confirmation. Some lock as a distribution opens, among them payment collection, auction prices and quantity, and a later opening time; a queue counts as open about 5 and a half minutes early. For a setting fixed for good, the way out is to deactivate and create a new distribution. A sequence or experience whose distributions are all deactivated takes nothing new, so the replacement may need a new sequence or experience. See [What locks, and when](/concepts/what-locks-when).
+
+### How long do customers have to pay?
+
+A queue and a timed release give 30 minutes, and an auction 30 minutes from the win. A draw uses its **Admission expiration**, 60 minutes if you leave it blank when you create the draw. On Shopify, customers pay in Shopify's checkout and there is no **Payment collection** choice. See [Admission and the payment window](/concepts/admission-and-payment) and [Limits and defaults](/guide/reference/limits).
+
+### If I deactivate one sequence, what happens to the rest?
+
+They keep running, but a published hosted page shows the whole experience as ended, including for sequences still running, and there is no way to keep it open for them. Only organisation admins can deactivate; on Shopify, anyone who can open the app can. See [Stop a drop](/guide/drop/deactivate) and [Things that cannot be undone](/guide/reference/cannot-be-undone).
+
+## After a drop
+
+### Why can't I delete my experience?
+
+Delete is unavailable while anything in it is **Scheduled** or **Live**, though a running auction's Delete looks available and leads to Deactivate. After you deactivate, Delete is refused for the payment window plus about an hour, about 90 minutes at the defaults or 2 hours for a draw, even though the button looks available. See [Stop a drop](/guide/drop/deactivate).
+
+### Why is Gross revenue higher than what I was paid?
+
+**Gross revenue** adds up order totals, including orders that were never paid, such as Pending payment, Payment failed and Cancelled. Refunds are shown beside it in **Refunded**, not subtracted, and fees are not taken off. Filtering **Order status** to **Paid**, then to **Partially refunded**, leaves out unpaid orders, but the cards still show totals before refunds. **Net revenue** on **Performance** counts paid orders minus refunds. What you receive is lower again by the Fanfare fee and Stripe's own fees. See [Orders and refunds](/guide/learn/orders) and [Payments and fees](/guide/account/payments).
+
+### Does a refund put the item back in stock?
+
+Only if you choose **Return to stock**, and only for items whose stock Fanfare manages. A refund is sent as soon as you submit it and cannot be undone. See [Orders and refunds](/guide/learn/orders) and [Things that cannot be undone](/guide/reference/cannot-be-undone).
+
+## Plans and payments
+
+### What happens to my audiences and pages if I move to a lower plan?
+
+They keep serving customers: live hosted pages stay published and audiences keep deciding who can enter. What you lose is creating new ones or editing the ones you have, until you choose a plan that includes them again. See [Plans and what they unlock](/guide/start/plans).
+
+### Why is Auction locked when my plan includes it?
+
+An **Auction** card marked "Needs a checkout that charges the winning bid" is not a plan lock, and upgrading does not lift it. It depends on your checkout. See [Plans and what they unlock](/guide/start/plans) and [Checkout options](/concepts/checkout-options).
+
+### Can I change my organisation's country or currency?
+
+Not once your organisation has a Stripe account, created or connected: from then on neither can change. The currency also cannot change while you have an auction you haven't deleted. Fanfare checkout needs USD and a US Stripe account, so set **Currency** to USD before you create or connect one. See [Payments and fees](/guide/account/payments) and [Organisation settings](/guide/account/organization).
+
+### What happens when my trial ends?
+
+If no card is on file, the subscription is cancelled and your organisation moves to Starter. Everything you built stays and keeps working, but you cannot create or edit Growth features until you choose a plan. See [Billing and usage](/guide/account/billing).
+
+## In the Fanfare app in Shopify
+
+### Can I refund a Shopify order in Fanfare?
+
+No. Fanfare offers no Refund or Cancel on a Shopify order: refund or cancel it in Shopify. A change made in Shopify does not update Fanfare's copy of the order. See [Orders with Shopify checkout](/guide/shopify/orders).
+
+### Is my product still protected after the drop?
+
+Yes. A product stays protected after its drop has ended, and **Deactivate** does not release it. Customers cannot buy it the normal way until no experience includes it: delete each experience that includes it, or remove the product from each one. See [Checkout protection](/guide/shopify/checkout-protection).
+

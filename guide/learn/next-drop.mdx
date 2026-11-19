@@ -1,0 +1,135 @@
+---
+title: Set up the next drop from this one
+description: Read what your last drop tells you, decide whether the next one runs in the same experience or a new one, and let the right customers in first.
+---
+
+This page takes you from a finished drop's results to the set-up of the next one: read the numbers that matter, decide where the next drop runs, then choose who gets in first. Once the drop's distributions read **Closed** on the Performance tab, entry and payment have finished, but a refund made later still lowers **Net revenue**. While they read **Settling**, admitted customers can still pay and the figures can change: see [Read your results](/guide/learn/performance).
+
+## Before you start
+
+- The drop has closed. A sequence is one way in to an experience; check that every distribution in the sequences you are learning from reads **Closed**.
+- Audiences need Growth or above, and loyalty tiers and the loyalty programme need Pro.
+- To reward loyalty, the loyalty programme must be on. Customers earn points only while it is on, so points from a drop that ran with the programme off do not exist. See [Run a loyalty programme](/guide/learn/loyalty).
+
+## Read what happened
+
+Four parts of the results shape the next drop. What each one counts is on [Read your results](/guide/learn/performance).
+
+- **By drop**, on the experience's **Performance** tab: entrants, orders, revenue and sell-through for each sequence, side by side.
+- **Entry to payment**: how many entered, how many were admitted, and how many of those paid.
+- **How queue places ended**, for queues only: many **Still waiting at close** means demand outran the drop; many **Admission lapsed** means admitted customers did not pay in time. See [Admission and the payment window](/concepts/admission-and-payment).
+- **Sizes**: units sold per size and when each one sold out.
+
+{/* image: guide-learn-next-drop-by-drop */}
+
+## Decide where the next drop goes
+
+<Warning>
+  If Fanfare manages the products' stock, a finished drop's stock is released. Once every distribution in a sequence has ended and nobody is still in checkout, the sequence shows **Released** and takes no further queue, draw, auction or timed release. Once every sequence holding stock is released, the experience cannot be given more stock, so a new sequence in it has nothing to sell. To sell those products again, create a new experience. Release cannot be undone: see [Stock](/concepts/stock).
+</Warning>
+
+Where stock allows more than one option, the deciding fact is the forecast: **Expected entrants**, and the comparison with an earlier distribution on **Results**, only use distributions of the same type in the same experience. After one closed draw, the next draw in that experience is compared against it; after two, it also gets a forecast. A new experience starts with neither. See [Before a distribution opens](/guide/learn/performance#before-a-distribution-opens).
+
+| Option | When to use it | What you keep | What to know |
+| --- | --- | --- | --- |
+| Same experience, new distribution in an existing sequence | The same customers get in the same way, at a later date | The sequence's audience, access code, order limits and waitlist; the forecast and comparison | Not possible once the sequence shows **Released** (see the warning above). Select **Duplicate** in a distribution's menu: it copies the settings and clears every date ([Add and gate sequences](/guide/create/sequences)). Windows in one sequence cannot overlap, and a distribution with no close time blocks every later one. If every distribution in the sequence was deactivated, it takes no new distribution and **Duplicate** is not offered: add a new sequence instead ([Stop a drop](/guide/drop/deactivate)). The sequence's waitlist takes sign-ups again in the gap between windows ([Waitlists](/concepts/waitlists)). |
+| Same experience, new sequence | A new group should get in on its own terms or from its own stock | The forecast and comparison; the experience's products and page | Not possible for Fanfare-managed products once the experience's stock is released. A new sequence ranks after every sequence created before it. Priority follows creation order and cannot be changed in the admin ([Sequences and routing](/concepts/sequences)). |
+| New experience | Different products, every distribution in the old experience has been deactivated, or its Fanfare-managed stock has been released | Your audiences, tiers and customer records, which belong to your organisation | Required once the old experience is fully deactivated, because it takes nothing new ([Stop a drop](/guide/drop/deactivate)), or once its Fanfare-managed stock is released. No forecast and no comparison to start with, and it needs its own hosted page ([Build and publish the hosted page](/guide/create/hosted-page)). |
+
+There is no way to copy a whole experience in the admin. To repeat one, create a new experience and set it up again: see [Create an experience](/guide/create/experiences).
+
+## Choose who gets in first
+
+<Info>Available on Growth and above.</Info>
+
+On Starter, the audience forms and **Import CSV** show an upgrade prompt and are disabled, but the built-in "RFM Segments" can still be chosen for a sequence. See [Plans and what they unlock](/guide/start/plans).
+
+An audience lets only its members into a sequence. Rules can look at purchase and loyalty figures: **Total orders**, **Last order**, **Lifetime value**, **Average order value**, **Loyalty balance**, **Lifetime points**, the scores, **Created at** and **Email**. The full list is in [Build audiences](/guide/create/audiences).
+
+No rule looks at whether a customer entered, won or bought in a particular drop. To reach the people from one drop, use its waitlist (next section) or the purchase figures above.
+
+Recipes, created with **Create Audience**:
+
+- Repeat buyers: **Match consumers where** **AND**, **Total orders** **Greater Than or Equal** 2, and **Last order** **Greater Than** a date shortly before your last drop opened.
+- Top spenders: **Lifetime value** **Greater Than or Equal** an amount you choose.
+
+A **Last order** date is typed as text and stays fixed until you edit it, so a "recent buyers" audience does not move forward on its own: see [Build audiences](/guide/create/audiences).
+
+Order limits count a customer's earlier purchases across the whole experience, within each limit's time window, so in the same experience a repeat buyer may already have reached a limit and be turned away. Check **Edit → Order limits** on the sequence before you let repeat buyers in: see [Add and gate sequences](/guide/create/sequences).
+
+{/* image: guide-learn-next-drop-repeat-buyers */}
+
+The built-in "RFM Segments" ("Champions", "Loyal", "At-Risk", "New" and "Lost") can gate a sequence directly. You cannot edit them.
+
+Build the audience well before the next drop, and check that it reads **Live** before the sequence opens: an audience admits nobody until its first build finishes. When rule changes take effect is explained in [Audiences and access codes](/concepts/audiences).
+
+## Bring back last drop's waitlist
+
+<Info>Exporting the waitlist works on every plan; importing it as an audience needs Growth or above.</Info>
+
+{/* This procedure is put together from the waitlist export and the CSV importer's rules; no single admin screen describes it. */}
+
+A sequence's waitlist holds the signed-in customers who asked to be told when it opens, plus anyone you added. It is not everyone who entered. There is no export of entrants, winners or buyers, and **Customers** has no export. Exporting the waitlist and importing it as an audience is how you let those people in first next time.
+
+1. Open the old sequence and select the **Waitlist** tab.
+2. Select **Exports**, then **New export**. You can leave the page while it runs.
+3. When the export shows **Completed** under **Past exports**, select each file name to download it.
+4. Each file holds up to 1,000 people, with its own header row. If there are several, join them into one file and delete the repeated header rows.
+5. Every person on the waitlist is in the file, whatever their status. To keep only people still waiting, keep the rows whose `status` is `waitlisted` or `notified`, and delete `converted` (bought through one of the sequence's distributions), `expired` and `left` (left the list or removed by you). See [Waitlists](/concepts/waitlists).
+6. Delete every column except `email`. A row with no email is then skipped on import as **Needs an email or phone number**. To keep customers who signed in by phone only, keep the `phone` column too, and import straight after you export.
+7. Open **Audiences**, open the **Create Audience** menu and select **Import CSV**. Name the audience, add the file and select **Start Import**. The steps are in [Build audiences](/guide/create/audiences).
+
+<Warning>
+  Do not import the export as it comes. It holds each customer's name, phone number and lifetime points as they were when you exported, and importing it overwrites those details for every existing customer in it. A phone number that changed after the export is written back, and that clears the customer's SMS consent. This cannot be undone. Keep only `email` (and `phone` if you need it) before you import. The general rule is in [Build audiences](/guide/create/audiences).
+</Warning>
+
+{/* image: guide-learn-next-drop-waitlist-export */}
+
+The import creates a new **Static List** audience before the file uploads. It does not change afterwards, and the admin cannot add another file to it, so import once, with the final list. If the upload fails, delete the empty audience and import again. New customers created from a CSV are opted out of SMS marketing: see [Build audiences](/guide/create/audiences).
+
+## Reward loyalty
+
+<Info>Available on Pro and above.</Info>
+
+- Tiers: to let one tier in first, gate the members' sequence with that tier; the picker takes one tier per sequence. To admit several tiers, create a rule audience instead; for tiers built on **Lifetime points**, use **Lifetime points** **Greater Than or Equal** the start of the lowest tier you want, or **Between** to stop below a higher tier. A plain rule audience like this needs only Growth. How tiers behave when you edit them is in [Loyalty and Fanfair](/concepts/loyalty).
+- **Bias toward loyal consumers**: turn it on for the next queue or draw to give customers with more points better odds. It needs the programme on and never guarantees a win. How the weighting works is on [Loyalty and Fanfair](/concepts/loyalty).
+- **Event Points**: if entering or buying should earn more, raise the **Purchase** card or the Queue Events and Draw Events cards under **Loyalty → Event Points** before the next drop; browsing and cart cards such as Add to Cart never award points. A change saves itself once the slider stops and applies only to points awarded after that. See [Run a loyalty programme](/guide/learn/loyalty).
+
+## Put it together
+
+1. Create the members' sequence first, then the public one. Priority follows creation order and cannot be changed in the admin: see [Sequences and routing](/concepts/sequences).
+2. Read step 3 first, then gate the members' sequence with your audience or tier, and give it the earlier window: an open sequence is offered before a scheduled one, whatever the priority. See [Add and gate sequences](/guide/create/sequences).
+3. Once the sequence has an audience and a distribution with an opening time, Fanfare sets up the invite email. It goes 2 days before the sequence opens, once the hosted page is published and your postal address is saved; if the sequence opens sooner than that, it goes about 30 minutes after you save. Check the **Invite email** card on the sequence's **Access** tab straight away, and turn off **Send this invite** if you are not ready. Each customer is invited once per sequence, so a reused sequence does not invite its earlier invitees again. See [Invites, waitlist and access-code sends](/guide/create/invites-and-waitlist).
+4. Run through [Before doors open](/guide/drop/preflight).
+
+## Worked example
+
+Northbound Supply Co. finished "Stealth Parka Winter Draw". Its one sequence, "Public Draw", ran the draw "Winter Draw", which now reads **Closed**.
+
+1. The parka sells again next month. Its stock is **Not managed** by Fanfare, so nothing was released, and Northbound stays in the same experience.
+2. It builds "Winter Draw Repeat Buyers": **Total orders** **Greater Than or Equal** 2 **AND** **Last order** **Greater Than** a date shortly before Winter Draw opened, and checks it reads **Live**.
+3. It adds a sequence gated by that audience. The sequence ranks after "Public Draw", which was created first, so Northbound gives the members' draw the earlier window: it closes before the next public draw opens.
+4. The members' draw is compared against Winter Draw on **Results**, but shows "No forecast yet": only one draw in the experience has closed. The next public draw gets an **Expected entrants** forecast built from both closed draws.
+5. It exports the Public Draw waitlist, keeps the `waitlisted` and `notified` rows and only the `email` column, and imports the file as a new Static List.
+6. For a new sneaker, Northbound plans "KaiZen Relic Release" as a new experience. The wizard creates its first sequence, named after the experience, and Northbound gates it with the "Sneaker Club" audience in the wizard; the public sequence is added after it. A new experience has no forecast or comparison, and needs its own hosted page before the invite can send.
+
+## On Shopify
+
+The audience, loyalty, waitlist and Performance screens are the same in the Fanfare app in Shopify. Shopify customer lists cannot be imported as an audience: see [Build audiences](/guide/create/audiences). Products for the next drop come from your Shopify store: see [Products from Shopify](/guide/shopify/products). The app does not offer appointments.
+
+## Related
+
+<CardGroup>
+  <Card title="Read your results" href="/guide/learn/performance">
+    What each number on Home and the Performance tabs counts.
+  </Card>
+  <Card title="Build audiences" href="/guide/create/audiences">
+    Rules, CSV import and loyalty tiers.
+  </Card>
+  <Card title="Loyalty and Fanfair" href="/concepts/loyalty">
+    Points, tiers and loyalty bias in queues and draws.
+  </Card>
+  <Card title="Before doors open" href="/guide/drop/preflight">
+    What must be true before the next drop opens.
+  </Card>
+</CardGroup>

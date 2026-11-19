@@ -1,0 +1,111 @@
+---
+title: Checkout options
+description: Who takes your customers' money once Fanfare lets them buy, what Fanfare can see and enforce with each checkout, and when you can change your choice.
+---
+
+Fanfare decides who may buy and when. A checkout takes the money. You make one choice for the whole organisation: Fanfare's own checkout, your own store's checkout, or, if you use the Fanfare app in Shopify, Shopify checkout. The choice decides how much Fanfare can count and enforce for you: whether it sees each sale, how your stock is counted, whether customers can choose between products, and whether you can run auctions. Make it before you build your first experience, because it cannot change while any queue, draw, auction or timed release is Scheduled or Live.
+
+## Where you choose
+
+At sign-up, the **How will you sell?** step offers **Fanfare checkout** ("Sell through Fanfare. Connect Stripe before you create experiences.") and **External checkout** ("You sell in your own store."). Afterwards the same choice is the **Checkout processor** card in **Settings → Organization**, on the **Basic Information** tab, where the two options are called **Fanfare** and **External**. Shopify checkout is External: the Fanfare app in Shopify sets it up that way when you install it.
+
+<Frame caption="The Checkout processor card.">
+  <img src="/images/guide/concepts-checkout-options-processor.webp" alt="The Checkout processor card in organisation settings, with the Fanfare option selected beside External, and the checkout rates for draws, queues and auctions and for timed releases beneath it." />
+</Frame>
+
+## The three options side by side
+
+| | Fanfare checkout | Your own checkout | Shopify checkout |
+| --- | --- | --- | --- |
+| Who takes payment | Fanfare, into your own Stripe account. Customers pay inside the Fanfare widget or hosted page. | Your store. Fanfare collects no payment. | Shopify. |
+| Who counts stock | Fanfare can. Products can be **Fanfare-managed** or **Not managed**. | Nobody in Fanfare. Products you create are **Not managed**. | Normally Shopify: products from Shopify are **Shopify-managed**. |
+| Does Fanfare see the sale? | Yes. | No. | Yes. Shopify orders appear in Fanfare's **Orders** as imported orders. |
+| Order limits | Enforced. | Not enforced by Fanfare, which never sees the orders. Your store has to enforce them. | Enforced. |
+| Offer more than one product or variant (**Customer Picks** or **Mystery Box**) | Yes. | No. A sequence can offer only one product and variant. | Yes, when every product and variant on offer comes from Shopify. |
+| Auctions | Yes. | No. | Only on Shopify Plus. See On Shopify below. |
+| Pre-authorising a card on entry | Available on queues and draws. | Not available. | Not available. |
+| Refunds | From Fanfare's **Orders**. | In your store. | In Shopify. |
+| Fanfare's fee | A percentage of each paid order, set by your plan and the distribution type. Never charged on appointments. | No per-order fee, because Fanfare never sees the sale. | Billed through your Shopify app charges. |
+
+<Frame caption="Where the customer pays, where the money goes, and whether Fanfare sees the sale, for each checkout option.">
+  <img src="/images/guide/concepts-checkout-options-compare.webp" alt="A three-column diagram comparing Fanfare checkout, your own checkout and Shopify checkout. Each column follows a customer from being let in to paying: on Fanfare checkout they pay in the Fanfare widget or hosted page and the money goes to your Stripe account; on your own checkout they pay in your store's checkout and the money goes to your store; on Shopify checkout they pay in Shopify checkout and the money goes to Shopify. On Fanfare checkout the sale comes back to Fanfare for stock count and order limits, and on Shopify checkout the order comes back for order limits and Orders. On your own checkout nothing comes back, Fanfare never sees the sale, and a stock number means people who may buy at once." />
+</Frame>
+
+### Fanfare checkout
+
+Customers pay without leaving your experience. Payment goes through your own Stripe account, so Stripe's processing fees are charged to that account, separately from Fanfare's fee. Fanfare records every order, so it can count your stock, enforce order limits, let customers choose a product, run auctions, and hold a card on entry if you want it to. You refund and cancel orders from **Orders**; see [Orders and refunds](/guide/learn/orders). A refund does not return Fanfare's fee.
+
+Fanfare checkout has two requirements:
+
+- Your organisation must be in the US and sell in US dollars. Otherwise the sign-up option is disabled with "Fanfare checkout supports US stores selling in USD for now."
+- You need a connected Stripe account before you create experiences.
+
+Connecting Stripe fixes your organisation's country and currency for good. That, and the fee for each plan, are covered in [Payments and fees](/guide/account/payments).
+
+### Your own checkout
+
+Fanfare lets customers in and then hands them to your store to pay. Fanfare takes no payment and never learns whether anyone bought, which has four consequences:
+
+- Stock: products you create are **Not managed**: Fanfare keeps no count of them. See [Stock](/concepts/stock).
+- Product choice: a sequence is one way in to an experience, and on your own checkout each one can sell only one thing. Your checkout is handed one item per customer, so a sequence cannot offer a choice of product or variant, and **Mystery Box** is not available.
+- Order limits: the order limits section says "Fanfare can't see orders taken in your own checkout, so these limits never trip." Your own store has to enforce any limit per customer.
+- Auctions: not available. The auction type shows "Needs a checkout that charges the winning bid" and cannot be selected.
+
+When a customer is let in, the **Continue to checkout** button in the Fanfare widget opens, in a new tab, the checkout address your site gave the widget when it was added, or hands the customer to your site's own code. If your site gives it neither, customers who are let in see no checkout button. Adding the widget is covered in [API keys and embedding](/guide/account/developer). Fanfare has no way to check, inside your store, whether a customer was let in or whether their payment window is still open, so turning away a customer who arrives late is up to your store.
+
+#### What a stock number means on your own checkout
+
+On Fanfare checkout, a sequence's stock number counts units sold. On your own checkout Fanfare sees no purchases, so the same number caps how many customers hold the right to buy at the same time. When a customer's payment window ends, their unit comes back, whether or not they bought in your store. Over a whole drop, many more customers than your number can pass through to your checkout.
+
+<Warning>
+  On your own checkout, a stock number in Fanfare does not limit how many units you sell. Your store's own inventory is the only thing that stops an oversell, so set it to what you actually have before the drop opens.
+</Warning>
+
+### Shopify checkout
+
+With the Fanfare app in Shopify, customers pay in Shopify checkout and Shopify keeps the stock count. Shopify orders come back to Fanfare, so order limits apply and imported orders show in **Orders**, but you refund them in Shopify, not in Fanfare. See [Orders with Shopify checkout](/guide/shopify/orders). Fanfare's fee on these orders is billed through your Shopify app charges.
+
+## How customers pay is a separate setting
+
+Whether a customer pays after winning or has a card hold placed when they enter, and whether entry is automatic, is set on each distribution, not here. It is explained in [Admission and payment](/concepts/admission-and-payment). On your own checkout or Shopify checkout there is no choice: queues and draws show "Customers pay in your own checkout, so Fanfare collects no payment for this queue." (or draw), and auctions and timed releases have no payment setting. For what a customer sees while paying through Fanfare, see [What your customers see](/guide/drop/what-customers-see).
+
+## Changing your mind
+
+In the Fanfare admin, only organisation admins can change the **Checkout processor**. It cannot change while any queue, draw, auction or timed release in your organisation is Scheduled or Live, including one whose winners are still inside their payment window. A queue or timed release with no end time keeps blocking the change until you **Deactivate** or delete it. A move to **External** is also refused while any **Fanfare-managed** product exists, while a sequence offers a choice of product that the new checkout cannot handle, or while an auction exists that the new checkout cannot charge for. Customers already let in keep the checkout they were given. The steps, and what to clear first, are in [Organisation settings](/guide/account/organization).
+
+## Worked example
+
+Northbound Supply Co. is a US organisation selling in US dollars, on Fanfare checkout with Stripe connected. It runs "Eternal Bloom No. 1 Auction", a live auction for a single numbered silk bomber. Bidders bid inside the experience, and the winner pays there. The order appears in **Orders**, and Fanfare takes its fee at the "Draws, queues and auctions" rate for Northbound's plan.
+
+The same organisation on its own, non-Shopify checkout could not run that auction at all: the auction type would show "Needs a checkout that charges the winning bid". It also could not let customers in its "Phantom Stitch Anorak Drop" choose between products or variants inside Fanfare: each sequence would have to offer one product and one variant. And if it set a stock number of 50 on a sequence, that would mean 50 customers allowed to buy at once, not 50 jackets.
+
+## On Shopify
+
+- Taking payments with Fanfare checkout is not available in the Fanfare app in Shopify yet. **Settings → Payments** says "Taking payments with Fanfare checkout isn't available in the Shopify app yet. Your plan's checkout rates are below." and the connect button is disabled. Customers pay in Shopify checkout.
+- Your experiences protect nothing in your store until storefront setup is done. See [Checkout protection](/guide/shopify/checkout-protection).
+- Auctions need your store on Shopify Plus, with Fanfare's checkout rules turned on, and selling in the same currency as your Fanfare organisation. Otherwise the auction type shows "Needs a checkout that charges the winning bid" and cannot be selected. Upgrading your Fanfare plan does not change this. See [Checkout protection](/guide/shopify/checkout-protection).
+- Leave the **Checkout processor** on **External**. Shopify checkout only works with External, and Fanfare checkout cannot be connected from the Fanfare app in Shopify.
+- Fanfare's fee on Shopify checkout orders can differ from the Fanfare checkout rate. When it does, **Payments** shows both, under "On Fanfare checkout" and "On Shopify checkout".
+
+## Related
+
+<CardGroup>
+  <Card title="Payments and fees" href="/guide/account/payments">
+    Connect Stripe, see your plan's checkout rates, and what connecting fixes for good.
+  </Card>
+  <Card title="Organisation settings" href="/guide/account/organization">
+    Change the checkout processor, and what has to be cleared first.
+  </Card>
+  <Card title="Admission and payment" href="/concepts/admission-and-payment">
+    Paying after the win, card holds on entry, the payment window and automatic entry.
+  </Card>
+  <Card title="Stock" href="/concepts/stock">
+    Fanfare-managed, Shopify-managed and Not managed products.
+  </Card>
+  <Card title="Add and gate sequences" href="/guide/create/sequences">
+    Product selection and order limits on a sequence.
+  </Card>
+  <Card title="Checkout protection" href="/guide/shopify/checkout-protection">
+    Make Shopify checkout respect your experience.
+  </Card>
+</CardGroup>

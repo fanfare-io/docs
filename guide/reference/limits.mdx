@@ -1,0 +1,188 @@
+---
+title: Limits and defaults
+description: The defaults, limits and timings of Fanfare settings in one place, each with a link to the page that explains it.
+---
+
+Use this page to check a number without reading the whole page about a setting. Each row links to the page that explains it, where the field reference table says what the setting does. What locks at each moment is on [What locks, and when](/concepts/what-locks-when), and actions you cannot take back are on [Things that cannot be undone](/guide/reference/cannot-be-undone).
+
+Where the new-experience wizard and **Add distribution** start a setting differently, both are given.
+
+## Timing around an opening
+
+| What | Default or limit | Explained in |
+| --- | --- | --- |
+| Queue waiting room | Opens 5 minutes before **Opens**. Nobody is let in before **Opens**. | [Queue](/concepts/distributions/queue) |
+| When a queue, draw or auction counts as opened, and its locks start | 30 seconds before **Opens**. For a queue, 5 minutes 30 seconds before **Opens**. An appointment locks while bookings stand instead. | [What locks, and when](/concepts/what-locks-when) |
+| Stock counting | Starts about 10 minutes before a sequence opens | [Stock](/concepts/stock) |
+| Pre-open audience rebuild | 5 minutes before the first distribution in the sequence starts taking entries. For a queue, 10 minutes before **Opens**. | [Audiences and access codes](/concepts/audiences) |
+| Daily rebuild of a **Dynamic** audience | 24 hours after its last build | [Audiences and access codes](/concepts/audiences) |
+| Hosted page publish freeze | From 15 minutes before any distribution in the experience opens until it closes. A distribution with no close time freezes publishing until 30 minutes after it opens. | [Brand, templates and designs](/concepts/design) |
+| Waitlist "opens soon" message | 5 minutes before each opening, except for appointments | [Invites, waitlist and access-code sends](/guide/create/invites-and-waitlist) |
+| First invite email | 2 days before the sequence opens. About 30 minutes after set-up if the sequence opens sooner. | [Invites, waitlist and access-code sends](/guide/create/invites-and-waitlist) |
+| **Keep inviting** | **Every 15 minutes** | [Invites, waitlist and access-code sends](/guide/create/invites-and-waitlist) |
+| An opening time in the past | Accepted on create if it is up to 5 minutes ago; anything earlier is refused | [Create an experience](/guide/create/experiences) |
+| Opening and closing times | Saved to the whole minute | [Set up a timed release](/guide/create/timed-release) |
+| An announcement moved into the past | Sends straight away if the new time is less than 24 hours ago. Never sends if it is 24 hours or more ago. | [Announcements](/guide/create/announcements) |
+
+## Payment windows
+
+The payment window is the time a customer has to pay once they get through. How it works is on [Admission and the payment window](/concepts/admission-and-payment).
+
+| What | Default or limit | Explained in |
+| --- | --- | --- |
+| Queue | 30 minutes. You cannot change it. | [Admission and the payment window](/concepts/admission-and-payment) |
+| Draw: **Admission expiration** | 60 minutes if left blank when you create the draw. 30 minutes if you clear the field later. | [Admission and the payment window](/concepts/admission-and-payment) |
+| Draw: a short window when customers choose their product | Under 5 minutes shows a warning in **Add distribution** and **Edit**; you can still save | [Set up a draw](/guide/create/draw) |
+| Timed release | 30 minutes | [Admission and the payment window](/concepts/admission-and-payment) |
+| Auction | 30 minutes from the win | [Auction](/concepts/distributions/auction) |
+| Pre-authorised card holds (queue and draw) | Last about a week. A schedule is refused when a hold placed at opening would expire before the first selection (**Closes**, for a queue) plus the payment window. Holds placed early can also lapse before later selections, so keep the time from opening to the last selection, plus the payment window, under six days. | [Admission and the payment window](/concepts/admission-and-payment) |
+
+## Defaults by distribution type
+
+### Queue
+
+| What | Default or limit | Explained in |
+| --- | --- | --- |
+| **Admit rate** | 100 a minute, up to 10,000. At least 1 in the wizard. **Add distribution** and **Edit** accept 0, which lets no one in. | [Set up a queue](/guide/create/queue) |
+| **Bias toward loyal consumers**, **Allow guest access**, **Automatic entry** | Off | [Set up a queue](/guide/create/queue) |
+| **Payment collection** | **Pay when admitted** | [Set up a queue](/guide/create/queue) |
+
+### Draw
+
+| What | Default or limit | Explained in |
+| --- | --- | --- |
+| **Winner count** | 10. In the wizard it follows the **Stock** total when every size has a number. | [Set up a draw](/guide/create/draw) |
+| **Continue selecting until completed** | On | [Set up a draw](/guide/create/draw) |
+| **Payment collection** | **Pay after the win** | [Set up a draw](/guide/create/draw) |
+| **Bias toward loyal consumers**, **Allow guest access**, **Automatic entry** | Off | [Set up a draw](/guide/create/draw) |
+
+### Auction
+
+The wizard works from a base price: the lowest price of the first product you picked, or 100 if that product has no price. **Add distribution** leaves every price field blank.
+
+| What | Default or limit | Explained in |
+| --- | --- | --- |
+| **Reserve Price** (English) | Wizard: the base price | [Set up an auction](/guide/create/auction) |
+| **Minimum Bid Increment** (English) | Wizard: 5 | [Set up an auction](/guide/create/auction) |
+| Auto-extend (English) | Off. In the wizard, 5 minutes when you switch it on, chosen from 1, 2, 5, 10, 15 or 30 minutes; elsewhere, a number of seconds. It extends **Settles** once, and never past **Closes**. | [Set up an auction](/guide/create/auction) |
+| **Start Price** (Dutch) | Wizard: one and a half times the base price | [Set up an auction](/guide/create/auction) |
+| **Floor Price** (Dutch) | Wizard: the base price | [Set up an auction](/guide/create/auction) |
+| **Price Drop Amount** (Dutch) | Wizard: 10 | [Set up an auction](/guide/create/auction) |
+| **Price Drop Interval (seconds)** (Dutch) | Wizard: 5 minutes, chosen from 1, 2, 5, 10, 15 or 30 minutes. Elsewhere, at least 1 second. | [Set up an auction](/guide/create/auction) |
+| **Quantity** (Dutch) | At least 1, where you enter it | [Set up an auction](/guide/create/auction) |
+
+### Timed release
+
+| What | Default or limit | Explained in |
+| --- | --- | --- |
+| **Allow guest access**, **Automatic entry** | Off | [Set up a timed release](/guide/create/timed-release) |
+
+### Appointment
+
+| What | Default or limit | Explained in |
+| --- | --- | --- |
+| **Slot duration** | Wizard: 30 minutes, from 15 minutes to 2 hours. **Add distribution** and **Edit**: 5 to 480 minutes; empty in **Add distribution** runs as 60. | [Set up appointments](/guide/create/appointment) |
+| **Buffer** | Wizard: 15 minutes, up to 30. **Add distribution** and **Edit**: 0 to 240 minutes; empty runs as no buffer. | [Set up appointments](/guide/create/appointment) |
+| **Max capacity per slot** | 1, from 1 to 1000 | [Set up appointments](/guide/create/appointment) |
+| **Location** | Wizard: **Physical Location**, with nothing picked. **Add distribution**: none, so the appointment runs online; choose a location later under **Edit**. | [Set up appointments](/guide/create/appointment) |
+| Hours for an online appointment, or a location with no opening hours | 9 AM to 5 PM every day | [Set up appointments](/guide/create/appointment) |
+
+## Experiences and sequences
+
+| What | Default or limit | Explained in |
+| --- | --- | --- |
+| Products in an experience | Up to 10. At least one, except for appointments. | [Create an experience](/guide/create/experiences) |
+| **Opens At** in the wizard | The next minute | [Create an experience](/guide/create/experiences) |
+| **Closes At** in the wizard | Seven days after **Opens At** | [Create an experience](/guide/create/experiences) |
+| **Time Zone** | Your organisation's time zone | [Create an experience](/guide/create/experiences) |
+| First sequence | Takes the experience's name, at priority P1 | [Create an experience](/guide/create/experiences) |
+| A new sequence's priority | The next number after the existing sequences. It cannot be changed in the admin. | [Sequences and routing](/concepts/sequences) |
+| **Shared access code** | Up to 32 characters. Access codes are not case-sensitive. | [Add and gate sequences](/guide/create/sequences) |
+| **Product Selection** | **Customer Picks** | [Add and gate sequences](/guide/create/sequences) |
+| **Mystery Box** shares | Split evenly when you create the sequence. In the sequence's settings, weights from 1 to 1,000. | [Add and gate sequences](/guide/create/sequences) |
+| Size combinations per sequence | Fanfare counts stock for up to 256. Above that, a sequence that counts any size refuses new customers. | [Stock](/concepts/stock) |
+| A Fanfare-managed size, or a size on a sequence running a Dutch auction, given no number | Starts at 0 and shows **Opens sold out** | [Stock](/concepts/stock) |
+
+## Products and stock
+
+| What | Default or limit | Explained in |
+| --- | --- | --- |
+| **Stock management** | **Fanfare-managed**. With an external checkout, **Not managed** is the only option. | [Add products](/guide/create/products) |
+| **Opening stock** | 0 | [Manage stock](/guide/create/stock) |
+| Product images | JPEG, PNG, GIF or WebP, up to 50 MB each | [Add products](/guide/create/products) |
+| **Autofill** (Growth and above) | 25 a day and 3 a minute per organisation. Copies up to 12 images, keeps up to 100 variants, and works out up to 3 options. Usually takes 15 to 40 seconds. | [Add products](/guide/create/products) |
+| Prices with Fanfare checkout | No more than two decimal places (whole amounts for currencies such as JPY and HUF), and not below your currency's smallest charge, for example 0.50 in USD or EUR. A price of 0 is always allowed. | [Add products](/guide/create/products) |
+
+## Audiences, customers and loyalty
+
+| What | Default or limit | Explained in |
+| --- | --- | --- |
+| Audience CSV import | Up to 100 MB, with a column named `email` or `phone` in lower case | [Build audiences](/guide/create/audiences) |
+| Loyalty tiers | Up to 10 | [Build audiences](/guide/create/audiences) |
+| **Program Status** | Off | [Run a loyalty programme](/guide/learn/loyalty) |
+| **Point Expiration** | **Never**. **Months until expiry** and **Months of inactivity** run from 1 to 120. | [Run a loyalty programme](/guide/learn/loyalty) |
+| **Maximum balance**, **Daily earning cap**, **Monthly earning cap** | No limit | [Run a loyalty programme](/guide/learn/loyalty) |
+
+## Pages, designs and messages
+
+| What | Default or limit | Explained in |
+| --- | --- | --- |
+| Hosted page blocks | At most 10 blocks and one entry widget | [Build and publish the hosted page](/guide/create/hosted-page) |
+| Customer poll | **Question** up to 200 characters; 2 to 10 options; **Option ID** up to 64 characters; **Option label** up to 120 | [Build and publish the hosted page](/guide/create/hosted-page) |
+| Preview link | Lasts 5 minutes | [Build and publish the hosted page](/guide/create/hosted-page) |
+| Widget text strings | Up to 500 characters each | [Templates and widget designs](/guide/create/templates) |
+| Design pickers | At most 50 Live designs of each kind, plus the default and, for widget designs, the one the experience already uses | [Templates and widget designs](/guide/create/templates) |
+| Wallet pass fields | **Program name** 40 characters, points labels 9, tier label 20, **Logo text** 30 | [Templates and widget designs](/guide/create/templates) |
+| Announcement email | Headline up to 60 characters, button label up to 40 | [Announcements](/guide/create/announcements) |
+| **Brand name in texts** | Up to 20 standard characters | [Integrations](/guide/account/integrations) |
+
+## Plans and fees
+
+Prices and take rates for each plan, and what each plan unlocks, are on [Plans and what they unlock](/guide/start/plans).
+
+| What | Default or limit | Explained in |
+| --- | --- | --- |
+| Monthly price | Starter $0, Growth $199, Pro $799, Enterprise by quote | [Plans and what they unlock](/guide/start/plans) |
+| Standard take rate (queues, draws, auctions) | Starter 3.50%, Growth 2.75%, Pro 2.25% | [Plans and what they unlock](/guide/start/plans) |
+| Timed-release take rate | Starter 1.75%, Growth 1.25%, Pro 1.00% | [Plans and what they unlock](/guide/start/plans) |
+| Trial for a new organisation created in the Fanfare admin | 5 days of Growth, no card needed. The banner warns you in the last three days. | [Billing and usage](/guide/account/billing) |
+| Fee on an order | Never more than the order itself | [Payments and fees](/guide/account/payments) |
+| **Minimum fee per order** | Only on a custom rate that carries one | [Payments and fees](/guide/account/payments) |
+
+## Account and sign-in
+
+| What | Default or limit | Explained in |
+| --- | --- | --- |
+| Password | At least 8 characters | [Team members](/guide/account/team) |
+| Emailed sign-in code for the admin | Expires in 10 minutes | [Team members](/guide/account/team) |
+| Customer sign-in code | 6 digits; expires in 5 minutes | [What your customers see](/guide/drop/what-customers-see) |
+| **Experience Subdomain** | 3 to 64 characters | [Organisation settings](/guide/account/organization) |
+| Home period | 7 days | [A tour of the admin](/guide/start/tour-of-the-admin) |
+| Home figures | Refresh every 30 seconds while Home is on screen and auto-refresh is on | [A tour of the admin](/guide/start/tour-of-the-admin) |
+| Live screens and the experience overview | Refresh about every 5 seconds while the tab is visible. Once everything in the experience has closed, the overview refreshes about once a minute. | [Watch a live drop](/guide/drop/watch-live) |
+| A settling distribution's screen | Refreshes every 30 seconds, or every 5 seconds while another distribution in the sequence is live | [Watch a live drop](/guide/drop/watch-live) |
+| Connecting Meta or Discord | Finish choosing Pages or a channel within 15 minutes | [Integrations](/guide/account/integrations) |
+| Connecting Telegram | Select **Verify channel** within 30 minutes of getting the code | [Integrations](/guide/account/integrations) |
+
+## Delete after Deactivate
+
+**Delete** stays unavailable after a distribution ends until customers who were let in can no longer pay, plus a margin.
+
+| What | Default or limit | Explained in |
+| --- | --- | --- |
+| After **Deactivate** | The payment window plus about an hour: about 90 minutes for a queue, timed release or auction, and about 2 hours for a draw whose **Admission expiration** was left blank when it was created. An appointment has no wait once its bookings are cancelled. | [Stop a drop](/guide/drop/deactivate) |
+| A queue or timed release that closes on its own | Its payment window plus about an hour from its close: about 90 minutes | [Stop a drop](/guide/drop/deactivate) |
+| A draw that closes on its own | Its payment window plus about 2 hours from its close, or from its final selection if it keeps drawing until every unit is claimed: about 3 hours with a 60-minute **Admission expiration** | [Stop a drop](/guide/drop/deactivate) |
+| An auction that closes on its own | About 90 minutes from its close or settlement, whichever is later | [Stop a drop](/guide/drop/deactivate) |
+| An English auction that closed without settling | About 30 days, unless you deactivate it, which brings it down to about 90 minutes | [Stop a drop](/guide/drop/deactivate) |
+
+## On Shopify
+
+In the Fanfare app in Shopify:
+
+- Products come in through Shopify's product picker, up to 20 at a time. An experience still holds at most 10. See [Products from Shopify](/guide/shopify/products).
+- An imported Shopify order can have at most 250 lines. See [Orders with Shopify checkout](/guide/shopify/orders).
+- The Fanfare block on a product in Shopify admin stops waiting after about 10 seconds and shows its empty state. See [Fanfare inside Shopify admin](/guide/shopify/in-shopify-admin).
+- Customers pay in Shopify's checkout, so there is no **Payment collection** choice and the pre-authorisation rows do not apply. See [Admission and the payment window](/concepts/admission-and-payment).
+- Appointments are not offered, so the appointment rows do not apply.
+- You approve a plan on Shopify's plan page. See [Install and choose a plan](/guide/shopify/install-and-plans).

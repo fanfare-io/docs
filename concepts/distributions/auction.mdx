@@ -1,204 +1,144 @@
 ---
-title: Auction Distribution
-description: Competitive bidding for price discovery and limited item allocation
+title: Auction
+description: How English and Dutch auctions set the price by demand, who wins, and what you can no longer change once bidding starts.
 ---
-An **Auction** is a distribution mechanism that allocates products through competitive bidding. Auctions are ideal for limited items where price discovery is desirable or when scarcity drives value.
 
-## How Auctions Work
+An auction lets demand set the price: "Let people bid — the highest bids win." Use one when you have a few high-value pieces and would rather not fix a price. There are two kinds, chosen when you create the auction:
 
-![Auction lifecycle diagram showing bidding, extension, auction end, reserve decision, and result.](/images/concepts/distributions/auction-lifecycle.webp)
+- **English (ascending)**: customers bid against each other and the price climbs. When bidding ends, the highest bidder wins.
+- **Dutch (descending)**: the price starts high and falls on a schedule. The first customers to accept the current price buy a unit at that price.
 
-### Bidding Phase
+The kind cannot be changed later. Auctions are available on every Fanfare plan, Starter included.
 
-1. Auction opens at the scheduled start time
-2. Consumers place bids (must exceed current highest bid by the minimum increment)
-3. Current highest bid is visible to all bidders
-4. If auto-extend is enabled, late bids extend the auction to prevent sniping
+<Frame caption="English bids climb to a winner at Settles; a Dutch price falls on a schedule until customers buy, and units left at Settles are unsold.">
+  <img src="/images/guide/concepts-auction-price-over-time.webp" alt="Two price-over-time charts. On the left, English auction bids step up by the Minimum Bid Increment or more and rise past a dashed Reserve Price line; a late bid inside the extension stretch moves Settles later once, before Closes, and the winner has 30 minutes to pay from Settles. On the right, a Dutch auction price steps down from the Start Price by the Price Drop Amount every Price Drop Interval to the Floor Price, customers buy units along the way and at the floor, and units left at Settles are Unsold." />
+</Frame>
 
-### Settlement Phase
+## The times that matter
 
-1. At the end time (including any auto-extension), bidding closes
-2. Highest bidder wins (if their bid meets or exceeds the reserve price)
-3. Winner receives access to complete their purchase
-4. Non-winners are notified of the result
+Every auction has three times: **Opens**, **Settles** (**Settle at** when you add an auction to a sequence) and **Closes**.
 
-## The Consumer Experience
+- From **Opens**, customers can bid (English) or buy (Dutch).
+- At **Settles**, bidding ends. In an English auction "the highest bidder wins"; in a Dutch auction "the price freezes wherever it has landed".
+- From **Settles** to **Closes** the auction is settling.
 
-### During Bidding
+An English winner has 30 minutes to pay, counted from when bidding ends and the result is confirmed. **Closes** does not shorten or lengthen this. A winner who does not pay in that time loses the unit, and nobody else is offered it. The customer sees "Payment window closed".
 
-Consumers see:
+The window from **Opens** to **Closes** cannot overlap another distribution in the same sequence: see [Distributions](/concepts/distributions/overview).
 
-- Current highest bid
-- Minimum next bid amount
-- Time remaining until auction ends
-- Whether the reserve price has been met
-- Their current bid status (winning or outbid)
+## English auctions
 
-### Real-Time Updates
+Each new bid must beat the highest bid by at least the **Minimum Bid Increment**. You can set a **Reserve Price**, the lowest price you will sell for. If the highest bid at **Settles** is below the reserve, there is no winner and every bid is released.
 
-Bidders receive instant updates when:
+On a sequence that counts stock, "An English auction offers one unit of each size and the winner takes one, so there is no quantity to enter. Units it doesn't sell stay in the sequence." If the sequence holds no units, the auction opens sold out.
 
-- A new high bid is placed
-- They've been outbid
-- The auction time extends due to a late bid
-- The auction ends
+A customer's first bid locks their choice of item.
 
-### When the Auction Ends
+### Late bids and auto-extend
 
-**If you won:**
+**Auto-Extend** (**Auto Extend Seconds** in the auction's settings) stops a last-second bid from winning unanswered. A bid that arrives within the extension length of **Settles** pushes **Settles** back by that length.
 
-- Congratulations notification
-- Link to complete your purchase at the winning bid price
-- Time limit to complete (before access expires)
+- It happens once. A second late bid during the extension does not extend the auction again.
+- It never pushes past **Closes**: bidding then ends at **Closes**.
+- **Settles** must be at least the extension length before **Closes**. The admin refuses a schedule without that room.
 
-**If you didn't win:**
+## Dutch auctions
 
-- Notification of final result
-- Optional: Information about similar upcoming auctions
+The price starts at the **Start Price** and drops by the **Price Drop Amount** every **Price Drop Interval (seconds)**, down to the **Floor Price**. A customer buys a unit at the current price with "Buy now — [amount]".
 
-### Completing Your Purchase
+On a sequence that counts stock, the number of units is the sum of the sequence's sizes, with no quantity to enter: change a size on the sequence's Stock card instead. Otherwise it is the **Quantity** you enter.
 
-Winners have a limited time to complete checkout:
+A Dutch buyer has 30 minutes to pay, counted from the moment they buy. A buyer who does not pay in time loses the unit. While the auction is running, that unit goes back on sale at the current price. Once the auction has ended, it stays unsold and is not offered again. A Dutch auction with a **Quantity** ends as soon as its last unit is bought, so a unit that lapses after that is lost to the sale too.
 
-- **Checkout window** — Winners receive a link to complete their purchase within a set time (e.g., 24 hours)
-- **If the winner doesn't complete** — The item remains unsold; you can contact the winner or relist
-- **No automatic re-offer** — Unlike draws with backfill, auctions don't automatically offer to the next-highest bidder
+At **Settles** the price stops where it is and nobody can buy any more. Units not bought by then stay unsold. Reaching the floor price does not end a Dutch auction: customers can still buy at the floor until **Settles**. If the auction ends at the floor with units still unsold, customers who did not buy see "Unsold" and "The auction reached its floor price before all items were claimed."
 
-Plan your follow-up process for non-completing winners when setting up auctions.
+## Pricing is fixed once the auction opens
 
-## Consumer Journey
+<Note>
+  "Pricing is locked once the auction opens". From that moment you cannot change the **Reserve Price**, **Minimum Bid Increment**, **Start Price**, **Floor Price**, **Price Drop Amount**, **Price Drop Interval (seconds)** or **Quantity**. Once the auction has opened, **Opens** can only move earlier, so you cannot reopen pricing by postponing it. The auto-extend length (**Auto Extend Seconds**) stays editable.
+</Note>
 
-![Auction consumer journey showing not bidding, winning, outbid, won, lost, and complete states.](/images/concepts/distributions/auction-journey.webp)
+## Rules that make auctions different
 
-## When to Use Auctions
+- **Customers must sign in.** An open or scheduled auction makes its whole sequence require sign-in, even if another distribution in it allows guests: see [Sequences and routing](/concepts/sequences).
+- **Customers always choose to take part.** There is no automatic entry.
+- **Payment is taken after the win.** There is no card hold when a customer bids.
+- **Bids are binding.** Once a customer has bid, they cannot leave the auction or withdraw the bid.
+- **The currency is fixed at creation.** An auction uses your organisation's currency at the moment you create it. While your organisation has auctions that have not been deleted, or ended auctions whose winners can still pay, you cannot change its currency: see [Organisation settings](/guide/account/organization).
 
-| Scenario            | Why Auction Works                           |
-| ------------------- | ------------------------------------------- |
-| Rare collectibles   | Price discovery for unique items            |
-| Limited editions    | Allows market to set fair price             |
-| Charity events      | Maximizes donation value                    |
-| Unique experiences  | VIP access, meet-and-greets                 |
-| Overstock clearance | Moves inventory at market-determined prices |
+### The checkout must charge the winning bid
 
-## Configuration Options
+An auction's price is only known when bidding ends, so the checkout must charge exactly the winning amount. Auctions need either Fanfare checkout or a connected checkout that enforces the auction price in your organisation's currency. Without one, Auction is locked in the admin with "Needs a checkout that charges the winning bid".
 
-### Reserve Price
+This is not a Fanfare plan limit, so upgrading does not unlock it. Switch to Fanfare checkout or connect a checkout that supports auction pricing: see [Checkout options](/concepts/checkout-options).
 
-The minimum price required for a sale to complete:
+## What customers see
 
-- **With reserve**: Item only sells if bidding reaches this amount
-- **No reserve**: Item sells to highest bidder regardless of amount
-- If reserve isn't met, auction ends with no winner
+Every stage and message is in [What your customers see](/guide/drop/what-customers-see). In short:
 
-**Tips:**
+- An English auction shows a ledger with the highest bid, the minimum next bid, and the amount the sale needs ("Sale needs at least") until the reserve is met.
+- A customer who bids far above the minimum next bid must confirm a line saying what they will pay if nobody beats them.
+- A customer who is outbid sees "Outbid — the highest bid is now [amount]" and gets an email or a text message.
+- After **Settles** they see "Auction settling" while the result is confirmed.
+- The winner sees "Won at [amount]" (English) or "Bought at [amount]" (Dutch) and goes on to pay.
 
-- Set reserve at roughly 70% of expected value
-- Too high = no bids, auction fails
-- Too low = may undersell valuable items
+When an English auction ends because the reserve was not met, customers see the generic "Ended" message. Nothing tells them the reserve was the reason.
 
-### Minimum Bid Increment
+## Deactivating an auction
 
-The minimum amount each new bid must exceed the current highest bid:
+Deactivating an auction voids its bids and no winner is chosen. A winner already in checkout keeps their unit and can still pay; any other winner loses the win. An English auction whose bidding has ended can refuse deactivation while its winner can still check out, and one that ended without settling must be deactivated on its own: see [Stop a drop](/guide/drop/deactivate).
 
-- **Higher increments** (e.g., $25-$100): Faster price discovery, fewer bids
-- **Lower increments** (e.g., $1-$5): More competitive bidding, more engagement
+To follow bids as they arrive, use the auction's panel on the sequence's **Overview**: see [Watch a live drop](/guide/drop/watch-live).
 
-**Examples:**
+<Frame>
+  <img src="/images/guide/concepts-auction-english-bidding.webp" alt="The live panel of an English auction in the Bidding state, with a sentence naming the leading bidder and amount, the highest bid, the reserve with its status marked reserve met, a price axis and a list of recent bids." />
+</Frame>
 
-- High-value items ($1000+): $50-$100 increments
-- Mid-range items ($100-$1000): $10-$25 increments
-- Lower-value items (under $100): $1-$5 increments
+## Worked example: one numbered jacket
 
-### Auto-Extend
+Northbound Supply Co. auctions one numbered Eternal Bloom Silk Bomber in "Eternal Bloom No. 1 Auction", an English auction:
 
-Prevents last-second "sniping" by extending the auction when late bids are placed:
-
-- **How it works**: If a bid is placed in the final 60 seconds, the auction extends at most once by the configured duration
-- **Example**: A 2-minute extension triggers when a bid arrives in the last minute
-- **One-time extension**: Further late bids during the extension do not extend the auction again
-
-**Benefits:**
-
-- Gives all bidders a fair chance to respond to last-minute activity
-- Encourages competitive bidding in the final stretch
-- Prevents frustration from losing to last-second bids
-
-### Guest vs. Verified Access
-
-For auctions, we strongly recommend requiring verified accounts:
-
-- Bidding involves payment commitment
-- Prevents duplicate accounts
-- Reduces fraudulent bids
-
-## Best Practices
-
-### 1. Set Appropriate Reserves
-
-Balance seller protection with buyer engagement. A reserve that's too high means no bids; too low means potentially underselling.
-
-### 2. Use Auto-Extend
-
-Enable auto-extend (2-5 minutes recommended) to prevent sniping and ensure fair bidding.
-
-### 3. Choose Bid Increments Wisely
-
-Match increments to item value—larger increments for expensive items, smaller for affordable ones.
-
-### 4. Require Verified Accounts
-
-Since auctions involve payment commitments, require consumers to have verified accounts before bidding.
-
-### 5. Communicate Clearly
-
-Always show bidders:
-
-- Current high bid
-- Minimum next bid required
-- Time remaining
-- Reserve status (met or not met)
-- Extension notifications
-
-## Common Patterns
-
-### Standard Single-Item Auction
-
-- **Duration**: 5-7 days
-- **Reserve**: 70% of expected value
-- **Bid increment**: $25
-- **Auto-extend**: 5 minutes
-- **Authentication**: Verified consumers only
-
-### Flash Auction
-
-Short duration, creates urgency:
-
-- **Duration**: 1-4 hours
-- **Reserve**: None (starts at $1)
-- **Bid increment**: $10
-- **Auto-extend**: 1 minute
-- **Authentication**: Verified consumers only
-
-### Charity Auction
-
-Maximize donations:
-
-- **Duration**: 1-2 weeks
-- **Reserve**: Based on retail value
-- **Bid increment**: $50
-- **Auto-extend**: None (fixed end time)
-- **Authentication**: Verified consumers only
-
-## Currency and Pricing
-
-Auctions use your account's configured currency. All monetary values (reserve price, bid increments, bids) are displayed in that currency with proper formatting.
-
-## Related Concepts
-
-- [Distributions Overview](/concepts/distributions/overview) — Common distribution concepts
-- [Queue Distribution](/concepts/distributions/queue) — First-come, first-served alternative
-- [Draw Distribution](/concepts/distributions/lottery) — Random selection alternative
-- [Appointment Distribution](/concepts/distributions/appointment) — Time-slot booking
-- [Timed Release Distribution](/concepts/distributions/instant) — Instant access at scheduled time
-- [Waitlist Distribution](/concepts/distributions/exclusive) — Interest capture and notifications
-- [Products](/concepts/products) — Product configuration and pricing
+| Setting | Value |
+| --- | --- |
+| **Reserve Price** | 650.00 |
+| **Minimum Bid Increment** | 25.00 |
+| **Settles** | 18:00 |
+| **Closes** | 19:00 |
+| **Auto Extend Seconds** | 300 (five minutes) |
+
+1. Bids arrive at 600.00 and 625.00. Because the reserve has not been met, the ledger shows "Sale needs at least" 650.00.
+2. At 17:40 a bid of 650.00 meets the reserve.
+3. At 17:58 another customer bids 675.00. The bid lands inside the last five minutes, so **Settles** moves from 18:00 to 18:05.
+4. At 18:03 the previous leader bids 700.00. The auction has already been extended once, so **Settles** stays at 18:05.
+5. At 18:05 bidding ends and customers see "Auction settling". The highest bid, 700.00, is above the reserve, so that customer wins and sees "Won at 700.00".
+6. The winner has 30 minutes from the end of bidding to pay, so until about 18:35. If they do not pay in time, the jacket stays unsold and is not offered to the 675.00 bidder.
+
+## On Shopify
+
+In the Fanfare app in Shopify, your organisation's currency is your shop's currency.
+
+With Shopify checkout, Auction stays locked with "Needs a checkout that charges the winning bid" unless all of these hold:
+
+- Your shop is on Shopify Plus.
+- The **Fanfare checkout validation** rule is on and blocking: see [Checkout protection](/guide/shopify/checkout-protection).
+- The app has every permission it asks for.
+- Your shop's currency matches your organisation's currency.
+
+Fanfare checks these when you install the app, when your shop or the app's permissions change, and each time you open the app in Shopify admin until the check passes. Changing your Fanfare plan does not help.
+
+## Related
+
+<CardGroup>
+  <Card title="Set up an auction" href="/guide/create/auction">
+    Every field and the steps.
+  </Card>
+  <Card title="Admission and the payment window" href="/concepts/admission-and-payment">
+    Payment windows in general.
+  </Card>
+  <Card title="What locks, and when" href="/concepts/what-locks-when">
+    The full lock table.
+  </Card>
+  <Card title="Stop a drop" href="/guide/drop/deactivate">
+    Deactivate, and when it is refused.
+  </Card>
+</CardGroup>

@@ -1,0 +1,133 @@
+---
+title: Fanfare in Shopify
+description: Which parts of this guide apply to the Fanfare app in Shopify as written, and what works differently there.
+---
+
+The Fanfare app in Shopify is the Fanfare admin inside Shopify admin. It has the same experiences, sequences, distributions, audiences, customers, loyalty, Design Studio and performance screens as the Fanfare admin at admin.fanfare.io. This guide serves both: where the Fanfare app in Shopify differs, a page says so in an On Shopify section or note. This page lists what is the same, what only exists on Shopify, and what works differently, with a link to the page that explains each one, and sets out who can use the app.
+
+<Frame caption="The Fanfare app runs inside Shopify admin and reaches customers through the product widget and the checkout rule, which you switch on in Storefront setup.">
+  <img src="/images/guide/guide-shopify-overview-where-fanfare-sits.webp" alt="A diagram of the Fanfare app inside Shopify admin, opened from the Fanfare item in Shopify's left-hand menu. Two arrows labelled &quot;Storefront setup&quot; lead from the app to the product widget on your storefront's theme and to the checkout rule in Shopify checkout." />
+</Frame>
+
+## What is the same
+
+These parts of the guide apply to the Fanfare app in Shopify as written, apart from any On Shopify note on the page itself:
+
+- Experiences, sequences and their gates, and waitlists. A sequence is one way in to an experience.
+- Audiences. Shopify customer lists cannot be imported as an audience.
+- Customers and loyalty.
+- Design Studio.
+- **Performance** and the live screens.
+- Locations.
+
+## Only in the Fanfare app in Shopify
+
+| What | What it does | Where it is explained |
+| --- | --- | --- |
+| **Settings → Storefront setup** | Shows the status of the checkout rule and the product widget. Finish both before a drop: the rule refuses ordinary checkout of a product in an experience even without the widget. | [Storefront setup](/guide/shopify/storefront-setup) |
+| Home's "Finish setting up Fanfare" checklist and the tour "Setting up Fanfare on your store" | Walk you through the two storefront steps. | [Storefront setup](/guide/shopify/storefront-setup) |
+| Checkout protection | Refuses checkout of a protected product unless the customer got access through your experience, while any experience includes the product. A "Shopify gating could not be updated" message means a product's protection did not update. | [Checkout protection](/guide/shopify/checkout-protection) |
+| Products picked from Shopify, and **Sync from Shopify** | Brings products in with Shopify's picker and refreshes them from Shopify. | [Products from Shopify](/guide/shopify/products) |
+| Orders from Shopify checkout | Brings paid orders into Fanfare, imports one that is missing, and links an order to Shopify from the **Shopify order** card. | [Orders with Shopify checkout](/guide/shopify/orders) |
+| The **Fanfare experiences** block, **Create Fanfare experience** and **Import order into Fanfare** | Show and start Fanfare work from a product or order in Shopify admin. | [Fanfare inside Shopify admin](/guide/shopify/in-shopify-admin) |
+| Plans on Shopify's plan page | Plan approval, **Confirming your plan**, comped stores, stores on an older Fanfare subscription, the unsupported-currency notice, and fees billed as Shopify usage. | [Install and choose a plan](/guide/shopify/install-and-plans) |
+
+## What works differently
+
+| Area | In the Fanfare admin | In the Fanfare app in Shopify | Details |
+| --- | --- | --- | --- |
+| Getting in | Sign in at admin.fanfare.io and set up an organisation. | Install from Shopify; Fanfare creates the organisation in your store's currency. No sign-up, sign-in or sign-out. | [Install and choose a plan](/guide/shopify/install-and-plans) |
+| Navigation | Fanfare sidebar; **Billing** and **Usage** in the user menu. | Shopify's left-hand menu; **Billing** and **Usage** are top-level, and **Billing** leaves the app for Shopify's plan page (a comped store sees a notice instead). Settings adds **Storefront setup** and has no **Tours & Tips**. No **Send feedback**. | [A tour of the admin](/guide/start/tour-of-the-admin) |
+| Home quick actions | **Create Product** | **Create Location** | [A tour of the admin](/guide/start/tour-of-the-admin) |
+| Team and roles | Admins and members, with invitations. | No roles: see [Who can use the app](#who-can-use-the-app). | [Team members](/guide/account/team) |
+| Products | Created in Fanfare. | Brought in from Shopify; name, description, URL, handle and variants are read-only; **Sync from Shopify** in place of **Delete**. | [Products from Shopify](/guide/shopify/products) |
+| Stock | Fanfare-managed or Not managed. | A product brought in while the checkout processor is **External** is Shopify-managed, and stays so. For a Fanfare-managed product, Fanfare's and Shopify's counts do not sync. | [Manage stock](/guide/create/stock), [Stock](/concepts/stock) |
+| Distribution types | Five. | Four: Appointment is not offered on any plan. Auction needs a Fanfare plan that includes it and a Shopify checkout that can charge the winning bid. | [Distributions](/concepts/distributions/overview), [Checkout protection](/guide/shopify/checkout-protection) |
+| Checkout and payment | Fanfare checkout through your Stripe account, with payment collection and pre-authorisation. | Shopify checkout; the organisation starts on an **External** checkout processor. Leave it there: [Organisation settings](/guide/account/organization) lets you switch to Fanfare checkout, but connecting the Stripe account it needs is "Coming soon" in the app. No payment collection or **Authorization amount**. A Stripe account connected earlier can be disconnected but not reconnected from the app. | [Checkout options](/concepts/checkout-options), [Payments and fees](/guide/account/payments) |
+| Refunds and cancellations | In Fanfare. | In Shopify only; Fanfare's copy of the order does not change. | [Orders with Shopify checkout](/guide/shopify/orders) |
+| Plan and billing | A Stripe subscription; without one the admin shows a banner. | Every store approves a plan on Shopify's plan page, Starter included, before the app opens, apart from a comped store and a store still on an older Fanfare subscription. | [Install and choose a plan](/guide/shopify/install-and-plans), [Billing and usage](/guide/account/billing) |
+| Test emails | Go to your sign-in email. | Go to your Shopify staff email, only when Shopify has verified it. | [Announcements](/guide/create/announcements) |
+| Integrations | — | Meta and Discord consent opens in the full browser window and returns you to Shopify admin. | [Integrations](/guide/account/integrations) |
+| **Embedding** | Limits which sites can frame your pages. | Also limits headless storefront calls once it has any entry. | [API keys and embedding](/guide/account/developer) |
+| Hosted pages | Only admins can create, change, save, publish (including overriding the freeze) or archive the page. | Anyone who can open the app can. | [Build and publish the hosted page](/guide/create/hosted-page) |
+| Locations | Used by appointments. | The same screens, though appointments are not offered. Only appointments use a location. A Fanfare location is not a Shopify inventory location. | [Locations and opening hours](/guide/create/locations) |
+
+{/* image: guide-shopify-overview-nav */}
+
+## Only in the Fanfare admin
+
+- Sign-up, sign-in and sign-out.
+- Invitations, members and roles.
+- **Account** and **Profile**.
+- The **Tours & Tips** settings page.
+- **Send feedback**.
+- The billing overview, the plan change dialogue and the Stripe customer portal.
+- Creating a product in Fanfare.
+- Appointments.
+- Connecting Stripe for Fanfare checkout.
+
+## Who can use the app
+
+Opening the Fanfare app in Shopify needs no Fanfare login: Shopify decides which of your staff can open it.
+
+The app has no admins or members. Everyone who can open it has an organisation admin's powers in Fanfare, including:
+
+- rotating the API secret key;
+- editing organisation settings, the checkout processor included;
+- editing the email sender and **Embedding**;
+- connecting and disconnecting integrations;
+- disconnecting a Stripe account connected earlier, which cannot then be reconnected from the app;
+- creating, changing, saving, publishing and archiving hosted pages.
+
+Messages elsewhere in this guide that say "ask an admin" do not apply in the Fanfare app in Shopify.
+
+<Warning>
+  Anyone who can open the Fanfare app can rotate your secret key, change your checkout processor and **Embedding**, and change your integrations. Limit who can open the app in Shopify accordingly.
+</Warning>
+
+Fanfare records every change made in the app against your store, not against the staff member who made it.
+
+For who can deactivate an experience, see [Stop a drop](/guide/drop/deactivate).
+
+## Things that surprise people
+
+- Installing the app is not enough: Fanfare usually turns checkout protection on for you at install, but customers can get through your experience only once the product widget is on your theme. Until then, a product in an experience cannot be bought at all, because checkout protection refuses its ordinary checkouts. See [Storefront setup](/guide/shopify/storefront-setup).
+- A product stays protected after its drop ends, for as long as any experience includes it. See [Checkout protection](/guide/shopify/checkout-protection).
+- **Billing** takes you out of the Fanfare app to Shopify's plan page, unless your store is comped. See [Install and choose a plan](/guide/shopify/install-and-plans).
+- A store priced in a currency Fanfare cannot price sees only a notice, with no app behind it. See [Install and choose a plan](/guide/shopify/install-and-plans).
+
+## Worked example: a queue set up from Shopify
+
+A staff member at Northbound Supply Co. sets up a queue for the Phantom Stitch Anorak by following [Set up a queue](/guide/create/queue) from inside Shopify admin. Most steps match the page as written. Three things differ:
+
+1. When the wizard asks for a product, Shopify's own product picker opens, and the anorak is brought in from the store's catalogue.
+2. The **Payment** step says "Customers pay in your own checkout, so Fanfare collects no payment for this queue." There is no **Pre-authorise on joining** choice.
+3. Customers can reach the anorak through the queue only once checkout protection is on and the product widget is on your theme; Home's "Finish setting up Fanfare" checklist tracks both.
+
+For the full sequence of steps for a first drop on Shopify, see [Your first drop on Shopify](/guide/start/your-first-drop-on-shopify). What each plan unlocks is on [Plans and what they unlock](/guide/start/plans).
+
+## Related
+
+<CardGroup>
+  <Card title="Your first drop on Shopify" href="/guide/start/your-first-drop-on-shopify">
+    Install, choose a plan, set up the storefront and run a first experience.
+  </Card>
+  <Card title="Install and choose a plan" href="/guide/shopify/install-and-plans">
+    Install the app, approve a plan on Shopify's plan page, and read your fees.
+  </Card>
+  <Card title="Storefront setup" href="/guide/shopify/storefront-setup">
+    Turn on checkout protection and add the product widget to your theme.
+  </Card>
+  <Card title="Products from Shopify" href="/guide/shopify/products">
+    Bring products in from Shopify and keep them in step.
+  </Card>
+  <Card title="Checkout protection" href="/guide/shopify/checkout-protection">
+    What the checkout rule refuses, and for how long a product stays protected.
+  </Card>
+  <Card title="Orders with Shopify checkout" href="/guide/shopify/orders">
+    How Shopify orders reach Fanfare, and refunds in Shopify.
+  </Card>
+  <Card title="Fanfare inside Shopify admin" href="/guide/shopify/in-shopify-admin">
+    The Fanfare experiences block and the two Fanfare actions in Shopify admin.
+  </Card>
+</CardGroup>

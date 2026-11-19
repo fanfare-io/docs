@@ -1,0 +1,92 @@
+---
+title: Things that cannot be undone
+description: Every action in Fanfare you cannot take back, and every setting that locks, each with a link to the page that explains it.
+---
+
+Fanfare has no undo and no draft step for most actions: they take effect as soon as you confirm them. Some locks lift on their own, listed under [Locks that lift](#locks-that-lift). Where a drop's setting is fixed for good, the only way out the admin gives is to **Deactivate** and create a new one, and Deactivate cannot be undone either. A sequence or experience whose distributions are all deactivated takes nothing new, so the replacement may need a new sequence or experience: see [What locks, and when](/concepts/what-locks-when). Read the row for what you are about to do, then the linked page before you act. Changes that apply at once but that you can set back by hand, such as a brand save or an **Event Points** change, are on [Change things mid-drop](/guide/drop/live-controls).
+
+## Actions you cannot undo
+
+| Action | What is final | Owner |
+| --- | --- | --- |
+| **Deactivate** a distribution, sequence or experience | Cannot be undone, even on one that has already closed; once all its distributions are deactivated, a sequence or experience takes nothing new, and deactivating any part shows the whole public page as ended | [Stop a drop](/guide/drop/deactivate) |
+| **Delete** an experience, sequence or distribution | No restore; orders, entries and customer records are kept | [Stop a drop](/guide/drop/deactivate#delete) |
+| **Cancel booking** on an appointment | Cannot be undone, and the customer is notified | [Change things mid-drop](/guide/drop/live-controls#cancel-a-booking) |
+| **Submit refund** on an order | Sent to Stripe at once and cannot be undone; the amount starts at the full remaining balance | [Orders and refunds](/guide/learn/orders) |
+| **Archive** a customer | Cannot be restored; their email address and phone number stay reserved | [Customer profiles](/guide/learn/customers) |
+| **Start Import** of a customer CSV | Overwrites every filled-in field of each matched customer, replaces their metadata and clears SMS consent on a changed phone number; cannot be undone | [Build audiences](/guide/create/audiences) |
+| **Delete** an audience | Cannot be restored | [Build audiences](/guide/create/audiences) |
+| **Delete** a product | No restore | [Add products](/guide/create/products) |
+| Remove an image from a product | Deleted at once, with no confirmation and no undo | [Add products](/guide/create/products) |
+| **Delete** a location | Cannot be undone; an appointment still using it can no longer be booked | [Locations and opening hours](/guide/create/locations) |
+| **Send code** to a waitlist | Goes at once to everyone on the waitlist; cannot be undone | [Invites, waitlist and access-code sends](/guide/create/invites-and-waitlist) |
+| **Delete** an email or text announcement, or cancel a social post or kit | Cannot be undone or restored | [Announcements](/guide/create/announcements) |
+| **Archive page** on a published hosted page | Cannot be undone; the address stops working within about a minute, and a new page gets a new address | [Build and publish the hosted page](/guide/create/hosted-page) |
+| **Delete** a design in the hosted page's **Unused designs** list | Cannot be undone | [Build and publish the hosted page](/guide/create/hosted-page) |
+| **Reset poll** on a live page | Every count goes back to zero; cannot be undone | [Build and publish the hosted page](/guide/create/hosted-page) |
+| **Delete** a design in Design Studio | Cannot be undone from the admin; anything already using it keeps it | [Templates and widget designs](/guide/create/templates) |
+| **Rotate key** for the secret key | Cannot be undone; the old key stops working within a minute and the new key is shown once | [API keys and embedding](/guide/account/developer) |
+| **Create account**, or connect your own Stripe account | Ties your organisation to that account for good and locks country and currency | [Payments and fees](/guide/account/payments) |
+| **Disconnect** Stripe | Stops Fanfare checkout at once; you can reconnect only the same account | [Payments and fees](/guide/account/payments) |
+| **Cancel immediately** on a paid plan | No refund for the rest of the current period | [Billing and usage](/guide/account/billing) |
+| Switch Loyalty off on a plan below Pro | One-way until you upgrade to Pro | [Run a loyalty programme](/guide/learn/loyalty) |
+| Change **Experience Subdomain** | The old address keeps serving with no end date, and no other organisation can take it | [Organisation settings](/guide/account/organization) |
+
+## Settings fixed for good
+
+| Setting | Fixed from | Owner |
+| --- | --- | --- |
+| A product's **Stock management** | When the product is created | [Add products](/guide/create/products) |
+| Sequence priority | When the sequence is created: it follows creation order and cannot be changed in the admin | [Add and gate sequences](/guide/create/sequences), [Sequences](/concepts/sequences) |
+| **Auction Type** | When the auction is created | [Set up an auction](/guide/create/auction) |
+| An auction's currency | When the auction is created | [Auction](/concepts/distributions/auction) |
+| Queue **Payment collection** and **Authorization amount** | About five and a half minutes before **Opens** | [Set up a queue](/guide/create/queue) |
+| Draw **Payment collection**, **Authorization amount** and **Continue selecting until completed** | About 30 seconds before **Opens** | [Set up a draw](/guide/create/draw) |
+| Draw **Winner count** | When entry closes | [Set up a draw](/guide/create/draw) |
+| Auction prices and **Quantity** | About 30 seconds before **Opens** | [Set up an auction](/guide/create/auction) |
+| **Opens** | About 30 seconds before **Opens** (about five and a half minutes for a queue) it can only move earlier; once it has closed the whole schedule is final | [What locks, and when](/concepts/what-locks-when) |
+| Every setting on a deactivated distribution | Deactivate: it becomes read only | [Stop a drop](/guide/drop/deactivate) |
+| The hosted page address | The page's first publish; you cannot choose it | [Build and publish the hosted page](/guide/create/hosted-page) |
+| Organisation country and currency | A Stripe account created or connected, even after **Disconnect** | [Payments and fees](/guide/account/payments) |
+| A verified sending domain | Verification: the admin offers no way to remove or replace it while it shows **Verified** or **Needs attention** | [Sender identity and sending domain](/guide/create/email-sender) |
+| A loyalty tier group's attribute | When the group is created | [Build audiences](/guide/create/audiences) |
+| The start value of a tier group's lowest tier | When the group is created: you cannot type a new one, but adding a tier or removing the lowest one resets it to the lowest value in your customer data | [Loyalty and Fanfair](/concepts/loyalty) |
+| A product with units already sold in one of the experience's sequences | Its first sale in one of the experience's sequences: it can never be removed from the experience | [What locks, and when](/concepts/what-locks-when) |
+| A released sequence's stock | Release, after its drop ends | [Stock](/concepts/stock) |
+
+The stage-by-stage view of these locks, and why they start at the opening moment, is on [What locks, and when](/concepts/what-locks-when).
+
+## Locks that lift
+
+| What is locked | While | Owner |
+| --- | --- | --- |
+| An appointment's slot settings, window, location and time zone | Any booking stands | [Set up appointments](/guide/create/appointment) |
+| A location's opening hours and time zone, and its **Delete** | Bookings stand at that location | [Locations and opening hours](/guide/create/locations) |
+| A sequence's **Product Selection** and Mystery Box products | A distribution in it is open, has entrants or holds checkouts, or its stock is being counted, which starts about 10 minutes before it opens | [Add and gate sequences](/guide/create/sequences) |
+| The experience's products | Any of its sequences is locked | [Create an experience](/guide/create/experiences) |
+| The experience's allocations | The drop is live; a sequence's sizes only go up once counting starts, about 10 minutes before it opens | [Allocate stock to a drop](/guide/create/stock-allocation) |
+| Republishing a live hosted page, unless you type PUBLISH and select **Override freeze and publish** | From 15 minutes before a distribution opens until it closes, or until 30 minutes after it opens if it has no close time | [Build and publish the hosted page](/guide/create/hosted-page) |
+| A **Dynamic** audience: **Refresh now** is refused and rule changes wait | The audience is **Held** | [Audiences and access codes](/concepts/audiences) |
+| **Checkout processor** | Any distribution is scheduled or running, or its winners can still pay; switching to **External** also waits until no sequence offers a choice of product and no Fanfare-managed product exists | [Organisation settings](/guide/account/organization) |
+| **Currency** | Any auction exists, or an ended auction's winner may still pay | [Organisation settings](/guide/account/organization) |
+| **Delete** after a drop ends | Admissions wind down: the payment window plus about an hour after **Deactivate**, so about 90 minutes, or about 2 hours for a draw left at its default payment window; longer after a drop that ends on its own; an English auction that closed without settling is held about 30 days unless you deactivate it | [Stop a drop](/guide/drop/deactivate) |
+| Plan changes during a trial | Until you add a card | [Billing and usage](/guide/account/billing) |
+| Creating and editing Growth or Pro features after a move to a lower plan | Until you choose a plan that includes them; what already runs keeps serving | [Plans and what they unlock](/guide/start/plans) |
+
+## On Shopify
+
+- The Fanfare app in Shopify offers no appointments and has no payment collection to lock: see [What locks, and when](/concepts/what-locks-when#on-shopify).
+- Everyone who can open the app counts as an organisation admin, so anyone there can deactivate: see [Stop a drop](/guide/drop/deactivate) and [Team members](/guide/account/team).
+- **Disconnect** on a Stripe account connected earlier: you cannot reconnect from the Shopify app. See [Payments and fees](/guide/account/payments).
+- Uninstalling the app moves your organisation to Starter, cancelled: see [Install and choose a plan](/guide/shopify/install-and-plans).
+- Shopify orders are refunded or cancelled in Shopify, and those changes do not change Fanfare's copy of the order: see [Orders with Shopify checkout](/guide/shopify/orders).
+- A product stays protected after its drop, even after **Deactivate**, until no experience includes it: delete each experience that includes it, or remove the product from each one. See [Checkout protection](/guide/shopify/checkout-protection).
+
+## Related
+
+<CardGroup>
+  <Card title="What locks, and when" href="/concepts/what-locks-when">What you can change before, during and after a drop.</Card>
+  <Card title="Stop a drop" href="/guide/drop/deactivate">Deactivate and Delete, and how long Delete waits.</Card>
+  <Card title="Change things mid-drop" href="/guide/drop/live-controls">Live edits that apply at once.</Card>
+  <Card title="Limits and defaults" href="/guide/reference/limits">Every setting's default.</Card>
+</CardGroup>
