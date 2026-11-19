@@ -86,11 +86,14 @@ Production logs and analytics should capture high-level outcomes, such as "admit
 
 ## Content Security Policy
 
-If your site uses a Content Security Policy, allow browser connections to Fanfare.
+If your site uses a Content Security Policy, allow browser connections to Fanfare and the frame the bot check runs in.
 
 ```txt
 connect-src 'self' https://api.fanfare.io https://beacon.fanfare.io;
+frame-src https://consumer.fanfare.io;
 ```
+
+Without the `frame-src` entry the browser blocks the bot check and consumers cannot enter. If you take payment in the widget, add the Stripe origins too: see [Content Security Policy](/sdk/reference/content-security-policy).
 
 Keep the rest of your policy aligned with your application framework and security requirements.
 
