@@ -17,7 +17,7 @@ Fanfare-hosted experience pages send this policy. It is the closest thing to a r
 | `img-src` | `'self' data: <media assets host>` |
 | `font-src` | `'self' data: <media assets host>` |
 | `style-src` | `'self' 'unsafe-inline'` |
-| `frame-src` | `https://js.stripe.com https://*.js.stripe.com https://hooks.stripe.com` |
+| `frame-src` | `https://consumer.fanfare.io https://js.stripe.com https://*.js.stripe.com https://hooks.stripe.com` |
 | `frame-ancestors` | The origins configured for the organization, or `'none'` |
 | `base-uri` | `'none'` |
 | `form-action` | `'self'` |
@@ -27,6 +27,8 @@ Fanfare-hosted experience pages send this policy. It is the closest thing to a r
 **Stripe.** Fanfare-managed checkout collects the card in your document, so Stripe's own runtime has to load: Stripe.js comes from `js.stripe.com`, the card field and its per-request frames come from `*.js.stripe.com`, the 3-D Secure challenge is a frame on `hooks.stripe.com`, and the client calls `api.stripe.com`. Stripe Hosted Checkout, Connect embedded components, and the Address Element's Maps origins are **not** loaded, so they need no allowance.
 
 **Your Fanfare origins.** `connect-src` must allow the consumer API origin and the beacon origin your integration is configured with. These are your own values — the hosted policy interpolates them rather than hard-coding them.
+
+**The bot check.** Before a consumer enters, the widget shows a verification step in a frame served from `https://consumer.fanfare.io`. The frame always comes from that origin, whichever host your integration calls the API on, so `frame-src` must allow it. Without it the browser blocks the frame, the check cannot be completed, and no consumer can enter while the organization's bot check is on (it is on by default). The verification provider loads inside that frame, so it needs no allowance in your policy.
 
 **`style-src 'unsafe-inline'`.** The widget's motion animations render inline style attributes and inject `<style>` elements. CSP offers no nonce or hash path that covers dynamic style *attributes*, so this relaxation is required. It is scoped to styles only: script execution stays gated by `script-src`, which never carries `'unsafe-inline'`.
 
