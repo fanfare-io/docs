@@ -138,7 +138,7 @@ Sequences without Fanfare-managed units don't release; their stock grid stays op
 
 | Setting | What it does | Default | Editable while live? |
 | --- | --- | --- | --- |
-| **Units** (wizard **Stock** step) | Starting units per size for the experience and its first sequence. | `0` for Fanfare-managed sizes. Non-Fanfare-managed sizes start at `0` (always `0` in a Dutch auction), Shopify's count for Shopify-managed sizes, or **No limit** for timed releases, external checkout, or more than 256 size combinations | Creation only—adjust later on the experience's **Stock** card |
+| **Units** (wizard **Stock** step) | Starting units per size for the experience and its first sequence. | `0` for Fanfare-managed sizes and every size in a Dutch auction; otherwise Shopify's count for Shopify-managed sizes, or **No limit** for timed releases, external checkout, or more than 256 size combinations | Creation only—adjust later on the experience's **Stock** card |
 | **Experience units** (Experience Settings → **Stock**) | Experience-level pool for Fanfare-managed sizes, or one shared limit across sequences for other products. | Set by the wizard | No—locks while the drop is live |
 | **Quantity** (sequence grid) | Units this sequence can sell. | Same defaults as above | Upward only once counting starts; move units out with [Move units](/guide/drop/live-controls) |
 | **No limit** (sequence grid) | Never caps sales or marks the size sold out. | Off, except the cases above | Yes—once counting starts, a **No limit** size can't be switched to a fixed number |

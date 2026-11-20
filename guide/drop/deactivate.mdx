@@ -99,11 +99,11 @@ Unlike Dutch auctions, an **English auction** can block deactivation most common
 
 You can't delete anything while it's live, scheduled, or still releasing active payment windows:
 
-- **Live or scheduled items:** Deactivate first. **Delete** stays disabled in experience and sequence headers until everything inside is deactivated. Selecting **Delete** on a live or upcoming distribution opens the **Deactivate** dialog instead. Header **Delete** looks enabled on a sequence or experience (and on the auction itself) while an auction is running—selecting it opens the **Delete** confirmation first, and confirming opens the **Deactivate** dialog.
+- **Live or scheduled items:** Deactivate first. **Delete** stays disabled in experience and sequence headers until everything inside is deactivated—except while an auction is running, when header **Delete** looks enabled (selecting it opens the **Delete** confirmation first, and confirming opens the **Deactivate** dialog). Selecting **Delete** on a live or upcoming distribution opens the **Deactivate** dialog directly.
 - **Wind-down wait period:** Even after a drop ends or is deactivated, **Delete** waits until all payment windows have finished winding down (about **payment window + 1 hour**) and is refused during this period even though the button looks available:
   - **After Deactivate:** About 90 minutes with the default payment window, or about 2 hours for a draw.
   - **After natural close (queue and timed release):** Payment window + ~1 hour from close (about 90 minutes for a timed release).
-  - **After natural close (draw):** About an hour longer, measured from the final selection if it keeps drawing until every unit is claimed.
+  - **After natural close (draw):** Payment window + ~2 hours (about an hour longer than a queue or timed release), measured from the final selection if it keeps drawing until every unit is claimed.
   - **After natural close (auction):** About 90 minutes from close or settlement, whichever is later. An English auction that closed without settling stays on hold for about 30 days unless you deactivate it, which drops the wait to about 90 minutes.
 - **Appointments:** No wind-down wait, but you can't delete an appointment while any upcoming or in-progress booking stands. After deactivating, wait for all booking cancellations to complete, then delete. Past bookings don't block deletion.
 

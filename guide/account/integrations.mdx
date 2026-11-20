@@ -63,7 +63,7 @@ For how these channels work in drops, see [Build audiences](/guide/create/audien
 5. Select **Save**.
 
 <Warning>
-  **Save** always adds a new connection rather than replacing an existing one. To rotate an API key, save the new key first and then disconnect the old connection ([Manage a connection](#manage-a-connection)). You can't re-import that list through the new connection, so audiences imported through the old one stop syncing for good (existing members remain). Weigh that before you disconnect a working connection (if you leave both connected, both stay live).
+  **Save** always adds a new connection rather than replacing an existing one. To rotate an API key, save the new key first and then disconnect the old connection ([Manage a connection](#manage-a-connection)). You can't re-import the Klaviyo or Mailchimp lists you imported through the old connection, so audiences imported through it stop syncing for good (existing members remain). Weigh that before you disconnect a working connection (if you leave both connected, both stay live).
 </Warning>
 
 <Note>
@@ -189,7 +189,7 @@ The **Integrations** page works the same in the Fanfare Shopify app, with four d
 
 <AccordionGroup>
   <Accordion title="The connection step expired">
-    `"The connection attempt expired or was already used. Start again."` means Facebook or Discord sign-in took longer than 10 minutes, or you reused an older link. Start the connection again from the integration card.
+    "The connection attempt expired or was already used. Start again." means Facebook or Discord sign-in took longer than 10 minutes, or you reused an older link. Start the connection again from the integration card.
   </Accordion>
   <Accordion title="I see 'Fanfare could not complete this step. Check that you are an organization admin.'">
     Only organization admins can finalize Meta, Discord, or Telegram connections (permissions are checked when saving the selection or verifying the channel). Ask an admin to complete the connection from the start.
