@@ -1,164 +1,192 @@
 ---
 title: Change things mid-drop
-description: What you can still change while a drop is live, how to change it, and what happens to customers the moment you save.
+description: Adjust queue pace, close times, stock allocations, and bookings while a drop is live.
 ---
 
-Something needs to change while the drop is running: the pace of a queue, the closing time, the stock in one size, a booking. Most distribution settings stay editable while customers are in, and a few lock at a set moment. This page shows where to make each change and what happens when you save. A sequence is one way in to an experience, and every distribution belongs to one sequence.
+Need to slow down a queue, extend a close time, restock a sold-out size, or cancel an appointment while customers are live? Most operational controls stay editable during a drop, while pricing and payment rules lock before opening.
 
-## Before you start
-
-- The experience has a sequence with a live or upcoming distribution.
-- You know which sequence the change belongs to. Live settings, stock moves and bookings are all on the sequence's **Overview** tab.
-- To read the live numbers before you act, see [Watch a live drop](/guide/drop/watch-live).
+All live controls—settings, stock transfers, and booking cancellations—live on the sequence's **Overview** tab. To monitor real-time traffic before making a change, see [Watch a live drop](/guide/drop/watch-live).
 
 ## Edit a live distribution
 
-1. Open the experience, then the sequence.
-2. On the **Overview** tab, in the **Distributions** card, select **Edit** on the distribution's card.
-3. Change what you need in **Schedule**, **Configuration** or **Payment**. Queues and draws have a **Payment** section; the other types do not.
-4. Select **Save**.
+<Steps>
+  <Step title="Open the sequence">
+    Open your experience, then select the sequence you want to update.
+  </Step>
+  <Step title="Open distribution settings">
+    On the **Overview** tab, find the **Distributions** card and select **Edit** on the distribution you want to change.
+  </Step>
+  <Step title="Adjust and save">
+    Update fields under **Schedule**, **Configuration**, or **Payment** (queues and draws only), then select **Save**.
+  </Step>
+</Steps>
 
-Your plan limits which distribution types you can create, not edits. A distribution stays editable, and **Pause queue** and **Resume queue** keep working, even if your plan no longer includes its type.
-
-On the live screen of a queue or draw, the pills under **Change a setting** on **Run** open these same settings, with no field selected. See [Watch a live drop](/guide/drop/watch-live).
+On a live queue or draw's Performance screen, the shortcuts under **Change a setting** in **Run** mode jump directly to this same editor. See [Watch a live drop](/guide/drop/watch-live).
 
 <Warning>
-  **Save** applies the change straight away. There is no confirmation step. Lowering **Admit rate**, moving **Closes** earlier, or switching **Allow guest access** or **Automatic entry** on a queue or draw changes who gets in. Check the value before you save.
+  **Changes go live immediately when you select Save**—there's no confirmation dialog. Double-check values like **Admit rate**, **Closes**, **Allow guest access**, or **Automatic entry** before saving.
 </Warning>
 
-<Frame caption="Once a distribution has opened, you can still change when it closes.">
-  <img src="/images/guide/guide-drop-live-controls-schedule-live.webp" alt="The settings dialogue of a live queue. Opens is marked Locked, with a note that it can only move earlier, and the Closes field can still be changed." />
+<Note>
+  Existing distributions stay editable—and **Pause queue** / **Resume queue** keep working—even if your organization moves to a plan that doesn't allow creating that distribution type.
+</Note>
+
+<Frame caption="Once a distribution opens, Opens locks to earlier times only, while Closes stays editable.">
+  <img src="/images/guide/guide-drop-live-controls-schedule-live.webp" alt="The settings dialog of a live queue. Opens is marked Locked with a note that it can only move earlier, while the Closes field remains editable." />
 </Frame>
 
 ## Change when a distribution closes
 
-**Closes** stays editable while the distribution is live. You can end entry earlier or let it run later. Distributions in one sequence cannot overlap, so a later close cannot run into the next distribution's window: **Save** stays disabled until the window is clear. On a draw, the **Draw date** must stay inside the window, so move it too if you close earlier than it. An appointment's times cannot move at all while any booking stands.
+**Closes** stays editable throughout a live drop, so you can wrap up early or extend the window:
 
-Once the distribution has opened, **Opens** shows **Locked** and can only move earlier. Hovering **Locked** shows "This [type] has opened, so its open time can only move earlier. You can still change when it closes." Moving it back into the future does not unlock anything that locked when it opened. A queue counts as opened about five and a half minutes before **Opens**, just before customers can start joining five minutes before it. The lead time for each type is on its setup page.
+- **Avoid overlaps:** Distributions in the same sequence can't overlap—**Save** stays disabled if an extended close time runs into the next distribution's window.
+- **Draws:** Keep the **Draw date** inside the open window. If you pull **Closes** earlier than the draw date, move the draw date too.
+- **Appointments:** Appointment schedules can't change while any booking exists.
+- **Once opened:** **Opens** shows **Locked** and can only move earlier (moving it doesn't unlock settings that locked at open). Queues count as opened about 5 minutes 30 seconds before **Opens**, right before their 5-minute waiting room opens.
+- **Once closed:** Schedules can't be changed after a distribution closes, and closed queues refuse all edits.
 
-Once the distribution has closed, its schedule can no longer move. A change to its times is refused with a message that names the type, such as "This draw has closed. Create a new one." A closed queue refuses every save, with "This queue has closed. Create a new queue."
+When **Closes** passes on a queue, new customers can't join and anyone still waiting in line is turned away, but customers who were already admitted keep their checkout window.
 
-Moving **Closes** earlier is not the same as **Deactivate**. **Deactivate** stops the distribution at once and ends everything in progress, and it cannot be undone. See [Stop a drop](/guide/drop/deactivate).
+<Tip>
+  Pulling **Closes** earlier is much gentler than **Deactivate**. Closing lets admitted customers finish checking out and leaves the rest of your experience intact, whereas **Deactivate** ends everything immediately and can't be undone. See [Stop a drop](/guide/drop/deactivate).
+</Tip>
 
-When **Closes** passes on a queue, no one new can join, and customers still waiting in line are turned away. Customers it has already let in keep their admission.
+## What you can change while live
 
-## What you can change while it is live
+For the full lock timeline, see [What locks, and when](/concepts/what-locks-when). For type-specific rules and defaults, see [Set up a queue](/guide/create/queue), [Set up a draw](/guide/create/draw), [Set up an auction](/guide/create/auction), [Set up a timed release](/guide/create/timed-release), and [Set up appointments](/guide/create/appointment).
 
-Why each setting locks when it does is in [What locks, and when](/concepts/what-locks-when). Defaults and exact field rules for each type are on [Set up a queue](/guide/create/queue), [Set up a draw](/guide/create/draw), [Set up an auction](/guide/create/auction), [Set up a timed release](/guide/create/timed-release) and [Set up appointments](/guide/create/appointment).
-
-| Setting | Can you change it now? |
+| Setting | Editable while live? |
 | --- | --- |
-| **Closes** (every type) | Yes, until it closes. For an appointment, not while any booking stands. |
-| **Opens** (every type; **First bookable slot** on an appointment) | Only earlier, once it has opened. On an appointment, not at all while any booking stands. |
-| Queue **Admit rate** | Yes. It sets how many people are let in each minute from now on. |
-| **Allow guest access** and **Automatic entry** (queue, draw, timed release) | Yes. Guest access cannot be turned on while the sequence has an audience, and a timed release on counted stock does not offer automatic entry to customers, whatever this is set to. |
-| **Bias toward loyal consumers** (queue, draw) | Yes, but on a queue it only orders people who joined before **Opens**. See [Set up a queue](/guide/create/queue). |
-| Draw **Winner count** | Yes, until entry closes: never below the winners already chosen, never below 1 once it has opened, and never above what the sequence's stock can cover. |
-| Draw **Admission expiration** | Yes. See [Set up a draw](/guide/create/draw). |
-| English auction **Auto Extend Seconds** | Yes. |
-| Timed release settings | Yes. Nothing locks beyond the schedule rules above. |
-| **Payment collection** and **Authorization amount** (queue, draw) | No. The only way out is to deactivate it and create another distribution. Deactivating shows your whole public page as ended, and if every other distribution in the sequence is already deactivated, the replacement needs a new sequence, or a new experience if nothing in the experience is left. See [Stop a drop](/guide/drop/deactivate). |
-| Draw **Continue selecting until completed** | No, once the draw has opened. The switch still moves, but **Save** is refused. |
-| Auction prices and quantity | No, once the auction has opened. **Auction Type** is fixed when you create it. |
-| Appointment **Slot duration**, **Buffer**, **Max capacity per slot**, location, window and time zone | No, while any booking stands. See [Cancel a booking](#cancel-a-booking). |
-| The sequence's product selection and **Mystery Box Products** | No, while a distribution in the sequence is open, settling or has entrants. See [Add and gate sequences](/guide/create/sequences). |
-| The experience's products | No, while any sequence is live or has entrants. See [Create an experience](/guide/create/experiences). |
-| The experience's stock allocations | No, while the drop is live. Units move only through [Move units](#move-units-during-a-drop). |
+| **Closes** (all types) | **Yes**, until it closes. On appointments, locked while any booking exists. |
+| **Opens** (all types; **First bookable slot** on appointments) | **Earlier only**, once opened. On appointments, locked while any booking exists. |
+| Queue **Admit rate** | **Yes.** Sets how many customers are admitted per minute going forward. |
+| **Allow guest access** and **Automatic entry** (queue, draw, timed release) | **Yes.** Guest access can't be enabled on a sequence with an audience, and timed releases on counted stock don't offer automatic entry regardless of this toggle. |
+| **Bias toward loyal consumers** (queue, draw) | **Yes**, though on a queue it only orders people who joined before **Opens**. See [Set up a queue](/guide/create/queue). |
+| Draw **Winner count** | **Yes**, until entry closes—never below winners already chosen, never below `1` once open, and never above available sequence stock. |
+| Draw **Admission expiration** | **Yes.** See [Set up a draw](/guide/create/draw). |
+| English auction **Auto Extend Seconds** | **Yes.** |
+| Timed release settings | **Yes.** Only the schedule rules above lock. |
+| **Payment collection** and **Authorization amount** (queue, draw) | **No.** You must deactivate and recreate the distribution. Note that deactivating marks your entire public page as ended, and if every distribution in the sequence or experience is deactivated, you'll need a new sequence or experience. See [Stop a drop](/guide/drop/deactivate). |
+| Draw **Continue selecting until completed** | **No**, once the draw has opened. |
+| Auction prices and quantity | **No**, once the auction has opened. (**Auction Type** locks at creation.) |
+| Appointment **Slot duration**, **Buffer**, **Max capacity per slot**, location, window, and time zone | **No**, while any booking stands. See [Cancel a booking](#cancel-a-booking). |
+| Sequence product selection and **Mystery Box Products** | **No**, while a distribution in the sequence is open, settling, or has entrants. See [Add and gate sequences](/guide/create/sequences). |
+| Experience products | **No**, while any sequence is live or has entrants. See [Create an experience](/guide/create/experiences). |
+| Experience stock allocations | **No**, while live. Shift inventory with [Move units](#move-units-during-a-drop) instead. |
 
-A queue's payment window is always 30 minutes and has no field, even though **Run** offers an **Admission window** pill for a queue. See [Admission and the payment window](/concepts/admission-and-payment).
+<Note>
+  A queue's payment window is always 30 minutes and doesn't have an editable field (even though **Run** mode displays an **Admission window** link). See [Admission and the payment window](/concepts/admission-and-payment).
+</Note>
 
-A deactivated distribution is read only. Its card shows **View** instead of **Edit**, and its settings read "This distribution was deactivated and can't be edited."
+Deactivated distributions are read-only—their cards show **View** instead of **Edit**.
 
-<Frame caption="Payment collection cannot change once the distribution has opened.">
+<Frame caption="Payment collection locks as soon as a queue or draw counts as opened.">
   <img src="/images/guide/guide-drop-live-controls-payment-locked.webp" alt="The Payment section of a queue's settings, with a notice that payment collection is locked because the queue has opened." />
 </Frame>
 
 ## Pause and resume a queue
 
-To stop a live queue letting anyone new in, and later resume it at the rate it had, use **Pause queue** and **Resume queue** in the menu on the queue's card. Setting **Admit rate** to 0 is not a pause. See [Set up a queue](/guide/create/queue).
+To temporarily stop admitting people from a live queue without losing your pace settings:
 
-Customers already in line keep their place while the queue is paused, and new customers can still join the line.
+- Open the menu on the queue's card and select **Pause queue**.
+- When you're ready to restart at your previous rate, open the same menu and select **Resume queue**.
 
-What customers see at each stage, including a queue that sells out while they wait, is in [What your customers see](/guide/drop/what-customers-see).
+While paused, customers already waiting keep their place in line and new customers can still join. Don't set **Admit rate** to `0` as a pause—that overwrites your admit rate instead of pausing, so **Resume queue** won't appear. See [Set up a queue](/guide/create/queue) and [What your customers see](/guide/drop/what-customers-see).
 
 ## Move units during a drop
 
-Fanfare starts counting a sequence's stock about 10 minutes before it opens. From then on, a sequence's quantities can only go up in **Edit allocations**, and units leave a sequence only through **Move units**. Allocating stock before counting starts is in [Allocate stock to a drop](/guide/create/stock-allocation).
+Stock counting starts about 10 minutes before a sequence opens. Once counting begins, quantities in **Edit allocations** can only increase—to take units out of a sequence or rebalance sizes mid-drop, use **Move units**. (For pre-drop setup, see [Allocate stock to a drop](/guide/create/stock-allocation).)
 
-1. On the sequence's **Overview** tab, in the **Stock** card, select **Move units**. When a size sells out, the card's sold-out notice also offers **Move units in** and, when only one size is sold out and the experience has unassigned units of it, "Move [units] × [size] from Unassigned". In **Edit allocations**, if you try to lower a size that can only go up, "Move [size]" appears beside the message under it.
-2. Choose **From** and **To**: another sequence of the same experience, or "Unassigned ([experience])".
-3. Choose the size.
-4. Enter **Units to move**. The line under the field shows the most you can move ("up to [max]"). If you enter more, the field says "At most [max]".
-5. Select "Move [units]".
-
-The result reads "Moved [moved] of [requested]", with each sequence's figures before and after.
+<Steps>
+  <Step title="Open Move units">
+    On the sequence's **Overview** tab, select **Move units** in the **Stock** card. (If a size sells out, the sold-out banner also shows **Move units in**, or a one-click shortcut to pull units from **Unassigned**.)
+  </Step>
+  <Step title="Pick source and destination">
+    Select **From** and **To**—either another sequence in the same experience or **Unassigned**.
+  </Step>
+  <Step title="Choose size and quantity">
+    Pick the size and enter **Units to move** (up to the maximum shown below the field).
+  </Step>
+  <Step title="Confirm the move">
+    Select **Move [units]**. Fanfare shows how many units moved along with before-and-after totals for each sequence.
+  </Step>
+</Steps>
 
 <Warning>
-  A size that sells out comes back only when units are added to it: move them in with **Move units**, from Unassigned or another sequence, or raise the size in **Edit allocations** by up to the experience's unassigned units. Until then, customers see it as sold out.
+  **Sold-out sizes stay sold out until you add inventory.** Move units in from **Unassigned** or another sequence with **Move units**, or raise the size in **Edit allocations** using unassigned stock.
 </Warning>
 
 <Note>
-  A move can be partial. Units that customers have in checkout stay with the source sequence, and the result says how many stayed. If those checkouts lapse, the units go back to the source's **Remaining**: move them again then.
+  **Moves can be partial.** Units currently held in active customer checkouts stay with the source sequence, and the confirmation shows how many remained behind. If those checkouts expire without completing, the units return to the source's **Remaining** count and you can move them then.
 </Note>
 
 <Warning>
-  Moving units changes a draw's winner count. While a draw is still selecting winners, moving units into its sequence raises its winner count by the units moved, and moving units out lowers it, never below the winners already selected and never to zero once the draw has opened. Once it has finished selecting winners, moves into it are refused. For a move into a draw, the dialogue shows the new winner count before you move. For a move out of a draw, it says the count will go down, and the result shows the new count.
+  **Moving units changes a draw's winner count.** While a draw is still selecting winners, moving units *into* its sequence raises **Winner count** by the same amount, and moving units *out* lowers it (never below winners already chosen and never to `0` once open). Once winner selection finishes, moves into that draw are refused.
 </Warning>
 
-Fanfare refuses a move when the source does not have that many units, when it would take a sequence below what it has sold, or when the target cannot take units: a draw that has finished selecting winners, a Dutch auction that has ended, or an English auction whose winner is decided. Nothing is moved, and the dialogue says why.
+Fanfare also refuses a move if the source doesn't have enough available units, if the move would drop a sequence below its sold count, or if the destination can't accept stock (a finished draw, an ended Dutch auction, or a decided English auction).
 
-<Frame caption="Units leave a sequence only through Move units once stock counting has started.">
-  <img src="/images/guide/guide-drop-live-controls-move-units.webp" alt="The Move units dialogue, with a size, From and To sequences, the number of units to move, the remaining, in checkout and maximum counts, and the Move button." />
+<Frame caption="Once stock counting starts, move inventory between sequences or Unassigned with Move units.">
+  <img src="/images/guide/guide-drop-live-controls-move-units.webp" alt="The Move units dialog, with a size, From and To sequences, the number of units to move, the remaining, in checkout, and maximum counts, and the Move button." />
 </Frame>
 
 ## Cancel a booking
 
-You can cancel one person's appointment booking before or during the appointment, as long as its slot has not ended.
+You can cancel a customer's appointment booking before or during the appointment, as long as its time slot hasn't ended.
 
-1. On the sequence's **Overview** tab, find the appointment's card, headed with its name, below the **Distributions** card.
-2. Pick the day and the slot.
-3. In **Slot Attendees**, select **Cancel booking** beside the person.
-4. Read "Are you sure you want to cancel the appointment for [name]? This action cannot be undone and the person will be notified." and select **Cancel booking**.
+<Steps>
+  <Step title="Find the appointment panel">
+    On the sequence's **Overview** tab, scroll below the **Distributions** card to the appointment card.
+  </Step>
+  <Step title="Select the day and slot">
+    Pick the appointment day and time slot to load **Slot Attendees**.
+  </Step>
+  <Step title="Cancel and confirm">
+    Select **Cancel booking** beside the customer's name, review the confirmation prompt, and select **Cancel booking** again. The customer is notified automatically.
+  </Step>
+</Steps>
 
-The admin shows "Booking cancelled". You cannot cancel a booking once the appointment has been deactivated.
+<Note>
+  Canceling a booking can't be undone, and individual bookings can't be canceled after the appointment has been deactivated. Any active booking keeps the appointment's slot settings, window, and location locked until all bookings end or are canceled.
+</Note>
 
-A standing booking keeps the appointment's slot settings, window and location locked. They unlock when every booking has ended or been cancelled.
-
-<Frame>
+<Frame caption="Select a day and slot to view attendees and cancel individual bookings.">
   <img src="/images/guide/guide-drop-live-controls-cancel-booking.webp" alt="The card of a live appointment, with a day and time slot selected and its two attendees listed, each with a Cancel booking button." />
 </Frame>
 
-## Other changes during a drop
+## Other live changes
 
-- **Access code:** changing or clearing a sequence's code takes effect at once: from then on, customers need the new code, or no code at all. The sequence's audience and sign-in still apply. See [Add and gate sequences](/guide/create/sequences).
-- **Order limits:** adding or deleting one applies to a live drop as soon as it saves. See [Add and gate sequences](/guide/create/sequences).
-- **Brand and pages:** during a publish freeze, a brand save restyles live pages, widgets and emails within about a minute, and page publishing is frozen from 15 minutes before a distribution opens. See [Set your brand](/guide/create/brand) and [Build and publish the hosted page](/guide/create/hosted-page).
-- **After Deactivate:** nothing new can be added under a sequence or experience whose distributions are all deactivated. See [Stop a drop](/guide/drop/deactivate).
+- **Access code:** Updating or clearing a sequence's **Shared access code** takes effect immediately for anyone who hasn't entered yet. Audience and sign-in gates still apply. See [Add and gate sequences](/guide/create/sequences).
+- **Order limits:** Adding or deleting an order limit applies to the live drop as soon as you save. See [Add and gate sequences](/guide/create/sequences).
+- **Brand and hosted pages:** Saving brand changes restyles live pages, widgets, and emails within about a minute—even during a hosted page publish freeze (which begins 15 minutes before a distribution opens). See [Set your brand](/guide/create/brand) and [Build and publish the hosted page](/guide/create/hosted-page).
+- **After Deactivate:** Once every distribution in a sequence or experience is deactivated, you can't add new ones to it. See [Stop a drop](/guide/drop/deactivate).
 
 ## On Shopify
 
-The Fanfare app in Shopify does not offer appointments, so [Cancel a booking](#cancel-a-booking) does not apply there. For products whose stock Shopify manages, the **Stock** card can also show "Shopify shows [count], below what this drop has left" or "Shopify may be short by [units] while these are in checkout". What these mean is in [Products from Shopify](/guide/shopify/products).
+Appointments aren't offered in the Fanfare app in Shopify, so [Cancel a booking](#cancel-a-booking) doesn't apply.
+
+For Shopify-managed products, the **Stock** card can also warn you if Shopify's inventory count falls below what your drop has left or in checkout. See [Products from Shopify](/guide/shopify/products) for how to resolve stock mismatches.
 
 ## Troubleshooting
 
 <AccordionGroup>
-  <Accordion title="Save is greyed out">
-    **Save** stays greyed out until you change something, and while any field fails its check. Common causes: the new window overlaps another distribution in the same sequence; on a draw, **Closes** is now earlier than the **Draw date** (move the draw date into the window too); **Opens** was moved later after opening; or the distribution has been deactivated and is read only.
+  <Accordion title="Save is grayed out">
+    **Save** stays disabled until you make a change and all fields pass validation. Common causes: the new schedule overlaps another distribution in the sequence; a draw's **Closes** time is earlier than its **Draw date**; **Opens** was pushed later after opening; or the distribution was deactivated and is now read-only.
   </Accordion>
   <Accordion title="Save says the distribution has closed">
-    "This draw has closed. Create a new one.", or the same message for another type, means its schedule can no longer change. A queue says "This queue has closed. Create a new queue." Add a new distribution to the sequence instead.
+    Once a distribution's window closes, its schedule can't be changed (and closed queues reject all edits). Add a new distribution to the sequence instead.
   </Accordion>
   <Accordion title="I can't lower a size in Edit allocations">
-    Stock counting has started: "Stock is counting, so this size can only go up here. Use Move units to take units out." Use [Move units](#move-units-during-a-drop).
+    Stock counting has already started, so **Edit allocations** only allows increases. Use [Move units](#move-units-during-a-drop) to transfer units out.
   </Accordion>
   <Accordion title="A move into a draw is refused">
-    The draw has finished selecting winners, so it takes no more units. Move them to another sequence, or leave them where they are.
+    The draw has already finished selecting winners and can't accept additional units. Move the units to another sequence or keep them where they are.
   </Accordion>
-  <Accordion title="Winner count is greyed out">
-    Entry to the draw has ended, and the count is final. Hover the info icon beside the field to see "Winner count can't change after entry has closed."
+  <Accordion title="Winner count is grayed out">
+    Draw entry has already closed, so **Winner count** is final.
   </Accordion>
-  <Accordion title="Appointment settings will not change">
-    Bookings stand on the appointment: "[count] bookings stand on this appointment; slot configuration, window and location cannot change until they end or are cancelled." Wait for them to end, or cancel them.
+  <Accordion title="Appointment settings won't change">
+    One or more bookings still stand on the appointment. Wait for those slots to finish—or cancel them—to unlock slot duration, buffer, capacity, window, and location.
   </Accordion>
 </AccordionGroup>
 
@@ -166,18 +194,18 @@ The Fanfare app in Shopify does not offer appointments, so [Cancel a booking](#c
 
 <CardGroup>
   <Card title="What locks, and when" href="/concepts/what-locks-when">
-    Why each setting locks at the moment it does.
+    See exactly when each setting locks before, during, and after a drop.
   </Card>
   <Card title="Watch a live drop" href="/guide/drop/watch-live">
-    The live numbers, and the Run screen.
+    Follow live metrics and jump to settings from Run mode.
   </Card>
   <Card title="What your customers see" href="/guide/drop/what-customers-see">
-    Each stage from the customer's side, including a paused or sold-out queue.
+    See what customers experience during a pause, sellout, or close.
   </Card>
   <Card title="Stop a drop" href="/guide/drop/deactivate">
-    Deactivate and Delete a distribution, sequence or experience.
+    Deactivate or delete a distribution, sequence, or experience.
   </Card>
   <Card title="Allocate stock to a drop" href="/guide/create/stock-allocation">
-    Set each sequence's units before counting starts.
+    Configure per-sequence stock allocations before counting begins.
   </Card>
 </CardGroup>

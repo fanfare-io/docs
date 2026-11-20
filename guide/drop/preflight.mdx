@@ -1,94 +1,108 @@
 ---
 title: Before doors open
-description: What must be right before a drop opens, and what stops being changeable on its own as the opening time approaches.
+description: Final pre-launch checklist and automatic lock countdown before your drop opens.
 ---
 
-Use this page in the days before a drop. There is no launch step: each distribution goes live at its **Opens** time with whatever is set at that moment, and until then the experience reads **Scheduled** (see [Experiences](/concepts/experiences)). The checklist below covers what has to be right well before the drop. The countdown after it shows what Fanfare changes on its own as **Opens** approaches, so you can finish each setting before it locks.
+Run through this checklist a day or two before launch. Fanfare has no separate publish or launch button—each distribution opens automatically at its **Opens** time with whatever settings are saved at that moment, moving from **Scheduled** to **Live** (see [Experiences](/concepts/experiences)).
+
+The checklist below covers what to lock in ahead of time, followed by a countdown of what Fanfare locks automatically as doors open.
 
 <Warning>
-  Nothing asks you to launch the drop. At **Opens** customers start getting in on the settings as they stand. Some settings stop being changeable shortly before then. For payment collection, auction prices and a later opening time, the only way out is to deactivate the distribution and create a new one. Deactivating cannot be undone and shows your whole public page as ended, and once every distribution in a sequence is deactivated, the replacement needs a new sequence, or a new experience if nothing in the experience is left. See [What locks, and when](/concepts/what-locks-when) and [Stop a drop](/guide/drop/deactivate).
+  Drops go live automatically at **Opens**, and several settings lock shortly beforehand. Once locked, you can't change payment collection, auction prices, or a delayed opening time without deactivating the distribution and creating a new one. **Deactivate** can't be undone, marks your entire public page as ended, and if every distribution in a sequence or experience is deactivated, you'll need a new sequence or experience to relaunch. See [What locks, and when](/concepts/what-locks-when) and [Stop a drop](/guide/drop/deactivate).
 </Warning>
 
 {/* image: guide-drop-preflight-scheduled-experience */}
 
 ## Before you start
 
-- The experience exists, with its sequences and distributions. See [Create an experience](/guide/create/experiences).
-- You know who on your team is an organisation admin. Only admins can **Deactivate**, which is how you stop a drop. See [Team members](/guide/account/team).
+- Your experience, sequences, and distributions are built. See [Create an experience](/guide/create/experiences).
+- You know who on your team is an organization admin—only admins can **Deactivate** a drop if you need to stop it. See [Team members](/guide/account/team).
 
-## Well before the drop
+## Pre-launch checklist
 
-Work through this list a day or more ahead. Each line points to the page that explains it.
+Review each item at least a day before your drop:
 
-1. Every distribution's **Opens** and **Closes** are the times you mean, not the wizard's defaults (**Opens At** the next minute, **Closes At** seven days later), and the experience's **Time Zone** is right. An experience created with the default opening goes live almost at once. See [Create an experience](/guide/create/experiences).
-2. Distribution windows in one sequence do not overlap, and no distribution you rely on later is blocked by an earlier one with no close time. See [Sequences and routing](/concepts/sequences).
-3. Your sequences were created in the order customers should be offered them. Priority follows creation order and cannot be changed in the admin. See [Sequences and routing](/concepts/sequences).
-4. Who can enter each sequence is decided: its audience, its **Shared access code**, and **Allow guest access** on each distribution. Choosing an audience turns guest entry off, and an auction or appointment makes its sequence require sign-in. See [Sequences and routing](/concepts/sequences) and [Add and gate sequences](/guide/create/sequences). Creating and editing audiences needs Growth or above.
-5. Each audience you gate with reads **Live**, not **Not built yet**, **Building** or **Build failed**. An audience admits nobody until its first build finishes. See [Audiences and access codes](/concepts/audiences).
-6. Every size you sell has a number. A size left at 0 opens sold out, a size at **No limit** cannot be given a number once counting starts, and a sequence with more than 256 size combinations refuses new customers while it is counted. See [Allocate stock to a drop](/guide/create/stock-allocation).
-7. Payment is ready. If you sell through Fanfare checkout, Stripe is connected: see [Payments and fees](/guide/account/payments). For each queue you have chosen **Pay when admitted** or **Pre-authorise on joining**, and for each draw **Pay after the win** or **Pre-authorise on entry**, because the choice locks shortly before opening. If you pre-authorise, keep entry close to selection: a card hold lasts about a week, so customers who enter long before winners are chosen can have their hold expire. See [Set up a queue](/guide/create/queue), [Set up a draw](/guide/create/draw) and [Admission and the payment window](/concepts/admission-and-payment).
-8. Distribution names read well to customers. The waitlist "opens soon" email uses each name as you typed it. See [Invites, waitlist and access-code sends](/guide/create/invites-and-waitlist).
-9. Customers have somewhere to go: the hosted page is published, or the widget is on your own site. Publish your final page before the freeze in the countdown below. See [Build and publish the hosted page](/guide/create/hosted-page) and [Run it on your own site](/guide/create/your-own-site). Hosted pages need Growth or above.
-10. Announcements are scheduled and test-sent, and the invite email is set for each sequence gated by an audience. See [Announcements](/guide/create/announcements) and [Invites, waitlist and access-code sends](/guide/create/invites-and-waitlist). Your sender identity, including your postal address, is set up: see [Sender identity and sending domain](/guide/create/email-sender).
-11. Guest access is on only where customers will keep the page open. Guests get no emails or texts. See [What your customers see](/guide/drop/what-customers-see).
-12. If a queue or draw uses **Bias toward loyal consumers**, your loyalty programme is switched on. Loyalty needs Pro or above. See [Run a loyalty programme](/guide/learn/loyalty) and [Loyalty and Fanfair](/concepts/loyalty).
-13. Your plan covers every feature the drop uses. See [Plans and what they unlock](/guide/start/plans).
-14. Your brand and widget designs are final. Saving them restyles live pages without a publish. See [Set your brand](/guide/create/brand) and [Templates and widget designs](/guide/create/templates).
+1. **Schedule and time zone:** Confirm every distribution's **Opens** and **Closes** times and the experience's **Time Zone**. Make sure you replaced the wizard defaults (**Opens At** defaults to the next minute, **Closes At** to 7 days later) so the drop doesn't open early. See [Create an experience](/guide/create/experiences).
+2. **Non-overlapping windows:** Verify that distribution windows inside the same sequence don't overlap, and that no earlier distribution without a close time blocks a later one. See [Sequences and routing](/concepts/sequences).
+3. **Sequence priority:** Confirm your sequences were created in the order you want customers offered them—priority follows creation order and can't be reordered in the admin. See [Sequences and routing](/concepts/sequences).
+4. **Access and gating:** Check each sequence's audience, **Shared access code**, and per-distribution **Allow guest access** setting. Adding an audience disables guest entry, and auctions or appointments require sign-in for the entire sequence. Creating and editing audiences requires Growth or above. See [Sequences and routing](/concepts/sequences) and [Add and gate sequences](/guide/create/sequences).
+5. **Audience status:** Make sure every gating audience shows **Live**—not **Not built yet**, **Building**, or **Build failed**. An audience won't admit anyone until its first build finishes. See [Audiences and access codes](/concepts/audiences).
+6. **Stock counts:** Confirm every size you plan to sell has a count. A size left at `0` opens sold out, a size set to **No limit** can't switch to a fixed count once stock counting starts, and any sequence with more than 256 size combinations refuses new customers while counted. See [Allocate stock to a drop](/guide/create/stock-allocation).
+7. **Payment settings:** If you use Fanfare checkout, confirm Stripe is connected ([Payments and fees](/guide/account/payments)). Lock in **Pay when admitted** or **Pre-authorize on joining** for each queue, and **Pay after the win** or **Pre-authorize on entry** for each draw—these lock shortly before opening. When pre-authorizing, keep entry close to selection: card holds expire after about 7 days, so early entrants can lose their hold before winners are chosen. See [Set up a queue](/guide/create/queue), [Set up a draw](/guide/create/draw), and [Admission and the payment window](/concepts/admission-and-payment).
+8. **Customer-facing distribution names:** Give every distribution a clean name—waitlist "opens soon" emails display distribution names verbatim. See [Invites, waitlist and access-code sends](/guide/create/invites-and-waitlist).
+9. **Published destination:** Publish your hosted page (Growth and above) or confirm the widget is live on your site. Finish hosted page edits before the 15-minute publish freeze below. See [Build and publish the hosted page](/guide/create/hosted-page) and [Run it on your own site](/guide/create/your-own-site).
+10. **Announcements, invites, and sender identity:** Schedule and test-send announcements, review invite emails for audience-gated sequences, and confirm your sender identity and postal address are saved. See [Announcements](/guide/create/announcements), [Invites, waitlist and access-code sends](/guide/create/invites-and-waitlist), and [Sender identity and sending domain](/guide/create/email-sender).
+11. **Guest access check:** Only turn on **Allow guest access** where customers will keep the page open—guests don't receive emails or texts. See [What your customers see](/guide/drop/what-customers-see).
+12. **Loyalty program (if used):** If any queue or draw uses **Bias toward loyal consumers**, confirm your loyalty program (Pro and above) is turned on. See [Run a loyalty program](/guide/learn/loyalty) and [Loyalty and Fanfair](/concepts/loyalty).
+13. **Plan coverage:** Make sure your current plan covers every feature in the drop. See [Plans and what they unlock](/guide/start/plans).
+14. **Brand and widget designs:** Finalize colors, fonts, and widget styling now. Saving brand changes restyles live pages immediately without republishing. See [Set your brand](/guide/create/brand) and [Templates and widget designs](/guide/create/templates).
 
-## As opening approaches
+## Countdown to opening
 
-These things happen on their own, counted back from a distribution's **Opens** time. A queue starts earlier than the other types because its waiting room opens 5 minutes before **Opens**.
+As a distribution's **Opens** time approaches, Fanfare runs a set of automatic steps and locks. Queues begin earlier because their waiting room opens 5 minutes before **Opens**.
 
-<Frame caption="What Fanfare changes on its own as a distribution's Opens time approaches.">
-  <img src="/images/guide/guide-drop-preflight-countdown.webp" alt="A countdown timeline that ends at a drop's Opens time. The invite email sends 2 days before by default. At 15 minutes, republishing the hosted page freezes. At about 10 minutes, stock counting starts, sizes can only go up and products can lock, and a queue's gating audience rebuilds. At about 5 minutes 30 seconds, a queue's payment settings lock. At 5 minutes, the waiting room opens and the other types' audiences rebuild. At 30 seconds, the settings of draws, auctions and timed releases lock. At Opens, customers start getting in and the experience reads Live." />
+<Frame caption="Automatic locks and events as a distribution's Opens time approaches.">
+  <img src="/images/guide/guide-drop-preflight-countdown.webp" alt="A countdown timeline ending at a drop's Opens time. The invite email sends 2 days before by default. At 15 minutes, republishing the hosted page freezes. At about 10 minutes, stock counting starts, sizes can only increase, products can lock, and a queue's gating audience rebuilds. At about 5 minutes 30 seconds, a queue's payment settings lock. At 5 minutes, the waiting room opens and other types' audiences rebuild. At 30 seconds, draw, auction, and timed release settings lock. At Opens, customers enter and the experience reads Live." />
 </Frame>
 
-| Time before **Opens** | What happens | What it means for you | Details |
+| Time before **Opens** | What happens automatically | What to finish beforehand | Details |
 | --- | --- | --- | --- |
-| 2 days, by default, before the sequence's first **Opens** | The invite email sends to the sequence's audience. You can change the timing under **When it sends** until it first sends. If the sequence opens sooner than that, it sends about 30 minutes after the invite is set up. | The audience, the published hosted page and your postal address need to be in place before then. | [Invites, waitlist and access-code sends](/guide/create/invites-and-waitlist) |
-| 15 minutes (counted from any distribution in the experience) | Republishing a hosted page that is already published is refused until the distribution closes, or until 30 minutes after it opens if it has no close time, unless an admin confirms **Override freeze and publish**. A first publish is never frozen. | Publish your final page before this point. | [Brand, templates and designs](/concepts/design) |
-| About 10 minutes | Stock counting starts on a sequence with counted stock. From then a size can only go up, the sequence's product selection can lock, and the experience's products cannot be added or removed. For a queue, a **Dynamic** audience that gates the sequence rebuilds now. | Set every size and the products on offer before this point. Get audience rules right before the rebuild. | [What locks, and when](/concepts/what-locks-when), [Allocate stock to a drop](/guide/create/stock-allocation), [Audiences and access codes](/concepts/audiences) |
-| About 5 minutes 30 seconds (queue) | The queue counts as opened. Payment collection and **Authorization amount** lock, and **Opens** can only move earlier. | Check the queue's payment settings before this point. | [Set up a queue](/guide/create/queue) |
-| 5 minutes | A queue's waiting room opens and customers can join it. The sequence's waitlist "opens soon" message sends (appointments have no waitlist). For the other types, a **Dynamic** audience that gates the sequence rebuilds now. | Customers start arriving at a queue from here. | [Queue](/concepts/distributions/queue), [Invites, waitlist and access-code sends](/guide/create/invites-and-waitlist), [Audiences and access codes](/concepts/audiences) |
-| 30 seconds (draw, auction, timed release) | The distribution counts as opened. **Opens** can only move earlier. A draw's payment collection, **Authorization amount** and **Continue selecting until completed** lock. An auction's prices and quantity are fixed. | Check these settings before this point. | [Set up a draw](/guide/create/draw), [What locks, and when](/concepts/what-locks-when) |
-| At **Opens** | Customers start getting in, and the distribution, its sequence and the experience read **Live**. | Watch the drop. | [Watch a live drop](/guide/drop/watch-live) |
+| 2 days (default) before the sequence's first **Opens** | Fanfare sends the invite email to the sequence's audience. (You can adjust **When it sends** until the first send; if the sequence opens sooner, it sends about 30 minutes after setup.) | Finalize your audience, publish your hosted page, and save your postal address. | [Invites, waitlist and access-code sends](/guide/create/invites-and-waitlist) |
+| 15 minutes (any distribution in the experience) | Republishing an already-published hosted page freezes until the distribution closes—or 30 minutes after opening if it has no close time—unless an admin selects **Override freeze and publish**. First-time publishes are never frozen. | Publish your final hosted page. | [Brand, templates and designs](/concepts/design) |
+| About 10 minutes | Stock counting starts on counted sequences. From here, size counts can only increase, sequence products can lock, and experience products can't be added or removed. For queues, gating **Dynamic** audiences rebuild now. | Finalize stock allocations, product selection, and queue audience rules. | [What locks, and when](/concepts/what-locks-when), [Allocate stock to a drop](/guide/create/stock-allocation), [Audiences and access codes](/concepts/audiences) |
+| About 5 minutes 30 seconds (queue) | The queue counts as opened. Payment collection and **Authorization amount** lock, and **Opens** can only move earlier. | Double-check queue payment settings. | [Set up a queue](/guide/create/queue) |
+| 5 minutes | A queue's waiting room opens and customers can join the line. Waitlist "opens soon" messages send (appointments don't have waitlists). For draws, auctions, timed releases, and appointments, gating **Dynamic** audiences rebuild now. | Expect queue traffic to start arriving. | [Queue](/concepts/distributions/queue), [Invites, waitlist and access-code sends](/guide/create/invites-and-waitlist), [Audiences and access codes](/concepts/audiences) |
+| 30 seconds (draw, auction, timed release) | The distribution counts as opened. **Opens** can only move earlier. Draw payment collection, **Authorization amount**, and **Continue selecting until completed** lock; auction prices and quantity lock. | Confirm draw payment and auction pricing settings. | [Set up a draw](/guide/create/draw), [What locks, and when](/concepts/what-locks-when) |
+| At **Opens** | Customers start entering, and the distribution, sequence, and experience show **Live**. | Switch to live monitoring. | [Watch a live drop](/guide/drop/watch-live) |
 
-The audience hold has no fixed time. Once a gated distribution starts taking entries (for a queue, when its waiting room opens 5 minutes before **Opens**), full rebuilds of a **Dynamic** audience that gates it wait, and **Refresh now** is refused. No hold applies while any distribution taking entries has no end: a queue, timed release or appointment with no **Closes**. A draw with no **Closes** still holds until its draw time. See [Audiences and access codes](/concepts/audiences).
+<Note>
+  **Dynamic audience holds:** Once a gated distribution starts taking entries (5 minutes before **Opens** for a queue), full rebuilds of any gating **Dynamic** audience pause and **Refresh now** is disabled until the drop closes. No hold applies while an open queue, timed release, or appointment has no **Closes** time; an open-ended draw still holds until its draw time. See [Audiences and access codes](/concepts/audiences).
+</Note>
 
-An appointment's window, slot length, buffer, capacity and location cannot change while any booking stands, and customers can book as soon as the page is live, which can be well before **Opens**. See [What locks, and when](/concepts/what-locks-when).
+<Note>
+  **Appointments lock on first booking:** An appointment's window, slot duration, buffer, capacity, and location lock as soon as any booking exists—and customers can book as soon as the page is live, even well before **Opens**. See [What locks, and when](/concepts/what-locks-when).
+</Note>
 
-## Check the forecast
+## Check the demand forecast
 
-On the sequence's **Performance** tab, **Before opening** shows **Opens in**, **Expected entrants** and **Range**. You see "No forecast yet" until this experience has at least two closed distributions of the same kind (English and Dutch auctions count separately). What the figures mean is in [Read your results](/guide/learn/performance#before-a-distribution-opens).
+Open your sequence's **Performance** tab to check **Before opening**, which shows **Opens in**, **Expected entrants**, and **Range**. Forecasts appear once the experience has at least two closed distributions of the same type (English and Dutch auctions count separately); until then, you'll see "No forecast yet." See [Read your results](/guide/learn/performance#before-a-distribution-opens).
 
 {/* image: guide-drop-preflight-forecast */}
 
-## Have the controls ready
+## Keep live controls handy
 
-- Some settings stay editable once the drop is live, such as a queue's **Admit rate** and **Closes**, and a save takes effect with no confirmation step. See [Change things mid-drop](/guide/drop/live-controls).
-- Keep the live figures open while the drop runs. See [Watch a live drop](/guide/drop/watch-live).
-- To stop a drop, an admin selects **Deactivate**, which cannot be undone. See [Stop a drop](/guide/drop/deactivate).
-- When something goes wrong mid-drop, start at [Troubleshooting a live drop](/guide/drop/troubleshooting).
+- **Live edits apply immediately:** Settings that stay editable mid-drop—such as a queue's **Admit rate** and **Closes**—take effect as soon as you save, with no confirmation dialog. See [Change things mid-drop](/guide/drop/live-controls).
+- **Keep live monitoring open:** Follow queue length, admissions, and sales in real time in [Watch a live drop](/guide/drop/watch-live).
+- **Know how to stop a drop:** Only organization admins can **Deactivate**, and it can't be undone. See [Stop a drop](/guide/drop/deactivate).
+- **Bookmark troubleshooting:** If anything looks off during the drop, start at [Troubleshooting a live drop](/guide/drop/troubleshooting).
 
 ## On Shopify
 
-In the Fanfare app in Shopify, check these as well:
+If you run drops through the Fanfare app in Shopify, check these items too:
 
-- Both storefront steps are done: checkout protection is on and the product widget is on your theme. **Home** shows "Fanfare is set up on your store" when both are; until then it says "Your experiences won't protect a product on your store until both steps are done." See [Storefront setup](/guide/shopify/storefront-setup).
-- The products in the drop came in from Shopify and are up to date. Select **Sync from Shopify** on a product to bring a change in at once. See [Products from Shopify](/guide/shopify/products).
-- There is no payment collection choice to make in item 7: customers pay in Shopify's checkout. See [Checkout options](/concepts/checkout-options).
-- An auction needs your store on Shopify Plus, Fanfare's latest permissions approved in Shopify, checkout protection on, and your store's currency the same as your organisation's. See [Checkout protection](/guide/shopify/checkout-protection).
-- Appointments are not offered.
-- A queue or draw size that Shopify manages starts at Shopify's count when you create it. See [Allocate stock to a drop](/guide/create/stock-allocation#on-shopify).
-- Every Shopify staff member who can open the app counts as an organisation admin, so anyone there can deactivate. See [Stop a drop](/guide/drop/deactivate).
+- **Storefront setup is complete:** Both checkout protection and the product widget must be active. **Home** shows "Fanfare is set up on your store" when ready; otherwise it warns that your experiences won't protect products until both steps are done. See [Storefront setup](/guide/shopify/storefront-setup).
+- **Products are synced:** Your drop's products come from Shopify—select **Sync from Shopify** on any product to pull in recent catalog changes immediately. See [Products from Shopify](/guide/shopify/products).
+- **Checkout is handled by Shopify:** You can skip payment collection settings in item 7—customers pay in Shopify's checkout. See [Checkout options](/concepts/checkout-options).
+- **Auction requirements:** Running an auction requires Shopify Plus, Fanfare's latest approved app permissions, checkout protection enabled, and a store currency matching your Fanfare organization's currency. See [Checkout protection](/guide/shopify/checkout-protection).
+- **Shopify-managed stock:** Queue and draw sizes managed by Shopify start at Shopify's current inventory count when you create them. See [Allocate stock to a drop](/guide/create/stock-allocation#on-shopify).
+- **No appointments:** Appointments aren't available in the Shopify app.
+- **Admin permissions:** Every Shopify staff member who can open the Fanfare app counts as an organization admin and can **Deactivate** a drop. See [Stop a drop](/guide/drop/deactivate).
 
 {/* image: guide-drop-preflight-shopify-checklist */}
 
 ## Related
 
 <CardGroup>
-  <Card title="What locks, and when" href="/concepts/what-locks-when">What you can change before, during and after a drop.</Card>
-  <Card title="Watch a live drop" href="/guide/drop/watch-live">The live figures and what each one means.</Card>
-  <Card title="Change things mid-drop" href="/guide/drop/live-controls">Pause a queue, move units, and edit a live drop.</Card>
-  <Card title="Troubleshooting a live drop" href="/guide/drop/troubleshooting">What to do when something goes wrong.</Card>
+  <Card title="What locks, and when" href="/concepts/what-locks-when">
+    What you can change before, during, and after a drop.
+  </Card>
+  <Card title="Watch a live drop" href="/guide/drop/watch-live">
+    Follow live metrics and understand what each number counts.
+  </Card>
+  <Card title="Change things mid-drop" href="/guide/drop/live-controls">
+    Pause a queue, move units, and edit settings during a drop.
+  </Card>
+  <Card title="Troubleshooting a live drop" href="/guide/drop/troubleshooting">
+    Quick fixes when something looks wrong mid-drop.
+  </Card>
 </CardGroup>

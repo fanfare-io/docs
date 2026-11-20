@@ -1,148 +1,154 @@
 ---
 title: Audiences and access codes
-description: How Fanfare decides who belongs to an audience, when that list changes, and when a shared access code is the better way to limit who can enter a sequence.
+description: Control who can enter a sequence with dynamic rules, uploaded lists, synced segments, or shared access codes.
 ---
 
-An audience is a named group of customers. You use it for two things: to decide who can enter a sequence, and to choose who gets that sequence's invite email. A sequence is one way in to an experience, and each sequence takes at most one audience, so to admit several groups you create one audience that combines them. Use an audience when you want "only my best customers" to get in first.
+Audiences let you target specific groups of customers—like VIPs, repeat buyers, or newsletter subscribers—for exclusive or early access to a drop. You use an audience in two ways: to control who can enter a sequence, and to define who receives that sequence's invite email. Each sequence accepts one audience, so if you want to admit multiple groups together, combine them into a single audience.
+
 <Info>Available on Growth and above.</Info>
 
-On Starter, the forms for creating and importing audiences show an upgrade prompt and cannot be used. Loyalty tiers need Pro: see [Loyalty and Fanfair](/concepts/loyalty).
+On Starter, audience creation and import controls display an upgrade prompt. Loyalty tier audiences require Pro—see [Loyalty and Fanfair](/concepts/loyalty).
 
 ## Where members come from
 
-The **Type** column on the **Audiences** page shows one of three kinds.
+The **Type** column on the **Audiences** page shows how each audience is populated:
 
-| Kind | Where its members come from | When the list changes |
+| Type | Where members come from | When the list updates |
 | --- | --- | --- |
-| **Dynamic** | Rules on customer fields that you write | At each build (see below), and when one customer's details change |
-| **Static List** | A CSV file you upload when you create the audience | When the import finishes |
-| **Imported** | A Klaviyo or Mailchimp list, copied one way into Fanfare | When an import or **Sync Now** finishes |
+| **Dynamic** | Rules you define on customer fields | On each rebuild (see below), plus live per-customer updates when a customer's details change |
+| **Static List** | A CSV file you upload when creating the audience | When the import finishes |
+| **Imported** | A one-way copy of a Klaviyo or Mailchimp list | When an import or manual **Sync Now** finishes |
 
-Two kinds of audience come as a group, shown as one row you can expand:
+Two audience types appear as expandable groups on the **Audiences** page:
 
-- Loyalty tiers, created with **Create Loyalty Tiers**: one rule-based audience per tier, each covering a range of one customer field you choose, such as lifetime points or lifetime value. How tiers are set and edited is in [Loyalty and Fanfair](/concepts/loyalty).
-- "RFM Segments": five audiences Fanfare creates for every organisation, "Champions", "Loyal", "At-Risk", "New" and "Lost", based on how customers rank on activity, purchase frequency and spend (and, for "New", having placed at most one order). You cannot edit them.
+- **Loyalty tiers** — Created via **Create Loyalty Tiers**, giving you one rule-based audience per tier across ranges of a single customer attribute (such as lifetime points or lifetime value). See [Loyalty and Fanfair](/concepts/loyalty).
+- **RFM Segments** — Five built-in, read-only audiences Fanfare maintains for every organization (**Champions**, **Loyal**, **At-Risk**, **New**, and **Lost**), grouped by activity, purchase frequency, and spend (with **New** covering customers who've placed at most one order).
 
-<Frame caption="For a rule-based audience, the Status column shows whether its latest build is live and when it next rebuilds.">
+<Frame caption="For rule-based audiences, the Status column shows whether the latest build is live and when the next rebuild is scheduled.">
   <img src="/images/guide/concepts-audiences-list.webp" alt="The Audiences list showing each audience's name, type, member count, group and status, with the Status column highlighted: Live, Held, Refreshing and Not built yet audiences, each with a Next build line." />
 </Frame>
 
-### What a rule can look at
+### What rules can target
 
-A **Dynamic** audience is built from rules on customer fields: how much a customer has spent in total and per order, how many orders they have placed, their loyalty balance and lifetime points, their activity and purchase scores, the date of their last order, when their customer record was created, and their email address. Rules combine in one of two ways only: every rule must be true, or any one rule must be true. You cannot mix the two in one audience. There is no rule on a customer's location.
+A **Dynamic** audience filters customers using rules on these fields: total spend, per-order spend, order count, loyalty balance, lifetime points, activity and purchase scores, last order date, account creation date, and email address. You can require either **all** rules to match or **any** rule to match—you can't mix both in a single audience. Location rules aren't available.
 
-The full list of fields and operators is in [Build audiences](/guide/create/audiences).
+See [Build audiences](/guide/create/audiences) for the complete list of fields and operators.
 
-A guest never matches a rule, so a sequence with an audience always asks the customer to sign in. For what that means for routing and guest entry, see [Sequences and routing](/concepts/sequences#audiences).
+Because guests have no customer profile, they never match audience rules—so any audience-gated sequence automatically requires customers to sign in. See [Sequences and routing](/concepts/sequences#audiences) for how gating interacts with routing and guest access.
 
-## Building: what Fanfare checks at the door
+## How membership builds work
 
-When a signed-in customer reaches a sequence with an audience, Fanfare checks them against the audience's current member list, not against live customer data. A build is Fanfare working out the member list from scratch and making it the list the door uses. The audience's status shows where its build stands:
+When a signed-in customer arrives at an audience-gated sequence, Fanfare checks them against the audience's latest built member list rather than recalculating rules on the fly. A **build** evaluates your audience from scratch and activates the resulting list for drop entry.
 
 | Status | What it means | Who can enter |
 | --- | --- | --- |
-| **Not built yet**, **Queued**, **Building** | The first build has not finished. | Nobody. |
-| **Build failed** | The first build failed. | Nobody, until a build succeeds. |
-| **Live** | The latest build is in place. | Its members. |
-| **Refreshing** | A rebuild of the same rules is queued or running. | The members from the last build. |
-| **Updating** | You saved a change and the new build has not finished. | Mostly the members from before your change. A customer re-checked in the meantime is judged by the new rules. |
-| **Update failed** | The build of your latest change failed. | The members from before your change. |
-| **Held** | A drop this audience gates is open, so full rebuilds wait until it closes (see below). | The members from the last build, plus or minus any customer re-checked since because their own details changed. |
+| **Not built yet**, **Queued**, **Building** | The initial build hasn't finished yet. | Nobody. |
+| **Build failed** | The initial build failed. | Nobody, until a build succeeds. |
+| **Live** | The latest build is active. | Current members. |
+| **Refreshing** | A rebuild of the same rules is queued or running. | Members from the previous build. |
+| **Updating** | You saved a rule change and the rebuild is in progress. | Mostly members from before the change; individual customers re-checked in the meantime are evaluated against your new rules. |
+| **Update failed** | Rebuilding after your latest change failed. | Members from before the change. |
+| **Held** | A gated drop is currently open, so full rebuilds are paused until it closes (see below). | Members from the last build, updated by any per-customer re-checks. |
 
 <Warning>
-  A new audience admits nobody until its first build finishes, and nobody at all if that build fails. Create or import the audience well before the drop, and before your sequence opens check that it reads **Live**: in the Status column for a **Dynamic** audience, or in the **Access** row on the audience's page for a list. If the first build of a rule-based audience you created fails, select **Refresh now** to build it again. For an **Imported** audience, select **Sync Now**. **Refresh now** works only on rule-based audiences, so for a **Static List** whose build failed, import the file again as a new list and set that on the sequence.
+  A new audience won't admit anyone until its first build finishes—and won't admit anyone if that build fails. Create or import audiences well ahead of launch, and verify they read **Live** before doors open (in the **Status** column for **Dynamic** audiences, or the **Access** row on the audience's detail page for lists). If an initial build fails, select **Refresh now** on a rule-based audience or **Sync Now** on an **Imported** audience. For a **Static List**, re-upload the CSV as a new list and attach it to your sequence.
 </Warning>
 
 ### When a Dynamic audience rebuilds
 
-- When you save it, including a rename.
-- When you select **Refresh now**.
-- 24 hours after its last build, for an audience you create from rules, so any other build moves this time.
-- After the daily score refresh, if its rules use scores, spend, orders or last order date.
-- Before a drop it gates opens: 5 minutes before the first distribution in the sequence starts taking entries. A queue takes entries into its waiting room 5 minutes before its open time, so for a queue the rebuild runs 10 minutes before open.
+Fanfare automatically rebuilds custom **Dynamic** audiences at these times:
 
-Loyalty tiers and "RFM Segments" have no 24-hour rebuild and no **Refresh now**. They rebuild before a drop they gate opens, after the daily score refresh if their rules use scores, spend or orders (every RFM segment does), and, for tiers, when you save the group. A tier on loyalty points otherwise changes only through the per-customer re-checks below, so check its members before a drop.
+- **On save** — Whenever you edit or rename the audience.
+- **On demand** — Whenever you select **Refresh now**.
+- **Daily** — 24 hours after its previous build (any rebuild resets this 24-hour clock).
+- **After score refreshes** — Following Fanfare's daily score refresh, if your rules use scores, spend, order count, or last order date.
+- **Before a drop opens** — 5 minutes before the sequence's first distribution starts accepting entries. Because a queue's waiting room opens 5 minutes early, Fanfare runs that rebuild 10 minutes before the queue's **Opens** time.
 
-Between builds, Fanfare re-checks a single customer when one of the fields an audience's rules use changes for them. That customer joins or leaves the audience on their own, without waiting for the next build. The re-check uses the rules as last saved.
+Loyalty tiers and **RFM Segments** don't run on a 24-hour cycle and don't offer **Refresh now**. They rebuild before a gated drop opens, after the daily score refresh when based on scores, spend, or orders (which applies to all RFM segments), and—for loyalty tiers—whenever you edit the tier group. Because tiers based on loyalty points rely on per-customer updates between drops, review their member counts before launch.
+
+Between full builds, whenever a field used by your rules changes for a specific customer, Fanfare re-evaluates that customer right away using the latest saved rules—adding or removing them without waiting for the next full rebuild.
+
 ### Held while a drop is open
 
-While any distribution in a sequence that a **Dynamic** audience gates is taking entries, the audience is **Held**: full rebuilds wait until the latest such distribution closes. The hold covers every experience that uses the audience, not only the one whose drop is open.
+While any distribution in an audience-gated sequence is taking entries, Fanfare puts the **Dynamic** audience in a **Held** state and pauses full rebuilds until the last open distribution closes. This hold applies across every experience that uses the audience.
 
 <Warning>
-  While an audience is held, **Refresh now** is refused. A rule change you save shows **Updating** and is applied to the whole list only when the drop closes, but any customer re-checked in the meantime is judged by the new rules straight away. Get the rules right before the rebuild that runs ahead of the open.
+  While an audience is **Held**, **Refresh now** is disabled. If you save a rule change during a hold, the status shows **Updating** and the full list won't rebuild until the drop closes—however, any customer whose details change mid-drop is re-evaluated under your new rules right away. Finalize your rules before the pre-open rebuild runs.
 </Warning>
 
-- If any distribution taking entries has no close time, the audience is not held at all, even while other gated distributions with close times are open.
-- The first build of a new audience is never held.
+Two exceptions apply:
 
-A **Static List** or **Imported** audience is never held. If you select **Sync Now** while a drop it gates is open, the new member list applies as soon as the sync finishes.
+- **Open-ended distributions** — If any open gated distribution has no close time, the audience isn't held—even while other gated distributions with close times are open.
+- **First builds** — A brand-new audience's initial build is never held.
 
-## There is no draft step
+**Static List** and **Imported** audiences are never held. Selecting **Sync Now** on an imported audience during an active drop applies the updated list as soon as the sync completes.
+
+## Edits take effect immediately
 
 <Warning>
-  Saving a rule change on a **Dynamic** audience changes who can enter every sequence the audience gates and who receives each of those sequences' invite emails. Nothing asks you to confirm or publish. To try a different rule, create a new audience rather than editing one that sequences already use.
+  There's no draft or publish step for **Dynamic** audiences. Saving a rule change immediately updates who can enter every sequence using that audience—and who receives its invite emails. If you want to test different rules safely, create a new audience instead of editing one attached to active or upcoming drops.
 </Warning>
 
 ## Imported audiences
 
-The **Create Audience** menu does not offer Klaviyo or Mailchimp lists, even with a connected account, so an imported audience cannot be created from **Audiences**. On an imported audience that already exists, **Sync Now** replaces the member list with a fresh copy of the Klaviyo or Mailchimp list. What it clears first, and the care that needs, is in [Build audiences](/guide/create/audiences).
+Imported audiences from Klaviyo or Mailchimp are created through your connected integration rather than the **Create Audience** menu. On an existing imported audience, **Sync Now** replaces the member list with a fresh one-way copy from Klaviyo or Mailchimp—see [Build audiences](/guide/create/audiences) for how syncing handles existing members.
 
-Until a sync finishes, Fanfare keeps checking customers against the members from the last sync that finished. If the sync fails, those members stay in place. Fanfare never re-copies the list on its own.
+Fanfare doesn't re-sync imported lists automatically. While a sync is running—or if a sync fails—Fanfare continues using the member list from the last successful sync.
 
-## Audience or access code?
+## Audience vs. access code
 
-An access code is one shared code you hand out: at an event, over the phone, through a partner. An audience is a list Fanfare checks after the customer signs in.
+An **access code** is a single shared code you hand out directly—at an event, through a partner, or in a private community. An **audience** verifies eligibility automatically after a customer signs in.
 
 | | Access code | Audience |
 | --- | --- | --- |
-| Suits | People you reach directly, who are not on any list | Customers you can describe by rules or already have on a list |
-| Sign-in needed | Not by the code itself | Always |
-| What the customer types | The code | Nothing extra: their email or phone and the one-time code to sign in |
-| How you take access away | Change the code: new attempts need the new code at once, but a customer who already got past the gate with the old one can still enter for a short while, and anyone already in keeps their place. Clearing the code removes the code requirement; an audience on the same sequence still applies. | For a **Dynamic** audience, change its rules: a customer leaves at the next build that no longer includes them (builds wait while the audience is held), or sooner if their own details change and a re-check no longer matches them. You cannot remove one customer from a **Static List**: import a new list without them and set that on the sequence. For an **Imported** audience, remove them from the Klaviyo or Mailchimp list, then select **Sync Now** |
+| **Best for** | People you reach directly who aren't on a customer list | Customers you can target with rules or already have in a list |
+| **Sign-in required** | Not required by the code itself | Always |
+| **What customers enter** | The access code | Just their email or phone and one-time sign-in code |
+| **Revoking access** | Change the code—new attempts require it immediately, though anyone who already passed the gate has a brief window to finish entering and people already inside keep their spot. Clearing the code removes the requirement (any audience on the sequence still applies). | For a **Dynamic** audience, update the rules—removed customers lose access on the next rebuild (after any hold ends) or sooner if their profile updates. For a **Static List**, upload a new CSV without them and attach it to the sequence. For an **Imported** audience, remove them in Klaviyo or Mailchimp and select **Sync Now**. |
 
-You can set both on one sequence, and then a customer needs both. Access codes are not case-sensitive. All the rules for codes are on [Sequences and routing](/concepts/sequences#access-codes).
+You can apply both an audience and an access code to the same sequence—customers will need to satisfy both. Access codes aren't case-sensitive. See [Sequences and routing](/concepts/sequences#access-codes) for full access code rules.
 
 ## Plans and downgrades
 
-Creating, editing, renaming, importing, syncing and **Refresh now** need Growth. If you move to a lower plan, your existing audiences keep gating their sequences and keep rebuilding on their schedule, but you cannot edit, refresh or re-sync them. You can still delete them.
+Creating, editing, renaming, importing, syncing, and manually refreshing audiences require **Growth** or above. If you downgrade to Starter, existing audiences continue gating their sequences and rebuilding on schedule, though you won't be able to edit, refresh, or re-sync them until you upgrade again. You can still delete unused audiences on any plan.
 
-## Worked example: Inner Circle early access
+## Example: Inner Circle early access
 
-Northbound Supply Co. runs "Phantom Stitch Anorak Drop". Its first sequence, "Inner Circle Early Access", is gated by the "Inner Circle" audience and runs a queue that opens at 10:00 and closes at 11:00. Suppose Inner Circle is a **Dynamic** audience with one rule: customers whose lifetime points are above a set number.
+Suppose Northbound Supply Co. launches its "Phantom Stitch Anorak Drop" with an "Inner Circle Early Access" sequence gated by a **Dynamic** "Inner Circle" audience (customers above a lifetime points threshold). The sequence runs a queue from 10:00 to 11:00:
 
-1. Inner Circle rebuilds once a day and its status reads **Live**.
-2. At 09:50, 10 minutes before the queue opens, Fanfare rebuilds it. Customers who meet the rule at that moment are the members.
-3. From 09:55, when the waiting room opens, the audience is **Held** until 11:00, so no full rebuild runs, though an individual customer whose details change can still join or leave.
-4. A signed-in customer outside Inner Circle is never shown the sequence. Fanfare tries the next one, or tells them "This experience is for members of a specific group." if no sequence will take them.
-5. If you saved a rule change during the queue, Inner Circle rebuilds shortly after 11:00 to apply it. Otherwise its next full build is the daily one, about 24 hours after the 09:50 rebuild.
+1. **Before launch:** Inner Circle rebuilds daily and shows **Live**.
+2. **At 09:50:** Ten minutes before the queue opens (5 minutes before the waiting room opens), Fanfare runs a pre-open rebuild to lock in everyone who qualifies.
+3. **From 09:55 to 11:00:** While the waiting room and queue take entries, Inner Circle stays **Held**. Full rebuilds wait until 11:00, though individual customers whose points change are still re-evaluated.
+4. **At the door:** Signed-in shoppers outside Inner Circle don't see this sequence—Fanfare routes them to the next eligible sequence, or lets them know the experience is reserved for a specific group if no other sequence is open to them.
+5. **After 11:00:** If the team saved a rule tweak during the queue, Inner Circle rebuilds right after 11:00 to apply it. Otherwise, its next scheduled build runs about 24 hours after the 09:50 build.
 
-<Frame caption="While the queue is open, full rebuilds wait, and a saved rule change is applied just after the queue closes.">
+<Frame caption="While the queue is open, full rebuilds pause; any rule change saved during the drop applies right after the queue closes.">
   <img src="/images/guide/concepts-audiences-build-timeline.webp" alt="A timeline for the Inner Circle audience: after a daily build it reads Live, it is rebuilt at 09:50, ten minutes before the queue opens, and it is Held from 09:55 to 11:00 while the waiting room and queue take entries. A rule change saved during the hold shows Updating and is applied by a rebuild shortly after 11:00, and the next daily build comes about 24 hours after the 09:50 rebuild." />
 </Frame>
 
 ## On Shopify
 
-Audiences work the same way in the Fanfare app in Shopify. Connecting Klaviyo and Mailchimp differs there: see [Integrations](/guide/account/integrations).
+Audiences work the same way in the Fanfare app in Shopify. Connecting Klaviyo and Mailchimp works differently there—see [Integrations](/guide/account/integrations).
 
 ## Related
 
 <CardGroup>
   <Card title="Build audiences" href="/guide/create/audiences">
-    Create rule audiences, import a CSV, edit and delete.
+    Create rule-based audiences, import a CSV, and manage existing lists.
   </Card>
   <Card title="Sequences and routing" href="/concepts/sequences">
-    Access codes, how gates combine, and where non-members go.
+    How access codes, audiences, and fallback routing work together.
   </Card>
   <Card title="Add and gate sequences" href="/guide/create/sequences">
-    Set an audience or access code on a sequence.
+    Attach an audience or access code to a sequence.
   </Card>
   <Card title="Invites, waitlist and access-code sends" href="/guide/create/invites-and-waitlist">
-    The invite email an audience sets up.
+    Send invite emails to the audience attached to a sequence.
   </Card>
   <Card title="Loyalty and Fanfair" href="/concepts/loyalty">
-    Points and loyalty tiers.
+    Reward points and build tiered loyalty audiences.
   </Card>
   <Card title="Customers and identity" href="/concepts/customers">
-    How customer records are created and matched.
+    How customer profiles are created, matched, and verified.
   </Card>
 </CardGroup>

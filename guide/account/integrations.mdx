@@ -1,219 +1,207 @@
 ---
 title: Integrations
-description: Connect your email marketing tool, Google Analytics, social channels and Twilio number to Fanfare, and change or remove a connection safely.
+description: Connect Klaviyo, Mailchimp, Google Analytics, Meta, Discord, Telegram, and Twilio to Fanfare, and manage or disconnect existing accounts.
 ---
 
-Integrations link Fanfare to the other tools you use for a drop: email marketing, analytics, social channels and your own Twilio number for marketing texts.
-<Info>Available on Growth and above.</Info>
+Connect Fanfare to the marketing, analytics, social, and messaging tools you already use for drops.
 
-Google Analytics is available on every plan. On Starter, the page shows an "Available on Growth" prompt above the cards, and the same prompt inside the Klaviyo, Mailchimp, Meta, Discord and Twilio dialogues, where you cannot add or reconnect a connection but can still disconnect one. Telegram's dialogue shows no prompt: see [Telegram](#telegram). See [Plans and what they unlock](/guide/start/plans).
+<Info>
+  Marketing integrations (Klaviyo, Mailchimp, Meta, Discord, Telegram, and Twilio) require **Growth** or above. **Google Analytics** is available on every plan. On Starter, you can still disconnect existing integrations, while adding or reconnecting marketing integrations requires upgrading ([Plans and what they unlock](/guide/start/plans)).
+</Info>
 
 ## Before you start
 
-- Check the "Who can connect" column below: some integrations need an admin of your Fanfare organisation. See [Team members](/guide/account/team) for who is an admin.
+- Check the **Who can connect** column below—several integrations require an organization admin ([Team members](/guide/account/team)).
 
-## Find the Integrations page
+## Find your integrations
 
-Open **Settings**, then **Integrations** in the **Connections** group. Above the cards, the tabs **All Integrations**, **Email Marketing**, **Analytics**, **Social Media** and **Communication** filter the list.
+Go to **Settings → Integrations** (under **Connections**). Use the filter tabs—**All Integrations**, **Email Marketing**, **Analytics**, **Social Media**, and **Communication**—to narrow the grid.
 
-<Frame caption="Each card shows whether that integration is connected.">
-  <img src="/images/guide/guide-account-integrations-grid.webp" alt="The Integrations page in Settings, with filter tabs above a two-column grid of integration cards, each showing a status badge such as Connected, Inactive or Not Connected." />
+<Frame caption="Each integration card shows its current connection status.">
+  <img src="/images/guide/guide-account-integrations-grid.webp" alt="The Integrations page in Settings, with category filter tabs above a two-column grid of integration cards showing status badges such as Connected, Inactive, and Not Connected." />
 </Frame>
 
-Each card carries a badge:
+Card status badges:
 
 | Badge | What it means |
 | --- | --- |
-| **Inactive** | Nothing is connected. |
-| **Not Connected** | Twilio only: nothing is connected. |
-| **Connected** | At least one connection is active. The badge does not test your key: a wrong Klaviyo key also shows **Connected** (see below). |
-| **Error** | There are connections, but none of them is active. For Klaviyo, Mailchimp, Google Analytics, Meta, Discord and Telegram this also covers a connection that needs reconnecting: open the card to see which. |
-| **Needs Reconnecting** | Twilio only: Twilio no longer accepts the Auth Token Fanfare holds. Other Twilio problems, such as a number Twilio no longer has, show **Error**. |
+| **Inactive** / **Not Connected** | No account is connected (**Not Connected** is used for Twilio). |
+| **Connected** | At least one connection is active. (Note: Fanfare doesn't live-verify Klaviyo keys, so verify yours carefully.) |
+| **Error** | Existing connections aren't active or need attention—open the card for details. |
+| **Needs Reconnecting** | Twilio only: Twilio no longer accepts the saved Auth Token. |
 
-<Frame caption="Integrations on a lower plan show an upgrade prompt above the cards.">
-  <img src="/images/guide/guide-account-integrations-starter-locked.webp" alt="The Integrations page on a plan that does not include these integrations, with an Available on Growth label and an Upgrade to Growth link above the integration cards." />
+<Frame caption="Integrations outside your current plan display an upgrade prompt above the cards.">
+  <img src="/images/guide/guide-account-integrations-starter-locked.webp" alt="The Integrations page on Starter showing an Available on Growth banner and Upgrade to Growth link above the integration cards." />
 </Frame>
 
-## Which integration does what
+## Available integrations
 
-| Integration | What it is for | How you connect | Who can connect | Plan |
+| Integration | What it does | How you connect | Who can connect | Plan |
 | --- | --- | --- | --- | --- |
-| Klaviyo | Importing Klaviyo lists into audiences | Paste a private API key | Anyone on the team | Growth and above |
-| Mailchimp | Importing Mailchimp audiences into audiences | Paste an API key | Anyone on the team | Growth and above |
-| Google Analytics | Saving your Google Analytics 4 Measurement ID and the events you want forwarded | Enter a Measurement ID and choose events | Anyone on the team | Every plan |
-| Meta | Posting announcements on a Facebook Page and its linked Instagram account | Sign in with Facebook, then choose Pages | Anyone can start; an admin must finish | Growth and above |
-| Discord | Posting announcements in a Discord channel | Add the Fanfare bot to your server, then choose a channel | Anyone can start; an admin must finish | Growth and above |
-| Telegram | Posting announcements in a Telegram channel | Put a one-time code in the channel description | An admin, who gets the code and verifies it | Growth and above |
-| Twilio | Sending marketing texts from your own number | Account SID and Auth Token, then a number and your SMS programme | Admins only | Growth and above |
+| **Klaviyo** | Connect your Klaviyo account via API key | Paste a private API key | Any team member | Growth and above |
+| **Mailchimp** | Connect your Mailchimp account via API key | Paste an API key | Any team member | Growth and above |
+| **Google Analytics** | Store your GA4 Measurement ID and forwarded event preferences | Enter Measurement ID and select events | Any team member | Every plan |
+| **Meta** | Publish announcements to a Facebook Page and its linked Instagram account | Sign in with Facebook and pick Pages | Anyone can start; an admin must finish | Growth and above |
+| **Discord** | Post announcements to a Discord server channel | Add the Fanfare bot and pick a channel | Anyone can start; an admin must finish | Growth and above |
+| **Telegram** | Post announcements to a public Telegram channel | Verify a one-time code in the channel description | Admins only | Growth and above |
+| **Twilio** | Send marketing texts from your own phone number or Messaging Service | Account SID, Auth Token, number, and SMS program | Admins only | Growth and above |
 
-Using these connections is covered in [Build audiences](/guide/create/audiences) and [Announcements](/guide/create/announcements). The **Create Audience** menu does not offer Klaviyo or Mailchimp lists, even with a connected account, so connecting either one does not let you import a list. Google Analytics is separate from Fanfare's own numbers, which are in [Read your results](/guide/learn/performance).
+For how these channels work in drops, see [Build audiences](/guide/create/audiences) and [Announcements](/guide/create/announcements). Google Analytics is tracked separately from Fanfare's built-in drop analytics ([Read your results](/guide/learn/performance)).
+
+<Note>
+  While you can save Klaviyo and Mailchimp connections here, importing lists directly from the **Create Audience** menu isn't currently available.
+</Note>
 
 ## Klaviyo and Mailchimp
 
 1. Select the **Klaviyo** or **Mailchimp** card.
-2. Paste your key into **API Key**.
-   - Klaviyo: your private API key, which starts with `pk_`. It is in your Klaviyo account settings.
-   - Mailchimp: the key in the form key-datacentre, for example `abc123-us19`. It is in Mailchimp under Account & Billing > Extras > API keys.
-3. Optionally fill in **Connection name**, which tells connections apart when you have more than one. It defaults to the provider name.
-4. Mailchimp only: select **Test Connection** to check the key before saving.
-5. Select **Save**. The card shows **Connected**.
+2. Paste your **API Key**:
+   - **Klaviyo:** Your private API key starting with `pk_` (from your Klaviyo account settings).
+   - **Mailchimp:** Your key in `key-datacenter` format, such as `abc123-us19` (from Mailchimp under **Account & Billing → Extras → API keys**).
+3. Optionally enter a **Connection name** to tell multiple accounts apart.
+4. For Mailchimp, select **Test Connection** to verify the key before saving.
+5. Select **Save**.
 
 <Warning>
-  **Save** always adds a new connection. It never updates the existing one. To change a key, save the new key, then disconnect the old connection (see [Manage a connection](#manage-a-connection)). If you do not, both connections stay live.
+  **Save** always adds a new connection rather than replacing an existing one. To rotate an API key, save the new key first and then disconnect the old connection ([Manage a connection](#manage-a-connection)). Keep in mind that disconnecting an account stops future syncing for any audience previously imported through it (existing members remain).
 </Warning>
 
-Imported lists stay tied to the connection they came through. Once you disconnect the old connection, an audience imported through it keeps its members but can no longer be synced, and the **Create Audience** menu does not offer Klaviyo or Mailchimp lists, so you cannot import it again through the new connection (see [Build audiences](/guide/create/audiences)). Weigh that before you disconnect a working connection.
-
 <Note>
-  Klaviyo has no **Test Connection** button. A wrong Klaviyo key still saves, and the card keeps showing **Connected**, so copy the key carefully.
+  Klaviyo doesn't have a **Test Connection** button—an invalid key still saves as **Connected**, so double-check it carefully.
 </Note>
 
-On Starter, importing lists stops, because audiences need Growth.
-
-<Frame caption="Saving here adds a new connection; it does not replace the one listed above it.">
-  <img src="/images/guide/guide-account-integrations-klaviyo-dialog.webp" alt="The Klaviyo Integration dialogue showing a Connected notice, one connected account with its connection date and a Disconnect button, and the API Key and Connection name fields, with the Save button highlighted." />
+<Frame caption="Saving adds a new connection rather than overwriting an existing one.">
+  <img src="/images/guide/guide-account-integrations-klaviyo-dialog.webp" alt="The Klaviyo Integration dialog showing a Connected notice, an existing connected account with a Disconnect button, and the API Key and Connection name fields with the Save button." />
 </Frame>
 
 ## Google Analytics
 
-Your organisation can have one working Google Analytics connection.
+Your organization can keep one active Google Analytics 4 connection.
 
 <Note>
-  Saving the connection stores your Measurement ID and event choices. It does not by itself send events to Google Analytics 4.
+  Saving this connection stores your Measurement ID and event preferences in Fanfare; it doesn't automatically transmit events to Google Analytics 4 on its own.
 </Note>
 
 1. Select the **Google Analytics** card.
-2. Enter your **Measurement ID**: G- followed by capital letters and digits, for example `G-XXXXXXXXXX`. It is in your Google Analytics 4 property settings under Data Streams.
-3. Under **Event Forwarding**, choose events. They are grouped by type, such as Queue and Draw, and every one is ticked at first. One button changes them all at once: it reads **Deselect All** when every event is ticked, and **Select All** otherwise.
+2. Enter your **Measurement ID** (`G-` followed by uppercase letters and digits, such as `G-XXXXXXXXXX`, found in GA4 under **Data Streams**).
+3. Under **Event Forwarding**, choose which event groups (such as Queue or Draw) to include. Use **Deselect All** or **Select All** to toggle everything at once.
 4. Select **Save**.
 
 <Warning>
-  Saving a change removes the current Google Analytics connection before creating the new one. If creating the new one fails, Google Analytics is left disconnected. After saving, check that the card shows **Connected**. If it does not, open it, enter the Measurement ID, choose your events again (all are ticked), and save.
+  Saving updates replaces your existing Google Analytics connection. If saving fails partway through, your connection may be left disconnected—verify that the card shows **Connected** after saving, and re-enter your Measurement ID if needed.
 </Warning>
-
-<Note>
-  If you untick every event and save, the card still shows **Connected**, with no events chosen.
-</Note>
 
 ## Meta
 
-1. Select the **Meta** card, then **Connect with Facebook**. Your browser goes to Facebook.
-2. Sign in and leave every permission switched on. If you switch one off, Fanfare cannot connect and asks you to start again.
-3. Back in Fanfare, **Choose Pages** opens. Tick the Facebook Pages Fanfare may post to.
+1. Select the **Meta** card, then select **Connect with Facebook**.
+2. Sign in to Facebook and leave all requested permissions turned on (turning any off prevents Fanfare from connecting).
+3. Back in Fanfare, select the Facebook Pages Fanfare can post to in **Choose Pages**.
 4. Select **Connect selected Pages** within 15 minutes.
 
-Instagram is connected only if it is linked to the Page when you connect. Otherwise the Page connects without it, and its row shows **Instagram** as **Not linked**. To add Instagram later, link it to the Page in Meta, then select **Connect with Facebook** again and choose the same Page. Fanfare updates that Page's connection instead of adding a second one.
-
-If Facebook shares more Pages than the list can show, only the first ones are listed.
+Instagram connects automatically only if it's already linked to your Facebook Page in Meta. If a Page connects with **Instagram** shown as **Not linked**, link Instagram to that Page in Meta, then run **Connect with Facebook** again and select the same Page—Fanfare updates the existing connection instead of creating a duplicate. (If your Facebook account manages a large number of Pages, only the first batch is listed.)
 
 ## Discord
 
-1. Select the **Discord** card, then **Add to Discord**. Your browser goes to Discord.
-2. Choose your server and authorise the Fanfare bot.
-3. Back in Fanfare, **Choose a channel** opens. Pick the channel announcements are posted in. Fanfare posts to one channel per server: picking a channel in a server you have already connected moves that connection, and its scheduled posts, to the new channel.
+1. Select the **Discord** card, then select **Add to Discord**.
+2. Choose your server and authorize the Fanfare bot.
+3. Back in Fanfare, pick your destination channel in **Choose a channel**.
 4. Select **Connect channel** within 15 minutes.
 
-If the bot is not allowed to create scheduled events in your server, the chooser says so: announcements then post as messages only. If the bot cannot post in any channel, allow it to send messages in one, then start again.
+Fanfare posts to one channel per Discord server—selecting a different channel on a server you already connected moves that connection and its scheduled posts to the new channel. Make sure the bot has permission to send messages in your chosen channel; if it doesn't have permission to create scheduled events, announcements will post as regular messages.
 
 ## Telegram
 
 1. Select the **Telegram** card.
-2. Enter the channel's public username in **Channel**, for example `@yourchannel`, and select **Get code**. A channel without a public username cannot be connected.
-3. In Telegram, add the bot the dialogue names to the channel as an administrator with the Post messages and Edit messages of others rights.
-4. Paste the code into the channel description and save it in Telegram.
-5. Back in Fanfare, select **Verify channel** within 30 minutes of getting the code.
-<Note>
-  On Starter, **Get code** is refused with "This feature requires the … plan. Upgrade to continue.", naming the plan you need.
-</Note>
+2. Enter your channel's public username in **Channel** (for example, `@yourchannel`) and select **Get code**. Private channels without a public username can't be connected.
+3. In Telegram, add the bot named in the dialog as a channel administrator with **Post messages** and **Edit messages of others** permissions.
+4. Paste the verification code into your channel's description and save it in Telegram.
+5. Back in Fanfare, select **Verify channel** within 30 minutes of generating the code.
 
 ## Twilio
 
-Only admins can connect, change or disconnect Twilio; anyone else who opens the card sees "Only organization admins can change the Twilio connection."
+Only organization admins can connect, edit, or disconnect Twilio.
 
 1. Select the **Twilio** card.
-2. Enter your **Account SID** (on your Twilio Console home page, under Account Info) and **Auth Token**, then select **Test and continue**.
-3. Choose the number or Messaging Service that sends your texts. The list shows up to the first 100 SMS-capable numbers and the first 100 Messaging Services that Twilio returns. If yours is not listed, choose **Another number or Messaging Service** and enter the number in international format (a plus sign, the country code, then the number) or a Messaging Service SID that starts with MG.
+2. Enter your **Account SID** (from your Twilio Console home page under **Account Info**) and **Auth Token**, then select **Test and continue**.
+3. Pick the phone number or Messaging Service that will send your texts. Fanfare lists up to the first 100 SMS-capable numbers and 100 Messaging Services from Twilio—if yours isn't listed, choose **Another number or Messaging Service** and enter an international phone number (starting with `+`) or a Messaging Service SID (starting with `MG`).
 4. Select **Continue**.
-5. Fill in your SMS programme: **Brand name in texts**, **SMS terms link** and **Privacy policy link**. **Customers will see** previews the consent wording built from them.
-6. Select **Connect**.
-7. If Fanfare asks, tick "Send replies to [your number] to Fanfare instead" and select **Replace and connect**.
-
-When it is done, Fanfare shows "Twilio connected. Marketing texts will send from your number."
+5. Fill in your SMS program details—**Brand name in texts**, **SMS terms link**, and **Privacy policy link**—and review the **Customers will see** consent preview.
+6. Select **Connect**. If prompted to route replies to Fanfare, check the box and select **Replace and connect**.
 
 <Note>
-  Fanfare does not check carrier registration. US carriers block marketing texts from numbers without an approved A2P 10DLC campaign or toll-free verification, so confirm the number's registration in Twilio before you send.
+  Fanfare doesn't check carrier registration. US carriers block marketing texts from numbers without an approved A2P 10DLC campaign or toll-free verification—confirm your registration in Twilio before sending campaigns.
 </Note>
 
-<Frame caption="The preview shows the consent wording customers see before they agree to marketing texts.">
-  <img src="/images/guide/guide-account-integrations-twilio-program.webp" alt="The Your SMS Program step of the Connect Twilio dialogue, with the step indicator on Program, three fields, and a Customers will see preview of the consent text." />
+<Frame caption="Preview the exact SMS consent wording customers will see before connecting.">
+  <img src="/images/guide/guide-account-integrations-twilio-program.webp" alt="The Your SMS Program step of the Connect Twilio dialog showing fields for brand name, SMS terms link, and privacy policy link alongside a Customers will see consent preview." />
 </Frame>
 
-| Setting | What it does | Default | Can you change it once it is live? |
+| Setting | What it does | Default | Editable after connecting? |
 | --- | --- | --- | --- |
-| **Brand name in texts** | Starts every marketing text, such as "Kazen: Doors open at 10am". Up to 20 standard characters: letters, numbers and common punctuation, no emoji. | Your company name, if it fits these rules; otherwise empty | Yes, with **Edit program details** |
-| **SMS terms link** | Your SMS terms page, linked from the consent wording. It must start with https://. | None | Yes, with **Edit program details** |
-| **Privacy policy link** | Your privacy policy, linked from the consent wording. It must start with https://. | None | Yes, with **Edit program details** |
+| **Brand name in texts** | Prefixes every marketing text (for example, "Kazen: Doors open at 10am"). Up to 20 standard characters—letters, numbers, and common punctuation, no emoji. | Your company name (if it fits), otherwise blank | Yes, via **Edit program details** |
+| **SMS terms link** | Link to your SMS terms page (`https://...`), included in customer consent wording. | Blank | Yes, via **Edit program details** |
+| **Privacy policy link** | Link to your privacy policy (`https://...`), included in customer consent wording. | Blank | Yes, via **Edit program details** |
 
 ### When Fanfare asks to take over replies
 
-Fanfare needs your number's replies so that customers who reply STOP stop getting marketing texts. If they go to another system today, Fanfare shows "Replies to … currently go to another system". **Replace and connect** points them at Fanfare, and the other system stops getting them.
+Fanfare needs to receive replies to your Twilio number so customers who reply `STOP` are unsubscribed automatically. If replies currently route to another system, selecting **Replace and connect** updates the webhook to Fanfare (and the previous system stops receiving replies).
 
 <Frame>
-  <img src="/images/guide/guide-account-integrations-twilio-replies.webp" alt="The Replies step of the Connect Twilio dialogue, warning that replies currently go to another system, with a checkbox to send them to Fanfare instead." />
+  <img src="/images/guide/guide-account-integrations-twilio-replies.webp" alt="The Replies step of the Connect Twilio dialog noting that replies currently go to another system, with a checkbox to send them to Fanfare instead." />
 </Frame>
 
-### Change your SMS programme
+### Update your SMS program
 
-Open the **Twilio** card and select **Edit program details**. Change the fields and select **Save**. Changes apply to the next marketing text and consent prompt.
+Open the **Twilio** card, select **Edit program details**, update any field, and select **Save**. Changes take effect on your next marketing text and consent prompt.
 
-### One organisation per account
+### One organization per account
 
-A Twilio account or number, a Discord server and a Telegram channel can each be connected to only one Fanfare organisation. If you run several brands as separate organisations, each needs its own.
+A Twilio account or phone number, a Discord server, and a Telegram channel can each be connected to only one Fanfare organization at a time. If you manage multiple brands in separate organizations, each needs its own account or channel.
 
 ## Manage a connection
 
-For Klaviyo, Mailchimp, Meta, Discord and Telegram, open the card to see **Connected accounts**: one row per connection, with a status dot (**Connected**, **Needs reconnecting** or **Error**), the date under **Connected on**, and, for Meta, Discord and Telegram, the number of **Scheduled posts**. The Google Analytics dialogue shows its one working connection the same way.
+Open any integration card to see its **Connected accounts**, including status, **Connected on** date, and (for Meta, Discord, and Telegram) the count of **Scheduled posts**.
 
 ### Reconnect
 
-- Meta, Discord or Telegram showing "Needs reconnecting": expand the row and select **Reconnect**. Meta and Discord send you through Facebook or Discord again. Telegram returns to its first step with the channel filled in.
-- Twilio showing "Marketing texts are paused" (see [Troubleshooting](#troubleshooting)): an admin selects **Reconnect Twilio** and walks through the steps again with the same Twilio account. The **Auth Token** is always empty on reconnect, so paste it again. To move to a different Twilio account, disconnect Twilio first, then connect the new one.
+- **Meta, Discord, or Telegram:** If a connection shows **Needs reconnecting**, expand its row and select **Reconnect** to re-authorize or re-verify.
+- **Twilio:** If Twilio shows **Marketing texts are paused** (see [Troubleshooting](#troubleshooting)), an admin can select **Reconnect Twilio** and walk through setup again with the same Twilio account—you'll need to paste your **Auth Token** again. To switch to a different Twilio account, disconnect first and then connect the new one.
 
 ### Disconnect
 
-- Klaviyo, Mailchimp, Google Analytics, Meta, Discord, Telegram: expand the row and select **Disconnect**, then **Disconnect** again to confirm, or **Keep** to back out. Anyone on the team can do this.
-- Twilio: open the card and select **Disconnect**. In "Disconnect Twilio?", select **Disconnect** to confirm, or **Keep connected**.
+- **Klaviyo, Mailchimp, Google Analytics, Meta, Discord, and Telegram:** Expand the account row, select **Disconnect**, and confirm. Any team member can disconnect these integrations.
+- **Twilio (admins only):** Open the **Twilio** card, select **Disconnect**, and confirm.
 
-Before you disconnect Meta, Discord or Telegram, check the row's footer. If it reads "1 scheduled post won't go out." or similar, those posts will not be published to this account. "Nothing is scheduled here." means nothing is lost.
-
-Disconnecting Twilio stops marketing texts at once: SMS announcements due afterwards show "Didn't send" (see [Announcements](/guide/create/announcements)). Twilio keeps sending your number's replies to Fanfare, which no longer acts on them: point them back at your own system in Twilio if you need them.
+<Warning>
+  Before disconnecting **Meta**, **Discord**, or **Telegram**, check whether any scheduled posts are listed on the row—disconnecting prevents those posts from publishing. Disconnecting **Twilio** stops marketing texts right away (upcoming SMS announcements won't send—see [Announcements](/guide/create/announcements)), and you'll need to re-point inbound reply webhooks in Twilio if you want another system to receive replies again.
+</Warning>
 
 ## On Shopify
 
-The Integrations page in the Fanfare app in Shopify differs in four ways:
+The **Integrations** page works the same in the Fanfare Shopify app, with four differences:
 
-- Everyone who can open the Fanfare app can connect, change and disconnect Klaviyo, Mailchimp, Google Analytics, Meta, Discord and Twilio on this page; there are no admin-only steps. See [Team members](/guide/account/team).
-- **Connect with Facebook** and **Add to Discord** open Facebook and Discord outside the Shopify admin. When you finish, you return to the Integrations page in the Fanfare app in Shopify.
-- If the Meta and Discord cards show **Coming Soon** and cannot be opened, connecting them is not available in your Shopify app.
-- Telegram cannot be connected in the Fanfare app in Shopify: **Get code** answers "Fanfare could not complete this step. Check that you are an organization admin."
+- **Permissions:** Every Shopify staff member who can open the Fanfare app can connect, edit, and disconnect Klaviyo, Mailchimp, Google Analytics, Meta, Discord, and Twilio—there are no admin-only steps ([Team members](/guide/account/team)).
+- **External sign-in:** **Connect with Facebook** and **Add to Discord** open outside the Shopify admin and return you to **Integrations** when finished.
+- **Social availability:** If the Meta or Discord cards show **Coming Soon**, they aren't yet available in your Shopify app.
+- **Telegram:** Telegram connections aren't available inside the Fanfare Shopify app.
 
 ## Troubleshooting
 
 <AccordionGroup>
-  <Accordion title="This step expired. Start the connection again.">
-    Start again from the card. "The connection attempt expired or was already used. Start again." means you took more than 10 minutes in Facebook or Discord, or used an old link.
+  <Accordion title="The connection step expired">
+    OAuth authorizations expire if you take longer than 10 minutes in Facebook or Discord, or if you reuse an older link. Start the connection again from the integration card.
   </Accordion>
-  <Accordion title="Fanfare could not complete this step. Check that you are an organization admin.">
-    Anyone on the team can start a Meta, Discord or Telegram connection, but only an admin can finish it: the check happens after Facebook or Discord, or when you select **Verify channel**. Ask an admin to connect it from the start.
+  <Accordion title="I see 'Fanfare could not complete this step. Check that you are an organization admin.'">
+    Only organization admins can finalize Meta, Discord, or Telegram connections (permissions are checked when saving the selection or verifying the channel). Ask an admin to complete the connection from the start.
   </Accordion>
-  <Accordion title="This connection already exists.">
-    Google Analytics is already connected, for example from another tab. Reload the page and open the **Google Analytics** card to change it.
+  <Accordion title="Google Analytics says the connection already exists">
+    Google Analytics was already connected (for instance, in another browser tab). Reload the page and open the **Google Analytics** card to edit it.
   </Accordion>
-  <Accordion title="… is already connected to another Fanfare organization.">
-    That Twilio account or number, or Telegram channel, belongs to another Fanfare organisation. For a Discord server the message reads "This destination is already connected to another organization." See [One organisation per account](#one-organisation-per-account).
+  <Accordion title="My account or channel is already connected to another Fanfare organization">
+    Each Twilio account or number, Discord server, and Telegram channel can only belong to one organization at a time. Disconnect it from the other organization first, or use a separate account—see [One organization per account](#one-organization-per-account).
   </Accordion>
   <Accordion title="Marketing texts are paused">
-    Marketing texts stop; sign-in codes and order texts still send from Fanfare. The notice gives the reason, such as an Auth Token Twilio no longer accepts or a number Twilio no longer has. Fix it in Twilio if the notice says to, then reconnect as described in [Reconnect](#reconnect). If you are not an admin, ask one.
+    Marketing SMS campaigns pause while transactional sign-in codes and order texts continue sending from Fanfare. Check the notice for the cause (such as an invalid Auth Token or removed Twilio number), fix it in Twilio if needed, and have an admin reconnect—see [Reconnect](#reconnect).
   </Accordion>
 </AccordionGroup>
 
@@ -221,15 +209,15 @@ The Integrations page in the Fanfare app in Shopify differs in four ways:
 
 <CardGroup>
   <Card title="Build audiences" href="/guide/create/audiences">
-    Import Klaviyo lists and Mailchimp audiences.
+    Manage audiences and access gating for your drops.
   </Card>
   <Card title="Announcements" href="/guide/create/announcements">
-    Post to Facebook, Instagram, Discord and Telegram, and send marketing texts.
+    Publish drop announcements to Facebook, Instagram, Discord, Telegram, and SMS.
   </Card>
   <Card title="Plans and what they unlock" href="/guide/start/plans">
-    Which plan includes which integrations.
+    See which plans include marketing integrations.
   </Card>
   <Card title="Team members" href="/guide/account/team">
-    Who is an admin in your organisation.
+    See which integrations require admin permissions.
   </Card>
 </CardGroup>

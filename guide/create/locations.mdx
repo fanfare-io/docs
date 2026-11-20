@@ -1,129 +1,139 @@
 ---
 title: Locations and opening hours
-description: Add the stores where your appointments run, set the opening hours their slots follow, and understand what happens to bookings when you change or delete a location.
+description: Add physical stores, venues, or studios for in-person appointments, set their opening hours and time zone, and manage updates safely.
 ---
 
-A location is a place where an appointment runs: a store, venue or studio with an address, a time zone and weekly opening hours. When an appointment is tied to a location, its slots are cut from that location's opening hours, in that location's time zone. Appointments are the only feature that uses a location, so add your locations when you are about to run in-store appointments, and set their hours before you open bookings.
+A location represents any physical store, venue, or studio where you host in-person appointments. When you tie an appointment to a location, Fanfare builds its bookable slots directly from that location's weekly opening hours and time zone.
 
-Locations are available on every plan. Appointments need Growth or above: see [Set up appointments](/guide/create/appointment).
+Locations are available on every plan, though appointments themselves require Growth or above. See [Set up appointments](/guide/create/appointment).
 
 ## Before you start
 
-- Know each store's address, its time zone, and its regular weekly hours.
-- Decide any seasonal hours now. Once a customer books a slot at a location, you cannot change its hours or time zone until that booking ends or is cancelled.
+- Have each location's street address, local time zone, and weekly hours ready.
+- Set any seasonal or special hours up front—once a customer books a slot at a location, its opening hours and time zone lock until every active booking ends or is canceled.
 
 {/* image: guide-create-locations-list */}
 
 ## Create a location
 
-1. In the sidebar, select **Locations**, then **Create Location**.
-2. Under **Basic Information**, enter the **Location Name**. **Handle** fills in from the name; you can edit it. It uses lowercase letters, numbers and hyphens, and must be different for each location, so give a second store with the same name its own handle. Choose a **Location Type** (default **Store**) and a **Status** (default **Active**).
-3. Under **Address Information**, start typing the address in the search box and pick a suggestion. This fills in the address fields and places a pin on the map. Suggestions come only from the selected **Country**, so set the country first if your store is abroad. To type the address yourself, use the fields under **Or enter manually**: **Street Address**, **City** and **Postal Code** are required, and **State** is required for some countries.
-4. Under **Location Preview**, check the pin. Click the map to drop a pin, or drag the marker to move it.
-5. Under **Opening Hours**, set the hours for each day. Every day starts open from 09:00 to 17:00. Use each day's switch to mark it closed, and set the from and to times for open days. **Open All Days** and **Close All Days** change every day at once.
-6. Optionally, add a **Phone Number** and **Email Address** under **Contact Information**, and a **Description** and **Capacity** under **Additional Details**.
-7. Check the **Timezone** under **Additional Details**. It starts as your organisation's time zone (Pacific time if none is set).
-8. Select **Create Location**. The button is available once every required field is valid. You land on the new location's page.
+<Steps>
+  <Step title="Enter basic details">
+    In the sidebar, go to **Locations → Create Location**. Under **Basic Information**, enter a **Location Name**. **Handle** fills in automatically (lowercase letters, numbers, and hyphens) and must be unique across your locations—customize it if you have multiple stores with similar names. Optionally pick a **Location Type** (default **Store**) and **Status** (default **Active**).
+  </Step>
+  <Step title="Add the address and verify the map pin">
+    Under **Address Information**, set **Country** first if the store is outside your organization's default country—address search only suggests matches in the selected country. Pick a suggestion from the search box to fill in the address and place a pin, or use **Or enter manually** (**Street Address**, **City**, and **Postal Code** are required, plus **State** for some countries).
+
+    Under **Location Preview**, click the map or drag the pin if you want to fine-tune its position.
+  </Step>
+  <Step title="Set weekly opening hours">
+    Under **Opening Hours**, every day defaults to **09:00–17:00**. Toggle off any closed days and adjust open/close times for open days, or use **Open All Days** / **Close All Days** to update the whole week at once.
+  </Step>
+  <Step title="Confirm the time zone and save">
+    Optionally add a **Phone Number** and **Email Address** under **Contact Information**, plus a **Description** and **Capacity** under **Additional Details**.
+
+    Verify **Timezone** under **Additional Details** (defaults to your organization's time zone, or Pacific time if none is set), then select **Create Location**.
+  </Step>
+</Steps>
 
 <Note>
-  Set **Timezone** to the store's own time zone. A location's opening hours, the slots of any appointment there, and the times in its booking messages are all read in the location's time zone, whatever time zone the experience or appointment uses. Choosing an address does not set the time zone for you, so a store in a different zone from your organisation needs this changed by hand.
+  **Always double-check Timezone for stores in another region.** Entering an address doesn't update **Timezone** automatically. Opening hours, bookable slots, and customer booking notifications all use the location's time zone—regardless of the experience or appointment's time zone.
 </Note>
 
 <Note>
-  Each day has one opening interval. You cannot add a lunch break, a holiday or a one-off closed date. If you enter a close time earlier than or the same as the open time, Fanfare accepts it and reads it as running past midnight into the next day, so a typo such as 17:00 to 09:00 becomes a 16-hour overnight window, and 09:00 to 09:00 a 24-hour one.
+  **One continuous shift per day:** Locations support a single opening interval each day—you can't add midday breaks, holidays, or one-off closures. Entering a close time earlier than or equal to the open time wraps past midnight into the next day (for example, `17:00` to `09:00` creates a 16-hour overnight window, and `09:00` to `09:00` creates a 24-hour window).
 </Note>
 
-<Frame caption="Opening hours start at 09:00 to 17:00 every day; switch off the days the store is closed.">
+<Frame caption="Opening hours default to 09:00–17:00 every day—toggle off any days the location is closed.">
   <img src="/images/guide/guide-create-locations-create.webp" alt="The Opening Hours card of the Create Location form, with Monday to Friday open from 09:00 AM to 05:00 PM and Saturday and Sunday switched off and marked Closed." />
 </Frame>
 
-The following settings are on the form. Several of them are labels only: they do not change how appointments behave.
+### Location settings
 
-| Setting | What it does | Default | Can you change it once bookings stand? |
+Several fields on the form act as organizational labels and don't change how appointments behave:
+
+| Setting | What it does | Default | Editable while bookings stand? |
 | --- | --- | --- | --- |
-| **Location Name** | The name shown in the Fanfare admin, in the appointment's location picker, and to customers in the booking widget and in appointment emails and texts, which also show the street address. | None (required) | Yes |
-| **Handle** | A short identifier shown as @handle on the card. | Filled in from the name | Yes |
-| **Location Type** | A label: Store, Venue, Pop-up, Warehouse or Office. It sets the icon and map colour only. | Store | Yes |
-| **Status** | A label: Active, Inactive or Temporary. It does not hide the location from the appointment picker or stop its slots. | Active | Yes |
-| Address and **Country** | Where the store is, and where its map pin sits. | Country: your organisation's | Yes |
-| **Opening Hours** | The hours appointment slots at this location are cut from. | 09:00 to 17:00 every day | No |
-| **Timezone** | The time zone the hours and slots are read in. | Your organisation's time zone | No |
-| **Capacity** | A label. It does not limit bookings; each appointment sets its own **Max capacity per slot**. | Empty | Yes |
-| **Phone Number**, **Email Address**, **Description** | Contact details and notes shown in the Fanfare admin. | Empty | Yes |
+| **Location Name** | Shown in the admin, the appointment picker, the booking widget, and customer emails/texts (alongside the street address). | Required | Yes |
+| **Handle** | Unique identifier displayed as `@handle` on the location card. | Generated from name | Yes |
+| **Location Type** | Label (`Store`, `Venue`, `Pop-up`, `Warehouse`, or `Office`) controlling only the card icon and map pin color. | `Store` | Yes |
+| **Status** | Label (`Active`, `Inactive`, or `Temporary`). Doesn't hide the location from appointments or pause its slots. | `Active` | Yes |
+| **Address** and **Country** | Store address and map pin position. | Organization's country | Yes |
+| **Opening Hours** | Weekly schedule used to generate appointment slots. | 09:00–17:00 daily | **No** |
+| **Timezone** | Time zone used for opening hours and appointment slots. | Organization's time zone | **No** |
+| **Capacity** | Reference label only—doesn't cap bookings (each appointment sets its own **Max capacity per slot**). | Empty | Yes |
+| **Phone Number**, **Email Address**, **Description** | Internal contact details and notes in the admin. | Empty | Yes |
 
-Your organisation's time zone and country are set in [Organisation settings](/guide/account/organization).
+Your default country and time zone come from [Organization settings](/guide/account/organization).
 
 ## Find a location
 
-On **Locations**, search with whole words from the location's name, description, city or state. A partial word such as "Soh" finds nothing, and a street address does not find the location. Narrow the list with the type filter (**All Types**) and the status filter (**All Statuses**). The status filter offers Active and Inactive only, so Temporary locations appear only under **All Statuses**. The view toggle switches between the card list and a map. A location with no map pin does not appear on the map. Select **View** on a card, or a point on the map, to open the location.
+On **Locations**, you can search by whole words matching a location's name, description, city, or state (partial words and street addresses don't match). Narrow results with **All Types** and **All Statuses**—note that **Temporary** locations appear only under **All Statuses** because the status filter lists `Active` and `Inactive`.
+
+Switch between the card grid and map view using the view toggle (locations without a map pin won't appear on the map). Select **View** on any card—or click a pin—to open the location.
 
 ## Edit a location
 
-1. On **Locations**, select **View** on the location's card.
-2. Change the fields you need. A bar appears with **Save** and **Discard**.
-3. Select **Save**. You return to the list.
+1. On **Locations**, select **View** on the location card.
+2. Update any fields you need, then select **Save** (or **Discard** to cancel).
 
-To rename a location, you can also click its name at the top of its page and edit it there. That change saves on its own, without **Save**.
+You can also rename a location inline by clicking its title at the top of the page—that change saves immediately without clicking **Save**.
 
 <Warning>
-  While any customer holds a booking at an appointment at this location, **Opening Hours** and **Timezone** are disabled, and the page says: "2 bookings stand on this location; hours and time zone cannot change until they end or are cancelled." **Delete** is greyed out too, with no explanation on the button. The only way out is to wait until those bookings have ended, or to cancel them, either one at a time or all at once by deactivating the appointment. Set seasonal hours before you open appointments.
+  **Active bookings lock hours, time zone, and deletion.** While any customer holds a booking at an appointment using this location, **Opening Hours**, **Timezone**, and **Delete** are locked. Wait for those bookings to finish, or cancel them (individually or by deactivating the appointment) before making changes.
 </Warning>
 
 <Warning>
-  Saved changes to hours, time zone or address reach customers at once. Appointment slots are rebuilt from the location's current hours; there is no draft or publish step for a location.
+  **Changes go live immediately.** Locations have no draft or publish state—saving changes to hours, time zone, or address immediately rebuilds appointment slots and updates what customers see.
 </Warning>
 
-<Frame caption="While a booking stands, hours and time zone are locked.">
-  <img src="/images/guide/guide-create-locations-locked.webp" alt="A location form for an existing location with a notice that 2 bookings stand on it, and the opening hours switches and times and the time zone greyed out." />
+<Frame caption="While any booking stands at a location, opening hours and time zone lock until it ends or is canceled.">
+  <img src="/images/guide/guide-create-locations-locked.webp" alt="A location form for an existing location with a notice that 2 bookings stand on it, and the opening hours switches and times and the time zone grayed out." />
 </Frame>
 
-### What the location's page shows
+### Reading the location overview
 
-The top of a location's page shows its type and status, its address, a map of its pin, and four figures:
+The header on a location's page displays its type, status, address, map pin, and four summary metrics:
 
-- **Today's Appointments** counts bookings made today at this location, not appointments taking place today. Its **All time** figure counts bookings at this location that are still in the booked state, so cancelled bookings and bookings already checked in are left out.
-- **Active Experiences** counts experiences with an appointment at this location, including draft and ended ones.
-- **Hours & Timezone** shows the opening hours for today as your computer's clock reads it, and the location's time zone.
-- **Capacity** shows the label you entered.
+- **Today's Appointments:** Bookings *created* today at this location (not slots scheduled for today). **All time** counts active bookings that haven't been checked in or canceled.
+- **Active Experiences:** Total experiences tied to this location, including drafts and ended experiences.
+- **Hours & Timezone:** Today's hours (based on your browser's clock) and the location's time zone.
+- **Capacity:** The capacity label you entered.
 
 {/* image: guide-create-locations-detail */}
 
 ## Delete a location
 
-1. Open the location's page. You cannot delete from the list or the map.
-2. Select **Delete**.
-3. The dialogue says: "Are you sure you want to delete this location? This action cannot be undone." Select **Delete** to confirm.
+1. Open the location's page (you can't delete from the list or map).
+2. Select **Delete**, then confirm **Delete** in the dialog. This can't be undone.
 
-Fanfare refuses to delete a location while bookings stand on it.
+Fanfare blocks deleting a location while any booking stands on it.
 
 <Warning>
-  Fanfare lets you delete a location that an appointment still uses, as long as no bookings stand there. Customers still see slots for that appointment, at 09:00 to 17:00 every day in the appointment's own time zone, but every attempt to book or reschedule one fails, and you cannot restore the location. Before you delete a location, open each appointment that uses it and, under **Location**, choose another location or **Online**. **Active Experiences** on the location's page shows how many experiences have an appointment there.
+  **Reassign appointments before deleting.** If a location has no active bookings, Fanfare lets you delete it even while an appointment still points to it. Shoppers will continue seeing fallback 09:00–17:00 slots in the appointment's time zone, but every attempt to book or reschedule will fail—and a deleted location can't be restored. Check **Active Experiences** on the location page and move every linked appointment to another location or **Online** before deleting.
 </Warning>
 
-Choosing a location for an appointment, Online versus a physical location, and the appointment's own booking lock are covered in [Set up appointments](/guide/create/appointment). How slots are built from opening hours is explained in [Appointment](/concepts/distributions/appointment).
+See [Set up appointments](/guide/create/appointment) to connect a location to an appointment, and [Appointment](/concepts/distributions/appointment) for how slots are generated from opening hours.
 
 ## On Shopify
 
-Locations work the same way in the Fanfare app in Shopify. While you have no experiences yet, **Home** also offers **Create Location** as a quick action.
+Locations work the same way in the Shopify app (and **Home** includes a **Create Location** quick action before your first experience). Keep in mind that appointments aren't available in the Shopify app, and appointments are currently the only feature that uses Fanfare locations.
 
-Appointments are not offered in the Fanfare app in Shopify, and appointments are the only feature that uses a location.
-
-A Fanfare location is not a Shopify inventory location.
+A Fanfare location is separate from your Shopify inventory locations.
 
 ## Troubleshooting
 
 <AccordionGroup>
   <Accordion title="No address suggestions appear">
-    Suggestions come only from the selected **Country**. Check the country under **Address Information**, or enter the address under **Or enter manually**.
+    Address search only looks inside the selected **Country**. Check **Country** under **Address Information**, or enter the address under **Or enter manually**.
   </Accordion>
-  <Accordion title="Delete is greyed out">
-    Bookings stand on this location. The notice above **Opening Hours** shows how many. Wait until they have ended, or cancel them, then delete.
+  <Accordion title="Delete is grayed out">
+    Active bookings are standing on this location—the banner above **Opening Hours** shows how many. Wait until those slots finish, or cancel them, then try again.
   </Accordion>
-  <Accordion title="A location is missing from the appointment's location picker">
-    The picker lists only your first 100 locations in alphabetical order, so with more than 100 locations, those later in the alphabet do not appear.
+  <Accordion title="A location is missing from the appointment picker">
+    The location picker lists your first 100 locations alphabetically. If you have more than 100 locations, ones later in the alphabet won't appear in the dropdown.
   </Accordion>
-  <Accordion title="A name change was undone after I saved">
-    If you rename a location at the top of its page and then save other changes in the form, the form saves the old name back. Reload the page after renaming, before you change anything else.
+  <Accordion title="A name change reverted after I saved">
+    If you rename a location inline at the top of the page and then save edits in the form below without reloading, the form overwrites the inline rename with the previous name. Reload the page after renaming inline before editing other fields.
   </Accordion>
 </AccordionGroup>
 
@@ -131,12 +141,12 @@ A Fanfare location is not a Shopify inventory location.
 
 <CardGroup>
   <Card title="Set up appointments" href="/guide/create/appointment">
-    Tie an appointment to a location or run it online.
+    Link an appointment to a physical location or run it online.
   </Card>
   <Card title="Appointment" href="/concepts/distributions/appointment">
-    How appointment slots are built.
+    How bookable slots are generated from opening hours.
   </Card>
-  <Card title="Organisation settings" href="/guide/account/organization">
-    The time zone and country new locations start with.
+  <Card title="Organization settings" href="/guide/account/organization">
+    Set the default country and time zone new locations inherit.
   </Card>
 </CardGroup>

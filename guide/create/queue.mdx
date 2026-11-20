@@ -1,147 +1,168 @@
 ---
 title: Set up a queue
-description: Create a queue that lets customers in, in order, at a pace your checkout can handle, and know which settings you can change once it is live.
+description: Create a queue that admits shoppers in order at a steady pace your checkout can handle, and know which settings lock before doors open.
 ---
 
-A queue lets customers in, in order, at a steady rate. You set how many people it lets in each minute, so a limited release does not flood your checkout. A sequence is one way in to an experience, and a queue always belongs to one sequence. To decide whether a queue is the right distribution for your drop, read [Queue](/concepts/distributions/queue) first.
+A queue admits shoppers in order at a steady pace you control, keeping high-demand drops from overwhelming your checkout. You can create a queue with a new experience or add one to a sequence in an existing experience.
+
+Not sure if a queue is the right format for your drop? Read [Queue](/concepts/distributions/queue) first.
 
 ## Before you start
 
-- You have at least one product to sell. See [Add products](/guide/create/products).
-- **Pre-authorise on joining** needs a connected payment provider and Fanfare checkout. See [Payments and fees](/guide/account/payments).
-- **Bias toward loyal consumers** needs your loyalty programme turned on. Loyalty is available on Pro and above. See [Run a loyalty programme](/guide/learn/loyalty).
+- Have at least one product ready in Fanfare. See [Add products](/guide/create/products).
+- To use **Pre-authorize on joining**, you need **Fanfare checkout** and a connected Stripe account. See [Payments and fees](/guide/account/payments).
+- To use **Bias toward loyal consumers**, turn on your loyalty program first (Pro and above). See [Run a loyalty program](/guide/learn/loyalty).
 
 Queues are available on every plan, including Starter.
 
 ## Create a queue with a new experience
 
-The experience wizard creates the experience, its first sequence and the queue in one go. The steps every experience shares, including products, name, time zone, **Opens At**, **Closes At**, **Stock** and **Review & launch**, are in [Create an experience](/guide/create/experiences). These are the steps that are specific to a queue.
+The experience wizard builds your experience, its first sequence, and the queue in one flow. Shared steps—products, naming, schedule defaults, **Stock**, and **Review & launch**—are covered in [Create an experience](/guide/create/experiences). Here's what's specific to a queue:
 
-1. Open **Experiences** and select **Create Experience**.
-2. On **Experience type**, select the **Queue** card. The wizard moves to the next step on its own.
-3. Complete **Configure Experience** and **Stock**. **Opens At** starts at the next minute. If you keep it, the queue takes customers straight away and **Payment collection** locks as soon as you create it: see [Create an experience](/guide/create/experiences).
-4. On **Queue Configuration**, under **Flow Control**, set **Admit rate**, and turn on **Bias toward loyal consumers** or **Automatic entry** if you want them. The **Throughput** figure shows how many people the queue lets in per hour at that rate.
-5. On **Payment**, choose how customers pay under **Payment collection**. Read [Payment collection](#payment-collection) before you choose.
-6. On **Access**, under **Open to everyone**, select **Anyone, as a guest** to let customers join without signing in. This is where the wizard sets guest access for a queue.
-7. On **Review & launch**, check each row and select **Create experience**.
+<Steps>
+  <Step title="Choose Queue">
+    Open **Experiences**, select **Create Experience**, and choose **Queue**.
+  </Step>
+  <Step title="Set your schedule and stock">
+    Complete **Configure Experience** and **Stock**. **Opens At** defaults to the next minute—adjust it if you aren't ready to launch right away, because keeping it opens the queue immediately and locks **Payment collection** as soon as you finish.
+  </Step>
+  <Step title="Configure queue pacing">
+    On **Queue Configuration**, under **Flow Control**, set your **Admit rate** (how many shoppers enter per minute). Check the **Throughput** estimate below it to see your hourly pace, then optionally turn on **Bias toward loyal consumers** or **Automatic entry**.
+  </Step>
+  <Step title="Choose how customers pay">
+    On **Payment**, choose **Pay when admitted** or **Pre-authorize on joining** under **Payment collection**. Review [Payment collection](#payment-collection) before deciding.
+  </Step>
+  <Step title="Set guest access and launch">
+    On **Access**, select **Anyone, as a guest** under **Open to everyone** if you want shoppers to join without signing in. Review your setup on **Review & launch**, then select **Create experience**.
+  </Step>
+</Steps>
 
-<Frame caption="Selecting the Queue card moves the wizard to the next step.">
+<Frame caption="Select Queue to start a paced, first-in-line release.">
   <img src="/images/guide/guide-create-queue-wizard-type.webp" alt="The Experience type step of the Create Experience wizard, showing cards for Queue, Draw, Auction, Appointment and Timed Release, with the Queue card highlighted" />
 </Frame>
 
-The experience gets one sequence named after the experience, holding your queue. There is no separate launch step: once you select **Create experience**, the queue is scheduled to open at the time you set.
+There's no separate publish or launch step—your queue opens automatically at the **Opens At** time you set.
 
-<Frame>
+<Frame caption="Set your admit rate and check the hourly throughput before continuing.">
   <img src="/images/guide/guide-create-queue-wizard-config.webp" alt="The Queue Configuration step with an admit rate of 100 per minute and a throughput of 6,000 per hour" />
 </Frame>
 
 ## Add a queue to an existing sequence
 
-Use this to add a queue to an experience you have already created, for example a second window later in the day.
+Use this when you want to add another release window—like a second wave later in the day—to an experience you've already created.
 
-1. Open the experience, then open the sequence.
-2. On the **Overview** tab, in the **Distributions** card, select **Add distribution**. **Create Distribution** at the top of the page does the same.
-3. Enter a **Name**, choose **Queue**, and select **Next**.
-4. Set **Opens**, **Closes** and **Time zone**, then select **Next**. The time zone starts as the experience's time zone.
-5. On the **Configure** step, set **Admit rate**, and turn on **Bias toward loyal consumers**, **Allow guest access** or **Automatic entry** if you want them. Select **Next**.
-6. Under **Payment**, choose the **Payment collection** option. Select **Next**.
-7. Check the review and select **Create Distribution**.
+1. Open your experience, then select the sequence you want to add to.
+2. On the **Overview** tab, select **Add distribution** in the **Distributions** card (or **Create Distribution** at the top of the page).
+3. Enter a **Name**, select **Queue**, and click **Next**.
+4. Set **Opens**, **Closes**, and **Time zone** (defaults to the experience's time zone), then select **Next**.
+5. On **Configure**, set **Admit rate** and toggle **Bias toward loyal consumers**, **Allow guest access**, or **Automatic entry** as needed, then select **Next**.
+6. On **Payment**, choose your **Payment collection** option and select **Next**.
+7. Review your settings and select **Create Distribution**.
 
-The queue appears in the **Distributions** card. To copy an existing queue instead, use **Duplicate**; the copy's dates are cleared. See [Add and gate sequences](/guide/create/sequences).
+You can also reuse an existing queue's setup by selecting **Duplicate** from its card—the copy keeps your settings with cleared dates. See [Add and gate sequences](/guide/create/sequences).
 
-You cannot choose an opening time that has already passed: earlier times are greyed out, and a time that has passed by the time you continue is refused with "This time has passed. Choose a time from now on."
+<Note>
+  **Schedule rules:** Opening times can't be in the past, and distributions in the same sequence can't overlap—if they do, **Schedule conflict** flags the overlapping window before you can continue. Before **Opens**, shoppers see a countdown (or whichever earlier distribution is currently active). To run two distributions at the same time, place the second one in a new sequence—keeping in mind that sequence routing priority follows creation order and can't be reordered in the admin. See [Distributions](/concepts/distributions/overview) and [Sequences and routing](/concepts/sequences).
+</Note>
 
-Distributions in one sequence cannot overlap in time: if they do, the panel under the dates shows **Schedule conflict**, naming the distribution in the way, and you cannot continue. See [Distributions](/concepts/distributions/overview). Until **Opens**, customers see a countdown to the queue, or the earlier distribution in the sequence while that one is still open. To run a queue at the same time as another distribution, put it in a second sequence. A new sequence ranks after the ones created before it, because priority follows creation order and cannot be changed in the admin. See [Sequences and routing](/concepts/sequences) and [Add and gate sequences](/guide/create/sequences).
-
-<Frame caption="When you add a queue to a sequence, guest access is a switch on the Configure step.">
-  <img src="/images/guide/guide-create-queue-add-distribution-configure.webp" alt="The Add Distribution dialogue on the Configure step for a queue, showing the admit rate and the three switches" />
+<Frame caption="When adding a queue to an existing sequence, guest access appears as a toggle on the Configure step.">
+  <img src="/images/guide/guide-create-queue-add-distribution-configure.webp" alt="The Add Distribution dialog on the Configure step for a queue, showing the admit rate and the three switches" />
 </Frame>
 
 ## Queue settings
 
-| Setting | What it does | Default | Can you change it once it is live? |
+| Setting | What it does | Default | Editable once live? |
 | --- | --- | --- | --- |
-| **Admit rate** | How many people the queue lets in each minute, up to 10,000. | 100 | Yes. |
-| **Bias toward loyal consumers** | Gives customers with more loyalty points a better chance of an early place among those who joined before the queue opened. It has no effect on anyone who joins after it opens. | Off | Yes, but it only affects the order of people who join before **Opens**. Changing it after the queue opens reorders no one, though it changes whether waiting customers see their exact place in line. |
-| **Allow guest access** (in the wizard: **Anyone, as a guest**) | Lets customers join without an account. | Off | Yes, unless the sequence has an audience. A sequence with an audience requires sign-in, so it cannot be turned on there. |
-| **Automatic entry** | Puts everyone who reaches the queue into it, including visitors who leave straight away. | Off | Yes. |
-| **Payment collection** | When the customer pays: **Pay when admitted** or **Pre-authorise on joining**. | **Pay when admitted** | No. It locks about five and a half minutes before **Opens**. |
-| **Authorization amount** | The amount held on the customer's card with **Pre-authorise on joining**. Required with that option. | None | No. It locks with **Payment collection**. |
-| **Opens** | When the queue starts letting people in. | In the wizard, the next minute; in **Add distribution**, none | Yes until about five and a half minutes before **Opens**. After that, only earlier. |
-| **Closes** | When the queue closes. | In the wizard, seven days after **Opens At**; in **Add distribution**, none | Yes, until it closes. |
-| **Name** | The queue's name in the admin. | In the wizard, the experience's name; in **Add distribution**, none | Yes, until the queue closes. |
-| **Time zone** (in the settings dialogue: **Time Zone**) | The zone the times are shown and entered in. Changing it does not move **Opens** or **Closes**. | The experience's time zone | Yes, until the queue closes. |
+| **Admit rate** | Shoppers admitted per minute (up to 10,000). | 100 | Yes |
+| **Bias toward loyal consumers** | Weights line order before opening so shoppers with more loyalty points have better odds of an earlier spot. Doesn't affect anyone who joins after **Opens**. | Off | Yes, but changing it after open won't reorder anyone—it only affects whether waiting shoppers see their exact spot in line. |
+| **Allow guest access** (**Anyone, as a guest** in the wizard) | Lets shoppers join without signing in. | Off | Yes, unless the sequence is gated to an audience (audience sequences require sign-in). |
+| **Automatic entry** | Automatically enters everyone who lands on the queue, including visitors who leave right away. | Off | Yes |
+| **Payment collection** | Whether shoppers pay at checkout (**Pay when admitted**) or place a card hold up front (**Pre-authorize on joining**). | **Pay when admitted** | No—locks about 5.5 minutes before **Opens**. |
+| **Authorization amount** | Card hold amount when using **Pre-authorize on joining**. | None | No—locks with **Payment collection**. |
+| **Opens** | When the queue begins admitting shoppers. | Wizard: next minute; **Add distribution**: none | Until about 5.5 minutes before **Opens**; after that, only earlier. |
+| **Closes** | When the queue stops admitting shoppers. | Wizard: 7 days after **Opens At**; **Add distribution**: none | Yes, until the queue closes. |
+| **Name** | Internal name in the admin. | Wizard: experience name; **Add distribution**: none | Yes, until the queue closes. |
+| **Time zone** (**Time Zone** in Edit) | Zone used to display and enter times. Changing it doesn't shift the actual open or close moment. | Experience's time zone | Yes, until the queue closes. |
 
-**Admit rate** in the wizard must be at least 1. When you add or edit a queue, it accepts 0, and a queue at 0 lets no one in.
+A few details worth knowing as you configure your queue:
 
-**Bias toward loyal consumers** cannot be turned on while your loyalty programme is off: the switch shows "Needs a loyalty program". How points weight the order is in [Loyalty and Fanfair](/concepts/loyalty).
-
-Guests can join without an account, but they can only come back from the same browser, and guest access brings more duplicate or throwaway entries than sign-in. See [Customers and identity](/concepts/customers). How guest entry works across a sequence is in [Sequences and routing](/concepts/sequences).
-
-Each customer who is let in has 30 minutes to pay, and you cannot change this payment window for a queue. See [Admission and the payment window](/concepts/admission-and-payment).
-
-The admin has no setting for how many people can wait in a queue.
+- **Admit rate floor:** The wizard requires an admit rate of at least `1`. In **Add distribution** or **Edit**, you can set `0` to hold admissions without pausing the drop.
+- **Loyalty bias:** Requires your loyalty program to be active—otherwise the toggle stays disabled. See [Loyalty and Fanfair](/concepts/loyalty) for how points affect queue order.
+- **Guest access trade-offs:** Guests can only return to their spot from the same browser, and open guest access tends to attract more duplicate or throwaway entries than email sign-in. See [Customers and identity](/concepts/customers) and [Sequences and routing](/concepts/sequences).
+- **Payment window and line size:** Every admitted shopper gets a fixed **30-minute payment window** (not configurable for queues), and there's no cap on how many shoppers can wait in line. See [Admission and the payment window](/concepts/admission-and-payment).
 
 ### Payment collection
 
-- **Pay when admitted**: "The customer pays at checkout once admitted from the queue, inside the payment window."
-- **Pre-authorise on joining**: "A hold is placed when the customer joins the queue, captured if they're admitted and released if they're not." Set the **Authorization amount** too, in your organisation's currency. It must equal the product's price, and card holds last about a week, which limits how long the queue can stay open: see [Admission and the payment window](/concepts/admission-and-payment).
+- **Pay when admitted:** Shoppers complete checkout within their 30-minute payment window after being admitted.
+- **Pre-authorize on joining:** Fanfare places a hold for the **Authorization amount** (in your organization's currency) when a shopper joins. The hold is captured automatically if they're admitted and released if they aren't. The authorization amount must exactly match the product's price, and because card holds expire after about 7 days, keep your queue window well under a week. See [Admission and the payment window](/concepts/admission-and-payment).
 
-Without a connected payment provider, **Pre-authorise on joining** cannot be selected. If your customers pay in your own checkout, there is no choice to make: the step reads "Customers pay in your own checkout, so Fanfare collects no payment for this queue." See [Checkout options](/concepts/checkout-options).
+Pre-authorization requires **Fanfare checkout** and a connected Stripe account. If you use external checkout, shoppers pay in your own store and Fanfare skips payment collection entirely. See [Checkout options](/concepts/checkout-options).
 
 <Note>
-  **Pre-authorise on joining** is refused while customers in the sequence still choose between products or variants: "A queue can't pre-authorize a card when consumers still have a product to choose. Run this as a draw, or leave the sequence with a single product and variant."
+  **Pre-authorize on joining** isn't available when shoppers in the sequence still have to choose between multiple products or variants. To pre-authorize a multi-option drop, run it as a [draw](/guide/create/draw) or limit the sequence to a single product and variant.
 </Note>
 
 <Warning>
-  **Payment collection** and **Authorization amount** lock about five and a half minutes before **Opens**, not at **Opens** itself. After that the admin shows "Payment collection is locked because this distribution has opened. Deactivate it and create another one to change how payment is collected." Deactivating cannot be undone, so check these two settings before the queue opens.
+  **Payment collection** and **Authorization amount** lock about **5.5 minutes before Opens**—not at the open time itself. Moving **Opens** earlier never unlocks them. To change how payment is collected after they lock, you'll need to **Deactivate** the queue (which can't be undone) and create a new one. Double-check both settings before launch.
 </Warning>
 
 ## Edit a queue
 
-On the sequence's **Overview** tab, select **Edit** on the queue's card. The settings are in three sections: **Schedule**, **Configuration** and **Payment**. Make your change and select **Save**.
+To update a scheduled or live queue, open the sequence's **Overview** tab, select **Edit** on the queue card, adjust **Schedule**, **Configuration**, or **Payment**, and select **Save**.
 
-While the queue is live, **Save** applies the change with no confirmation step: see [Change things mid-drop](/guide/drop/live-controls).
+- **Live edits apply immediately:** While a queue is live, **Save** takes effect right away with no confirmation prompt. See [Change things mid-drop](/guide/drop/live-controls).
+- **Opening-time lock:** Starting about 5.5 minutes before **Opens**, the open time can only move earlier—you can still adjust **Closes** until the queue ends.
+- **Closed or deactivated queues:** Once a queue closes, it can't be edited (including its **Name**)—create a new queue instead. Deactivated queues become read-only (**View** replaces **Edit**). See [Stop a drop](/guide/drop/deactivate).
 
-From about five and a half minutes before **Opens**, **Opens** shows **Locked** and can only move earlier: "This Queue has opened, so its open time can only move earlier. You can still change when it closes." Rescheduling **Opens** never unlocks **Payment collection** again. Once the queue has closed, you cannot save any change to it, even to its **Name**: **Save** is refused with "This queue has closed. Create a new queue." A deactivated queue is read only, and its card shows **View** instead of **Edit**. See [Stop a drop](/guide/drop/deactivate).
-
-<Frame caption="Payment collection locks shortly before the queue opens and cannot change after that.">
-  <img src="/images/guide/guide-create-queue-edit-locked.webp" alt="The Payment section of the settings dialogue for a live queue, with a notice that payment collection is locked because the queue has opened" />
+<Frame caption="Payment collection locks shortly before the queue opens and can't be changed afterward.">
+  <img src="/images/guide/guide-create-queue-edit-locked.webp" alt="The Payment section of the settings dialog for a live queue, with a notice that payment collection is locked because the queue has opened" />
 </Frame>
 
-To stop admissions for a while during a live drop, use **Pause queue**: see [Change things mid-drop](/guide/drop/live-controls).
+Need to temporarily halt admissions during a live drop? Use **Pause queue**—see [Change things mid-drop](/guide/drop/live-controls).
 
 ## What customers see
 
-How a queue orders customers is in [Queue](/concepts/distributions/queue). For each stage of their journey, from the countdown to checkout, see [What your customers see](/guide/drop/what-customers-see).
+For how line order works under the hood, see [Queue](/concepts/distributions/queue). For a walkthrough of every screen shoppers see from countdown to checkout, see [What your customers see](/guide/drop/what-customers-see).
 
 ## On Shopify
 
-You set up a queue the same way in the Fanfare app in Shopify, with one difference: customers pay in Shopify's checkout, so the **Payment** step shows the own-checkout message from [Payment collection](#payment-collection) and you cannot choose **Pre-authorise on joining**.
+Queues work the same way in the Shopify app, with one difference: shoppers pay in Shopify's checkout, so **Pre-authorize on joining** isn't available.
 
-The queue does not protect your product until checkout protection is on and the product widget is on your theme. See [Storefront setup](/guide/shopify/storefront-setup).
+Make sure checkout protection is enabled and the Fanfare product widget is published on your theme before doors open—otherwise shoppers can bypass the queue. See [Storefront setup](/guide/shopify/storefront-setup).
 
 ## Troubleshooting
 
 <AccordionGroup>
-  <Accordion title="I can't select Next on the Schedule step">
-    The window overlaps another distribution in the same sequence, and the panel under the dates names it: "This window overlaps ...". Choose a window that starts after the other one ends, or add the queue to another sequence.
+  <Accordion title="I can't continue past the Schedule step">
+    Your queue overlaps another distribution in the same sequence, flagged under **Schedule conflict**. Adjust the dates so the queue starts after the other distribution ends (back-to-back windows are fine), or add the queue to a separate sequence.
   </Accordion>
-  <Accordion title="Bias toward loyal consumers is greyed out">
-    Your loyalty programme is off. Turn it on in **Loyalty**, which is available on Pro and above, then come back to the queue.
+  <Accordion title="Bias toward loyal consumers is grayed out">
+    Your loyalty program is turned off. Enable it under **Loyalty** (available on Pro and above), then return to your queue settings.
   </Accordion>
   <Accordion title="I can't change Payment collection">
-    It locked about five and a half minutes before the queue opened. Deactivate the queue and create a new one with the payment collection you want.
+    **Payment collection** locks about 5.5 minutes before the queue opens. Deactivate the queue and create a new one with the payment method you want.
   </Accordion>
 </AccordionGroup>
 
 ## Related
 
 <CardGroup>
-  <Card title="Queue" href="/concepts/distributions/queue">What a queue is and when to choose one.</Card>
-  <Card title="Allocate stock to a drop" href="/guide/create/stock-allocation">How many units the queue can sell.</Card>
-  <Card title="Change things mid-drop" href="/guide/drop/live-controls">Pause a queue and change settings while it runs.</Card>
-  <Card title="What your customers see" href="/guide/drop/what-customers-see">Each stage of the queue from the customer's side.</Card>
-  <Card title="Watch a live drop" href="/guide/drop/watch-live">What each number on the live queue card means.</Card>
-  <Card title="Stop a drop" href="/guide/drop/deactivate">Deactivate and Delete.</Card>
+  <Card title="Queue" href="/concepts/distributions/queue">
+    How queues work and when to choose one.
+  </Card>
+  <Card title="Allocate stock to a drop" href="/guide/create/stock-allocation">
+    Control how many units a queue can sell.
+  </Card>
+  <Card title="Change things mid-drop" href="/guide/drop/live-controls">
+    Pause a queue or adjust pacing while it's live.
+  </Card>
+  <Card title="What your customers see" href="/guide/drop/what-customers-see">
+    Every stage of the queue from the shopper's side.
+  </Card>
+  <Card title="Watch a live drop" href="/guide/drop/watch-live">
+    What each metric on the live queue card means.
+  </Card>
+  <Card title="Stop a drop" href="/guide/drop/deactivate">
+    Deactivate or delete a queue.
+  </Card>
 </CardGroup>

@@ -1,143 +1,151 @@
 ---
 title: Products from Shopify
-description: How products from your Shopify catalogue get into Fanfare, what you can and cannot change on them there, and how to keep them in step with Shopify.
+description: Import products from your Shopify catalog, understand read-only fields, and keep product details and inventory synced.
 ---
 
-In the Fanfare app in Shopify, your products come from your Shopify catalogue. You do not create them in Fanfare: you pick them from Shopify when you build an experience, and Fanfare copies each one in with its variants and images. Shopify's stock count follows within a few minutes. Shopify stays in charge of these products: you change them there, and Fanfare keeps its copy in step.
+In the Shopify app, your Shopify catalog stays the source of truth for your products. Rather than recreating products in Fanfare, you pick them directly from Shopify when setting up an experience—Fanfare imports each product with its variants and images, and pulls in Shopify's inventory counts within a couple of minutes. Whenever you edit a product in Shopify, Fanfare keeps its copy in sync.
 
 ## Before you start
 
 - The Fanfare app is installed on your store. See [Install and choose a plan](/guide/shopify/install-and-plans).
-- The products you want to sell exist in Shopify admin, with the variants you want to offer.
+- The products and variants you plan to drop already exist in Shopify admin.
 
-## Bring a product into Fanfare
+## Import products from Shopify
 
-There is no button to create a product. A product enters Fanfare when you pick it in Shopify's product picker.
+There's no manual product creation form in the Shopify app—products enter Fanfare when you select them through Shopify's product picker.
 
-1. Start wherever Fanfare asks for a product, for example when you create an experience.
-2. Shopify's product picker opens. Select the products you want.
-3. Confirm. Fanfare copies each product in from Shopify, with all its variants.
+<Steps>
+  <Step title="Open the product picker">
+    Start anywhere Fanfare asks for a product, such as when creating an experience.
+  </Step>
+  <Step title="Choose your products">
+    Select the products you want in Shopify's product picker and confirm.
+  </Step>
+  <Step title="Confirm import">
+    Fanfare immediately imports each selected product along with all of its variants.
+  </Step>
+</Steps>
 
-The product is in Fanfare as soon as you confirm the picker, and it appears under **Products** even if you then leave the experience unsaved.
+Imported products stay in **Products** as soon as you confirm the picker, even if you leave the experience unsaved.
 
 {/* image: shopify-products-picker */}
 
-What the picker allows:
+Keep these picker rules in mind:
 
-- Whole products only. You cannot pick single variants: Fanfare brings in every variant of the product.
-- An experience can hold up to 10 products, so when you create or edit an experience the picker lets you choose only as many as are left of those 10. Elsewhere, such as adding products to a sequence (a sequence is one way in to an experience), you can pick up to 20 at a time.
-- Products that are not yet published to a sales channel can be picked, so you can set up an experience before the product goes on sale.
+- **Whole products only:** You can't pick individual variants—Fanfare imports every variant on the selected product.
+- **Selection limits:** An experience holds up to 10 products, so the picker caps your selection to the remaining open slots. When picking products for a sequence, you can choose up to 20 at a time.
+- **Unpublished products work:** You can select draft or unpublished products to prepare a drop before publishing them to a sales channel.
 
 <Note>
-  Fanfare only holds the products you have picked. A product you create in Shopify later is never added on its own: pick it when you need it.
+  Fanfare only stores products you've picked. New products you create in Shopify aren't imported automatically—just pick them when you're ready to use them in a drop.
 </Note>
 
-You can also start from the product in Shopify admin. **Create Fanfare experience** on a product page, or **Start a Fanfare experience** in the Fanfare experiences block, opens experience creation with that product already brought in and attached. See [Fanfare inside Shopify admin](/guide/shopify/in-shopify-admin).
+You can also start directly from a Shopify product page using **Create Fanfare experience** or **Start a Fanfare experience** in the **Fanfare experiences** block, which imports and attaches the product automatically. See [Fanfare inside Shopify admin](/guide/shopify/in-shopify-admin).
 
-## Review your products
+## Review imported products
 
-**Products** in the Fanfare app lists every product you have brought in. Its description reads "Products synced from Shopify when you attach them to a Fanfare experience. Use this list to review what's been pulled in and how it's being used." Use it to check what Fanfare holds and to open a product.
-
-The **Stock** column shows "—" for products from Shopify. Shopify's count is on the product's own page.
+Open **Products** in Fanfare to see every product imported from Shopify and check which experiences use it. In the list view, the **Stock** column shows `—` for Shopify products; open any product to view its synced Shopify inventory count.
 
 {/* image: shopify-products-list */}
 
-Before you have picked any product, the list says "No products yet" and "Products are synced from Shopify when you attach them to an experience."
-
 {/* image: shopify-products-empty */}
 
-## What you can change in Fanfare
+## What stays managed in Shopify
 
-Shopify is the source of truth for a product you brought in from it. Open the product from **Products** to see it. The page carries a **Managed by Shopify** badge and lists the experiences that use the product.
+Because Shopify is the source of truth, imported products are read-only in Fanfare. Opening one displays a **Managed by Shopify** badge along with the experiences using it.
 
-| Part of the product | In Fanfare | Where to change it |
+| Product field | In Fanfare | Where to edit |
 | --- | --- | --- |
-| Product name | Shown as plain text. You cannot rename it. | Shopify admin |
-| **Name**, **Description**, **Product URL**, **Handle** | Read-only, each marked **Managed by Shopify** | Shopify admin |
-| Variants | Cannot be added, edited or removed. The variant editor is not shown. | Shopify admin |
-| Stock | Shopify keeps the count, shown as **Total Stock** on the product page. Adjust stock is not offered. This applies to a product brought in while your checkout processor is **External**, the default on Shopify. | Shopify admin |
-| Images | Copied from Shopify. You cannot add, remove or reorder them in Fanfare: it refuses the change. See [Images](#images). | Shopify admin |
-| The product itself | There is no Delete, on the product page or in the list. | Not applicable |
+| Product name | Read-only plain text | Shopify admin |
+| **Name**, **Description**, **Product URL**, **Handle** | Read-only (marked **Managed by Shopify**) | Shopify admin |
+| Variants | Read-only; variants can't be added, edited, or removed | Shopify admin |
+| Stock | Synced from Shopify as **Total Stock** (no **Adjust stock** option while your checkout processor is **External**, the Shopify default) | Shopify admin |
+| Images | Copied from Shopify; can't be added, removed, or reordered in Fanfare (see [Images](#images)) | Shopify admin |
+| Deleting the product | No **Delete** action in the list or product view | Not applicable |
 
-A product brought in while your organisation used Fanfare checkout is Fanfare-managed instead, and its count does not follow Shopify's: see [Fanfare in Shopify](/guide/shopify/overview) and [Manage stock](/guide/create/stock).
+If a product was imported while your organization used Fanfare checkout instead of **External** checkout, its stock stays Fanfare-managed and won't follow Shopify's count. See [Fanfare in Shopify](/guide/shopify/overview) and [Manage stock](/guide/create/stock).
 
-To change any of these, edit the product in Shopify admin. Fanfare picks up most changes on its own (see [Keep products up to date](#keep-products-up-to-date)); select **Sync from Shopify** to bring a change in at once.
+To update any field, edit the product in Shopify admin. Fanfare pulls in most updates automatically (see [Keep products up to date](#keep-products-up-to-date)), or you can select **Sync from Shopify** to refresh immediately.
 
 <Warning>
-  Do not remove a variant in Shopify while a sequence is still counting stock for it. The sync still succeeds, but Fanfare keeps that variant, and the sequence can go on offering it to customers. Fanfare removes the variant at a later sync, once no sequence counts stock for it. That can be some time after the drop closes, while customers still have time to buy. Do not remove the variant when the drop closes. Wait until every drop that offers it has ended and the last customer's payment window has closed, then remove it in Shopify and select **Sync from Shopify**.
+  Don't remove a variant in Shopify while a sequence is still counting stock for it. Even though the sync succeeds, Fanfare retains that variant and can keep offering it to shoppers until no sequence counts stock for it—which includes active customer payment windows after a drop closes. Wait until every drop offering that variant has fully ended and the last payment window has closed, then remove the variant in Shopify and select **Sync from Shopify**.
 </Warning>
 
-If you delete a product in Shopify, Fanfare keeps it, and its product page shows a **Source missing** badge. Fanfare will not add it to an experience or sequence after that; it says "This product is no longer available from Shopify." Fanfare does not take it off experiences or sequences that already offer it.
+If you delete a product in Shopify, Fanfare keeps its record with a **Source missing** badge. You won't be able to add it to new experiences or sequences (`"This product is no longer available from Shopify."`), though Fanfare doesn't remove it from experiences that already include it.
 
 {/* image: shopify-products-detail */}
 
 ## Keep products up to date
 
-### What happens on its own
+### Automatic updates
 
-- **Product changes.** When you edit a product in Shopify that Fanfare already holds, Fanfare updates its copy.
-- **Stock counts.** Fanfare refreshes Shopify's counts about every two minutes, so a change in Shopify can take a couple of minutes to show.
-- **Which stock counts.** The count adds up only locations that are active and fulfil online orders. Stock held at other locations is not included.
-- **Counts Fanfare cannot read.** Fanfare cannot count a variant that Shopify does not track, or one stocked at more than ten locations. That variant adds nothing to **Total Stock**, and if no other variant has stock, the product shows **Untracked**.
+- **Product details:** Edits you make in Shopify sync automatically to products Fanfare already holds.
+- **Inventory counts:** Fanfare refreshes Shopify stock roughly every two minutes, so changes take a moment to appear.
+- **Eligible locations:** Counts include only active Shopify locations that fulfill online orders.
+- **Uncountable variants:** Fanfare can't read inventory for variants untracked in Shopify or stocked across more than 10 locations. Those variants add 0 to **Total Stock** (and the product shows **Untracked** if no other variant has readable stock).
 
-A sequence does not follow Shopify's count for a variant Fanfare cannot count. Unless the sequence sells that variant without a limit, it starts with 0 of it, so it has none of that variant to sell until you set a number for it.
+For variants Fanfare can't count, sequences with stock limits start at 0—you'll need to set a manual allocation or sell without a limit for that variant to be available. See [Allocate stock to a drop](/guide/create/stock-allocation) and [Stock](/concepts/stock).
 
-How stock from Shopify is shared out to an experience is covered in [Allocate stock to a drop](/guide/create/stock-allocation), and the stock model in [Stock](/concepts/stock).
+### Sync a product immediately
 
-### Sync a product now
+Run a manual sync after editing a product in Shopify when you want changes in Fanfare right away, or if anything looks out of date:
 
-Use this after you change a product in Shopify and want Fanfare to have it straight away, or when something looks out of date.
+<Steps>
+  <Step title="Open the product">
+    Go to **Products** in Fanfare and select the product.
+  </Step>
+  <Step title="Run Sync from Shopify">
+    Select **Sync from Shopify** (the button reads **Syncing from Shopify…** while running).
+  </Step>
+  <Step title="Verify confirmation">
+    When `"Product synced from Shopify"` appears, your product details are updated and fresh stock counts have been requested.
+  </Step>
+</Steps>
 
-1. Open **Products** in the Fanfare app.
-2. Open the product.
-3. Select **Sync from Shopify**. The button reads **Syncing from Shopify…** while it works.
+### Sync error messages
 
-When it finishes you see "Product synced from Shopify", and Fanfare asks Shopify for fresh stock counts.
+If a sync fails—either manually or while picking products in an experience—Fanfare displays one of these messages. (Adding products to a sequence shows a generic `"Failed to add products"` message instead.)
 
-### When a sync is refused
-
-When Fanfare refuses a sync, it usually shows one of these messages. You see the same messages when you pick products while creating or editing an experience. Adding products to a sequence shows only "Failed to add products".
-
-| Message | What it means and what to do |
+| Message | What it means and how to fix it |
 | --- | --- |
-| "This product could not be found in Shopify." | Shopify has no such product. Check that it still exists in Shopify admin. |
-| "Remove the restricted product option before syncing again." | One of the product's option values in Shopify is not among the values your organisation allows for that option. |
-| "This Shopify product is already linked to a different Fanfare product." | Another product in Fanfare already holds this Shopify product or one of its variants. |
-| "Reconnect Shopify before syncing this product." | Fanfare has lost its connection to your store. |
-| "Reconnect Shopify to restore the organization mapping." | Fanfare no longer knows which organisation your store belongs to. |
-| "Shopify did not return the complete product. Try syncing again." | Shopify sent only part of the product. Select **Sync from Shopify** again. |
-| "The Shopify product could not be synced. Try again." | Something else went wrong. Select **Sync from Shopify** again. |
+| `"This product could not be found in Shopify."` | The product no longer exists in Shopify. Verify it in Shopify admin. |
+| `"Remove the restricted product option before syncing again."` | One of the product's Shopify option values isn't allowed by your organization's option settings. |
+| `"This Shopify product is already linked to a different Fanfare product."` | Another Fanfare product record is already mapped to this Shopify product or one of its variants. |
+| `"Reconnect Shopify before syncing this product."` | Fanfare lost its connection to your store. Reconnect Shopify and try again. |
+| `"Reconnect Shopify to restore the organization mapping."` | Fanfare lost the link between your store and organization. Reconnect Shopify. |
+| `"Shopify did not return the complete product. Try syncing again."` | Shopify returned an incomplete payload. Select **Sync from Shopify** again. |
+| `"The Shopify product could not be synced. Try again."` | A temporary sync error occurred. Select **Sync from Shopify** again. |
 
 ## Images
 
-Fanfare copies each product image from Shopify. A copy can take a moment, and hosted pages show an image only once its copy is ready.
+Fanfare copies product images from Shopify in the background. Hosted pages only display an image once its copy finishes:
 
-- **Copying…**: "This image is being copied from Shopify. Hosted pages show it once the copy is ready."
-- **Couldn't copy**: "This image couldn't be copied from Shopify. Hosted pages can't show it until a copy succeeds." Select **Try again** on the image to start the copy again.
+- **Copying…:** The image is currently copying from Shopify and will appear on hosted pages once ready.
+- **Couldn't copy:** The copy failed, so hosted pages can't show it yet. Select **Try again** on the image to retry.
 
-## What Shopify checkout can sell
+## Products eligible for Shopify checkout
 
-On Shopify checkout, an experience can sell only products and variants that came from Shopify and are still active. When you pick products while creating an experience, Fanfare checks this and says "Shopify checkout can only sell products and variants synced from Shopify. Remove any that aren't." See [Create an experience](/guide/create/experiences).
+Experiences using Shopify checkout can sell only active products and variants synced from Shopify. If any item doesn't qualify, Fanfare flags it with `"Shopify checkout can only sell products and variants synced from Shopify. Remove any that aren't."` See [Create an experience](/guide/create/experiences).
 
 ## Related
 
 <CardGroup>
   <Card title="Fanfare inside Shopify admin" href="/guide/shopify/in-shopify-admin">
-    Start an experience from a product page in Shopify admin.
+    Start an experience directly from a Shopify product page.
   </Card>
   <Card title="Allocate stock to a drop" href="/guide/create/stock-allocation">
-    Share out a product's stock across an experience and its sequences.
+    Allocate inventory across an experience and its sequences.
   </Card>
   <Card title="Stock" href="/concepts/stock">
-    Who keeps the count, and what that means for an experience.
+    Understand inventory ownership and how stock behaves during drops.
   </Card>
   <Card title="Set up a draw" href="/guide/create/draw">
-    On Shopify, a draw's winner count follows Shopify's count when the draw is created.
+    Learn how Shopify stock counts set a draw's initial winner count.
   </Card>
   <Card title="Checkout protection" href="/guide/shopify/checkout-protection">
-    How Shopify refuses a checkout that did not come through your experience.
+    See how Shopify blocks unauthorized checkouts for drop products.
   </Card>
   <Card title="Add products" href="/guide/create/products">
-    Products in the standalone Fanfare admin, and organisation-wide variant options.
+    Manage standalone Fanfare products and organization-wide variant options.
   </Card>
 </CardGroup>

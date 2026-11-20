@@ -1,138 +1,136 @@
 ---
 title: Admission and the payment window
-description: What a customer gets when they get through a distribution, how long they have to pay, what happens if they don't, and how Fanfare collects the money.
+description: How admissions grant the right to buy, how payment windows and expiration work, and how to choose between checkout payment and card pre-authorization.
 ---
 
-When a customer gets through a distribution, they get an admission: the right to buy one unit, for a limited time. That time limit is the payment window. Where Fanfare counts the sequence's stock, a unit is held for them inside it. If they pay, they get an order. If the window runs out, they lose the unit, and in most cases it goes back on sale. For queues and draws that use Fanfare checkout, you also choose when Fanfare takes the money: after the customer gets through, or as a hold on their card when they join.
+When a customer makes it through a distribution, they receive an **admission**—the right to buy one unit within a limited **payment window**. Whenever Fanfare tracks your sequence's stock, a unit is held exclusively for that customer while the timer runs.
 
-<Frame caption="An admission is a timed right to buy one unit: it ends in an order or, when the window runs out, the unit is released.">
+If they complete payment in time, the order is confirmed. If the window expires, they lose the admission and, in most cases, the unit returns to sale. For queues and draws using Fanfare checkout, you can also choose whether customers pay after admission or pre-authorize their card when they join.
+
+<Frame caption="An admission grants a timed right to buy one unit: it ends in an order or, if the window expires, releases the unit.">
   <img src="/images/guide/concepts-admission-payment-window.webp" alt="A unit moves from the pool to one customer when they are admitted, and is set aside for them while a payment-window countdown runs. If they pay, it becomes an order. If the window runs out unpaid, the unit is released: in most cases it goes back on sale, and in a draw with Continue selecting until completed on, the next winner is selected and gets a new payment window." />
 </Frame>
 
-## How each distribution grants an admission
+## When each distribution grants an admission
 
-A sequence is one way in to an experience, and each sequence runs one or more distributions. Each distribution type grants admissions at a different moment:
+Each release format grants admissions at a different point:
 
-- **Queue:** when the customer reaches the front and is admitted at the queue's **Admit rate**.
-- **Draw:** when the customer is selected as a winner.
-- **Auction:** when the customer wins: as the auction settles in an English auction, or the moment they accept the current price in a Dutch auction.
-- **Timed release:** when the customer enters. Where the sequence counts stock, each entry holds a unit: see [Timed release](/concepts/distributions/timed-release).
-- **Appointment:** never. An appointment books a slot and never charges.
+- **Queue:** When the shopper reaches the front and is let in at the queue's **Admit rate**.
+- **Draw:** When the entrant is selected as a winner.
+- **Auction:** When the bidder wins—at settlement in an English auction, or the moment they accept the current price in a Dutch auction.
+- **Timed release:** The moment the shopper enters. When the sequence counts stock, each entry holds a unit—see [Timed release](/concepts/distributions/timed-release).
+- **Appointment:** Never. Appointments book a time slot and don't take payment.
 
-## How long the window is
+## Payment window lengths
 
-| Distribution | Payment window | Can you change it? |
+| Distribution | Payment window | Configurable? |
 | --- | --- | --- |
-| Queue | 30 minutes | No. The admin offers no field for it. |
-| Draw | **Admission expiration**, in seconds. 60 minutes if you leave it blank when you create the draw. | Yes. It is not one of the settings that lock when the draw opens. |
-| Timed release | 30 minutes | No |
-| Auction | 30 minutes from the win | No |
-| Appointment | No window: nothing is sold | — |
+| **Queue** | 30 minutes | No |
+| **Draw** | **Admission expiration** (in seconds); defaults to 60 minutes if left blank when creating the draw | Yes—remains editable even after the draw opens |
+| **Timed release** | 30 minutes | No |
+| **Auction** | 30 minutes from the win | No |
+| **Appointment** | None (unpaid booking) | — |
 
-On a draw where customers choose their product, the draw's Edit and Add distribution dialogues warn you if **Admission expiration** is under 5 minutes, because that leaves little time to pick. It is a warning only; you can still save. The new-experience setup does not show this warning.
+A few timing rules to keep in mind:
 
-Clearing **Admission expiration** when you edit a draw does not bring back the 60-minute default. A cleared field gives winners 30 minutes. To get 60 minutes, enter 3600. [Set up a draw](/guide/create/draw) covers the field step by step.
+- **Clearing Admission expiration on a draw:** If you edit an existing draw and clear the **Admission expiration** field, Fanfare resets the window to **30 minutes** (not 60 minutes). Enter `3600` to keep a 60-minute window. See [Set up a draw](/guide/create/draw).
+- **Changing a draw's window mid-selection:** Updating **Admission expiration** while winners are being selected applies only to winners picked afterward. Winners already selected keep their original deadline.
+- **Short windows on Customer Picks draws:** If winners need to pick a product or size, give them at least 5 minutes—the draw editor warns you if you enter a shorter window, though you can still save.
+- **Auctions near close:** An auction winner always gets a full 30 minutes from their win, even if that deadline extends past the auction's **Closes** time.
 
-If you change **Admission expiration** while a draw is selecting, the new length applies only to winners selected after the change. Winners already selected keep the deadline they were given.
+## During the payment window
 
-An auction winner's 30 minutes run from the win, even when they end after the auction's **Closes** time.
+While the timer runs, Fanfare holds the unit for that customer whenever Fanfare counts the sequence's stock. If you use an external store checkout, that hold exists only inside Fanfare's count, not in your store's inventory—see [Checkout options](/concepts/checkout-options) and [Stock](/concepts/stock).
 
-## While the window runs
+Customers see a live countdown of their remaining time. On Fanfare checkout, the countdown pauses while their bank confirms payment (such as 3D Secure verification).
 
-When Fanfare counts the sequence's stock, the unit is held for that customer. On your own checkout that hold exists only in Fanfare's count, not in your store's inventory: see [Checkout options](/concepts/checkout-options). [Stock](/concepts/stock) explains how held units are counted.
+Once a shopper submits payment through Fanfare checkout, their order appears in **Orders** as **Draft** (it can't be canceled while in Draft). Shoppers who haven't attempted payment don't have an order yet. See [Orders and refunds](/guide/learn/orders).
 
-The customer sees a countdown of the time they have left. With Fanfare checkout, the countdown pauses while their bank is confirming the payment.
+## When a payment window expires
 
-Once a customer submits payment with Fanfare checkout, their order appears in **Orders** as Draft, and you cannot cancel it while it is Draft. A customer who has not tried to pay has no order yet. See [Orders and refunds](/guide/learn/orders).
-
-## When the window runs out
-
-The customer loses the admission and the unit is released. What happens next depends on the distribution:
+If a customer doesn't pay before their deadline, they lose the admission and the held unit is released. What happens next depends on the distribution type:
 
 | Distribution | What the customer can do | What happens to the unit |
 | --- | --- | --- |
-| Queue | Rejoin the queue with "Rejoin queue" while it is still open. | Goes back on sale. |
-| Timed release | Enter again with "Re-enter release" while it is still open. | Goes back on sale. |
-| Draw | Nothing. "Each person can win once in this draw." | Another entrant is selected only when **Continue selecting until completed** is on. It is on by default, and it locks when the draw opens. See [Draw](/concepts/distributions/draw). |
-| English auction | Nothing. | Stays unsold. No one else is offered it. See [Auction](/concepts/distributions/auction). |
-| Dutch auction | Bid again while the auction is still running. A bidder who lets wins lapse can have further bids refused. | Goes back into the auction, and another bidder can buy it at the current price. See [Auction](/concepts/distributions/auction). |
+| **Queue** | Rejoin using **Rejoin queue** while the queue is still open. | Returns to sale. |
+| **Timed release** | Re-enter using **Re-enter release** while the release is still open. | Returns to sale. |
+| **Draw** | Can't win again—each person can win only once per draw. | A replacement winner is selected only if **Continue selecting until completed** is enabled (on by default; locks when the draw opens). See [Draw](/concepts/distributions/draw). |
+| **English auction** | Nothing. | Remains unsold; it isn't offered to another bidder. See [Auction](/concepts/distributions/auction). |
+| **Dutch auction** | Bid again while the auction is still running (repeated unpaid wins can block further bids). | Returns to the auction at the current price. See [Auction](/concepts/distributions/auction). |
 
-Signed-in customers get a message from Fanfare when their window opens and another when it closes. Queue and timed release customers get the opening message; draw and auction winners get their win message instead, which carries the same link and deadline. Guests get no messages, so a guest who closes the page can miss their window without knowing: see [Customers and identity](/concepts/customers). The wording of every message is on [What your customers see](/guide/drop/what-customers-see).
+Signed-in customers receive notifications when their payment window opens (or when they win a draw or auction, with their checkout link and deadline) and again if it expires. Guests don't receive notifications—so a guest who closes the page can miss their window without realizing it. See [Customers and identity](/concepts/customers) and [What your customers see](/guide/drop/what-customers-see).
 
-## Payment collection
+## Payment collection: pay after vs. pre-authorize
 
-For queues and draws that use Fanfare checkout, you choose when Fanfare takes the money, under **Payment collection**:
+For queues and draws using **Fanfare checkout**, you choose when to collect payment under **Payment collection**:
 
-| Distribution | Pay afterwards (default) | Pre-authorise |
+| Distribution | Pay after admission (default) | Pre-authorize on entry |
 | --- | --- | --- |
-| Queue | "Pay when admitted" | "Pre-authorise on joining" |
-| Draw | "Pay after the win" | "Pre-authorise on entry" |
+| **Queue** | **Pay when admitted** | **Pre-authorize on joining** |
+| **Draw** | **Pay after the win** | **Pre-authorize on entry** |
 
-Auctions and timed releases always take payment after the customer wins or enters. Appointments never charge.
+Auctions and timed releases always collect payment after winning or entering, and appointments never charge.
 
-Paying afterwards means the customer pays at checkout, inside the payment window. Pre-authorising places a hold on the customer's card when they join or enter. If they are admitted or win, Fanfare captures the hold and creates their order, so they do not check out; if they are not, the hold is released. The exception is an early entrant whose hold has expired by then, covered below.
+- **Pay after admission:** Shoppers enter without a card and complete checkout during their payment window.
+- **Pre-authorize:** Fanfare places a hold on the shopper's card when they join the queue or enter the draw. If they're admitted or selected as a winner, Fanfare captures the hold and creates their order automatically—no checkout step required. If they aren't selected, the hold is released automatically.
 
-<Frame caption="Pre-authorisation is offered only with Fanfare checkout and a connected payment provider.">
-  <img src="/images/guide/concepts-admission-payment-collection.webp" alt="The Payment section of a draw's settings dialogue, showing the choice between Pay after the win and Pre-authorise on entry, and the Fanfare fee notice beneath it." />
+<Frame caption="Pre-authorization is available only with Fanfare checkout and a connected payment provider.">
+  <img src="/images/guide/concepts-admission-payment-collection.webp" alt="The Payment section of a draw's settings dialog, showing the choice between Pay after the win and Pre-authorize on entry, and the Fanfare fee notice beneath it." />
 </Frame>
 
-Pre-authorisation needs Fanfare checkout and a connected payment provider. Without a provider the admin shows "Connect a payment provider to collect payments through Fanfare; until then only external checkout is available." If your customers pay in your own checkout, there is no choice to make: "Customers pay in your own checkout, so Fanfare collects no payment for this queue" (or draw). Which checkout takes the payment is explained on [Checkout options](/concepts/checkout-options).
+Pre-authorization requires **Fanfare checkout** and a connected Stripe account. If your organization uses your own external checkout, customers pay directly in your store and Fanfare collects no payment—so **Payment collection** isn't shown. When Stripe is connected on Fanfare checkout, the Payment section also displays your plan's Fanfare fee for that distribution. See [Checkout options](/concepts/checkout-options) and [Payments and fees](/guide/account/payments).
 
-With Fanfare checkout and a fully set-up Stripe account, the Payment section shows the Fanfare fee for the distribution. The rate depends on your plan: see [Payments and fees](/guide/account/payments).
+<Warning>
+  **Payment collection** and **Authorization amount** lock shortly before customers can join (about 5 minutes before a queue opens, and right before a draw opens) and can't be changed afterward. See [What locks, and when](/concepts/what-locks-when).
+</Warning>
 
-**Payment collection** and **Authorization amount** lock shortly before customers can first join, which on a queue is about five minutes before it opens. They cannot be changed afterwards. See [What locks, and when](/concepts/what-locks-when).
+## Pre-authorization rules and limits
 
-## What makes pre-authorisation refuse or fail
+Because pre-authorization places a real card hold up front, three constraints apply:
+
+- **One uniform price:** **Authorization amount** is a single amount in your organization's currency. Every product and variant offered in the drop must cost that exact amount.
+- **No product selection in pre-authorized queues:** A queue can't pre-authorize while customers still choose between multiple products or variants. Either run the drop as a draw, or limit the sequence to a single product and variant.
+- **7-day card hold limit:** Card holds expire after about 7 days from the moment a shopper enters.
 
 <Note>
-  Card holds last about a week. A hold is placed when the customer enters, so the earliest entrants' holds expire first. Fanfare checks your schedule against this when you save:
+  **Keep pre-authorized schedules under 6 days.** Plan the gap from when entry opens to the final selection (or **Closes** on a queue), plus the payment window, to stay under six days:
 
-  - If a hold placed when entry opens would not last comfortably past the first selection on a draw, or past **Closes** on a queue, plus the payment window, the admin refuses the schedule: "Card authorizations last about a week, so this schedule would leave every entrant's authorization expired before selection. Move the selection time earlier or open entry later."
-  - On a draw whose entry stays open after the draw time, holds can last to the first selection but not to the last one. The admin then lets you save with a warning. Early entrants whose hold has expired by the time they are selected lose their allocation, and it returns to sale. A replacement is selected only when **Continue selecting until completed** is on.
+  - If a hold placed at opening would expire before the first draw selection (or a queue's **Closes** time) plus the payment window, Fanfare blocks the schedule until you shorten it.
+  - On draws where entry stays open after the first draw time, holds can survive the first selection but expire before later rounds. Fanfare warns you when saving, and shows the earliest entry date whose holds will still be live at selection. If an early entrant's hold has already expired when they're picked, their allocation is released (and reassigned only if **Continue selecting until completed** is on).
 
-  In practice, keep the time from opening entry to the last selection (**Closes**, for a queue), plus the payment window, under six days. The schedule shows the date from which entries will still hold a live authorisation at selection. The warning when you choose a schedule is on [Set up a draw](/guide/create/draw) and [Set up a queue](/guide/create/queue).
+  See [Set up a draw](/guide/create/draw) and [Set up a queue](/guide/create/queue) for schedule validation details.
 </Note>
-
-- **Authorization amount** is one amount, in your organisation's currency. Every product and size on offer must cost exactly that amount.
-- A queue cannot pre-authorise while customers still choose a product. The admin refuses it: "Run this as a draw, or leave the sequence with a single product and variant."
 
 ## Automatic entry
 
-By default, customers who reach a queue, draw or timed release press a button to enter. With **Automatic entry** on, Fanfare "Enters everyone who reaches this distribution, including visitors who leave straight away." It is off by default.
+By default, visitors click a button to join a queue, draw, or timed release. Turning on **Automatic entry** (off by default) automatically enters every eligible visitor who reaches the distribution—even if they leave right away.
 
-- On a queue, those waiting at **Opens** are still shuffled.
-- With pre-authorisation, the customer is still asked for a card before they are entered.
-- On a timed release whose sequence counts a size that can run out, customers tap Enter themselves whatever the setting. See [Timed release](/concepts/distributions/timed-release).
-- Auctions always need an explicit bid.
+A few distribution-specific rules still apply when **Automatic entry** is on:
 
-## Worked example: a draw with a 15-minute window
-
-Northbound Supply Co. runs the draw "Public Draw" in "Phantom Stitch Anorak Drop". It picks 300 winners, collects payment with "Pay after the win", has **Admission expiration** set to 900 seconds (15 minutes), and has **Continue selecting until completed** on.
-
-- A winner who pays 10 minutes after being selected gets an order.
-- A winner who has not paid after 15 minutes loses the win. They cannot win again in this draw. Their unit is released, and because **Continue selecting until completed** is on, another entrant is selected and gets their own 15 minutes.
-
-Compare a queue: its admitted customers always have 30 minutes, the fixed queue window.
+- **Queues:** Everyone waiting when **Opens** hits is still randomized.
+- **Pre-authorized drops:** Shoppers are still prompted to authorize their card before entry completes.
+- **Timed releases with tracked stock:** Shoppers still select **Enter** themselves whenever the sequence counts a stock limit that can sell out. See [Timed release](/concepts/distributions/timed-release).
+- **Auctions:** Always require an explicit bid.
 
 ## On Shopify
 
-The Fanfare app in Shopify cannot connect Fanfare checkout yet: the Stripe connection under **Settings → Payments** is marked "Coming soon". An organisation created through the Fanfare app in Shopify starts on an external checkout. Customers pay in Shopify's checkout, Fanfare collects no payment, and the Payment section shows no **Payment collection** choice.
+The Fanfare app in Shopify routes shoppers to Shopify's checkout—Fanfare checkout (Stripe under **Settings → Payments**) is marked "Coming soon." Because Shopify handles payment directly, Fanfare collects no payment and **Payment collection** isn't shown.
 
-In Shopify checkout, a customer's access ends at their reservation deadline. After it, the checkout refuses the purchase, and the unit is released after a further short hold. Auction winners must check out the reserved item exactly once, at quantity 1, at its price and with no discount: see [Checkout protection](/guide/shopify/checkout-protection).
+In Shopify checkout, a customer's reservation expires at their payment deadline: Shopify checkout blocks late purchases, and Fanfare releases the held unit after a brief buffer. Auction winners must check out the reserved item at quantity `1`, at its winning price, with no discounts applied. See [Checkout protection](/guide/shopify/checkout-protection).
 
 ## Related
 
 <CardGroup>
   <Card title="Checkout options" href="/concepts/checkout-options">
-    Fanfare checkout, your own checkout and Shopify checkout.
+    Compare Fanfare checkout, your external checkout, and Shopify checkout.
   </Card>
   <Card title="What locks, and when" href="/concepts/what-locks-when">
-    When payment collection and other settings stop being editable.
+    See when payment collection and other drop settings lock.
   </Card>
   <Card title="Set up a draw" href="/guide/create/draw">
-    Admission expiration, payment collection and selection settings step by step.
+    Configure admission expiration, payment collection, and winner selection step by step.
   </Card>
   <Card title="What your customers see" href="/guide/drop/what-customers-see">
-    The countdown, the messages, and what a customer sees when the window closes.
+    Preview the payment countdown, notifications, and expiration screens.
   </Card>
 </CardGroup>

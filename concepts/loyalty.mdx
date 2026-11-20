@@ -1,132 +1,128 @@
 ---
 title: Loyalty and Fanfair
-description: How customers earn and lose loyalty points, how points place customers in tiers, and how Fanfair uses points to favour loyal customers in queues and draws.
+description: Reward loyal customers with points, tiered early access, and Fanfair prioritization in queues and draws.
 ---
 
-Your loyalty programme gives each signed-in customer a points balance, earned from what they buy and the drops they take part in. Points have two uses: audiences built on points, such as loyalty tiers, which can gate a sequence; and Fanfair loyalty prioritisation, which gives customers with more points a better chance of an early place in a queue or draw. There is one programme for your whole organisation, either **Active** or **Inactive**, with its own points per event, expiry and earning limits.
+Fanfare's loyalty program rewards your most engaged shoppers with points earned from purchases and drop participation. You can put those points to work in two ways: group customers into **loyalty tiers** to unlock early-access sequences, or enable **Fanfair loyalty prioritization** to give loyal shoppers better odds in queues and draws.
+
+You configure one loyalty program for your entire organization—either **Active** or **Inactive**—with its own event point values, expiration rules, and earning caps.
 
 <Info>Available on Pro and above.</Info>
 
-On Starter and Growth, the **Loyalty** pages show an upgrade prompt and their controls are disabled. Loyalty tier groups also need Pro, but a plain audience with a rule on **Lifetime points** needs only Growth. Pro also includes loyalty passes for Apple Wallet and Google Wallet.
+On Starter and Growth, the **Loyalty** pages remain visible for reference with controls disabled until you upgrade. Loyalty tier groups and Apple/Google Wallet loyalty passes also require Pro, though standard dynamic audiences filtering on **Lifetime points** are available on Growth.
 
-How to turn the programme on, set event points and adjust a customer's points is in [Run a loyalty programme](/guide/learn/loyalty).
+For step-by-step setup instructions, see [Run a loyalty program](/guide/learn/loyalty).
 
-## Balance and lifetime points
+## Balance vs. lifetime points
 
-- **Loyalty balance** is what the customer holds now. It goes up when they earn points or you add some, and down when points expire or you deduct some.
-- **Lifetime points** is everything they have ever been credited. Expiry and deductions do not reduce it; a CSV import can replace it with a lower value.
+Fanfare tracks two separate point totals for every signed-in customer:
 
-Loyalty tiers can use either. Fanfair loyalty prioritisation uses the balance. Setting **Lifetime points** when you **Add Customer** sets only the lifetime figure: the balance stays at 0, so those points count only towards audiences built on lifetime points.
+- **Loyalty balance** — The points a customer currently holds. It increases when they earn points or you add points manually, and decreases when points expire or you deduct them. **Fanfair loyalty prioritization** uses this balance.
+- **Lifetime points** — Every point a customer has ever earned or been credited. Expiration and deductions don't lower it, though a CSV import can overwrite it with a new value.
+
+Loyalty tiers can be built on either field. Note that setting **Lifetime points** when creating a record via **Add Customer** updates only the lifetime total—their **Loyalty balance** starts at `0`.
 
 ## How customers earn points
 
 Only signed-in customers earn points; guests never do. See [Customers and identity](/concepts/customers).
 
-Points come only from:
+Customers earn points from:
 
-- a purchase
-- taking part in a queue, draw, auction or appointment, for example entering, being admitted or winning
-- joining a waitlist, when the customer joins it themselves. Waitlist entries you add for a customer earn nothing.
+- **Purchases** made through your drops
+- **Drop participation** in queues, draws, auctions, or appointments (such as entering, being admitted, or winning)
+- **Waitlist sign-ups** completed by the customer themselves (entries you add manually don't earn points)
 
-Most of these have a card on **Event Points**, where you set its points, and a card set to 0 awards nothing. A few auction and appointment events have no card and award fixed points you cannot change in the admin.
+You set point values on the **Event Points** page—setting any event to `0` disables points for it. A few auction and appointment events award fixed point values that aren't editable in the admin.
 
 <Warning>
-  Most cards on **Event Points** never award points, whatever value you give them: page views, product impressions, views and clicks, searches, add to cart, view cart, begin checkout, QR scans and message opens, reads and clicks. Taking part in a timed release earns nothing in itself, though a purchase made through it still earns **Purchase** points.
+  Not every card listed on **Event Points** awards points automatically. Page views, product impressions, views, and clicks, searches, add to cart, view cart, begin checkout, QR scans, and message opens, reads, and clicks don't award points regardless of the value entered—and neither do referrals, reviews, sign-ups, or store check-ins. Entering a timed release also earns no participation points, though purchases completed through it still earn **Purchase** points.
 </Warning>
 
-Nothing awards points for referrals, reviews, sign-ups or store check-ins, although the **Loyalty** page header mentions referrals and reviews.
+### How points are used
 
-### Points cannot be spent
+Fanfare loyalty points aren't redeemable for discounts or checkout credit. Instead, they determine membership in loyalty-based audiences, weight a customer's odds with Fanfair, and display on Apple and Google Wallet loyalty passes.
 
-Customers cannot redeem points, whatever the **Program Status** banner says about "earning and redeeming". Points matter only through audiences built on them, Fanfair, and the balance shown on a customer's loyalty pass.
+## Earning limits and expiration
 
-## Earning limits and expiry
+Configure earning caps and expiration policies in **Loyalty → Settings**. See [Run a loyalty program](/guide/learn/loyalty) for every option.
 
-Each earning limit and expiry option is explained in [Run a loyalty programme](/guide/learn/loyalty).
-Earning limits:
+**Earning limits:**
 
-- **Daily earning cap** and **Monthly earning cap** count days and months in your organisation's time zone, by when the event happened.
-- Points you add by hand skip the daily and monthly caps, but **Maximum balance** still limits them.
-- Lowering **Maximum balance** removes no points.
+- **Daily earning cap** and **Monthly earning cap** calculate days and months in your organization's time zone, based on when each event occurred.
+- Points you add manually bypass daily and monthly caps, but still can't exceed **Maximum balance**.
+- Lowering **Maximum balance** never removes points a customer already holds.
 
-Expiry:
+**Expiration:**
 
-- Expiry dates follow your organisation's time zone. Fanfare checks for expired points every hour.
-- With **Inactivity**, once a customer has gone the set number of months without earning, their whole balance expires at once, whenever it was earned.
-- Points you add by hand do not count as activity. A goodwill credit to a customer who earned points in the past but is now past the inactivity window can expire within the hour. A customer who has never earned anything is never expired by **Inactivity**.
-- **Fixed** gives points their expiry date when they are earned, so points earned before you chose **Fixed** never expire under it. Choosing **Never** stops all expiry, including points that already had a date.
-<Frame caption="The programme status, expiry choice and earning limits apply to your whole organisation.">
-  <img src="/images/guide/concepts-loyalty-settings.webp" alt="The loyalty programme settings, showing the programme active, points expiring after 3 months of inactivity, and a maximum balance of 10000, a daily earning cap of 500 and a monthly earning cap of 5000." />
+- Expiration runs hourly using your organization's time zone.
+- **Inactivity** expires a customer's entire balance at once after they go the configured number of months without earning points. Manual point adjustments don't count as earning activity—so crediting points to a customer already past the inactivity window can expire within the hour. Customers who have never earned points aren't expired by **Inactivity**.
+- **Fixed** assigns an expiration date when points are earned, so points earned before you switched to **Fixed** won't retroactively expire.
+- **Never** turns off all expiration, including for points that previously had an expiration date.
+
+<Frame caption="Your program status, expiration policy, and earning limits apply across your entire organization.">
+  <img src="/images/guide/concepts-loyalty-settings.webp" alt="The loyalty program settings, showing the program active, points expiring after 3 months of inactivity, and a maximum balance of 10000, a daily earning cap of 500 and a monthly earning cap of 5000." />
 </Frame>
 
-## Turning the programme off
+## Turning the program off
 
 <Warning>
-  Turning the programme off freezes it; it does not reset anyone. Earning, expiry and manual adjustments all stop. Balances stay as they are, still place customers in tiers, and still count in any queue or draw that already has **Bias toward loyal consumers** on. When you turn the programme back on, points that fell due while it was off expire at the next hourly check, so an **Inactivity** programme can wipe whole balances at once.
+  Turning your loyalty program off freezes it without resetting balances. Earning, expiration, and manual adjustments all pause—while existing balances stay intact, continue placing customers in tiers, and still count in any queue or draw with **Bias toward loyal consumers** turned on. When you turn the program back on, any points that fell due while it was off expire on the next hourly check—which under **Inactivity** can clear whole balances at once.
 </Warning>
 
 ## Loyalty tiers
 
-A tier group is a set of rule-based audiences, one per tier. Each tier covers a range of one attribute, such as **Loyalty balance** or **Lifetime points**. You create a group from **Audiences** with **Create Audience → Create Loyalty Tiers**; the steps are in [Build audiences](/guide/create/audiences).
+A loyalty tier group is a set of rule-based audiences—one per tier—covering contiguous ranges of a single attribute such as **Loyalty balance** or **Lifetime points**. Create a group from **Audiences** via **Create Audience → Create Loyalty Tiers** (see [Build audiences](/guide/create/audiences)).
 
-- A group has 2 to 10 tiers. The ranges follow on from each other with no gaps, and the top tier has no upper limit.
-- The attribute cannot be changed after you create the group. To tier on something else, create a new group.
-- To let one tier in first, use its audience as a sequence's audience. See [Sequences and routing](/concepts/sequences).
+- Each group holds **2 to 10 tiers** with no gaps between ranges and an uncapped top tier.
+- The lowest tier starts at the lowest value any customer held when you created the group and can't be changed later. If no customer had `0` at that time, future customers with `0` points won't belong to any tier.
+- The tiered attribute locks at creation—create a new group if you want to tier on a different field.
+- Attach a tier's audience to a sequence to give that tier early or exclusive access. See [Sequences and routing](/concepts/sequences).
 
-Tier audiences have no 24-hour rebuild and no **Refresh now**. They rebuild when you edit the group, before a drop they gate opens and, for a tier on scores, spend or orders, after the daily score refresh; a single customer can move between tiers sooner when their own details change. The full schedule is in [Audiences and access codes](/concepts/audiences).
+Tier audiences don't run on a 24-hour rebuild cycle and don't offer **Refresh now**. They rebuild when you edit the group, before a gated drop opens, and after the daily score refresh if based on scores, spend, or orders—plus individual customers move between tiers right away when their underlying values change. See [Audiences and access codes](/concepts/audiences) for the full schedule.
 
 <Warning>
-  Tiers are matched by position, not by name. If you remove a tier, say Silver, the tier below widens to cover Silver's range, and every tier above moves down one audience: the audience that was Silver takes Gold's name and range, the audience that was Gold takes the next tier's, and so on. The audience that held your top tier is deleted. A sequence gated on any of these audiences then admits a different range, with no warning. If the audience that would be deleted gates a sequence that has not ended, the save is refused. Before you remove a tier, check which sequences each tier gates.
+  Tiers map to audiences by position, not by name. If you delete a tier like Silver, the tier below expands to cover Silver's range, every higher tier shifts down into the audience below it (Silver's audience becomes Gold, Gold's becomes the next tier), and the top tier's audience is deleted. Any sequence gated on those shifted audiences will quietly admit a different range—and if the top tier's audience gates an active or upcoming sequence, saving is blocked. Always check which sequences each tier gates before removing one.
 </Warning>
 
-## Fanfair loyalty prioritisation
+## Fanfair loyalty prioritization
 
-You turn Fanfair on per queue or per draw with **Bias toward loyal consumers**, in [Set up a queue](/guide/create/queue) or [Set up a draw](/guide/create/draw). The switch needs an active loyalty programme: while the programme is off it shows "Needs a loyalty program" and cannot be turned on.
+Turn on Fanfair per queue or draw using **Bias toward loyal consumers** (see [Set up a queue](/guide/create/queue) and [Set up a draw](/guide/create/draw)). The toggle requires an active loyalty program—while your program is off, it stays disabled with *"Needs a loyalty program"*.
 
-With bias on, Fanfare still puts customers in a random order, but weights that order by points balance:
+With Fanfair enabled, Fanfare still randomizes entry order, weighted by each customer's **Loyalty balance**:
 
-- More points make a customer more likely to come out ahead, up to a limit.
-- Guests count as having no points.
-- The balance that counts is the one the customer had when they signed in. Points they earn or you add after that count from their next sign-in.
+- Higher point balances improve a customer's odds of placing ahead, up to a cap.
+- Guests are weighted as `0` points.
+- Fanfare uses the balance the customer held when they signed in—points earned or added mid-session count starting on their next sign-in.
+- Weighting improves odds but never guarantees admission or a win: a shopper with fewer points can still place ahead of a top earner.
 
-It is a weighting, never a guarantee: a customer with few points can still come first. The draw setting says so: "Selection is not guaranteed."
+How Fanfair applies depends on the distribution:
 
-How it applies depends on the distribution:
+- **Queue** — Weights the randomized order of shoppers who joined the waiting room before **Opens**. Anyone arriving after **Opens** enters first-in, first-out. See [Queue](/concepts/distributions/queue).
+- **Draw** — Weights the random order in which entries are drawn. See [Draw](/concepts/distributions/draw).
 
-- **Queue:** the weighting orders only the customers who joined before the queue opened. After it opens, new arrivals are taken in the order they arrive. See [Queue](/concepts/distributions/queue).
-- **Draw:** the weighting sets the random order in which entries are picked. See [Draw](/concepts/distributions/draw).
+While entry is open on a queue or draw with Fanfair enabled, customers see *"Fairness provided by Fanfair"* beneath the entry button.
 
-While a customer can still enter a queue or draw with bias on, they see "Fairness provided by Fanfair" under the way in. Apart from that line, the widget shows customers the same thing with bias on or off.
+### Example: how weighting works in a draw
 
-## Worked example: two customers in a draw
+Suppose Northbound Supply Co. turns on **Bias toward loyal consumers** for the Public Draw in its "Phantom Stitch Anorak Drop". Customer A enters with `0` points and Customer B enters with `1,500` points at sign-in. Customer B is more likely to be drawn ahead of Customer A—but it's a weighted draw, not a guarantee, so Customer A can still place first and either shopper can miss out if demand exceeds winners. Any guest entering the same draw is weighted the same as Customer A.
 
-Northbound Supply Co. turns on **Bias toward loyal consumers** for the draw in the "Public Draw" sequence of "Phantom Stitch Anorak Drop". Two signed-in customers enter:
+## Plans and downgrades
 
-| Customer | Balance when they signed in |
-| --- | --- |
-| A | 0 |
-| B | 1,500 |
-
-B, with more points, is more likely to come ahead of A, but A can still come first. This illustrates the weighting, not a promise of odds: with fewer winners than entrants, either can miss out. A guest in the same draw is weighted like A.
-
-## Things to know before you go live
-
-- After a downgrade below Pro, an active programme keeps awarding and expiring points, but you cannot change anything except turning it off. Once it is off, you cannot turn it back on without Pro.
-- The lowest tier starts at the lowest value any customer had when you created the group, and you cannot change it. If no customer was at 0 then, customers below that value, including new customers with 0 points, are in no tier.
+If you downgrade below **Pro**, an active loyalty program keeps awarding and expiring points automatically, and existing wallet passes keep working. You won't be able to edit settings or adjust points—only turn the program off. Once turned off on a lower plan, you'll need to upgrade back to Pro to turn it on again.
 
 ## Related
 
 <CardGroup>
-  <Card title="Run a loyalty programme" href="/guide/learn/loyalty">
-    Turn the programme on, set expiry, limits and event points, and adjust a customer's points.
+  <Card title="Run a loyalty program" href="/guide/learn/loyalty">
+    Turn on your program, configure expiration, caps, and event points, and adjust customer balances.
   </Card>
   <Card title="Build audiences" href="/guide/create/audiences">
-    Create a loyalty tier group.
+    Create and manage loyalty tier groups.
   </Card>
   <Card title="Set up the next drop" href="/guide/learn/next-drop">
-    Use tiers and loyalty bias to plan your next drop.
+    Use loyalty tiers and Fanfair prioritization to plan your next launch.
   </Card>
   <Card title="Customers and identity" href="/concepts/customers">
-    Guests and signed-in customers.
+    How signed-in customers and guests differ.
   </Card>
 </CardGroup>

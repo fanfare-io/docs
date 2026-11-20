@@ -1,198 +1,185 @@
 ---
 title: Billing and usage
-description: See your plan and what Fanfare charges you, change or cancel your plan, keep your payment details current, and read your per-order fees.
+description: Manage your Fanfare plan, free trial, payment method, and invoices, and track your per-order fees by billing period.
 ---
 
-Billing shows which plan your organisation is on and what it costs. It is where you change or cancel the plan, keep the card that pays for it current, and download invoices. Usage shows the fees Fanfare took on your paid orders. Your plan is billed through Stripe, separately from the Stripe account you connect to take your customers' payments: see [Payments and fees](/guide/account/payments).
+Use **Billing** to manage your subscription, keep your payment method current, and download past invoices, and use **Usage** to track Fanfare's per-order fees by billing period. Your Fanfare subscription is billed through Stripe separately from the Stripe account that receives your customer payouts ([Payments and fees](/guide/account/payments)).
 
 ## Before you start
 
-- Open the user menu at the foot of the sidebar, then **Billing**. **Usage** is in the same menu. Billing is not in the sidebar itself.
-- Anyone in your organisation can read every section of both pages. Only organisation admins can change or cancel the plan, reactivate, update the card, open the billing portal, or contact sales from **Billing**. Everyone else sees those buttons disabled, with "Only organization admins can change the plan." beside the plan actions.
-- Which features each plan includes, its price and its take rates are on [Plans and what they unlock](/guide/start/plans).
+- **Where to find it:** Open the user menu at the bottom of the sidebar and select **Billing** or **Usage**.
+- **Permissions:** Everyone in your organization can view both pages, but only organization admins can change or cancel plans, reactivate a subscription, update the payment method, open the billing portal, or contact sales.
+- Compare features, monthly prices, and take rates across every tier in [Plans and what they unlock](/guide/start/plans).
 
-## Read your current plan
+## Check your current plan
 
-The **Current plan** card at the top of **Billing** shows the plan name, a status badge, and a line with the monthly price and what happens next.
+The **Current plan** card at the top of **Billing** displays your active plan, subscription status, monthly price (or **Custom pricing** on Enterprise), and upcoming renewal or end date.
 
-<Frame caption="The Current plan card, with the plans table and usage line below it.">
-  <img src="/images/guide/guide-account-billing-current-plan-card.webp" alt="The Billing page for a Growth subscription: the Current plan card shows Growth, Active, $199 per month and a renewal date, above the plans table with Switch to Starter highlighted and Upgrade to Pro, and the Usage line with View usage below." />
+<Frame caption="Review your current plan, compare tiers, and jump to your usage summary from Billing.">
+  <img src="/images/guide/guide-account-billing-current-plan-card.webp" alt="The Billing page for a Growth subscription showing the Current plan card marked Active at $199 per month with a renewal date, above the Plans and take rates table and the Usage section with View usage." />
 </Frame>
 
-| What the card shows | What it means | What you can do there |
+| Status shown | What it means | Action available |
 | --- | --- | --- |
-| Badge **Trial**, "Trial ends" and a date | You are trialling a paid plan. | **Add payment method**, if no usable card is on file. |
-| Badge **Active**, "Renews" and a date | The plan is paid up and renews on that date. | Nothing on the card. Change plan in the table below. |
-| Badge **Past due**, "Your last payment didn't go through" | A payment failed. You keep the plan's features. | **Update payment method**. |
-| Badge **Ends** and a date, "Plan ends" and a date | You have scheduled a cancellation. You keep the plan until that date. | **Keep subscription**. |
-| Plan name **Starter**, no badge, "Growth has ended" (or the plan you had) | Your paid plan has ended and you are on Starter. | **Reactivate**, or the text "Choose a plan below to start again." If you are billed through Shopify, change your plan from the Fanfare app in Shopify. |
-| Badge **Cancelled**, "Your subscription has ended" | Your subscription billed through Shopify has ended. Only an organisation billed through Shopify sees this badge. | Nothing on the card. Change your plan from the Fanfare app in Shopify. |
-| Badge **Inactive** | The subscription is inactive. | Nothing: the card says "This subscription is inactive. Contact support to restore it." |
-| Badge **Pending** | The subscription is still being set up. | Nothing: refresh the page in a moment. |
+| **Trial** | You're on a free trial of a paid plan. | Select **Add payment method** if no card is on file. |
+| **Active** | Your paid plan is active and renews automatically. | Change plans anytime in **Plans and take rates** below. |
+| **Past due** | Your most recent payment failed; paid features remain active while you resolve it. | Select **Update payment method**. |
+| **Ends [date]** | You scheduled a cancellation; you keep your paid plan until that date. | Select **Keep subscription** to undo cancellation. |
+| **Starter** (after a paid plan ended) | Your paid plan has ended and your organization is on Starter. | Select **Reactivate** or choose a plan from the table below (Shopify-billed stores manage plans in Shopify). |
+| **Canceled** (Shopify-billed only) | Your Shopify subscription has ended. | Choose a plan inside the Fanfare app in Shopify. |
+| **Inactive** | Your subscription is inactive. | Contact support to restore it. |
+| **Pending** | Your subscription is finishing setup. | Refresh the page in a moment. |
 
-Enterprise shows "Custom pricing" in place of a monthly price.
+## Manage your free trial
 
-## Your trial
-
-A new organisation that signs up in the Fanfare admin starts on a 5-day trial of Growth. You do not need a card to start it.
+New organizations created at [admin.fanfare.io](https://admin.fanfare.io) automatically start with a 5-day free trial of Growth—no credit card required.
 
 <Warning>
-  If no card is on file when the trial ends, the subscription is cancelled and your organisation moves to Starter. Everything you have built stays and keeps working, but you can no longer create or edit Growth features until you choose a plan again. The banner across the admin warns you only in the last three days of the trial. You also cannot change plans during a trial until you add a card. Add one early to stay on your plan.
+  If no payment method is on file when your trial ends, your subscription cancels and your organization automatically moves to Starter. Everything you've built keeps working, but creating and editing Growth features locks until you subscribe again. A reminder banner appears during the last three days of your trial, and you'll need to add a payment method before switching plans during a trial.
 </Warning>
 
-To add a card:
+To add a payment method during your trial:
 
 1. On the **Current plan** card, select **Add payment method**.
-2. Add your card in Stripe. Stripe returns you to **Billing**.
+2. Enter your card in Stripe. Stripe returns you to **Billing**.
 
-<Frame caption="During a trial with no card, the card asks for one.">
-  <img src="/images/guide/guide-account-billing-trial-add-card.webp" alt="The Current plan card during a Growth trial, with a Trial badge, the trial end date, an Add payment method button and a note saying the trial ends on a date and what happens without a payment method." />
+<Frame caption="Add a payment method before your trial ends to stay on your paid plan without interruption.">
+  <img src="/images/guide/guide-account-billing-trial-add-card.webp" alt="The Current plan card during a Growth trial, showing a Trial badge, the trial end date, an Add payment method button, and a note explaining what happens when the trial ends." />
 </Frame>
 
 ## Change between paid plans
 
-The **Plans and take rates** section lists every plan side by side. The plan you are on is marked **Current plan**.
+Compare all plans side by side under **Plans and take rates** (your active tier is marked **Current plan**).
 
-1. In **Plans and take rates**, select **Upgrade to Pro** (or another higher plan), or **Switch to Growth** (or another lower paid plan).
-2. In **Change Plan**, compare the **Current Plan** and **New Plan** cards and read **Proration Details**: the credit for unused time, the charge for the new plan, and the difference on your next invoice.
+1. Select **Upgrade to Pro** (or another higher tier), or **Switch to Growth** (or another lower paid tier).
+2. In **Change Plan**, review **Proration Details** to see your credit for unused time, the charge for the new plan, and the net difference on your next invoice.
 3. Select **Confirm Change**.
 
-The change takes effect immediately, whether you move up or down. Nothing is charged today: the difference is settled on your next invoice. There is no option to change at the end of the period. Anything you built on a higher plan keeps working after a downgrade, but you can no longer create or edit it: see [Plans and what they unlock](/guide/start/plans).
-
-You can change plans when:
-
-- you are an organisation admin;
-- during a trial, a usable card is on file;
-- the plan's price is confirmed. A plan showing "Price unavailable" cannot be chosen until it is.
-
-**Enterprise** is not self-serve. **Contact sales** in the Enterprise column opens a booking page in a new tab.
-
-<Frame caption="The difference is settled on your next invoice.">
-  <img src="/images/guide/guide-account-billing-plan-change-dialog.webp" alt="The Change Plan dialogue comparing the current Growth plan with the new Pro plan, with proration details, a note that nothing is charged today, and Cancel and Confirm Change buttons." />
-</Frame>
+Plan changes take effect immediately—nothing is charged today, and the prorated difference settles on your next invoice. (There is no option to schedule a paid-to-paid switch for the end of a billing period.) After moving to a lower tier, everything you've already built keeps serving customers while creating and editing higher-tier features locks ([Plans and what they unlock](/guide/start/plans)).
 
 <Note>
-  After a plan change, other pages in the admin can briefly still show the old plan's locks.
+  To change plans, you need to be an organization admin, have a payment method on file (if you're in a trial), and select a plan with confirmed pricing. For **Enterprise**, select **Contact sales** to book a call. Right after a plan change, other open admin pages may briefly show your previous plan's locks—refresh if needed.
 </Note>
+
+<Frame caption="Plan changes take effect right away, with the prorated difference settled on your next invoice.">
+  <img src="/images/guide/guide-account-billing-plan-change-dialog.webp" alt="The Change Plan dialog comparing the current Growth plan with the new Pro plan, showing proration details, a note that nothing is charged today, and Cancel and Confirm Change buttons." />
+</Frame>
 
 ## Move to Starter or cancel
 
-Starter is free, and you reach it by cancelling your paid subscription. You can start from **Switch to Starter** in the Starter column or, while your plan is active or in a trial, **Cancel subscription** at the foot of **Billing**. Both open the same cancellation flow.
+Starter is free, so moving to Starter cancels your paid subscription. Both **Switch to Starter** (in the Starter column) and **Cancel subscription** (at the bottom of **Billing**) open the same cancellation flow.
 
 <Warning>
-  **Switch to Starter** is not a plan change: it cancels your subscription. If you choose **Cancel immediately**, your organisation moves to Starter at once and there is no refund for the rest of the current period. Creating and editing Growth and Pro features is locked from that moment; see [Plans and what they unlock](/guide/start/plans). Choose **Cancel at end of period** to keep your plan until the period ends.
+  **Switch to Starter** cancels your subscription. If you choose **Cancel immediately**, your organization moves to Starter right away with no refund for the rest of the current billing period, and creating or editing Growth and Pro features locks immediately ([Plans and what they unlock](/guide/start/plans)). Keep **Cancel at end of period** selected to continue using your paid plan until your cycle ends.
 </Warning>
 
 1. Select **Switch to Starter** or **Cancel subscription**.
-2. Choose a reason under "Why are you cancelling?", then select **Continue**.
-3. Optionally add feedback. Under "When to cancel", keep **Cancel at end of period** (the default) or choose **Cancel immediately**. Select **Continue**.
-4. Read "What happens when you cancel", then select **Confirm Cancellation**.
+2. Choose a reason and select **Continue**.
+3. Optionally share feedback, choose **Cancel at end of period** (default) or **Cancel immediately**, and select **Continue**.
+4. Review what happens on Starter, then select **Confirm Cancellation**.
 
-With **Cancel at end of period**, the card shows **Ends** and the date, and the Starter column reads "Starter from" that date. With **Cancel immediately**, the card shows **Starter** straight away. Either way, everything you have built stays. If you turned Loyalty off after moving to a lower plan, you cannot turn it back on without upgrading: see [Run a loyalty programme](/guide/learn/loyalty).
+With **Cancel at end of period**, you keep full access through your end date; with **Cancel immediately**, your workspace switches to Starter right away. Everything you've built stays in place—just note that if you turn off Loyalty after moving down from Pro, you'll need Pro to turn it back on ([Run a loyalty program](/guide/learn/loyalty)).
 
-<Frame caption="Cancel at end of period is the default.">
-  <img src="/images/guide/guide-account-billing-cancellation-flow.webp" alt="The Cancel subscription dialogue asking when to cancel, with Cancel at end of period selected and Cancel immediately, ringed, as the other option." />
+<Frame caption="Cancel at end of period is selected by default so you keep paid access through the end of your billing cycle.">
+  <img src="/images/guide/guide-account-billing-cancellation-flow.webp" alt="The Cancel subscription dialog asking when to cancel, with Cancel at end of period selected and Cancel immediately as the alternative." />
 </Frame>
 
-## Keep a subscription you have scheduled to cancel
+## Keep a subscription scheduled to cancel
 
-Until the end date, you can undo a scheduled cancellation:
+You can undo a scheduled cancellation anytime before the end date:
 
 1. On the **Current plan** card, select **Keep subscription**.
-2. In **Reactivate Subscription**, select **Reactivate**.
+2. Select **Reactivate** to confirm.
 
-You are not charged anything new: your current period carries on and the plan renews as before. If no usable card is on file, the dialogue asks you to **Update Payment Method** in Stripe first. The **Keep Subscription** link on the banner only brings you to **Billing**; finish there.
+There's no extra charge—your current period continues and renews as usual. If no valid payment method is on file, you'll be prompted to **Update Payment Method** in Stripe first.
 
-## Come back after your subscription has ended
+## Reactivate after your subscription has ended
 
-When a paid plan has ended, you can start it again in two ways.
+Once a paid plan has ended, you can restart it in two ways:
 
-- **Reactivate** on the **Current plan** card, then **Reactivate** in the dialogue. This restarts the plan you had.
-- A plan in **Plans and take rates**. A **Reactivate Subscription** dialogue opens with "You'll be charged" the plan's price "starting immediately". Select **Reactivate Subscription**.
+- Select **Reactivate** on the **Current plan** card to restart your previous plan.
+- Select any plan in **Plans and take rates** and confirm in **Reactivate Subscription**.
 
 <Warning>
-  Reactivating after your subscription has ended charges your card straight away, and there is no trial. The dialogue you reach from **Reactivate** on the card does not mention the charge. Only the dialogue you reach by choosing a plan says so.
+  Reactivating after a subscription has ended charges your payment method immediately with no free trial—keep this in mind whether you restart from the **Current plan** card or from the plans table.
 </Warning>
 
-If no usable card is on file, **Reactivate** on the card opens a dialogue showing "Payment method update required", and its button becomes **Update Payment Method**, which takes you to Stripe to add a card first. The plans in the table stay unavailable until you do. If the plan you had is no longer offered at its old price, the card shows "Choose a plan below to start again." in place of **Reactivate**: pick a plan in the table.
-
-If your card is declined, an error starting "Payment method failed:" appears, nothing is charged and you stay on Starter. Update your card with **Update payment method** in **Payment & invoices**, then try again.
+If you don't have a valid card on file, you'll be prompted to add one via **Update Payment Method** in Stripe first. If your previous plan price is no longer offered, choose an active plan in **Plans and take rates** instead. If your card is declined, you aren't charged and stay on Starter—update your card under **Payment & invoices** and try again.
 
 ## Fix a failed payment
 
-When a payment fails, the card shows **Past due** and a "Payment Failed" banner appears across the admin.
+When a renewal charge fails, your status changes to **Past due** and a **Payment Failed** banner appears across the admin. Your paid features stay active while you resolve it.
 
-1. Select **Update payment method** on the **Current plan** card, or **Update Payment** on the banner.
-2. Update your card in Stripe. Stripe returns you to **Billing**, which refreshes your status.
+1. Select **Update payment method** on the **Current plan** card (or **Update Payment** on the banner).
+2. Update your card in Stripe. You'll return to **Billing** and your status refreshes automatically.
 
-While your subscription is past due, your paid plan's features stay on.
+## Payment method and invoices
 
-## Payment and invoices
+Manage your billing details under **Payment & invoices** (hosted securely in Stripe):
 
-**Payment & invoices** holds three things, all handled in Stripe:
-
-| Part | What it shows |
+| Section | What you can see and do |
 | --- | --- |
-| **Payment method** | Your card and its expiry, another saved payment method, or "No card on file". A card that needs attention shows "Needs updating" or "Expired". **Add payment method** or **Update payment method** opens Stripe. During a trial with no card, use **Add payment method** on the **Current plan** card instead. |
-| **Next invoice** | The amount and date of your next subscription charge, with "Renews automatically", "First charge after your trial" or "Payment past due". Otherwise "No upcoming invoice", with "Nothing is charged until you add a card" during a trial with no card. |
-| **Invoices & receipts** | **Open billing portal**, where you download past invoices and update your billing details in Stripe. |
+| **Payment method** | View your saved card and expiration date (or see if it needs updating). Select **Add payment method** or **Update payment method** to edit in Stripe. (During a trial without a card, use **Add payment method** on the **Current plan** card instead.) |
+| **Next invoice** | See the amount and date of your next subscription charge. |
+| **Invoices & receipts** | Select **Open billing portal** to download past invoices and receipts or update billing details in Stripe. |
 
-## Banners across the admin
+## Billing banners
 
-A billing problem shows as a banner on every page except **Billing** and **Usage**. Only one shows at a time, the most urgent first.
+When your subscription needs attention, Fanfare shows one banner at a time across the admin (prioritizing the most urgent):
 
-| Banner | When it shows | Its button | Can you dismiss it? |
+| Banner | When it appears | Action | Dismissible? |
 | --- | --- | --- | --- |
-| "Payment Failed" | Your subscription is past due. | **Update Payment**, which takes an organisation admin straight to Stripe. | No. |
-| "Subscription Cancelled" | Your subscription has ended. It stays as long as you are on Starter after cancelling, until you choose a plan again. | **Choose a Plan**, which opens the plans table. | No. |
-| "Trial Ending Soon" | Your trial ends within three days. | **Add Payment Method**, which opens **Billing**. | Yes, until you open the admin in a new tab or window. |
-| "Cancellation Scheduled" | You have scheduled a cancellation. | **Keep Subscription**, which opens **Billing**. | Yes, until you open the admin in a new tab or window. |
+| **Payment Failed** | Subscription is past due | **Update Payment** (opens Stripe for admins) | No |
+| **Subscription Canceled** | Paid subscription has ended | **Choose a Plan** (opens **Billing**) | No |
+| **Trial Ending Soon** | Within three days of trial expiration | **Add Payment Method** (opens **Billing**) | Yes (for the current tab) |
+| **Cancellation Scheduled** | Cancellation scheduled for period end | **Keep Subscription** (opens **Billing**) | Yes (for the current tab) |
 
-## Read your usage
+## Track your usage and fees
 
-**Usage** shows the fees Fanfare took on your paid orders, totalled by billing period. The **Usage** section on **Billing** gives the running period's total in one line; select **View usage** for the detail.
+**Usage** summarizes Fanfare's per-order fees by billing period. The **Usage** line on **Billing** gives you a quick snapshot of the current period; select **View usage** for the full breakdown.
 
-Fees on orders paid through Fanfare checkout are deducted from each payment as it is taken. They never appear on an invoice, and your Stripe invoice covers only your plan. Each order keeps the take rate that was in effect when it was paid, so changing plan mid-period does not re-rate earlier orders. How the fee is worked out, and custom rates, are on [Payments and fees](/guide/account/payments).
+Fees on Fanfare checkout orders are deducted automatically in Stripe when each order is paid—they never appear on your subscription invoice, and each order keeps the take rate active at payment time ([Payments and fees](/guide/account/payments)).
 
-<Frame caption="Usage shows Fanfare's fees for one period at a time.">
-  <img src="/images/guide/guide-account-billing-usage-page.webp" alt="The Usage page for Fanfare checkout, showing the current period stepper (September 2026), the period's fees, a daily bar chart, fees by drop, and the fees deducted at payment." />
+<Frame caption="Usage breaks down your per-order Fanfare fees one billing period at a time.">
+  <img src="/images/guide/guide-account-billing-usage-page.webp" alt="The Usage page for Fanfare checkout showing the current period stepper, total period fees, daily bar chart, fees by drop, and fees deducted at payment." />
 </Frame>
 
-| Part | What it shows |
+| Section | What it shows |
 | --- | --- |
-| Period stepper | The arrows move to an earlier or later period. The running one carries the badge "Current period". |
-| Lead sentence | The period's fees, sales, number of paid orders, and fees as a share of sales. |
-| "Fees by day (UTC)" | A bar chart of fees per day. It is hidden for a period with no fees. |
-| "Where it came from" | **By drop** lists your top five drops by fees, then "All other drops". **By rate** splits the fees by take rate, and by plan when the period spans a plan change. |
-| "Where it goes" | "Deducted at payment" for Fanfare checkout: taken from each payment, nothing further to pay. |
-| "How these fees are calculated" | Expand it for the period's arithmetic: gross sales times each rate, rounding, the total and the effective rate. Fanfare checkout only. |
-| "Other periods" | For Fanfare checkout, the running period and up to six earlier ones, each with its total. Shopify checkout shows "Other cycles": the current cycle and up to two earlier ones. |
+| **Period stepper** | Move between billing periods (the active period shows **Current period**). |
+| **Summary line** | Total fees, sales volume, paid order count, and effective fee rate for the period. |
+| **Fees by day (UTC)** | Daily bar chart of fees (hidden when a period has no fees). |
+| **Where it came from** | **By drop** lists your top five drops by fees plus all other drops; **By rate** breaks down fees by take rate (and by plan if you changed plans mid-period). |
+| **Where it goes** | Confirms Fanfare checkout fees were **Deducted at payment** with nothing further owed. |
+| **How these fees are calculated** | Expand to inspect the full calculation: gross sales by rate, rounding, total, and effective rate (Fanfare checkout only). |
+| **Other periods** / **Other cycles** | Quick totals for the current period and up to six prior periods on Fanfare checkout (or up to two prior cycles on Shopify checkout). |
 
-Dates on **Usage** are in UTC. The **Current plan** card, plans table and **Payment & invoices** use your organisation's time zone. The cancellation and plan-change dialogues and the banners use your browser's time zone. A date near midnight can differ by a day between them.
+<Note>
+  Dates on **Usage** are calculated in UTC, while **Billing** uses your organization's time zone and dialogs or banners use your browser's time zone—so dates near midnight may occasionally appear a day apart.
+</Note>
 
 ## On Shopify
 
-An organisation billed through Shopify cannot change its plan in Fanfare.
+Organizations billed through Shopify manage their subscription directly in Shopify:
 
-- In the Fanfare app in Shopify, **Billing** is an item in the app's navigation. It leaves the app for Shopify's plan page, showing "Opening Shopify's plan page." and "Open it here if it didn't open." There is no billing overview, plan card, payment section or invoice section in the app. A store that Fanfare provides at no charge sees "Your plan is comped: Fanfare provides it at no charge, so there is no plan to choose or pay for here." Choosing and approving a plan is on [Install and choose a plan](/guide/shopify/install-and-plans).
-- In the standalone Fanfare admin, a Shopify-billed organisation sees "Billed through Shopify" on the **Current plan** card, a disabled **Manage in Shopify** on every plan, and no **Payment & invoices** section.
-
-**Usage** in the Fanfare app in Shopify shows only fees on orders paid through Shopify checkout. They are grouped by Shopify billing cycle and charged on your Shopify bill in USD, converted from your store currency at the daily reference rate on each order's paid date. "Where it goes" splits them into "On your Shopify bill" and "Not billed", with the reason for each fee that is never charged. Orders on hold are listed separately and are not counted in the fees until Fanfare releases them. After a cancellation or uninstall, fees in a cycle that has not ended are still billed when it ends; fees after that are not billed.
+- **In the Shopify app:** Selecting **Billing** opens Shopify's plan selection page directly. (Stores on a complimentary Fanfare plan see a notice that no paid plan is required.) See [Install and choose a plan](/guide/shopify/install-and-plans).
+- **In the standalone Fanfare admin:** Your **Current plan** card shows **Billed through Shopify**, and plan changes are managed from Shopify rather than the standalone **Billing** page.
+- **Usage on Shopify:** **Usage** tracks fees on Shopify checkout orders grouped by Shopify billing cycle. Fees are added to your Shopify bill in USD (converted from your store's currency at the daily reference rate on each order's paid date). **Where it goes** separates charges **On your Shopify bill** from **Not billed** items with reasons. Orders on hold aren't counted until Fanfare releases them. If you cancel or uninstall mid-cycle, fees already accrued in that open cycle are still billed when the cycle closes; fees afterward aren't billed.
 
 ## Troubleshooting
 
 <AccordionGroup>
-  <Accordion title="Plan changes are unavailable until your subscription is active.">
-    Your subscription is **Inactive** or **Pending**. A pending subscription is still being set up: refresh **Billing** in a moment. An inactive one needs support to restore it.
+  <Accordion title="Plan changes are unavailable until your subscription is active">
+    Your subscription is either **Pending** or **Inactive**. If it's **Pending**, wait a moment and refresh **Billing**. If it's **Inactive**, contact [support@fanfare.io](mailto:support@fanfare.io) to restore it.
   </Accordion>
-  <Accordion title="Add a payment method to change plans during your trial.">
-    You see this when your trial has a cancellation scheduled and no card is on file. Select **Add payment method** beside the message, or in **Payment & invoices**, add a card in Stripe, then choose the plan again.
+  <Accordion title="I'm prompted to add a payment method to change plans during my trial">
+    You'll need a valid card on file before switching plans during a trial—especially if cancellation is scheduled. Select **Add payment method**, add your card in Stripe, and choose your new plan again.
   </Accordion>
-  <Accordion title="Your bank needs to approve this payment, which a plan change can't ask for.">
-    Add a different card in the billing portal and try again, or contact support.
+  <Accordion title="My bank requires additional approval during a plan change">
+    Some cards require interactive bank verification that mid-cycle plan changes can't prompt for. Add a different payment method in the billing portal and try again, or contact [support@fanfare.io](mailto:support@fanfare.io).
   </Accordion>
-  <Accordion title="Another plan change is in progress or did not complete.">
-    Refresh the page and check the **Current plan** card before trying again. If it keeps happening, contact support.
+  <Accordion title="Another plan change is in progress or didn't complete">
+    Refresh **Billing** and check your **Current plan** card before trying again. If the message persists, contact [support@fanfare.io](mailto:support@fanfare.io).
   </Accordion>
 </AccordionGroup>
 
@@ -200,15 +187,15 @@ An organisation billed through Shopify cannot change its plan in Fanfare.
 
 <CardGroup>
   <Card title="Plans and what they unlock" href="/guide/start/plans">
-    What each plan includes, its price and take rates, and what a downgrade locks.
+    Compare features, monthly pricing, take rates, and downgrade rules.
   </Card>
   <Card title="Payments and fees" href="/guide/account/payments">
-    Connect Stripe to take payments, and how the per-order fee is calculated.
+    Connect Stripe for payouts and see how per-order fees are calculated.
   </Card>
   <Card title="Install and choose a plan" href="/guide/shopify/install-and-plans">
-    Choose and approve a plan in the Fanfare app in Shopify.
+    Choose and approve a Fanfare plan inside Shopify.
   </Card>
   <Card title="Team members" href="/guide/account/team">
-    Who is an organisation admin.
+    See which team members have admin billing permissions.
   </Card>
 </CardGroup>

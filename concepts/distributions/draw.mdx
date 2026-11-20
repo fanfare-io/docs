@@ -1,97 +1,101 @@
 ---
 title: Draw
-description: How a draw picks winners at random, when it picks them, and what happens when a winner does not pay in time.
+description: Run fair, randomized drops where luck decides who buys—and learn how winner counts, replacements, and loyalty weighting work.
 ---
 
 import { DrawOddsFigure } from "/snippets/figures/draw-odds.jsx";
 
-A draw picks winners at random from everyone who enters. The admin describes it as "Randomly select winners from everyone who enters.", and the create wizard as "Let luck decide who gets access. Winners are randomly selected during registration." Everyone who enters before **Draw at** has the same chance (unless loyalty bias is on), so arriving first gives no advantage. Choose a draw when demand is far above your stock and you want luck, not speed, to decide who gets to buy. A queue is the opposite: after it opens, it lets people in by order of arrival. See [Distributions](/concepts/distributions/overview) to compare all five types.
+A **draw** selects winners randomly from everyone who enters, making it ideal when demand far outweighs supply and you want luck—not checkout speed—to decide who gets to buy. Everyone who enters before **Draw at** has the same chance of winning (unless you enable loyalty weighting), so shoppers don't need to race the clock.
 
-A draw is one of the distributions a sequence can run. A sequence is one way in to an experience; see [Sequences and routing](/concepts/sequences).
+If you'd prefer a first-come, first-served line after opening, use a [queue](/concepts/distributions/queue) instead. See [Distributions](/concepts/distributions/overview) to compare all five types, or [Sequences and routing](/concepts/sequences) to learn how sequences group distributions.
 
-## The three times
+## How the schedule works
 
-| Time | What it does |
+Every draw uses three timestamps:
+
+| Field | What it controls |
 | --- | --- |
-| **Opens** | Entry starts. |
-| **Draw at** | The first selection of winners runs. It must be in the future and fall between the open and close times. |
-| **Closes** | Entry ends. A draw must have a close time. |
+| **Opens** | Entry begins (labeled **Opens At** in the experience wizard). |
+| **Draw at** | First winner selection runs (labeled **Draw date** in the experience wizard and edit dialog). Must be in the future and fall between open and close. |
+| **Closes** | Entry ends (labeled **Closes At** in the experience wizard). Required on every draw. |
 
-The labels depend on the screen. **Draw at** is the label when you add a draw to a sequence. In the create-experience wizard the three fields are **Opens At**, **Draw date** and **Closes At**, and when you edit the draw they are **Opens**, **Draw date** and **Closes**.
+You can keep entry open past **Draw at** up until **Closes**, though the draw wraps up early once it fills:
 
-Entry can stay open after **Draw at**, up to **Closes**, but the draw ends early once it has filled. With **Continue selecting until completed** off, it fills as soon as every winner place has been given out, which is at **Draw at** itself when entries outnumber the winner count. With it on, it fills once every winner has paid. After that, new entries are turned away and everyone still waiting is not selected.
+- With **Continue selecting until completed** turned off, the draw fills as soon as all winner spots are assigned—immediately at **Draw at** if entries outnumber your winner count.
+- With **Continue selecting until completed** turned on (default), the draw stays open until every winner has completed payment (or, on a stock-counted sequence, until no units remain available or held in checkout). Until then, latecomers who enter after **Draw at** can still be selected for open or replacement spots.
 
-Until then, someone who enters after **Draw at** can still be picked while a winner place is free. On a sequence that counts its stock, a draw with **Continue selecting until completed** on also turns away new entries after **Draw at** once no unit is left and none is waiting in a winner's checkout.
-
-A draw's window follows the same rule as every other distribution: windows in one sequence cannot overlap. See [Distributions](/concepts/distributions/overview).
+Once the draw fills, new entries are closed and remaining entrants aren't selected. Like all distributions, a draw's window can't overlap another distribution in the same sequence. See [Distributions](/concepts/distributions/overview).
 
 <DrawOddsFigure />
 
-## How many winners
+## Setting your winner count
 
-**Winner count** is how many winners the draw aims for. When the sequence has a number of units for each size, the draw never gives out more wins than there are units. You cannot save a winner count above the units in the sequence's sizes: creating the draw, or raising its winner count, is refused with "A draw can't have more winners than the units in its sizes. Lower the winner count or add units first." When some units are already sold or held in a checkout, a winner count above what is left only warns you, for example "This draw can grant at most 250 of 300 winners". Saving stock that lowers the sequence's units below the winner count of its draws is refused with the same message as above. Sizes with no limit put no cap of their own on the winners. See [Stock](/concepts/stock).
+**Winner count** sets how many winners the draw aims to select. On stock-counted sequences, Fanfare keeps your winner count aligned with available inventory:
+
+- **Hard cap on total units:** You can't save a winner count higher than the units allocated across the sequence's sizes—or lower sequence stock below an active draw's winner count. (Sizes with no stock limit don't cap winners.)
+- **Warning for partially sold stock:** If some units are already sold or held in checkout, Fanfare warns you how many winners the draw can actually grant (for example, `"This draw can grant at most 250 of 300 winners"`).
 
 <Note>
-  On a sequence that counts its stock, the winner count follows units you move in and out while the draw is still selecting winners. Moving units into the sequence raises the winner count by the units moved. Moving units out lowers it by the same number, and a move that would take it below the winners already selected, or to zero once the draw has opened, is refused. Once the draw has finished selecting winners, moves into its sequence are refused. After entry has closed you cannot change the winner count at all: "Winner count can't change after entry has closed." Moving units is covered in [Allocate stock to a drop](/guide/create/stock-allocation).
+  While a draw is still selecting winners on a stock-counted sequence, moving stock into the sequence automatically increases **Winner count** by the same number of units, and moving stock out decreases it. You can't move stock out if it would drop **Winner count** below winners already selected (or to zero once open), and transfers into the sequence lock once winner selection finishes. After entry closes, **Winner count** can't be edited. See [Stock](/concepts/stock) and [Allocate stock to a drop](/guide/create/stock-allocation).
 </Note>
 
-The default winner count and how the create wizard sets it are on [Set up a draw](/guide/create/draw).
+See [Set up a draw](/guide/create/draw) for default winner counts and wizard behavior.
 
-## When a winner does not pay
+## Unpaid winners and replacements
 
-Each winner gets a payment window: a set time to check out. The field is **Admission expiration**. Left blank when you create the draw, it is 60 minutes. What a payment window is, and how payment is collected, is on [Admission and the payment window](/concepts/admission-and-payment).
+Each winner receives a timed checkout window controlled by **Admission expiration** (defaults to 60 minutes if left blank). See [Admission and the payment window](/concepts/admission-and-payment) for full details on payment windows and collection modes.
 
-**Continue selecting until completed** is on by default. When a winner's payment window lapses, the draw picks a replacement from the remaining entrants, and keeps doing so until the winner count is met. You can change the setting until the draw opens. After that the switch still appears, but saving a change is refused.
+- **Continue selecting until completed (on by default):** If a winner lets their payment window expire, Fanfare automatically draws a replacement from the remaining entrants until your winner count is filled. This toggle locks once the draw opens.
+- **When turned off:** Unpaid winner spots aren't replaced during the draw. Those unsold units return to the sequence's stock so a later distribution can sell them.
+- **One win per person:** Each shopper can win once per draw. If a winner misses their checkout window, they lose their spot and can't re-enter the same draw—they'll see **"Purchase window closed"** (**"Your purchase window ended. Each person can win once in this draw."**).
 
-With it off, a winner who lets the payment window lapse is not replaced: that winner's place is lost to the draw. The unit is not sold. It goes back into the sequence's stock, where a later distribution in the same sequence can sell it.
+<Note>
+  Two details to plan for:
+  - **Card pre-authorizations:** Payment collection locks shortly before **Opens**. Because card holds expire after roughly 7 days, avoid leaving a multi-day gap between **Opens** and **Closes** when using card holds—early entrants' holds could expire before replacement winners are drawn.
+  - **Automated expiry emails and guests:** The generic payment-window-expired email mentions re-entering, which doesn't apply to draws (see [What your customers see](/guide/drop/what-customers-see)). And if **Allow guest access** is enabled, guest shoppers don't receive emails or texts, so they'll need to keep the page open to see if they won (see [Customers and identity](/concepts/customers)).
+</Note>
 
-Each person can win once. A winner who does not pay in time loses the win and cannot enter the same draw again. They see "Purchase window closed" and "Your purchase window ended. Each person can win once in this draw." The automatic "payment window expired" email tells them they can enter again, which is not true for a draw; see [What your customers see](/guide/drop/what-customers-see).
+## While results settle
 
-Two more things affect winners. Payment collection (pay after the win, or a card hold placed on entry) locks shortly before the draw opens, and because a card hold lasts about a week, a long gap between **Opens** and **Closes** can leave early entrants' holds expired by the time a later winner is picked: see [Admission and the payment window](/concepts/admission-and-payment). And guests get no emails or texts, so a guest who wins has to keep the page open to find out: see [Customers and identity](/concepts/customers).
+Once **Draw at** passes, entrants who haven't been selected yet enter a settling state: they see **"Drawing results"** (**"We're finalizing the draw."**) and can no longer click **Withdraw entry**. Anyone entering after **Draw at** goes straight into this state. It continues until they're picked (**"You won"**) or the draw finishes (**"Not selected"**).
 
-## Settling
+## Rewarding loyal shoppers
 
-For a customer who has entered, the draw is settling from **Draw at** until their result is final. Once **Draw at** passes, an entrant who has not won sees "Drawing results" and "We're finalizing the draw." in place of their entry, and **Withdraw entry** is no longer offered. This starts at **Draw at** even though entry stays open to others until **Closes**, so it can last for hours, and someone who enters after **Draw at** goes straight to it. It ends when they are picked ("You won") or the draw ends ("Not selected").
+Turn on **Bias toward loyal consumers** to weight the randomized entry order using loyalty points. Higher point balances improve a customer's odds of winning without guaranteeing selection. This option requires an active loyalty program (Pro and above). See [Loyalty and Fanfair](/concepts/loyalty).
 
-## Loyalty bias
+## What your customers see
 
-With **Bias toward loyal consumers** on, loyalty points weight the random order of entries: "When enabled, loyalty points weight the randomized entry order. Selection is not guaranteed." A customer with more points has a better chance, never a certain one. The switch needs a running loyalty programme, which is on Pro and above. How points turn into weight is on [Loyalty and Fanfair](/concepts/loyalty).
+- **Before opening:** A countdown and **"Get notified when entry opens"**.
+- **During entry:** **"Enter the Draw"** with a **"Drawing in"** countdown, an item/size selector (if applicable), and **Enter draw**.
+- **After entering:** **"You've Entered"**, a countdown to the draw, and **Withdraw entry**.
+- **While settling:** **"Drawing results"**.
+- **Final outcome:** **"You won"** with **Continue to checkout** and a checkout countdown, or **"Not selected"**.
 
-## What customers see
-
-For a draw, the customer sees:
-
-- Before entry opens: a countdown and "Get notified when entry opens".
-- Entering: "Enter the Draw", with a "Drawing in" countdown, an item to choose when the sequence offers a choice, and "Enter draw".
-- After entering: "You've Entered", a countdown to the draw, and "Withdraw entry".
-- While the draw settles: "Drawing results".
-- The result: "You won", with a countdown to check out and "Continue to checkout", or "Not selected".
-
-Every stage and message is on [What your customers see](/guide/drop/what-customers-see).
+See [What your customers see](/guide/drop/what-customers-see) for every stage and notification.
 
 ## Deactivating a draw
 
-When you deactivate a draw, no more winners are drawn from the people who entered, and winners who have not started paying lose their win. A winner who has already started paying can finish within their payment window. It cannot be undone; paid orders are kept. See [Stop a drop](/guide/drop/deactivate).
+Choosing **Deactivate** stops any further winner selection and revokes access for winners who haven't started checkout. Winners who are already paying can finish within their payment window, and completed orders remain intact. Deactivating can't be undone; see [Stop a drop](/guide/drop/deactivate).
 
-## Worked example: the Public Draw
+## Example: running a public draw
 
-Northbound Supply Co. runs the "Phantom Stitch Anorak Drop". After the Inner Circle Early Access queue, everyone else gets in through the "Public Draw" sequence, which runs a draw. The times below are for illustration:
+After Northbound Supply Co.'s Inner Circle Early Access queue ends, they open the Phantom Stitch Anorak to everyone through a **Public Draw** sequence:
 
 | Setting | Value |
 | --- | --- |
 | **Opens** | 11:00 |
 | **Draw at** | 17:00 |
 | **Closes** | 19:00 |
-| **Winner count** | Set from the units allocated to the sequence |
-| **Continue selecting until completed** | On (the default) |
+| **Winner count** | Matches the units allocated to the sequence |
+| **Continue selecting until completed** | On (default) |
 
-1. From 11:00, customers enter. Some enter in the first minutes, some at 16:55. They all have the same chance.
-2. At 17:00 the draw picks winners at random, up to the winner count. Each winner sees "You won" and has the payment window to check out. Everyone else who entered now sees "Drawing results".
-3. One winner does not check out in time. They see "Purchase window closed" and cannot enter again. Because **Continue selecting until completed** is on, the draw picks a replacement from the remaining entrants.
-4. A customer who arrives at 17:30 can still enter, goes straight to "Drawing results", and can still be picked while places remain. Once every winner has paid, the draw ends: new entries are turned away and everyone still waiting is not selected.
-5. If the draw has not filled by 19:00, entry closes then. Customers still waiting see "Drawing results" until their result is final.
+1. Entry opens at 11:00. Shoppers who enter at 11:01 and shoppers who enter at 16:55 have the exact same odds.
+2. At 17:00, Fanfare draws winners up to the winner count. Winners see **"You won"** and get their payment window to check out, while remaining entrants see **"Drawing results"**.
+3. One winner lets their payment window expire. They see **"Purchase window closed"** and can't re-enter. Because **Continue selecting until completed** is on, Fanfare automatically draws a replacement from the remaining pool.
+4. A shopper arriving at 17:30 can still enter (going straight to **"Drawing results"**) and remains eligible while spots are open. Once every winner has paid, the draw closes immediately—new entries stop and remaining entrants see **"Not selected"**.
+5. If spots are still open at 19:00, entry closes while remaining results finish settling.
 
-<Frame>
+<Frame caption="Track total entries, selected winners, and live draw odds from the sequence Overview.">
   <img src="/images/guide/concepts-distributions-draw-live-card.webp" alt="A live draw's card showing its entries, winners and odds, with the winners figure highlighted." />
 </Frame>
 
@@ -99,15 +103,15 @@ Northbound Supply Co. runs the "Phantom Stitch Anorak Drop". After the Inner Cir
 
 <CardGroup>
   <Card title="Set up a draw" href="/guide/create/draw">
-    Every draw setting with its label, default and when it locks.
+    Configure every draw setting, check defaults, and see when options lock.
   </Card>
   <Card title="Distributions" href="/concepts/distributions/overview">
-    The five distribution types and how their windows work.
+    Compare all five distribution types and how their schedules work.
   </Card>
   <Card title="Admission and the payment window" href="/concepts/admission-and-payment">
-    The right to buy, its time limit, and payment collection.
+    Understand timed checkout windows, stock holds, and payment collection.
   </Card>
   <Card title="What your customers see" href="/guide/drop/what-customers-see">
-    Every stage and message a customer meets.
+    Walk through every screen and message customers receive.
   </Card>
 </CardGroup>

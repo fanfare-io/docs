@@ -1,99 +1,100 @@
 ---
 title: Build audiences
-description: Make a list of customers from rules, a CSV file or loyalty tiers, so you can let only those customers into a sequence.
+description: Build customer audiences from rules, a CSV import, or loyalty tiers so you can gate sequences to specific shoppers.
 ---
 
-An audience is a named list of customers. You use one to let only those customers into a sequence, and a sequence is one way in to an experience. There are three ways to build one.
+An audience is a named group of customers you use to gate a sequence—like giving repeat buyers early access, rewarding top loyalty members, or running a private guest-list drop.
 
-<Info>Available on Growth and above. Loyalty tiers need Pro.</Info>
+<Info>
+  Available on Growth and above. **Loyalty tiers** require Pro. On Starter, creating and importing audiences is locked, while any audiences you already have keep gating sequences and can still be deleted.
+</Info>
 
-On Starter, the create and import screens show an upgrade prompt and their controls are disabled. Audiences you already have keep letting their members in and can still be deleted.
+You can build an audience in three ways, all from the **Create Audience** menu on **Audiences**:
 
-| To make | Use | What you get |
+| To build | Choose | How it works |
 | --- | --- | --- |
-| A list that follows rules | **Create Audience** | Customers who match the conditions you set. Fanfare rebuilds it once a day. |
-| A fixed list | **Import CSV** | The customers in your file. |
-| Groups by a number, such as points | **Create Loyalty Tiers** | One audience per tier. |
+| A dynamic, rule-based list | **Create Audience** | Automatically includes customers matching your rules and rebuilds once a day. |
+| A fixed list | **Import CSV** | Includes the exact customers from your CSV file. |
+| Tiers by a numeric score or spend | **Create Loyalty Tiers** | Splits customers into ranges, creating one audience per tier. |
 
-**Create Audience**, **Import CSV** and **Create Loyalty Tiers** start from the **Create Audience** menu on **Audiences**. How an audience is built and held is explained in [Audiences and access codes](/concepts/audiences); using one on a sequence is in [Add and gate sequences](/guide/create/sequences).
+For how audiences are built, refreshed, and evaluated during a drop, see [Audiences and access codes](/concepts/audiences). To attach an audience to a drop, see [Add and gate sequences](/guide/create/sequences).
 
 {/* image: guide-create-audiences-list */}
 
 ## Before you start
 
-- For a CSV import, you have a CSV file with a header row.
+- If you're importing a CSV, make sure your file has a header row with a lowercase `email` or `phone` column.
 
 ## Create an audience from rules
 
 1. Open **Audiences** and select **Create Audience**.
-2. Optionally choose an **Audience Icon**. Enter a **Name** and, if you like, a **Description**.
-3. Under **Match consumers where**, choose **AND** to include customers who meet every rule, or **OR** to include customers who meet any of them. The choice applies to all the rules: you cannot combine the two, such as "A and (B or C)".
-4. Set the first rule: a field, an operator and a value. Select **Add Rule** for each further condition.
-5. Select **Create**.
+2. Enter a **Name** (and optionally choose an **Audience Icon** and **Description**).
+3. Under **Match consumers where**, select **AND** (customers must meet every rule) or **OR** (customers can meet any rule). This applies across all rules—nested combinations like `A and (B or C)` aren't supported.
+4. Set your first rule—field, operator, and value—and select **Add Rule** for each additional condition.
+5. Select **Create** to save and return to the **Audiences** list.
 
-You return to the **Audiences** list, not the new audience.
-
-| Field | Operators |
+| Field | Available operators |
 | --- | --- |
 | **Email** | **Equals**, **Not Equals**, **Contains**, **Not Contains** |
 | **Loyalty balance**, **Lifetime points**, **Lifetime value**, **Total orders**, **Average order value**, **Activity score**, **Purchase frequency score**, **Monetary score** | **Equals**, **Not Equals**, **Greater Than**, **Greater Than or Equal**, **Less Than**, **Less Than or Equal**, **Between** |
 | **Last order**, **Created at** | **Greater Than**, **Greater Than or Equal**, **Less Than**, **Less Than or Equal** |
 
+- **Between** is inclusive of both values you enter.
+- Guest shoppers never match audience rules.
+
 <Note>
-  The first rule starts as **Email** **Equals** with an empty value, and an empty value is accepted. Left empty, **Email** **Equals** matches no customer who has an email address, while **Email** **Not Equals** and **Email** **Contains** match every one of them. Fill in or replace the value before you select **Create**.
+  The first rule starts as **Email Equals** with an empty value, and blank values aren't blocked. Leaving **Email Equals** blank matches no customer who has an email address, whereas blank **Email Not Equals** or **Email Contains** matches everyone. Always enter a value or replace the default rule before selecting **Create**.
 </Note>
 
 <Note>
-  Dates for **Last order** and **Created at** are typed as text, with no date picker and no "in the last N days" option. Type a date as year-month-day, such as 2026-03-01: Fanfare reads it as the start of that day in UTC. A recent-buyers audience keeps its date until you edit it.
+  Enter **Last order** and **Created at** dates manually in `YYYY-MM-DD` format (for example, `2026-03-01`)—Fanfare reads them as the start of that day in UTC. There's no rolling "last N days" filter, so update the date whenever you want to move the window forward.
 </Note>
 
-- **Between** includes both of the values you enter.
-- Guests never match a rule.
-
-<Frame caption="One AND or OR choice applies to every rule.">
+<Frame caption="Your AND or OR selection applies across every rule in the audience.">
   <img src="/images/guide/guide-create-audiences-rules.webp" alt="The Create Audience form with two rules, an email that equals a value and total orders of at least 3, with the AND and OR switch ringed." />
 </Frame>
 
 ### Change the rules
 
 1. Open the audience and select **Details**.
-2. Change the rules, the **Match consumers where** choice, the name or the description.
-3. Select **Save** in the bar that appears.
+2. Edit the rules, **Match consumers where**, name, or description.
+3. Select **Save** in the action bar.
 
 <Warning>
-  There is no draft step. As soon as the rebuild finishes, saving changes who can enter every sequence this audience gates and who gets that sequence's invite email. Until then, members from before your change can still enter, but a customer re-checked meanwhile is judged by the new rules straight away: see [Audiences and access codes](/concepts/audiences).
+  Rule edits apply live with no draft step. Once the rebuild finishes, your updated rules immediately change who can enter every sequence this audience gates and who receives its invite email. While the rebuild runs, previous members can still enter, though any customer re-checked in the meantime is evaluated against the new rules right away. See [Audiences and access codes](/concepts/audiences). (Note: the audience page doesn't list which sequences use it, so check before editing.)
 </Warning>
-
-The audience's page does not list the sequences it gates.
 
 ### Refresh now
 
-**Refresh now**, in the row menu and on the audience's page, rebuilds a rule-based audience without waiting for its next build: "Refresh queued. Builds start within a minute." It is unavailable while a build is already queued or running, and while a drop this audience gates is open, because members are held for the drop: see [Audiences and access codes](/concepts/audiences).
+To rebuild a rule-based audience without waiting for its daily run, select **Refresh now** from the audience's row menu or detail page—builds start within a minute. **Refresh now** isn't available while a build is already queued or running, or while a drop gated by the audience is live (membership locks during live drops; see [Audiences and access codes](/concepts/audiences)).
 
 ## Import a CSV file
 
-1. Open **Audiences**, open the **Create Audience** menu and select **Import CSV**.
-2. Enter a **Name**. The **Audience Icon** and **Description** are optional.
-3. Drop your file on the upload area, or select it, then select **Next**.
-4. On **Preview Import**, check the rows shown, then select **Start Import**.
+1. Open **Audiences**, open the **Create Audience** menu, and select **Import CSV**.
+2. Enter a **Name** (plus an optional **Audience Icon** and **Description**).
+3. Drop your `.csv` file onto the upload area (or browse for it), then select **Next**.
+4. Review the sample rows on **Preview Import** and select **Start Import**.
 
-The file must be a CSV of up to 100 MB. Its header must include a column named `email` or `phone`, in lower case exactly: `Email` is not recognised. Optional columns are `fullName`, `phone`, `loyaltyLifetimePoints` and `metadata`. Fanfare ignores any other column without telling you.
+**File requirements:**
 
-The preview's row count stops at 6 however long the file is. It is not the size of your list.
+- `.csv` file up to 100 MB with a header row.
+- Must include a lowercase `email` or `phone` column (`Email` isn't recognized).
+- Optional columns: `fullName`, `phone`, `loyaltyLifetimePoints`, and `metadata`. Any other columns are ignored silently.
+- **Preview Import** shows up to 6 sample rows regardless of file size—it isn't your total member count.
 
 <Warning>
-  An import overwrites data on customers you already have. For each customer matched by email or phone, the name, phone number, lifetime points and metadata in your file replace what Fanfare holds. A changed phone number clears that customer's SMS consent and phone verification. New customers are created opted out of SMS marketing. The preview says only "Existing consumers with matching email addresses will be updated with the new data from your import." This cannot be undone: check every column before you select **Start Import**.
+  Importing a CSV overwrites data on existing customers matched by email or phone. Any name, phone number, lifetime points, or metadata in your file replaces what Fanfare currently stores. Updating a customer's phone number also clears their SMS consent and phone verification, and newly created customers start opted out of SMS marketing. This can't be undone—review every column carefully before selecting **Start Import**.
 </Warning>
 
-The audience is created before the file uploads, so a failed or abandoned upload leaves an empty audience behind. You cannot add another file to an existing list, so put everyone in one file.
+Fanfare creates the audience before uploading the file, so a canceled or failed upload leaves an empty audience behind. You can't append a second file to an existing static list—include everyone in one CSV.
 
-<Frame caption="The notice is the only warning that existing customer data will be replaced.">
+<Frame caption="Review the sample rows and data-overwrite notice before starting your import.">
   <img src="/images/guide/guide-create-audiences-csv-preview.webp" alt="The Preview Import step showing three customer rows and a notice, ringed, that existing customers with matching email addresses will be updated." />
 </Frame>
 
 ### Rows that were skipped
 
-Open the audience and select **Details**. The import card shows how many rows came in. Where the skipped-rows line, such as "3 rows skipped", can be expanded, it lists the reasons and up to five row numbers for each reason. Row 1 is the first row after the header. The reasons are:
+Open the imported audience and select **Details** to see how many rows succeeded. If any rows were skipped, expand the skipped-rows summary to see each reason and up to 5 row numbers (row 1 is the first data row below the header):
 
 - **Needs an email or phone number**
 - **Invalid email address**
@@ -105,76 +106,79 @@ Open the audience and select **Details**. The import card shows how many rows ca
 
 ## Klaviyo and Mailchimp lists
 
-The **Create Audience** menu does not offer Klaviyo or Mailchimp lists, even with a connected account, so they cannot be imported from **Audiences**.
+Klaviyo and Mailchimp lists can't be imported directly from **Audiences**, even if you've connected those integrations. Export your list as a CSV from your email platform and upload it with **Import CSV** instead.
 
 ## Create loyalty tiers
 
-<Info>Available on Pro and above. On Growth, **Create Loyalty Tiers** still appears in the menu but opens a locked form.</Info>
+<Info>
+  Available on Pro and above.
+</Info>
 
-Loyalty tiers split customers into ranges of one number, such as lifetime points, with one audience per range. The points programme is in [Run a loyalty programme](/guide/learn/loyalty).
+Loyalty tiers divide your customers into ranges based on a single numeric attribute—such as lifetime points or total spend—creating one audience per tier. For running a points program, see [Run a loyalty program](/guide/learn/loyalty).
 
-1. Open **Audiences**, open the **Create Audience** menu and select **Create Loyalty Tiers**.
-2. Enter a **Name** and choose a **Consumer Attribute**: **Loyalty balance**, **Lifetime points**, **Lifetime value**, **Total orders**, **Average order value**, **Activity score**, **Purchase frequency score** or **Monetary score**.
-3. Once both are set, a chart of your customers appears, usually with three suggested tiers. If every customer has the same value, no tiers are suggested: select **Add Tier** to add them. Drag the handles on **Tier Boundaries**, or type **From** and **To** values in the tier list. Rename the tiers and select **Add Tier** for more, up to 10.
+1. Open **Audiences**, open the **Create Audience** menu, and select **Create Loyalty Tiers**.
+2. Enter a **Name** and choose a **Consumer Attribute**: **Loyalty balance**, **Lifetime points**, **Lifetime value**, **Total orders**, **Average order value**, **Activity score**, **Purchase frequency score**, or **Monetary score**.
+3. Review the customer distribution chart and suggested tiers. (If all customers have the same value, select **Add Tier** to define ranges manually.) Drag the **Tier Boundaries** handles—or edit **From** and **To** directly—rename tiers, and add up to 10 tiers (at least 2 tiers are required to save).
 4. Select **Create Tiers**.
 
-The attribute cannot be changed later; for another attribute, create a new set of tiers. You can delete down to one tier, but the form will not save until you add one back.
+The **Consumer Attribute** locks at creation—to segment on a different attribute, create a new tier group.
 
-<Frame caption="The first tier's From is fixed at the lowest value your customers had.">
-  <img src="/images/guide/guide-create-audiences-tiers.webp" alt="The loyalty tiers editor with a customer distribution chart coloured by tier, a slider with two handles, and a list of three tiers with their point ranges; the first tier's From value is ringed." />
+<Frame caption="The first tier's From value is fixed at your lowest existing customer value.">
+  <img src="/images/guide/guide-create-audiences-tiers.webp" alt="The loyalty tiers editor with a customer distribution chart colored by tier, a slider with two handles, and a list of three tiers with their point ranges; the first tier's From value is ringed." />
 </Frame>
 
 ### Change tiers
 
-Open the tier group, select **Details** under **Settings**, change names or boundaries, add or remove tiers, then select **Save**.
+Open the tier group, select **Settings → Details**, update tier names, boundaries, or count, and select **Save**.
 
 <Warning>
-  Tiers are matched by their position in the list, not by name. If you remove a middle tier, the tier below it takes over the removed range. The audience in the removed tier's position takes the next tier's name and range, and so on up the list, and the audience that was the top tier is deleted. A sequence gated on a tier can then let in a different range of customers without telling you. If the deleted audience gates a sequence that has not ended, the whole save is refused. To change who is in each tier, move the boundaries instead of removing tiers, or create a new set of tiers.
+  Tiers map to their underlying audiences by list position, not by name. If you delete a middle tier, the remaining tiers shift down a slot and the top tier's audience is deleted—which can silently change which shoppers a gated sequence admits (or block saving if the deleted top audience gates an active or upcoming sequence). To reorganize tiers safely, adjust boundaries instead of deleting tiers, or create a new tier group.
 </Warning>
 
 ## RFM segments
 
-Every organisation has a Fanfare-made "RFM Segments" group: "Champions", "Loyal", "At-Risk", "New" and "Lost". You can use them and delete the whole group, but not edit or delete single segments. Deleted segments may come back.
+Every organization includes a built-in **RFM Segments** group (**Champions**, **Loyal**, **At-Risk**, **New**, and **Lost**). You can attach them to sequences right away or delete the whole group, though individual segments can't be edited or deleted (and deleted RFM segments may reappear automatically).
 
 ## Read the Audiences list
 
-**Type** shows **Dynamic** for rule-based audiences and **Static List** for CSV imports. **Members** shows the count. A dash means the audience has not been built yet, or the count could not be loaded. **Status** shows a CSV list's import progress, or a rule-based audience's build state with **Next build** under it; the states are explained in [Audiences and access codes](/concepts/audiences). Each tier group, and the RFM Segments group, shows as one row.
+- **Type:** **Dynamic** for rule-based audiences, or **Static List** for CSV imports.
+- **Members:** Current member count (`—` if the audience hasn't built yet or couldn't load).
+- **Status:** Import progress for CSV lists, or build state with **Next build** for dynamic audiences (see [Audiences and access codes](/concepts/audiences)).
+- Each loyalty tier group and the **RFM Segments** group appears as a single row.
 
 ## Delete an audience
 
-Select **Delete** from the row menu or on the audience's page.
+Select **Delete** from the row menu or on the audience's detail page.
 
-If the audience gates a sequence in any experience that has not ended, including a draft, the delete is refused and a dialogue lists those experiences. Remove the audience from their sequences first. Otherwise you confirm, and ended sequences stop using it. A deleted audience cannot be restored.
-
-A group delete skips that dialogue: if any audience in the group is in use, it fails with an error and nothing is deleted.
+You can't delete an audience—or a tier group containing one—while it gates a sequence in any active, upcoming, or draft experience. Remove the audience from those sequences first, then delete it. Deleting an audience can't be undone.
 
 ## Things to know before you go live
 
-- Customers cannot enter until the audience is built. A new or newly imported audience lets no one in until its first build finishes: see [Audiences and access codes](/concepts/audiences).
-- The first loyalty tier starts at the lowest value your customers had when you created the tiers, not at 0, and its **From** cannot be edited. Customers below it belong to no tier. If your customers' lowest value was above 0 when you created the tiers, that includes new customers at 0. Check the first tier's **From** and set the boundaries with that in mind.
-- Loyalty-tier audiences have no daily rebuild and no **Refresh now**. A tier audience is rebuilt when you create the tiers or save a change to them, and before an experience it gates opens.
+- **Wait for the first build:** A brand-new or newly imported audience won't admit anyone until its initial build finishes. See [Audiences and access codes](/concepts/audiences).
+- **Watch the lowest tier boundary:** The first loyalty tier's **From** value locks to the lowest value your customers had at creation—not `0`. If your lowest existing customer was above `0`, new customers starting at `0` won't match any tier.
+- **Loyalty-tier refresh timing:** Tier audiences don't rebuild daily and don't offer **Refresh now**—they rebuild whenever you create or save changes to them, and automatically before a gated experience opens.
 
 ## On Shopify
 
-The audience screens are the same in the Fanfare app in Shopify. Shopify customer lists cannot be imported as an audience.
+Audience tools work the same in the Shopify app. Shopify customer segments and lists can't be imported directly—export them as a CSV from Shopify and upload them with **Import CSV**.
 
 ## Troubleshooting
 
 <AccordionGroup>
-  <Accordion title="Import from Klaviyo or Mailchimp is missing from the menu">
-    The **Create Audience** menu does not offer Klaviyo or Mailchimp lists, even with a connected account.
+  <Accordion title="I don't see Klaviyo or Mailchimp in the Create Audience menu">
+    Klaviyo and Mailchimp lists can't be imported from **Audiences**, even when those integrations are connected. Export a CSV from your email platform and use **Import CSV** instead.
   </Accordion>
-  <Accordion title="My CSV file is refused">
-    The header needs a column named `email` or `phone` in lower case, and at least one row after it. Only `.csv` files up to 100 MB are accepted.
+  <Accordion title="My CSV file was rejected">
+    Make sure the file is a `.csv` under 100 MB, includes a header row with a lowercase `email` or `phone` column, and has at least one customer row beneath the header.
   </Accordion>
-  <Accordion title="Some rows were skipped">
-    See [Rows that were skipped](#rows-that-were-skipped). You cannot add rows to an existing list, and a sequence takes one audience. Fix the file, import the whole file again as a new audience, and use that audience on the sequence. You can then delete the first one.
+  <Accordion title="Some rows were skipped during CSV import">
+    Check the skip reasons under **Details** (see [Rows that were skipped](#rows-that-were-skipped)). Because you can't append rows to an existing static list—and each sequence takes one audience—fix your CSV, re-import the full file as a new audience, attach it to your sequence, and delete the old one.
   </Accordion>
-  <Accordion title="Refresh now is greyed out or refused">
-    A build is already queued or running, or a drop the audience gates is open. Loyalty-tier audiences have no **Refresh now**.
+  <Accordion title="Refresh now is disabled or unavailable">
+    A build is already queued or running, or an experience gated by the audience is currently live. Loyalty-tier audiences don't support **Refresh now**.
   </Accordion>
   <Accordion title="I can't delete an audience">
-    It gates a sequence in an experience that has not ended, including a draft. Remove it from those sequences first. For a group, check every audience in it.
+    It's currently gating a sequence in an active, upcoming, or draft experience. Remove it from those sequences first (for a tier group, check every tier inside it).
   </Accordion>
 </AccordionGroup>
 
@@ -182,15 +186,15 @@ The audience screens are the same in the Fanfare app in Shopify. Shopify custome
 
 <CardGroup>
   <Card title="Audiences and access codes" href="/concepts/audiences">
-    How audiences are built, held during a drop and checked for each customer.
+    How audiences are built, locked during live drops, and evaluated for each shopper.
   </Card>
   <Card title="Add and gate sequences" href="/guide/create/sequences">
-    Let only an audience's members into a sequence.
+    Restrict a sequence to members of an audience.
   </Card>
   <Card title="Invites, waitlist and access-code sends" href="/guide/create/invites-and-waitlist">
-    The invite email that goes to an audience's members.
+    Manage the invite email automatically sent to audience members.
   </Card>
   <Card title="Set up the next drop from this one" href="/guide/learn/next-drop">
-    Build audiences from what customers did in a past drop.
+    Build audiences from how customers engaged with a past drop.
   </Card>
 </CardGroup>

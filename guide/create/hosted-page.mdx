@@ -1,203 +1,206 @@
 ---
 title: Build and publish the hosted page
-description: Create the page Fanfare hosts for an experience, edit and publish it, change it near the drop, and take it down.
+description: Create, customize, and publish a Fanfare-hosted landing page for your drop, handle updates near launch, and archive it when needed.
 ---
 
-A hosted page is a web page Fanfare serves for one experience, at an address you can share in announcements, invites and social posts. It is optional: an experience can run with only the widget on your own site (see [Run it on your own site](/guide/create/your-own-site)). Each experience has at most one hosted page.
+A hosted page gives your drop a dedicated, shareable landing page served by Fanfare—ready to link from announcements, audience invites, and social posts. Hosted pages are optional: you can also run any experience using only the embedded widget on your own website (see [Run it on your own site](/guide/create/your-own-site)). Each experience can have one hosted page.
 
-<Info>Available on Growth and above.</Info>
+<Info>
+  Available on Growth and above. On Starter, the page editor opens read-only and publishing actions require an upgrade.
+</Info>
 
-On Starter, **Create Page**, **Choose a template**, **Change template**, **Use again**, **Reset to template** and **Publish…** are disabled with an upgrade prompt, and the page editor opens read-only.
+Every change you make in the page editor saves to a draft—customers won't see updates until you publish (with a few live-linked exceptions noted under [Things to know before you go live](#things-to-know-before-you-go-live)).
 
-Everything you change goes to a draft. Customers see nothing new until you publish, with the exceptions listed under [Things to know before you go live](#things-to-know-before-you-go-live).
-
-<Frame caption="Edits go to a draft until you publish, and archiving is the only way to take the page down.">
+<Frame caption="Page edits stay in draft until you publish, and archiving is the only way to take a published page down.">
   <img src="/images/guide/guide-create-hosted-page-lifecycle.webp" alt="Lifecycle of a hosted page: a draft is published to a live page, and its address locks at that point. Later edits are saved to a draft and reach customers only when you publish again, which needs a typed override during a drop. Archiving, which needs you to type ARCHIVE, takes the address down for good, and a page created again gets a new address." />
 </Frame>
 
 ## Before you start
 
-- Your organisation is on Growth or above.
-- In the Fanfare admin, you are an organisation admin. Members can open the page, preview it and open the publish sheet, but cannot create, change, save, publish or archive it.
-- You can start from one of Fanfare's starters, or from an organisation template set up in [Templates and widget designs](/guide/create/templates).
+- Your organization is on Growth or above.
+- You're an organization admin in the Fanfare admin. Team members can view and preview pages, but creating, editing, publishing, and archiving require an admin.
+- Start from one of Fanfare's built-in starters, or from a published organization template you built in [Templates and widget designs](/guide/create/templates).
 
 <Warning>
-  A hosted page cannot hand customers to a checkout outside Fanfare. If your **Checkout processor** is **External**, the setting used with Shopify checkout and with your own store's checkout, customers who are let in on the hosted page see no checkout button and cannot buy there. Run the drop on your own site instead: see [Run it on your own site](/guide/create/your-own-site), or [Storefront setup](/guide/shopify/storefront-setup) on Shopify. [Checkout options](/concepts/checkout-options) explains the two processors.
+  Hosted pages only work with **Fanfare checkout**. If your **Checkout processor** is **External** (including Shopify checkout or your own store's checkout), shoppers admitted on a hosted page won't see a checkout button and won't be able to purchase. Embed the widget on your own site instead—see [Run it on your own site](/guide/create/your-own-site) or [Storefront setup](/guide/shopify/storefront-setup) on Shopify. Compare both options in [Checkout options](/concepts/checkout-options).
 </Warning>
 
 ## Create the page
 
-1. Open **Experiences**, select the experience, then open **Design**.
+1. Go to **Experiences**, open your experience, and select **Design**.
 2. On the **Page** card, choose how to start:
-   - **Create Page** copies your organisation's default template into this experience. It shows only when a default is set.
-   - **Choose a template** lets you pick a published organisation template or a starter: Minimal, Lab, Poster or Editorial. Selecting one previews it; **Use template** or **Start from starter** creates the page.
-3. The page is created as a draft.
+   - **Create Page** copies your organization's default page template directly into the experience (shown when a default template is set).
+   - **Choose a template** lets you preview and pick a published organization template or a Fanfare starter (**Minimal**, **Lab**, **Poster**, or **Editorial**), then confirm with **Use template** or **Start from starter**.
+3. Fanfare creates your page as a draft.
 
 {/* image: guide-create-hosted-page-template-picker */}
 
 <Warning>
-  You cannot choose or edit the page address. Fanfare sets it when the page is created, from the experience name plus a short random ending, and it locks the first time you publish. Renaming the experience later does not change it. Name the experience as you want the address to read before creating the page.
+  Name your experience how you want the URL to read before creating the page. Fanfare generates the page URL automatically from the experience name plus a short random suffix, and locks it permanently the first time you publish—renaming the experience afterward won't change the URL.
 </Warning>
 
-## Edit the content
+## Edit content and styles
 
-1. On the **Page** card, select **Edit page**. The editor opens full screen.
-2. On the **Content** tab, fill in the fields. Some fields are linked: they show "From" and the source, such as the product name or the experience's open time, and fill themselves from it. **Sync from sources** pulls the latest values into every linked field. **Unlink** keeps the current value and stops following the source. Editing a linked field's value and saving also unlinks it.
-3. Select **Save**. **Save** stays unavailable while a field is invalid, and its tooltip names the fields to fix.
+### Content
 
-The canvas beside the fields shows your last save, not unsaved edits.
+1. On the **Page** card, select **Edit page** to open the full-screen editor.
+2. Fill in your copy and media on the **Content** tab.
+   - Linked fields display *"From [source]"* (such as your product name or experience open time) and pull their values automatically.
+   - Select **Sync from sources** to refresh all linked fields with the latest data, or **Unlink** to freeze a field's current value. Editing and saving a linked field also unlinks it.
+3. Select **Save**. If any field has a validation issue, hover over **Save** to see which fields need fixing.
 
-## Style the page
+The live canvas updates to show your last saved draft.
 
-On the **Style** tab (shown when the page's template has style settings), set this page's own colours; Fanfare's starters offer no font settings. An unset field marked **Brand · Primary** follows your brand's **Primary**, so a later brand change reaches it. One marked **Template default** keeps the template's colour. On the **Design** tab, the line under the page preview lists the fields the page sets itself. The brand is set in [Set your brand](/guide/create/brand); how the layers combine is in [Brand, templates and designs](/concepts/design).
+### Style
 
-## Add blocks
+If your template includes style controls, open the **Style** tab to customize page-level colors (Fanfare's starters use their built-in template fonts). Fields marked **Brand · Primary** inherit your organization's **Primary** brand color automatically, while fields marked **Template default** keep the template's color.
 
-Blocks are the interactive parts of the page, such as the entry widget or a poll.
+Your experience's **Design** tab summarizes any custom styles the page sets for itself right below the preview. See [Set your brand](/guide/create/brand) and [Brand, templates, and designs](/concepts/design) for how colors cascade.
 
-1. In the editor, open the **Blocks** tab. It lists one section per region of the page's template.
-2. In a region, select **Add block** and choose one. Each region offers only the blocks that fit it: larger areas take Customer Poll or the Fanfare Widget, smaller inline spots take Live Status or Countdown.
-3. Set **Region** and **Order**, fill in the block's settings, then **Save**.
+## Add interactive blocks
 
-| Setting | What it does | Default | Can you change it once it is live? |
+Blocks add interactive features to your page, such as the entry widget, countdowns, live status badges, or customer polls.
+
+1. Open the **Blocks** tab in the page editor to see each layout region in your template.
+2. Select **Add block** inside a region and choose a block. Each region lists only compatible blocks—larger areas support **Customer Poll** or the **Fanfare Widget**, while inline slots support **Live Status** or **Countdown**.
+3. Configure **Region**, **Order**, and the block's settings, then select **Save**.
+
+| Setting | What it controls | Default | Updates when live? |
 | --- | --- | --- | --- |
-| **Region** | The area of the template the block sits in. | The region you added it to | Yes, at the next publish |
-| **Order** | The block's position in its region. A whole number, 1 or more. | After the blocks already in that region (1 in an empty region). Moving a block to another region puts it last there. | Yes, at the next publish |
-| **Question** (Customer Poll) | The poll's question. Required, up to 200 characters. | None | Yes, at the next publish. Votes already cast are kept. |
-| **Options** (Customer Poll) | The answers customers choose from: 2 to 10. Each needs an **Option ID** (a short unique code of letters, numbers and underscores, up to 64 characters) and an **Option label** (the text customers see, up to 120 characters). | None | Yes, at the next publish. Votes stay with their **Option ID**: a new option starts at zero, and votes for a removed option still count in the total but are no longer shown. |
+| **Region** | The template area where the block appears. | The region you added it to | Yes, on next publish |
+| **Order** | Display order within the region (whole number, 1 or higher). | Last in the region (1 if empty) | Yes, on next publish |
+| **Question** (Customer Poll) | Poll prompt (required, up to 200 characters). | None | Yes, on next publish; existing votes are kept |
+| **Options** (Customer Poll) | 2 to 10 choices. Each needs a unique **Option ID** (letters, numbers, underscores; up to 64 characters) and an **Option label** (up to 120 characters). | None | Yes, on next publish. Votes stay tied to each **Option ID**—new options start at 0, and votes for removed options remain in the total without showing. |
 
-A page holds at most 10 blocks and one entry widget, and the settings of all its blocks together have a size limit. Once a poll is on the live page, its **Live state** panel shows the vote counts and, for organisation admins, **Close poll**, **Reopen poll** and **Reset poll**. These change the live poll straight away, without a publish. **Reset poll** sets every count back to zero and lets customers who already voted vote again. It cannot be undone. A poll added since the last publish shows its live state after the next publish.
+Each page supports up to 10 blocks and one entry widget (subject to a combined block-settings size limit).
+
+Once a poll is published, its **Live state** panel displays live vote counts and lets organization admins **Close poll**, **Reopen poll**, or **Reset poll**. These actions take effect immediately without republishing—**Reset poll** clears all counts back to zero and allows previous voters to vote again, and can't be undone.
 
 <Note>
-  Removing a block that is already on the live page abandons what it collected. The block leaves the live page at the next publish, and adding it again starts a fresh one with nothing carried over.
+  Removing a block that's already published discards its collected data on the next publish. Adding a new block later starts fresh.
 </Note>
 
-## Preview
+## Preview your draft
 
-On the **Design** tab, the **Delivery status** card has a **Preview** button. It opens **Draft preview**, showing your saved draft. Any field the draft cannot publish yet is filled with example content, and a notice names those fields. The preview link lasts 5 minutes; select **Refresh** for a new one.
+On the experience's **Design** tab, select **Preview** on the **Delivery status** card to open **Draft preview**. Any required field that isn't ready yet is filled with placeholder content and flagged in a banner. Preview links expire after 5 minutes—select **Refresh** anytime for a fresh link.
 
-## Publish
+## Publish the page
 
-1. On the **Delivery status** card, select **Publish…**. It is available when the card says "Unpublished draft changes". In the editor, save your changes first.
-2. Read the publish sheet:
-   - **Fill these in to publish** lists fields that must be filled first. **Publish page** stays disabled until they are.
-   - **Still empty** lists starter details you have not filled in yet, such as dates, quantities, place or rules. An empty field does not show on the page, and you can still publish.
-   - **Changed since last publish** lists what this publish changes.
-   - **Differs from the brand** lists the style values this page sets for itself.
-3. Select **Publish page**. You see "Page published".
+<Steps>
+  <Step title="Open the publish sheet">
+    Save your latest draft in the editor, then select **Publish…** on the **Delivery status** card.
+  </Step>
+  <Step title="Review what's going live">
+    Check each section of the publish sheet:
+    - **Fill these in to publish:** Required fields that must be completed before publishing.
+    - **Still empty:** Optional starter fields (such as dates, quantities, location, or rules)—empty fields stay hidden on the live page.
+    - **Changed since last publish:** Summary of updates since your last publish.
+    - **Differs from the brand:** Page-level style values overriding your brand.
+  </Step>
+  <Step title="Publish">
+    Select **Publish page**. Fanfare confirms with **Page published**.
+  </Step>
+</Steps>
 
-<Frame caption="The publish sheet shows what will change before you publish.">
+<Frame caption="Review required fields, changes, and brand overrides on the publish sheet before going live.">
   <img src="/images/guide/guide-create-hosted-page-publish-sheet.webp" alt="The publish sheet listing changes since the last publish and the values that differ from the brand, with the Publish page button at the bottom." />
 </Frame>
 
-Publishing can stop to ask about starter content:
+If your page still contains sample content from a starter, Fanfare prompts you before publishing:
 
-- **Publish with sample text?**: the page still has a starter's sample wording. Select **Publish anyway** to publish it, or **Keep editing**.
-- **Replace the starter's sample facts**: the page still states the starter's sample dates, quantities, place or rules. Sample facts never publish as yours: edit them, or select **Clear all sample facts**, which clears them, saves and publishes. A required fact asks for your own text instead. If the dialogue also lists **Starter wording you can keep**, tick **Publish this wording as it is** first.
+- **Publish with sample text?:** Select **Publish anyway** if you're happy with the starter wording, or **Keep editing**.
+- **Replace the starter's sample facts:** Sample dates, quantities, locations, or rules never publish as yours. Update them with your own details, or select **Clear all sample facts** to remove them and publish (if starter wording is also listed under **Starter wording you can keep**, check **Publish this wording as it is** first).
 
 <Warning>
-  From shortly before any distribution in the experience opens until it closes (or, for a distribution with no close time, until shortly after it opens), republishing a page that is already live is frozen. **Publishing is frozen** asks you to type PUBLISH and select **Override freeze and publish**, and what you publish then changes the page customers are looking at mid-drop. Saving the draft still works, and a page's first publish is never frozen. The exact window is in [Brand, templates and designs](/concepts/design).
+  Publishing updates to an already-live page freezes shortly before any distribution opens until it closes (or shortly after opening if there's no close time). To push an urgent change mid-drop, type `PUBLISH` in **Publishing is frozen** and select **Override freeze and publish**—this updates the page customers are viewing right away. Your first publish is never frozen, and saving drafts always works. See [Brand, templates, and designs](/concepts/design) for exact freeze windows.
 </Warning>
 
-<Frame caption="During a drop, republishing needs a typed override.">
-  <img src="/images/guide/guide-create-hosted-page-freeze.webp" alt="The Publishing is frozen dialogue asking you to type PUBLISH to override the freeze, with the Override freeze and publish button highlighted." />
+<Frame caption="Republishing during a drop requires typing PUBLISH to override the freeze.">
+  <img src="/images/guide/guide-create-hosted-page-freeze.webp" alt="The Publishing is frozen dialog asking you to type PUBLISH to override the freeze, with the Override freeze and publish button highlighted." />
 </Frame>
 
 ## Check delivery and share the link
 
-After you publish, the **Delivery status** card tracks your page going out to the servers that show it to customers ("the edge"):
+After publishing, the **Delivery status** card tracks rollout to Fanfare's edge servers:
 
-| Badge | Meaning |
+| Status | What it means |
 | --- | --- |
-| **Not published yet** | The page has never been published. |
-| **Delivery pending** | The publish is waiting to go out. |
-| **Delivering to the edge…** | The publish is on its way to the servers that show your page. |
-| **Live at the edge** | The published version is out. |
-| **The last publish attempt failed** | The last publish did not go out. This describes the last attempt, not whether the page is serving. |
+| **Not published yet** | The page hasn't been published yet. |
+| **Delivery pending** | Queued for delivery to the edge. |
+| **Delivering to the edge…** | Currently rolling out to edge servers. |
+| **Live at the edge** | Your latest published version is live for customers. |
+| **The last publish attempt failed** | The latest publish didn't complete (your previously published page may still be serving). |
 
-There is no retry button.
+Once published, the **Page** card shows **Live at** with your URL, a copy button, and a button to open it in a new tab. The URL uses your organization's **Experience Subdomain** from [Organization settings](/guide/account/organization).
 
-Once published, the **Page** card shows **Live at** with the page address, a button to copy it and one to open the page in a new tab. The address starts with your organisation's **Experience Subdomain**, set in [Organisation settings](/guide/account/organization).
-
-Invites and social posts link to the published page, so publish before they go out: see [Invites, waitlist and access-code sends](/guide/create/invites-and-waitlist) and [Announcements](/guide/create/announcements).
+<Warning>
+  Publish your hosted page before announcements or social posts go out so their links work—and check your sequence's **Invite email** settings first. If a gated sequence opens within about 2 days and your postal address is set, publishing the hosted page can trigger its audience invite automatically. See [Invites, waitlist and access-code sends](/guide/create/invites-and-waitlist) and [Announcements](/guide/create/announcements).
+</Warning>
 
 {/* image: guide-create-hosted-page-design-tab */}
 
-## Change the design
+## Switch or reset the page design
 
-1. On the **Page** card, select **Change template**, pick a template or starter, then select **Use template** or **Start from starter**.
-2. In **Switch this page's design?**, select **Switch design**.
-
-Only the draft changes. Switching replaces the draft's blocks with the new design's. The dialogue says the current design moves to **Unused designs**, but a copy of an organisation template that you never edited is removed instead. After a switch, check linked fields before you publish: a field that had a value can publish empty.
-
-If the page's design was copied from an organisation template that is still published, you can start the draft again from it: open the **Page** card's actions menu (…), select **Reset to template**, then **Reset**. This also replaces the draft's blocks. Pages started from a starter do not offer this.
-
-**Unused designs** lists designs copied for this experience that the page no longer uses. For each one:
-
-- **Use again** points the draft back at it.
-- **Save as organization template** creates a draft organisation template, which you then publish in Design Studio before it appears in pickers.
-- **Delete** removes it. This cannot be undone.
+- **Switch templates:** On the **Page** card, select **Change template**, pick a new template or starter, and confirm **Switch design**. Only your draft changes, and your draft's blocks are replaced by the new template's blocks. Review linked fields before publishing to make sure nothing cleared unexpectedly.
+- **Reset to template:** If your page started from a published organization template, open the **Page** card's actions menu (`…`) and select **Reset to template → Reset** to rebuild your draft from the latest template version (this replaces your draft's blocks).
+- **Manage unused designs:** Previous customized designs for this experience move to **Unused designs** (unedited template copies are cleaned up automatically). From there you can select **Use again**, **Save as organization template** (creates a Draft template in Design Studio), or permanently **Delete** them.
 
 ## Take the page down
 
-There is no unpublish. To take the page down while the experience carries on, archive it.
+Hosted pages don't have an unpublish button. To take a page offline while the experience continues, archive it:
 
-1. On the **Page** card, open the actions menu (…) and select **Archive page**.
-2. If the page has ever been published, type ARCHIVE to confirm, then select **Archive page**.
+1. On the **Page** card, open the actions menu (`…`) and select **Archive page**.
+2. If the page has ever been published, type `ARCHIVE` and select **Archive page**.
 
 <Warning>
-  Archiving a published page takes its address down within about a minute: anyone following the link then sees a page saying the drop couldn't be found. It cannot be undone. If you create a page for the experience again, it gets a new address, so every link you have already shared stays dead.
+  Archiving takes your page offline within about a minute—visitors see a not-found page—and can't be undone. Creating a new page for the experience later generates a brand-new URL, so any links you already shared stay broken.
 </Warning>
 
 {/* image: guide-create-hosted-page-archive */}
 
-## When the drop is over
+## When the drop ends
 
-Once you deactivate the experience, or any one of its sequences or distributions, or delete the experience, its published page's address shows a page in your brand saying the drop has ended or was cancelled, including for anything still running, with a link to the **Website** in your organisation settings when you have set one. See [Stop a drop](/guide/drop/deactivate) and [What your customers see](/guide/drop/what-customers-see).
-
-Until then, the address keeps serving your published page, even after every distribution has closed.
+Even after every distribution closes, your URL continues serving the published page until you archive it or end the experience. If you deactivate the experience (or any of its sequences or distributions) or delete the experience, visitors see a branded ended/canceled screen instead—including a link to the **Website** configured in your organization settings. See [Stop a drop](/guide/drop/deactivate) and [What your customers see](/guide/drop/what-customers-see).
 
 ## Things to know before you go live
 
-- The live page can change without a publish. Linked values (product name, description and image; experience name and times; organisation details) are refreshed on the live page after their source changes, sometimes after a delay. Brand changes restyle it too.
-- Experience colours change the live page as soon as they are saved, without a publish. See [Set your brand](/guide/create/brand).
-- Changing this experience's widget design changes the widget on the live page straight away. See [Templates and widget designs](/guide/create/templates).
-- Third-party tags and tracking pixels cannot run on hosted pages.
-- To show the page inside an iframe on another site, list that site under **Embedding**. See [API keys and embedding](/guide/account/developer).
-- After a downgrade to Starter, a published page keeps serving. You can still preview and archive it and close or reopen its polls, but not edit or publish it.
+- **Some updates go live without publishing:** Linked fields (product details, experience name and times, organization details) refresh automatically after their source changes, sometimes after a brief delay. Brand updates, **Experience colors**, and widget design changes also update live pages right away. See [Set your brand](/guide/create/brand) and [Templates and widget designs](/guide/create/templates).
+- **No third-party scripts:** Custom tracking tags and pixels can't run on Fanfare-hosted pages.
+- **Embedding in an iframe:** To display a hosted page inside an iframe on another website, add that domain under **Settings → Embedding**. See [API keys and embedding](/guide/account/developer).
+- **Downgrading to Starter:** Published pages continue serving customers. You can still preview, archive, and close or reopen live polls, while editing and republishing require Growth or above.
 
 ## On Shopify
 
-- There is no admin-only restriction on the hosted page: every staff member who can open the Fanfare app can create the page, change its template, save the draft, publish it and archive it.
-- For a product brought in from Shopify, the **Delivery status** card can say "The product image is being copied from Shopify. The page shows it once the copy is ready." or "The product image couldn't be copied from Shopify, so the page can't show it yet."
+- Any Shopify staff member who can open the Fanfare app can create, edit, publish, override freezes on, and archive hosted pages—admin-only restrictions don't apply in the Shopify app.
+- For products imported from Shopify, **Delivery status** lets you know if Fanfare is still copying the product image from Shopify (or if the image copy failed).
 
 ## Troubleshooting
 
 <AccordionGroup>
   <Accordion title="This page was changed somewhere else">
-    The page's draft was saved somewhere else (another tab or another admin) after you opened it. Reload to pick up the latest version, then make your change again.
+    Another tab or teammate saved a newer version of the draft after you opened the editor. Reload the page to pull the latest draft, then reapply your edit.
   </Accordion>
-  <Accordion title="Live at shows only /slug">
-    The page could not load your organisation's address, so the card shows only the end of it. Reload the page; if it persists, contact Fanfare support.
+  <Accordion title="Live at shows only /slug instead of the full URL">
+    The page couldn't load your organization's subdomain. Reload the page—if it persists, contact Fanfare support.
   </Accordion>
-  <Accordion title="The page names the wrong distribution">
-    A page started from an early version of a starter can carry a countdown label that names a distribution type, such as "Draw opens in". It is ordinary text on the page: change **Countdown label before opening** and **Countdown label while open** on the **Content** tab, save, and publish.
+  <Accordion title="The countdown label names the wrong drop type">
+    Pages created from earlier starter versions can include static countdown wording like *"Draw opens in"*. Update **Countdown label before opening** and **Countdown label while open** on the **Content** tab, save, and publish.
   </Accordion>
 </AccordionGroup>
 
 ## Related
 
 <CardGroup>
-  <Card title="Brand, templates and designs" href="/concepts/design">
-    What the brand, templates and page each control.
+  <Card title="Brand, templates, and designs" href="/concepts/design">
+    How brand, templates, and page overrides layer together.
   </Card>
   <Card title="Templates and widget designs" href="/guide/create/templates">
-    Organisation page templates, the default, and widget designs.
+    Build reusable page templates, set defaults, and style widgets.
   </Card>
   <Card title="Run it on your own site" href="/guide/create/your-own-site">
-    Use the widget on a page you own.
+    Embed the Fanfare widget directly on your own website.
   </Card>
   <Card title="What your customers see" href="/guide/drop/what-customers-see">
-    The stages and messages customers meet on the page.
+    Every customer screen and message across the drop lifecycle.
   </Card>
 </CardGroup>

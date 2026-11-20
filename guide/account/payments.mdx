@@ -1,149 +1,139 @@
 ---
 title: Payments and fees
-description: Connect the Stripe account that Fanfare checkout pays out to, and see what Fanfare takes from each paid order.
+description: Connect Stripe to receive payouts from Fanfare checkout, manage payouts and disputes, and understand Fanfare's per-order fees.
 ---
 
-**Settings → Payments**, in the **Commerce** group, is where you connect the Stripe account that Fanfare checkout pays out to, and where you see the fee Fanfare takes from each paid order. You need it only when your checkout processor is Fanfare: customers pay on Fanfare's checkout, and the money goes to your Stripe account. Choosing the processor is covered in [Organisation settings](/guide/account/organization), and what each kind of checkout means for your customers is in [Checkout options](/concepts/checkout-options).
+When you sell with Fanfare checkout, customer payments go straight to your connected Stripe account. Go to **Settings → Payments** (under **Commerce**) to connect Stripe, manage payouts, and review your per-order fee rates. To choose between Fanfare checkout and your own store's checkout, see [Organization settings](/guide/account/organization) and [Checkout options](/concepts/checkout-options).
 
 ## Before you start
 
-- You are an organisation admin. Members can read this page but cannot connect, manage or disconnect the Stripe account.
-- Fanfare checkout works only with a US Stripe account charging US dollars.
-- Connect Stripe before you create experiences. The organisation setup screen says so: "Sell through Fanfare. Connect Stripe before you create experiences." Until your Stripe account can take payments, Fanfare refuses to create a queue, draw, auction or timed release. Appointments are not affected.
-- Set your organisation's **Currency** to USD in [Organisation settings](/guide/account/organization) first. Creating or connecting a Stripe account sets your organisation's country to the account's country, and after that neither the country nor the currency can change.
+- **Admin access required:** Only organization admins can connect, manage, or disconnect Stripe. Members can view rates and account status read-only.
+- **US accounts in USD only:** Fanfare checkout currently supports US Stripe accounts charging US dollars.
+- **Set your currency first:** Confirm your organization's **Currency** is set to **USD** in [Organization settings](/guide/account/organization) before connecting. Linking a Stripe account sets your organization's country to match the Stripe account and permanently locks both country and currency.
+- **Connect before creating drops:** Your Stripe account must be able to take payments before Fanfare will let you create a queue, draw, auction, or timed release (appointments aren't affected).
 
-<Frame caption="The pricing card shows what Fanfare takes from each paid order; the Stripe account card shows where the money goes.">
-  <img src="/images/guide/guide-account-payments-pricing-and-account.webp" alt="Settings, Payments, showing the Fanfare checkout pricing card with a Starter plan rate badge (ringed) and two rates, and below it the Stripe account card marked Active with account name, account ID and country, and a Disconnect button." />
+<Frame caption="Review your per-order rates on the pricing card and your payout connection on the Stripe account card.">
+  <img src="/images/guide/guide-account-payments-pricing-and-account.webp" alt="Settings, Payments, showing the Fanfare checkout pricing card with a Starter plan rate badge and two rates, and below it the Stripe account card marked Active with account name, account ID, country, and a Disconnect button." />
 </Frame>
 
-## Read your fee
+## Check your fees
 
-The **Fanfare checkout pricing** card ("Fanfare's fee on each paid order.") shows the rates that apply to your organisation.
+The **Fanfare checkout pricing** card shows the exact rates applied to your paid orders:
 
-- The badge says where the rates come from: "Starter plan rate", "Growth plan rate", "Pro plan rate" or "Enterprise plan rate" for your plan's published rates, or "Custom rate" when Fanfare has agreed a rate with you.
-- **Draws, queues and auctions** is the percentage taken on orders from those three distributions.
-- **Timed releases** is the percentage taken on timed-release orders.
-- **Minimum fee per order** appears only on a custom rate that carries a minimum.
-- When orders paid through Shopify checkout are charged a different rate, the card splits into **On Fanfare checkout** and **On Shopify checkout**.
-- **Full pricing** opens the public price list.
+- **Rate badge:** Shows whether you're on your plan's standard rate (**Starter plan rate**, **Growth plan rate**, **Pro plan rate**, or **Enterprise plan rate**) or a negotiated **Custom rate**.
+- **Draws, queues and auctions:** The percentage fee on orders from those three drop types.
+- **Timed releases:** The percentage fee on timed-release orders.
+- **Minimum fee per order:** Appears only when a custom rate includes a minimum fee.
+- **Split rates:** If your Shopify checkout orders carry a different custom rate, the card separates **On Fanfare checkout** and **On Shopify checkout**.
+- **Full pricing:** Links to Fanfare's public pricing table.
 
-Each plan's percentages are listed in [Plans and what they unlock](/guide/start/plans). Fees by billing period are on the Usage page: see [Billing and usage](/guide/account/billing).
+Compare every plan's take rates in [Plans and what they unlock](/guide/start/plans), or track total fees by billing period in [Billing and usage](/guide/account/billing).
 
-### How the fee works
+### How fees work
 
-- The fee is a percentage of each paid order. With a minimum fee per order, Fanfare takes whichever is larger, and never more than the order itself.
-- It is deducted from the payment in Stripe when the payment is taken; for a pre-authorised hold, that is when the hold is captured. Fanfare never invoices you for it, and your subscription invoice does not include it.
-- Each order keeps the rate in effect when it was paid. If you change plan partway through a billing period, orders already paid are not re-rated.
-- Appointments carry no fee.
-- Stripe charges its own processing fees to your Stripe account, separately from Fanfare's fee.
-- A custom rate applies on every plan and stays in place when you change plan, so upgrading does not lower it.
-- On each order, the fee appears as **Fanfare fee** on the order's **Payment** card once the payment has been captured. A distribution's payment settings also state the fee for that distribution: see [Admission and the payment window](/concepts/admission-and-payment).
+- **Automatic deduction:** Fanfare's fee is deducted directly in Stripe when payment is captured (including when a pre-authorized hold is captured). You're never invoiced for it separately.
+- **Minimum fee cap:** If your custom rate has a minimum fee per order, Fanfare takes the percentage or the minimum—whichever is higher—never exceeding the order total itself.
+- **Rate locked at payment:** Each order keeps the rate active when it was paid. Changing plans mid-period doesn't re-rate earlier orders.
+- **Custom rates stay put:** A custom rate overrides standard plan rates across every tier, so changing plans won't alter it.
+- **Other fees and exceptions:** Unpaid appointments carry no fee. Stripe's own processing fees are billed separately to your Stripe account.
+- **Order details and refunds:** After payment is captured, the fee appears as **Fanfare fee** on the order's **Payment** card (and in each distribution's payment settings—see [Admission and the payment window](/concepts/admission-and-payment)). Refunding an order doesn't return the Fanfare fee ([Orders and refunds](/guide/learn/orders)).
 
-A refund does not return the Fanfare fee. See [Orders and refunds](/guide/learn/orders).
+## Choose how to connect Stripe
 
-## Choose how to connect
+You can either create a Stripe account through Fanfare or link an existing Stripe account you already own.
 
-You can connect Stripe in two ways.
-
-| | Created through Fanfare | Your own Stripe account |
+| | Created through Fanfare | Existing Stripe account |
 | --- | --- | --- |
-| How you connect | **Set up payments**, then Stripe's onboarding | **Connect an existing Stripe account**, then authorise Fanfare in Stripe |
-| Where you finish setup | **Continue setup** on this page | Your own Stripe Dashboard (**Open Stripe Dashboard**) |
-| Where you manage payouts, bank details and disputes | On this page, in **Account and bank details**, **Payouts** and **Payments and disputes** | Your own Stripe Dashboard |
-| After **Disconnect** | The account stays tied to your organisation, but you can no longer see its payouts, balance, bank details or disputes, because these accounts have no Stripe Dashboard of their own. **Set up payments** brings the same account back. | You can reconnect only the same account, with **Connect an existing Stripe account**. Fanfare cannot create a new account for you. |
+| **How to connect** | Select **Set up payments** and complete Stripe onboarding | Select **Connect an existing Stripe account** and authorize Fanfare in Stripe |
+| **Finish setup** | Select **Continue setup** on this page | Open your Stripe Dashboard (**Open Stripe Dashboard**) |
+| **Manage payouts, bank details, and disputes** | Directly on this page under **Account and bank details**, **Payouts**, and **Payments and disputes** | In your Stripe Dashboard |
+| **After disconnecting** | The account remains tied to your organization, though payout and bank sections are hidden while disconnected. Select **Set up payments** to reconnect the same account. | You can reconnect only the same Stripe account via **Connect an existing Stripe account**—Fanfare can't create a new one. |
 
 <Warning>
-  Selecting **Create account** locks your organisation's country and currency and ties your organisation to that new Stripe account at once, even if you never finish Stripe's onboarding. From then on you cannot connect a Stripe account you already have, even after you disconnect. Connecting your own account locks the same way, and no other account can replace it later. Decide which way to connect before you select **Create account**. The confirmation warns about the country only; the currency is locked too.
+  Selecting **Create account**—or connecting an existing Stripe account—immediately locks your organization's country and currency and permanently ties your workspace to that Stripe account, even if you never finish onboarding or disconnect it later. You can't swap in a different Stripe account afterward, so decide which connection path you want before continuing.
 </Warning>
 
 <Frame>
-  <img src="/images/guide/guide-account-payments-not-connected.webp" alt="The Stripe account card before anything is connected, with a Stripe account country picker set to United States, a highlighted Set up payments button, and a Connect an existing Stripe account button with a note that connecting sets the organisation's country." />
+  <img src="/images/guide/guide-account-payments-not-connected.webp" alt="The Stripe account card before anything is connected, showing a Stripe account country picker set to United States, a Set up payments button, and a Connect an existing Stripe account button." />
 </Frame>
 
 ## Create a Stripe account through Fanfare
 
 1. Go to **Settings → Payments**.
-2. Under **Stripe account country**, check the country. Only United States is offered.
+2. Confirm **Stripe account country** is set to **United States**.
 3. Select **Set up payments**.
-4. Read the confirmation, "Create your Stripe account in United States?", which says: "Your organization's country becomes United States. Stripe accounts can't move between countries, so your organization's country can't change after this."
-5. Select **Create account**. Stripe's onboarding opens.
-6. Complete Stripe's onboarding. Stripe sends you back to **Settings → Payments**.
+4. Review the country-lock confirmation and select **Create account**.
+5. Complete Stripe's onboarding flow. Stripe will return you to **Settings → Payments**.
 
-If Stripe has finished checking the account, you see "Stripe account connected successfully". The badge then says whether anything is still needed: see [Account states](#account-states). If the onboarding link had expired, the page reopens Stripe's onboarding for you when you come back.
+Once Stripe verifies your account, your status updates to **Active**. If anything is still required, check [Account states](#account-states). (If an onboarding link expires before you finish, returning to this page reopens onboarding automatically.)
 
 {/* image: guide-account-payments-create-account-confirm */}
 
-## Connect a Stripe account you already have
+## Connect an existing Stripe account
 
 1. Go to **Settings → Payments**.
-2. Select **Connect an existing Stripe account**. Stripe opens.
-3. Authorise Fanfare in Stripe.
-4. Stripe sends you back to **Settings → Payments**.
+2. Select **Connect an existing Stripe account**.
+3. Sign in to Stripe and authorize Fanfare.
+4. Stripe returns you to **Settings → Payments**.
 
-Connecting sets your organisation's country to your Stripe account's country, and the same permanent lock applies as for an account created through Fanfare (see the warning above).
+Connecting sets your organization's country to your Stripe account's country and applies the same permanent country, currency, and account lock described above.
 
-If Fanfare cannot accept the account, you see "Your Stripe account wasn't connected" with one of these reasons:
+If Stripe can't connect your account, review the message shown on the page:
 
-| Reason shown | What to do |
+| Error message | How to fix it |
 | --- | --- |
-| "Connection was cancelled or denied." | Start again and authorise Fanfare in Stripe. |
-| "Invalid connection state. Please try again." | Start again from **Connect an existing Stripe account**. |
-| "Failed to connect Stripe account. Please try again." | Try again. |
-| "Fanfare checkout isn't available for Stripe accounts in this country yet." | Use a US Stripe account. |
-| "Fanfare checkout is available for organizations that use US dollars with a US Stripe account." | Make sure your organisation's currency is USD and your Stripe account's default currency is US dollars, then connect again. |
-| "This Stripe account can't accept card payments yet. Finish its setup in Stripe, then connect it again." | Finish the account's setup in Stripe, then connect again. |
-| "This organization is tied to a different Stripe account than the one you chose. Connect that account instead, or contact support." | Connect the account your organisation used before. |
-| "An error occurred. Please try again." | Try again. |
+| "Connection was cancelled or denied." | Start again and authorize Fanfare in Stripe. |
+| "Invalid connection state. Please try again." | Restart from **Connect an existing Stripe account**. |
+| "Fanfare checkout isn't available for Stripe accounts in this country yet." | Connect a US Stripe account. |
+| "Fanfare checkout is available for organizations that use US dollars with a US Stripe account." | Set your organization's currency to **USD** and ensure your Stripe account's default currency is US dollars, then try again. |
+| "This Stripe account can't accept card payments yet. Finish its setup in Stripe, then connect it again." | Complete card-payment setup in your Stripe Dashboard, then reconnect. |
+| "This organization is tied to a different Stripe account than the one you chose. Connect that account instead, or contact support." | Connect the original Stripe account linked to your organization, or contact support. |
+| "Failed to connect Stripe account." / "An error occurred. Please try again." | Try connecting again in a moment. |
 
 ## Account states
 
-The **Stripe account** card ("Fanfare checkout pays out to your own Stripe account.") shows a badge once an account exists.
+Once an account is linked, the **Stripe account** card displays its **Account ID** (along with **Account Name**, **Email**, and **Country** once available from Stripe) and one of three badges:
 
-| Badge | What it means | What to do |
+| Badge | What it means | Next step |
 | --- | --- | --- |
-| "Setup not finished" | "Stripe needs a few more details before this account can take payments." | **Continue setup** for an account created through Fanfare. **Open Stripe Dashboard** for your own account. |
-| "Action needed" | "Stripe needs more information." Payments or payouts can pause until you provide it. | For an account created through Fanfare, update the details Stripe asks for in the sections below the notice. For your own account, **Open Stripe Dashboard**. |
-| "Active" | The account can take payments. | Nothing. |
+| **Setup not finished** | Stripe needs additional details before your account can accept payments. | Select **Continue setup** (for Fanfare-created accounts) or **Open Stripe Dashboard** (for existing accounts). |
+| **Action needed** | Stripe needs updated information—payments or payouts may pause until it's provided. | Complete the requested details in the sections below the notice (Fanfare-created accounts) or via **Open Stripe Dashboard** (existing accounts). |
+| **Active** | Your account is ready to take payments. | You're all set. |
 
-If you removed Fanfare's access from your own Stripe account, the badge also reads "Setup not finished". Select **Disconnect**, then connect the same account again with **Connect an existing Stripe account**.
-
-The card lists the account's **Account ID**, and its **Account Name**, **Email** and **Country** when Stripe has them.
+If you revoked Fanfare's access from your own Stripe Dashboard, the badge returns to **Setup not finished**—select **Disconnect**, then reconnect the same account using **Connect an existing Stripe account**.
 
 <Frame>
-  <img src="/images/guide/guide-account-payments-setup-not-finished.webp" alt="The Stripe account card with a Setup not finished badge and a notice saying Stripe needs a few more details, with a highlighted Continue setup button." />
+  <img src="/images/guide/guide-account-payments-setup-not-finished.webp" alt="The Stripe account card with a Setup not finished badge, a notice that Stripe needs more details, and a Continue setup button." />
 </Frame>
 
-## Manage payouts, bank details and disputes
+## Manage payouts, bank details, and disputes
 
-- **An account created through Fanfare:** once it is "Action needed" or "Active", the Stripe account card shows **Account and bank details**, **Payouts** and **Payments and disputes**, with any notices from Stripe above them. Only admins see these sections.
-- **Your own Stripe account:** the card says "You manage this account's payouts, bank and business details in your own Stripe Dashboard." Select **Open Stripe Dashboard**.
+- **Fanfare-created accounts:** Once your account is **Active** or **Action needed**, organization admins can manage **Account and bank details**, **Payouts**, and **Payments and disputes** directly on the **Stripe account** card, with any Stripe notices shown above them.
+- **Existing Stripe accounts:** Select **Open Stripe Dashboard** to manage payouts, bank accounts, and disputes in Stripe.
 
 ## Disconnect Stripe
 
 1. On the **Stripe account** card, select **Disconnect**.
-2. Read the confirmation, "Disconnect Stripe Account?": "This will remove the connection between your Fanfare organization and your Stripe account. You will no longer be able to process payments until you set up payments again."
-3. Select **Disconnect**.
+2. Review the confirmation dialog and select **Disconnect** again.
 
 <Warning>
-  Disconnecting stops Fanfare checkout taking new payments at once, including for experiences that are live or scheduled. Fanfare does not check whether any are running before it disconnects. A customer who has been admitted but has not paid yet cannot complete payment: checkout shows "An unexpected error occurred." and offers no way to try again. New customers cannot enter a distribution that pre-authorises payment. Despite the wording of the confirmation, you cannot set up payments with a different Stripe account afterwards: you can reconnect only the same one. Your organisation's country and currency stay locked.
+  Disconnecting immediately stops Fanfare checkout from taking new payments—even during live or scheduled drops. Customers who have been admitted but haven't paid yet won't be able to finish checkout, and new shoppers won't be able to enter distributions that pre-authorize payment. Disconnecting also doesn't free up your organization to connect a different Stripe account or unlock your country and currency—you can only reconnect the same Stripe account later.
 </Warning>
 
-To bring back an account created through Fanfare, select **Set up payments**. The confirmation still says "Create your Stripe account", but no new account is created, and Stripe's onboarding opens again so you can confirm the details.
+To reconnect an account you originally created through Fanfare, select **Set up payments** again. Rather than creating a new account, Fanfare reopens Stripe onboarding for your existing linked account so you can confirm its details.
 
 ## What members see
 
-A member who is not an admin sees "Only organization admins can connect, manage or disconnect the Stripe account." They can read the pricing card, the account's badge and its details, but get no **Set up payments**, **Connect an existing Stripe account**, **Continue setup** or **Disconnect**, and no payout or bank sections. For an account you connected yourself, **Open Stripe Dashboard** still appears.
-
-To make someone an admin, see [Team members](/guide/account/team).
+Non-admin team members can view your fee rates, Stripe status badge, and account details, but can't connect, manage, or disconnect Stripe, and won't see payout or bank management sections. For existing Stripe accounts, **Open Stripe Dashboard** remains visible. To grant admin permissions, see [Team members](/guide/account/team).
 
 ## On Shopify
 
-Taking payments with Fanfare checkout is not available in the Fanfare app in Shopify. Orders there are paid through Shopify checkout: see [Orders with Shopify checkout](/guide/shopify/orders) and [Checkout protection](/guide/shopify/checkout-protection).
+Fanfare checkout isn't available inside the Shopify app—orders run through Shopify checkout instead. See [Orders with Shopify checkout](/guide/shopify/orders) and [Checkout protection](/guide/shopify/checkout-protection).
 
-**Settings → Payments** in the Fanfare app in Shopify shows "Taking payments with Fanfare checkout isn't available in the Shopify app yet. Your plan's checkout rates are below.", a disabled **Connect Stripe Account** button with a "Coming soon" badge, and the **Fanfare checkout pricing** card.
+In the Shopify app, **Settings → Payments** displays your **Fanfare checkout pricing** card alongside a **Coming soon** placeholder for Stripe.
 
 <Warning>
-  If a Stripe account was connected earlier, the Fanfare app in Shopify still offers **Disconnect**. Once you use it, you cannot reconnect from the Shopify app.
+  If your organization connected a Stripe account outside Shopify earlier, **Disconnect** still appears here. If you disconnect it, you won't be able to reconnect from inside the Shopify app.
 </Warning>
 
 {/* image: guide-account-payments-on-shopify */}
@@ -152,32 +142,32 @@ Taking payments with Fanfare checkout is not available in the Fanfare app in Sho
 
 <AccordionGroup>
   <Accordion title="Set up payments shows an error">
-    "Fanfare checkout is available for organizations that use US dollars with a US Stripe account." means your organisation's currency is not USD. Change it in [Organisation settings](/guide/account/organization) and try again. "This organization uses its own Stripe account, so Fanfare can't set one up for it. Use Connect an existing Stripe account instead." means your organisation was connected to your own Stripe account before: reconnect that account with **Connect an existing Stripe account**.
+    If you see a message about US dollars, update your organization's **Currency** to **USD** in [Organization settings](/guide/account/organization) and try again. If the message says your organization uses its own Stripe account, reconnect that original account using **Connect an existing Stripe account**.
   </Accordion>
-  <Accordion title="I came back from Stripe and nothing says connected">
-    The confirmation appears only when the account can take payments. Look at the badge on the **Stripe account** card: "Setup not finished" or "Action needed" tells you what Stripe still wants. If you have just finished Stripe's steps and the badge still reads "Setup not finished", refresh the page, because the badge can take a moment to catch up.
+  <Accordion title="I returned from Stripe and my account still says 'Setup not finished'">
+    The status updates to **Active** once Stripe confirms your account can accept payments. If you just finished Stripe's onboarding steps, refresh the page—Stripe verification can take a moment to sync. If the badge shows **Action needed**, check what details Stripe is requesting.
   </Accordion>
-  <Accordion title="I can't change my organisation's country or currency">
-    Both are locked for good once you select **Create account** or connect your own Stripe account, including after **Disconnect**. There is no way to unlock them in the admin. The currency can also be refused for other reasons, such as auctions that exist: see [Organisation settings](/guide/account/organization).
+  <Accordion title="I can't change my organization's country or currency">
+    Both lock permanently as soon as you create or connect a Stripe account, including after disconnecting. Currency can also be temporarily locked by active or undeleted auctions—see [Organization settings](/guide/account/organization).
   </Accordion>
-  <Accordion title="The page says account management is unavailable">
-    "Account management is unavailable right now. Please try again later." appears in place of the payout and bank sections when Fanfare cannot open them. Try again later, and contact support if it persists.
+  <Accordion title="Account management sections are temporarily unavailable">
+    If Fanfare can't load your embedded Stripe payout or bank sections, wait a moment and refresh the page. Contact [support@fanfare.io](mailto:support@fanfare.io) if the issue persists.
   </Accordion>
 </AccordionGroup>
 
 ## Related
 
 <CardGroup>
-  <Card title="Organisation settings" href="/guide/account/organization">
-    Choose the checkout processor and set the country and currency.
+  <Card title="Organization settings" href="/guide/account/organization">
+    Choose your checkout processor and set your country and currency.
   </Card>
   <Card title="Checkout options" href="/concepts/checkout-options">
-    Fanfare checkout, your own checkout and Shopify checkout compared. Auctions need a checkout that charges the winning bid.
+    Compare Fanfare checkout, external checkout, and Shopify checkout.
   </Card>
   <Card title="Plans and what they unlock" href="/guide/start/plans">
-    Each plan's checkout rates.
+    Compare every plan's monthly price and take rates.
   </Card>
   <Card title="Orders and refunds" href="/guide/learn/orders">
-    The Fanfare fee on an order, refunds and cancellations.
+    See how Fanfare fees appear on orders and how refunds work.
   </Card>
 </CardGroup>

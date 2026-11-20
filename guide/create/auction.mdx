@@ -1,139 +1,152 @@
 ---
 title: Set up an auction
-description: Create an English or Dutch auction, set its prices and timing, and know what freezes once bidding opens.
+description: Run an English or Dutch auction, configure pricing and settlement timing, and know what locks once bidding opens.
 ---
 
-An auction lets customers bid for a scarce item. In an English auction the price rises with each bid and the highest bidder wins. In a Dutch auction the price starts high and falls on a schedule, and customers buy at the price it has reached. You can create an auction as the first distribution of a new experience, or add one to a sequence of an experience you already have. A sequence is one way in to an experience. How bidding, settling and winning work is explained in [Auction](/concepts/distributions/auction), including what happens when the reserve is not met or a winner does not pay. This page covers what you set and when it stops being changeable.
+An auction lets shoppers bid for scarce items—either driving the price up until the highest bidder wins (English) or starting high and stepping down on a schedule until buyers jump in (Dutch). You can launch an auction with a new experience or add one to an existing sequence.
+
+For how bidding, settlement, reserve prices, and unpaid wins work, read [Auction](/concepts/distributions/auction).
 
 ## Before you start
 
-- Your checkout must be able to charge the winning bid. When it cannot, the **Auction** card shows "Needs a checkout that charges the winning bid" and cannot be picked. This is not a plan limit: auctions are on every Fanfare plan, and upgrading does not lift it. To fix it, switch to Fanfare checkout, or connect a checkout that supports auction pricing in your organisation's currency. See [Checkout options](/concepts/checkout-options). On Shopify there are further conditions: see [On Shopify](/guide/create/auction#on-shopify).
-- Your organisation's currency cannot change while you have an auction that has not been deleted, or while the winner of an ended auction is still inside the payment window, even if you have deleted that auction. See [Organisation settings](/guide/account/organization).
-- The sequence needs stock. If you add an English auction to a sequence that holds no units, the auction opens sold out. Set units in [Allocate stock to a drop](/guide/create/stock-allocation).
+- **Checkout support:** Your checkout must be able to charge the winning bid. Auctions are included on every Fanfare plan—if the **Auction** card shows **"Needs a checkout that charges the winning bid"**, upgrading won't unlock it. Switch to **Fanfare checkout** or connect a checkout that supports auction pricing in your organization's currency. See [Checkout options](/concepts/checkout-options), or [On Shopify](/guide/create/auction#on-shopify) if you're using the Shopify app.
+- **Currency lock:** Your organization's currency can't be changed while any undeleted auction exists, or while a winner from an ended auction is still inside their payment window (even if you've deleted that auction). See [Organization settings](/guide/account/organization).
+- **Allocated stock:** Make sure the sequence holds units—adding an English auction to a sequence with zero units causes it to open sold out. See [Allocate stock to a drop](/guide/create/stock-allocation).
 
-Auctions have no **Payment** step. A winner always pays after winning, and customers always join by placing a bid: there is no guest entry and no automatic entry.
+Auctions don't have a **Payment** step: winners always pay after winning, and shoppers always enter by placing a bid (no guest access or automatic entry).
 
 ## Choose English or Dutch
 
-| Type | How the price moves | What you set |
+| Type | How pricing works | Key settings |
 | --- | --- | --- |
-| English | Rises with each bid. When the auction settles, the highest bidder wins. | **Reserve Price**, **Minimum Bid Increment**, auto-extend |
-| Dutch | Starts at **Start Price** and drops by **Price Drop Amount** at each interval, never below **Floor Price**. At settle, the price freezes wherever it has landed. | **Start Price**, **Floor Price**, **Price Drop Amount**, **Price Drop Interval (seconds)**, quantity |
+| **English** | Price rises with each bid; the highest bidder wins when the auction settles. | **Reserve Price**, **Minimum Bid Increment**, auto-extend |
+| **Dutch** | Starts at **Start Price** and drops by **Price Drop Amount** each interval, never below **Floor Price**. At settle, the price freezes where it stands. | **Start Price**, **Floor Price**, **Price Drop Amount**, **Price Drop Interval (seconds)**, quantity |
 
 <Warning>
-  The auction type is fixed when you create the auction. The edit screen shows it as text with no way to change it. To switch type, create a new auction.
+  **Auction type is permanent.** Once you create an auction, you can't switch between English and Dutch—create a new auction instead.
 </Warning>
 
 ## Create an auction with a new experience
 
-1. Go to **Experiences → Create Experience**.
-2. On **Experience type**, select **Auction**.
-3. On **Configure Experience**, pick the products and enter **Experience Name**. Set **Time Zone**, then **Opens At**, **Closes At** and **Settles**. **Settles** is when bidding ends and must fall between **Opens At** and **Closes At**.
-4. On **Stock**, set the units for each size. A Dutch auction sells the total of these sizes. An English auction ignores them: the new sequence gets one unit of each size, and the auction offers that unit.
-5. On **Auction Configuration**, under **Auction type**, choose **English auction** or **Dutch auction**. Nothing is chosen until you pick one. Fill in the fields for that type (see the tables below).
-6. Complete **Access** and **Review & launch**, then select **Create experience**.
+Shared wizard steps and default times are covered in [Create an experience](/guide/create/experiences). Here's what's specific to an auction:
 
-The steps shared by every experience, and the default times the wizard fills in, are in [Create an experience](/guide/create/experiences).
+<Steps>
+  <Step title="Choose Auction">
+    Open **Experiences**, select **Create Experience**, and choose **Auction**.
+  </Step>
+  <Step title="Set products and schedule">
+    On **Configure Experience**, pick your products, enter an **Experience Name**, and set **Time Zone**, **Opens At**, **Closes At**, and **Settles**. **Settles** is when bidding ends and must fall between **Opens At** and **Closes At**.
+  </Step>
+  <Step title="Allocate stock">
+    On **Stock**, enter units per size. A Dutch auction sells the total across sizes. An English auction ignores the quantities you type and assigns one unit of each size to the sequence.
+  </Step>
+  <Step title="Pick the auction type and pricing">
+    On **Auction Configuration**, choose **English auction** or **Dutch auction**, then review and adjust the pricing fields (see the tables below).
+  </Step>
+  <Step title="Set access and create">
+    Complete **Access** and **Review & launch**, then select **Create experience**.
+  </Step>
+</Steps>
 
 ## Add an auction to an existing sequence
 
-1. Open the experience, then the sequence. On its **Overview** tab, select **Add distribution** on the **Distributions** card.
-2. Enter a **Name**, choose **Auction**, then select **Next**.
-3. On **Schedule**, set **Opens**, **Closes**, **Time zone** and **Settle at**. The window cannot overlap another distribution in the same sequence: see [Distributions](/concepts/distributions/overview).
-4. Select **Next**. On the **Configure** step, choose **Auction Type**: **English (ascending)** or **Dutch (descending)**. English is selected to begin with. Fill in the fields for that type.
-5. Select **Next**, check the review, then select **Create Distribution**.
+1. Open your experience, then open the sequence you want to add to.
+2. On the **Overview** tab, select **Add distribution** in the **Distributions** card.
+3. Enter a **Name**, choose **Auction**, and select **Next**.
+4. On **Schedule**, set **Opens**, **Closes**, **Time zone**, and **Settle at** (same field as **Settles** in the wizard and **Edit**). Windows in the same sequence can't overlap—see [Distributions](/concepts/distributions/overview).
+5. On **Configure**, choose **English (ascending)** (selected by default) or **Dutch (descending)** under **Auction Type**, then fill in your pricing fields and select **Next**.
+6. Review your settings and select **Create Distribution**.
 
-The same field is labelled **Settle at** here and **Settles** in the wizard and on the edit screen.
+To reuse an existing auction's configuration, select **Duplicate** from its card menu. See [Add and gate sequences](/guide/create/sequences).
 
-<Note>
-  If you set an extension, **Settle at** must leave at least that long before **Closes**: "Settles must be at least the extension length before Closes, so a late bid can still extend the auction". A late bid extends the auction once, by the extension length, and never past **Closes**.
-</Note>
-
-To copy an auction you already have, open the menu on its card and select **Duplicate**. See [Add and gate sequences](/guide/create/sequences).
-
-<Frame caption="Choose the auction type here.">
+<Frame caption="Select English or Dutch auction to configure its pricing rules.">
   <img src="/images/guide/guide-create-auction-type.webp" alt="The Auction type choice with two cards, English auction and Dutch auction, each listing its pricing fields, with the pair outlined." />
 </Frame>
 
 <Note>
-  The wizard fills in starting values; **Add distribution** leaves the price fields blank. The wizard works from a base price: the lowest price of the first product you picked, or 100 if that product has no price. **Reserve Price** and **Floor Price** start at the base price, **Start Price** at one and a half times it, **Minimum Bid Increment** at 5, and the price drops by 10 every 5 minutes. Check every price before you create the auction.
+  **Leave room for auto-extend:** If you turn on auto-extend, **Settle at** (or **Settles**) must leave at least the full extension length before **Closes**. A late bid extends the auction once by that duration, and never past **Closes**.
+</Note>
+
+<Note>
+  **Check prefilled wizard prices:** **Add distribution** leaves price fields blank, while the experience wizard prefills starting values from a base price (the lowest price of your first selected product, or `100` if unpriced): **Reserve Price** and **Floor Price** default to the base price, **Start Price** to 1.5× the base price, **Minimum Bid Increment** to `5`, and **Price Drop Amount** to `10` every `5 minutes`. Review every price before creating your auction.
 </Note>
 
 ## English auction settings
 
-| Setting | What it does | Default | Can you change it once it is live? |
+| Setting | What it does | Default | Editable once live? |
 | --- | --- | --- | --- |
-| **Reserve Price** | The lowest winning bid. If the highest bid is below it, there is no winner. Optional. | Wizard: the base price. **Add distribution**: blank. | No |
-| **Minimum Bid Increment** | How much each bid must beat the one before. In the wizard it cannot be smaller than the currency's smallest unit, such as 0.01 in US dollars. Optional. | Wizard: 5. **Add distribution**: blank. | No |
-| **Auto-Extend** and **Extension Duration** (wizard); **Auto Extend Seconds** (**Add distribution** and edit) | Gives late bidders more time. A bid placed within the extension length of **Settles** moves **Settles** later by that length, once, and never past **Closes**. In the wizard you switch it on and pick 1, 2, 5, 10, 15 or 30 minutes; elsewhere you type a number of seconds. | Off | Yes |
+| **Reserve Price** | Minimum winning bid. If the highest bid stays below it, nobody wins. Optional. | Wizard: base price; **Add distribution**: blank | No |
+| **Minimum Bid Increment** | Minimum amount each new bid must beat the current bid by (in the wizard, at least your currency's smallest unit, like `0.01` USD). Optional. | Wizard: `5`; **Add distribution**: blank | No |
+| **Auto-Extend** and **Extension Duration** (wizard) / **Auto Extend Seconds** (**Add distribution** and **Edit**) | Gives late bidders extra time. A bid placed within this window before **Settles** pushes **Settles** out once by the same length (never past **Closes**). Choose 1, 2, 5, 10, 15, or 30 minutes in the wizard, or enter seconds elsewhere. | Off | Yes |
 
-An English auction has no quantity to enter. On a sequence that counts its stock it offers one unit of each size, and the winner takes one. When you add it to a sequence that holds more, the units it does not sell stay in the sequence. On a sequence that does not count its stock, it still has one winner, but Fanfare takes no unit from the sequence's stock for them, and **Add distribution** shows no units summary.
+English auctions don't have a quantity field. On a stock-tracked sequence, the auction offers one unit of each size and the winner takes one (any extra units remain in the sequence). On an untracked sequence, it still picks one winner without deducting stock, and **Add distribution** doesn't show a units summary.
 
 ## Dutch auction settings
 
-| Setting | What it does | Default | Can you change it once it is live? |
+| Setting | What it does | Default | Editable once live? |
 | --- | --- | --- | --- |
-| **Start Price** | The price when the auction opens. Must be above zero. | Wizard: one and a half times the base price. **Add distribution**: blank. | No |
-| **Floor Price** | The lowest the price can fall. Cannot be above **Start Price**. Optional. | Wizard: the base price. **Add distribution**: blank. | No |
-| **Price Drop Amount** | How much the price falls at each interval. Must be above zero. | Wizard: 10. **Add distribution**: blank. | No |
-| **Price Drop Interval (seconds)** | How often the price falls. In the wizard you pick 1, 2, 5, 10, 15 or 30 minutes; elsewhere you type seconds, at least 1. | Wizard: 5 minutes. **Add distribution**: blank. | No |
-| **Quantity** | How many units the auction sells. | See below | No |
+| **Start Price** | Opening price when bidding starts (must be above `0`). | Wizard: 1.5× base price; **Add distribution**: blank | No |
+| **Floor Price** | Lowest price the auction can reach (can't exceed **Start Price**). Optional. | Wizard: base price; **Add distribution**: blank | No |
+| **Price Drop Amount** | Amount the price steps down at each interval (must be above `0`). | Wizard: `10`; **Add distribution**: blank | No |
+| **Price Drop Interval (seconds)** | How often the price drops. Pick 1, 2, 5, 10, 15, or 30 minutes in the wizard, or enter seconds (at least `1`) elsewhere. | Wizard: 5 minutes; **Add distribution**: blank | No |
+| **Quantity** | Total units the auction sells. | See below | No |
 
-Where the quantity comes from depends on where you create the auction:
+How **Quantity** is set depends on where you create the auction:
 
-- In the wizard, it is the total of your sizes on the **Stock** step, shown read-only. Change it on that step.
-- With **Add distribution**, on a sequence that counts its stock, there is no **Quantity** field: the auction sells the sum of the sizes on the sequence's **Stock** card, and the dialogue shows the total. On a sequence that does not count its stock, you enter **Quantity**, at least 1.
+- **In the wizard:** Automatically equals the total units entered on **Stock** (edit it on that step).
+- **In Add distribution:** On a stock-tracked sequence, it automatically equals the sum of sizes on the sequence's **Stock** card. On an untracked sequence, enter **Quantity** manually (at least `1`).
 
-The Configure step previews the price descent from the values you enter.
+The **Configure** step previews the price drop schedule as you enter your values.
 
-<Frame caption="On a sequence that counts its stock, a Dutch auction sells the total of its sizes.">
-  <img src="/images/guide/guide-create-auction-dutch.webp" alt="The Dutch auction fields in the Add Distribution dialogue, with a per-size units summary totalling 24 units in place of a quantity field, and a preview of the falling price." />
+<Frame caption="On a stock-tracked sequence, a Dutch auction automatically sells the total allocated across sizes.">
+  <img src="/images/guide/guide-create-auction-dutch.webp" alt="The Dutch auction fields in the Add Distribution dialog, with a per-size units summary totaling 24 units in place of a quantity field, and a preview of the falling price." />
 </Frame>
 
 ## Edit an auction
 
-Select **Edit** on the auction's card on the sequence's **Overview** tab. The settings are in two sections, **Schedule** and **Configuration**.
+Open the sequence's **Overview** tab and select **Edit** on the auction card to adjust **Schedule** or **Configuration**.
 
 <Warning>
-  Pricing is locked once the auction opens. Changes to **Reserve Price**, **Minimum Bid Increment**, **Start Price**, **Floor Price**, **Price Drop Amount**, **Price Drop Interval (seconds)** and **Quantity** are refused from 30 seconds before **Opens**. Once the auction opens, those fields are disabled and the edit screen shows "Pricing is locked once the auction opens". The only way to change them is to deactivate the auction and create another. Deactivating voids every bid and cannot be undone: see [Stop a drop](/guide/drop/deactivate).
+  **Pricing locks 30 seconds before Opens.** Once an auction approaches its open time, **Reserve Price**, **Minimum Bid Increment**, **Start Price**, **Floor Price**, **Price Drop Amount**, **Price Drop Interval (seconds)**, and **Quantity** can no longer be changed. To change pricing after that point, you must **Deactivate** the auction (which voids every bid and can't be undone) and create a new one. See [Stop a drop](/guide/drop/deactivate).
 </Warning>
 
-On a sequence that counts its stock, a Dutch auction's quantity is not edited here. The edit screen shows it as "From allocation", and it follows the sizes on the sequence's **Stock** card until the auction opens.
+On a stock-tracked sequence, a Dutch auction's quantity displays as **"From allocation"** in **Edit** and tracks the sequence's **Stock** card until the auction opens.
 
-After the auction opens you can still:
+After an auction opens, you can still:
 
-- move **Closes**, and move **Opens** earlier but not later
-- change **Auto Extend Seconds**, on an English auction
-- change **Settles**, as long as it stays inside the window and leaves room for the extension
-Once bidding has ended, at **Settles** or at the end of an extension, the schedule can no longer change. The full rules for every distribution are in [What locks, and when](/concepts/what-locks-when).
+- Move **Closes**, or move **Opens** earlier (never later)
+- Adjust **Auto Extend Seconds** on an English auction
+- Adjust **Settles**, as long as it stays inside the window and leaves room for any extension
+
+Once bidding ends (at **Settles** or the end of an extension), the schedule locks completely. See [What locks, and when](/concepts/what-locks-when) for the full lock-in timeline.
 
 {/* image: guide-create-auction-pricing-locked */}
 
-To follow bids while the auction runs, see [Watch a live drop](/guide/drop/watch-live). What customers see while they bid is in [What your customers see](/guide/drop/what-customers-see).
+To track bids in real time, see [Watch a live drop](/guide/drop/watch-live). For the bidder experience, see [What your customers see](/guide/drop/what-customers-see).
 
 ## On Shopify
 
-In the Fanfare app in Shopify, **Auction** can show as locked with "Needs a checkout that charges the winning bid". Upgrading your Fanfare plan does not lift it. Shopify checkout counts as able to charge the winning bid only when all of these hold:
+In the Shopify app, **Auction** stays locked with **"Needs a checkout that charges the winning bid"** (regardless of your Fanfare plan) until all four requirements are met:
 
-- Your shop is on Shopify Plus.
-- The Fanfare app has every permission it asks for in Shopify.
-- The **Fanfare checkout validation** rule is on in Shopify's checkout settings, with **Allow all customers to complete checkout** unticked. Fanfare never turns the rule back on if you switch it off. See [Checkout protection](/guide/shopify/checkout-protection).
-- Your shop's currency is the same as your Fanfare organisation's currency.
+- Your store is on **Shopify Plus**.
+- The Fanfare app has all requested permissions in Shopify.
+- The **Fanfare checkout validation** rule is turned on in Shopify's checkout settings, with **Allow all customers to complete checkout** unchecked. Fanfare won't re-enable this rule if you turn it off. See [Checkout protection](/guide/shopify/checkout-protection).
+- Your Shopify store's currency matches your Fanfare organization's currency.
 
 ## Troubleshooting
 
 <AccordionGroup>
-  <Accordion title="The Auction card is greyed out with 'Needs a checkout that charges the winning bid'">
-    Your organisation's checkout cannot charge the winning bid. Switch to Fanfare checkout, or connect a checkout that supports auction pricing in your organisation's currency. Changing your Fanfare plan makes no difference. On Shopify, see [On Shopify](/guide/create/auction#on-shopify).
+  <Accordion title="Auction is grayed out with 'Needs a checkout that charges the winning bid'">
+    Your current checkout can't charge dynamic winning bids—upgrading your Fanfare plan won't unlock it. Switch to **Fanfare checkout** or connect a checkout that supports auction pricing in your organization's currency. Using Shopify? Check the four requirements under [On Shopify](/guide/create/auction#on-shopify).
   </Accordion>
-  <Accordion title="'Settles must be at least the extension length before Closes'">
-    The extension would run past **Closes**. Move **Settles** earlier, move **Closes** later, or choose a shorter extension. In the wizard the same problem shows on **Auction Configuration** as "This extension is longer than the time between Settles and Closes. Choose a shorter one, or move Settles earlier or Closes later in the schedule".
+  <Accordion title="My auto-extend duration is rejected">
+    Your extension would push settlement past **Closes**. Move **Settles** (or **Settle at**) earlier, push **Closes** later, or shorten the extension length.
   </Accordion>
-  <Accordion title="The price fields are greyed out when I edit the auction">
-    The auction has opened, so its pricing is locked. Deactivate it and create another auction if the prices must change.
+  <Accordion title="The price fields are grayed out when editing">
+    Pricing locks 30 seconds before the auction opens. If pricing must change, deactivate the auction and create a new one.
   </Accordion>
   <Accordion title="I can't get past the Dutch auction settings">
-    In the wizard, "Set the units for each size on the Stock step first." means the **Stock** step has no units yet: select **Go to Stock** and fill them in. With **Add distribution** on a sequence that counts its stock, **Next** stays disabled while any size is listed as missing or the sizes add up to zero. Give every size a number of units on the sequence's **Stock** card.
+    Your stock allocation is missing units. In the wizard, select **Go to Stock** and enter units for each size. In **Add distribution** on a stock-tracked sequence, give every size a unit count on the sequence's **Stock** card so the total is above zero.
   </Accordion>
 </AccordionGroup>
 
@@ -141,15 +154,15 @@ In the Fanfare app in Shopify, **Auction** can show as locked with "Needs a chec
 
 <CardGroup>
   <Card title="Auction" href="/concepts/distributions/auction">
-    How English and Dutch auctions run, settle and pick a winner.
+    How English and Dutch auctions run, settle, and pick a winner.
   </Card>
   <Card title="Allocate stock to a drop" href="/guide/create/stock-allocation">
     Set the units per size that an auction sells.
   </Card>
   <Card title="Watch a live drop" href="/guide/drop/watch-live">
-    Follow bids and extensions while the auction runs.
+    Follow bids and extensions while an auction runs.
   </Card>
   <Card title="Stop a drop" href="/guide/drop/deactivate">
-    Deactivate an auction, and the cases where Fanfare refuses.
+    Deactivate an auction and learn when Fanfare blocks deactivation.
   </Card>
 </CardGroup>

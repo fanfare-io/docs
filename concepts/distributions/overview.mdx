@@ -1,127 +1,129 @@
 ---
 title: Distributions
-description: The five ways a sequence releases your product, how to choose between them, and how their time windows work inside a sequence.
+description: Compare Fanfare's five distribution types—queues, draws, auctions, timed releases, and appointments—and learn how their schedules work inside a sequence.
 ---
 
-A distribution is how a sequence releases its products to customers during a time window: a queue, a draw, an auction, a timed release, or an appointment, which hands out time slots instead of products. These are the only five types. Each distribution belongs to exactly one sequence, and a sequence is one way in to an experience. The type decides how customers compete for your stock, when they pay, and whether they have to sign in.
+A **distribution** controls how customers claim access to your drop during a scheduled window. Fanfare offers five types: queues, draws, auctions, timed releases, and appointments. Each distribution belongs to a single sequence and determines how customers compete for stock, when they pay, and whether they need to sign in.
 
-The waitlist is not a distribution. Every sequence has one, whatever distributions it runs: see [Waitlists](/concepts/waitlists).
+Waitlists aren't a distribution type—every product sequence includes a waitlist automatically, regardless of which distributions it runs. See [Waitlists](/concepts/waitlists).
 
-## The five types compared
+## Compare the five types
 
-| Type | Who gets in | Guests allowed? | Payment | Settle moment | Plan |
+| Type | Best for | Guest access | Payment | Settle time | Plan |
 | --- | --- | --- | --- | --- | --- |
-| [Queue](/concepts/distributions/queue) | "Admit people in order at a steady rate." | Optional, off by default | You choose | None | Every plan |
-| [Draw](/concepts/distributions/draw) | "Randomly select winners from everyone who enters." | Optional, off by default | You choose | **Draw at** | Every plan |
-| [Auction](/concepts/distributions/auction) | "Let people bid — the highest bids win." | Never | Always after winning | **Settle at** | Every plan |
-| [Timed Release](/concepts/distributions/timed-release) | "Open access at a set time, first come first served." | Optional, off by default | Always after getting in | None | Every plan |
-| [Appointment](/concepts/distributions/appointment) | "Offer bookable time slots." | Never | Never charges; hands out no products | None | Growth and above ([plans](/guide/start/plans)) |
+| [Queue](/concepts/distributions/queue) | First-come, first-served drops with paced checkout traffic | Optional (off by default) | Pay after admission or card hold on entry | None | All plans |
+| [Draw](/concepts/distributions/draw) | High-demand drops where luck decides who buys | Optional (off by default) | Pay after winning or card hold on entry | **Draw at** | All plans |
+| [Auction](/concepts/distributions/auction) | Rare or one-of-a-kind items where demand sets the price | Sign-in required | After winning | **Settle at** | All plans |
+| [Timed Release](/concepts/distributions/timed-release) | Standard scheduled launches with no waiting room | Optional (off by default) | After entering | None | All plans |
+| [Appointment](/concepts/distributions/appointment) | In-store fittings, pickups, trunk shows, or private sessions | Sign-in required | No payment or product checkout | None | Growth and above ([plans](/guide/start/plans)) |
 
-"You choose" means you pick between paying after getting in and a card hold placed on entry. That choice exists only when Fanfare runs the checkout and a payment provider is connected; with your own checkout there is nothing to choose. See [Admission and the payment window](/concepts/admission-and-payment).
+<Note>
+  Choosing between paying after admission and placing a card hold on entry applies when Fanfare runs checkout with a connected payment provider. If you use your own external checkout, payment happens there after admission. See [Admission and the payment window](/concepts/admission-and-payment).
+</Note>
 
-The settle moment is the time results are decided. The Add distribution wizard labels it **Draw at** or **Settle at**. The experience creation wizard and the edit dialogue label it **Draw date** for a draw and **Settles** for an auction.
+### Choosing the right distribution
 
-### Which one fits
+- **Queue** — Demand exceeds supply and you want fair, first-come, first-served access. Shoppers wait in a virtual waiting room (early arrivals are shuffled once at open) and enter checkout at a steady rate, keeping traffic smooth.
+- **Draw** — Stock is tight and everyone should have an equal shot regardless of speed. Winners are selected randomly from everyone who enters.
+- **Auction** — You're releasing limited, high-value, or one-off pieces and want bidding to discover the price—either ascending (English) or descending (Dutch).
+- **Timed Release** — You want a clean, scheduled launch that opens to everyone at once, with no queue or waiting room.
+- **Appointment** — You want shoppers to reserve a specific time slot to visit in person or meet online. Appointments reserve time rather than selling products.
 
-- **Queue**: more demand than supply and you want first come, first served once it opens (customers already waiting at **Opens** are shuffled once). Customers wait in a virtual waiting room and are let in at a steady rate, which also protects your checkout from a rush.
-- **Draw**: limited stock and everyone should have the same chance. Winners are picked at random from everyone who enters.
-- **Auction**: one-off or high-value items where you want bidding to find the price. The highest bidders win.
-- **Timed Release**: a standard release that opens for everyone at a set time, with no queue.
-- **Appointment**: a scheduled time for each customer to shop or visit, such as a fitting or a pickup. It spreads people out and sells nothing itself.
+## How distribution windows work
 
-## The window
+Every distribution has **Opens**, **Closes**, and a **Time zone** (labeled **Time Zone** when editing), defaulting to your experience's time zone.
 
-Every distribution has **Opens**, **Closes** and a **Time zone** (shown as **Time Zone** in the edit dialogue). The time zone starts as the experience's.
+- Both **Opens** and **Closes** are required, entered in whole minutes, and **Closes** must come after **Opens**.
+- **Opens** can't be in the past when you create a distribution (allowing a few minutes' grace).
+- Pick your time zone before setting times. Changing the time zone afterward preserves the same moments in time, so the clock times adjust to the new zone.
 
-- Both times are required. You cannot create a distribution without a close time.
-- **Closes** must be after **Opens**.
-- **Opens** cannot be in the past when you create a distribution, with a few minutes' grace.
-- Times are whole minutes.
-- Set the time zone before you pick times. Changing it afterwards keeps the same moments, so the clock times shown change to the new zone.
+Each distribution type uses its window slightly differently:
 
-What the window means depends on the type. Each page below explains it:
+- **Queue** — Opens a pre-open waiting room 5 minutes before **Opens**. See [Queue](/concepts/distributions/queue).
+- **Draw** — Stops accepting entries at **Closes**. The settle moment (**Draw at** when adding a distribution, or **Draw date** in the experience wizard and edit dialog) must fall between **Opens** and **Closes**. See [Draw](/concepts/distributions/draw).
+- **Auction** — Stops accepting bids at **Settle at** (labeled **Settles** in the experience wizard and edit dialog), or earlier if a Dutch auction sells out. Auto-extend can push an English auction's settle time back once on a late bid. Winners have 30 minutes to pay from the end of bidding (English) or purchase (Dutch), even if that runs past **Closes**. See [Auction](/concepts/distributions/auction).
+- **Appointment** — Uses **First bookable slot** instead of **Opens** to define which slots are offered, not when booking starts. Customers can book as soon as your page goes live. See [Appointment](/concepts/distributions/appointment).
 
-- A [queue](/concepts/distributions/queue) opens its waiting room five minutes before **Opens**.
-- A [draw](/concepts/distributions/draw) stops taking entries at **Closes**. **Draw at** must fall inside the window.
-- An [auction](/concepts/distributions/auction) stops taking bids at **Settle at**, or earlier if a Dutch auction sells out. With auto-extend set, a late bid in an English auction can push that back once. An English winner has 30 minutes to pay from the end of bidding, and a Dutch buyer 30 minutes from buying, even if that runs past **Closes**.
-- An [appointment](/concepts/distributions/appointment) shows **First bookable slot** in place of **Opens**. It sets which slots exist, not when booking starts: customers can book as soon as the page is live.
+## Status follows the clock
 
-## Status follows the window
+There's no manual launch button—each distribution moves through its lifecycle automatically based on its schedule:
 
-There is no launch step. A distribution's status comes from its window and the clock:
-
-| Status | When |
+| Status | When it appears |
 | --- | --- |
-| Scheduled | Before **Opens**. The card on the sequence shows "Opens" with the time if it opens today, or the date if later. |
-| Live | Inside the window. |
-| Ended | After the window has closed. For an auction, see the settling stage below. |
-| Ended early | You deactivated it before its window ended. Deactivating after the window has ended leaves it showing Ended. For an auction, "before" means before bidding ends: deactivating it during the winner's time to pay leaves it Ended. |
+| **Scheduled** | Before **Opens**. On the sequence card, it displays the opening time (if today) or date. |
+| **Live** | During the open window. |
+| **Ended** | After the window closes. |
+| **Ended early** | You deactivated the distribution before its window closed (or before bidding ended for an auction). Deactivating after the window closes—or during an auction winner's payment window—leaves it as **Ended**. |
 
-A draw or an auction has a settling stage after entry or bidding ends, while results are worked out. A draw's card reads Live until the draw has finished picking winners and they have paid or run out of time, then Ended. An auction's card names its stage instead, Settling and then Settled, until **Closes**. The public page reports both as closed. How these statuses roll up to the sequence and the experience is on [Experiences](/concepts/experiences).
+Draws and auctions go through a settling period after entry or bidding ends while winners are finalized. A draw stays **Live** in the admin until winners are selected and finish checking out (or expire), then switches to **Ended**. An auction displays **Settling** and then **Settled** until **Closes**. On the storefront, customers see both as closed once entry or bidding stops. See [Experiences](/concepts/experiences) for how distribution statuses roll up to the sequence and experience.
 
-Deactivating a distribution cannot be undone. What you can still change once a distribution has opened, and what Deactivate does, is on [What locks, and when](/concepts/what-locks-when).
+<Warning>
+  Deactivating a distribution can't be undone. See [What locks, and when](/concepts/what-locks-when) to check what you can still edit once a drop opens and what **Deactivate** does.
+</Warning>
 
-<Frame caption="A sequence's distributions are listed on its Overview, with the live one first.">
+<Frame caption="A sequence's distributions appear on its Overview tab, with the active distribution listed first.">
   <img src="/images/guide/concepts-distributions-sequence-card.webp" alt="The Distributions card for a sequence, showing a Live queue with its closing countdown and live figures, two upcoming distributions (an appointment and an auction), and an Add distribution row at the bottom." />
 </Frame>
 
-## Several distributions in one sequence
+## Running multiple distributions in one sequence
 
-A sequence can hold any number of distributions, of any mix of types. They run one after another, never at the same time.
+A sequence can contain any number of distributions in any mix of types, running one after another.
 
-- Windows in one sequence cannot overlap, and a distribution you have deactivated still holds its window until you delete it. If you add or edit a window so that it overlaps another, the admin shows "Schedule conflict" with the name of the distribution in the way, and will not let you continue.
-- Back-to-back windows are fine: the next one can open at the same minute the previous one closes. It sells what is left of the sequence's units, but only once everyone the previous one let in has paid or run out of time to pay. Until then it shows Live but lets no one in. See [Stock](/concepts/stock).
-- To run two distributions at the same time, put them in two sequences. See [Sequences and routing](/concepts/sequences).
+- **No overlapping windows:** Distributions in the same sequence can't overlap—even a deactivated distribution holds its original window until you delete it. Trying to save an overlapping schedule triggers a **"Schedule conflict"** notice naming the conflicting distribution.
+- **Back-to-back windows work seamlessly:** You can start the next distribution the exact minute the previous one closes. It sells whatever units remain in the sequence, starting as soon as everyone admitted by the previous distribution finishes checking out or expires (until then, it shows **Live** without admitting new shoppers). See [Stock](/concepts/stock).
+- **Need two distributions running simultaneously?** Put them in separate sequences. See [Sequences and routing](/concepts/sequences).
 
-**Duplicate**, in a distribution card's menu, copies its type and settings but clears every date, including **Opens** and **Closes**. Choose a new window that does not overlap any other distribution in the sequence.
+To reuse a setup, choose **Duplicate** from a distribution card's menu. It copies the distribution type and settings while clearing all dates so you can assign a fresh window.
 
-<Frame caption="Windows in one sequence run back to back and cannot overlap; to run two distributions at the same time, put them in two sequences.">
+<Frame caption="Distributions in one sequence run back to back without overlapping; use separate sequences to run two distributions at the same time.">
   <img src="/images/guide/concepts-distributions-windows.webp" alt="Two sequences on a timeline from 10:00 to 18:00. In the first sequence, a queue (10:00 to 12:00, Live) is followed back to back by a timed release (12:00 to 18:00, Scheduled), and a third window from 11:00 to 14:00 that overlaps the queue is refused with Schedule conflict. In the second sequence, a draw from 11:00 to 14:00 overlaps the queue in time and is accepted." />
 </Frame>
 
-## Settings several types share
+## Shared settings across types
 
-Each of these is explained on its own page:
+Several settings work consistently across multiple distribution types:
 
-- **Payment collection** and **Automatic entry** (queues, draws and timed releases for automatic entry; queues and draws for payment collection): [Admission and the payment window](/concepts/admission-and-payment).
-- **Allow guest access** (queues, draws and timed releases): lets customers enter without signing in, as long as every other open or scheduled distribution in the sequence allows guests too. An auction or appointment never allows guests, so while one is open or scheduled the whole sequence asks customers to sign in. Giving the sequence an audience turns guest access off. See [Customers and identity](/concepts/customers) and [Sequences and routing](/concepts/sequences).
-- **Bias toward loyal consumers** (queues and draws): uses loyalty points to weight a draw's random order, or a queue's order for people who join before it opens. Without a running loyalty programme it is locked with "Needs a loyalty program". See [Loyalty and Fanfair](/concepts/loyalty).
-- **Name**: not only for you. Customers can see it, for example in the waitlist's opens-soon email. See [Waitlists](/concepts/waitlists).
+- **Payment collection** and **Automatic entry** — Choose when to charge customers (queues and draws) and whether eligible shoppers enter automatically (queues, draws, and timed releases). See [Admission and the payment window](/concepts/admission-and-payment).
+- **Allow guest access** — Lets shoppers enter queues, draws, and timed releases without signing in, provided every other open or scheduled distribution in the sequence allows guests too. Adding an open or scheduled auction or appointment—or gating the sequence with an audience—requires sign-in across the entire sequence. See [Customers and identity](/concepts/customers) and [Sequences and routing](/concepts/sequences).
+- **Bias toward loyal consumers** — Uses loyalty points to weight random order in a draw or a queue's pre-open waiting room. Requires an active loyalty program (Pro and above); otherwise it's locked with **"Needs a loyalty program"**. See [Loyalty and Fanfair](/concepts/loyalty).
+- **Name** — Customer-facing, not just internal. Shoppers see it in places like waitlist notifications, so give it a clear public title. See [Waitlists](/concepts/waitlists).
 
-## What decides which types you can add
+## What determines which types you can add
 
-- Your plan. A type your plan does not include is marked "Available on" with the plan's name, with a link to upgrade, and cannot be picked. After a downgrade, distributions you already have keep running and you can still edit them, but you cannot create or duplicate one of a type your plan no longer includes. See [Plans and what they unlock](/guide/start/plans).
-- Your checkout. Auction needs a checkout that can charge the winning bid. If yours cannot, Auction shows "Needs a checkout that charges the winning bid" and cannot be picked. This is not a plan lock: upgrading does not lift it. See [Checkout options](/concepts/checkout-options).
-- The sequence's product selection. Timed Release can still be picked in a sequence that assigns products as a **Mystery Box**, but creating it is refused with "Timed release can't be combined with Mystery Box products". See [Timed release](/concepts/distributions/timed-release).
-## Worked example
+- **Your plan:** Types outside your current plan appear with an **"Available on [Plan]"** badge and an upgrade link. If you downgrade later, existing distributions keep running and remain editable, but you can't create or duplicate types your plan doesn't include. See [Plans and what they unlock](/guide/start/plans).
+- **Your checkout:** Auctions require a checkout that can charge the winning bid. If yours can't, **Auction** shows **"Needs a checkout that charges the winning bid"**—this is a checkout requirement, not a plan limit. See [Checkout options](/concepts/checkout-options).
+- **Product selection:** Timed releases can't be combined with **Mystery Box** product selection; trying to save one displays **"Timed release can't be combined with Mystery Box products"**. See [Timed release](/concepts/distributions/timed-release).
 
-Northbound Supply Co. sells the Phantom Stitch Anorak through "Phantom Stitch Anorak Drop", which has two sequences:
+## Example: structuring a multi-stage drop
 
-1. Inner Circle Early Access: limited to the Inner Circle audience, running a queue called "Inner Circle Queue".
-2. Public Draw: open to everyone, running a draw called "Public Draw" that opens after the queue has closed.
+Suppose Northbound Supply Co. launches the Phantom Stitch Anorak with two sequences:
 
-The queue and the draw sit in separate sequences for two reasons. They are for different customers: the audience on Inner Circle Early Access would also restrict the draw to members if the draw were in the same sequence. And each sequence sells only its own units: see [Stock](/concepts/stock). Their windows do not overlap today, but separate sequences would also let the draw open while members are still queuing. In one sequence, that would be refused with "Schedule conflict".
+1. **Inner Circle Early Access** — Gated to their Inner Circle audience, running an "Inner Circle Queue".
+2. **Public Draw** — Open to everyone, running a "Public Draw" after the queue closes.
 
-If the release were for everyone, one sequence with no audience would do. It could run a queue from 10:00 to 12:00 to handle the opening rush, then a timed release from 12:00 to 18:00 for anyone who comes later. The windows are back to back, so the admin accepts them. At 12:00 the queue reads Ended and lets no one else in: see [Queue](/concepts/distributions/queue). The timed release reads Live, and starts letting customers in once everyone the queue let in has paid or run out of time to pay.
+Splitting these into two sequences solves two things: it keeps the audience gate on VIPs only, and it gives each sequence its own dedicated stock allocation (see [Stock](/concepts/stock)). Even if they wanted the draw to open while VIPs were still queuing, separate sequences allow overlapping schedules without triggering a conflict.
+
+If the drop were open to everyone with a single stock pool, one sequence would do the job: a queue from 10:00 to 12:00 to absorb the opening rush, followed back to back by a timed release from 12:00 to 18:00 for latecomers. At 12:00, the queue ends and the timed release goes **Live**, admitting shoppers as soon as anyone still checking out from the queue finishes or expires.
+
 ## On Shopify
 
-The Fanfare app in Shopify offers four types: Queue, Draw, Auction and Timed Release. Appointment is never offered, on any plan. An appointment never lets a customer buy, so it would leave the Shopify product it sits beside unbuyable.
+The Fanfare app in Shopify supports **Queue**, **Draw**, **Auction**, and **Timed Release**. **Appointment** isn't available in Shopify on any plan—because appointments don't sell products, attaching one to a Shopify product would leave that product unbuyable.
 
-Auction is offered only when your shop's checkout can charge the winning bid. Otherwise it shows the same "Needs a checkout that charges the winning bid" lock. Which shops qualify is on [Checkout protection](/guide/shopify/checkout-protection).
+**Auction** is available only when your store's checkout can charge the winning bid; otherwise it displays **"Needs a checkout that charges the winning bid"**. See [Checkout protection](/guide/shopify/checkout-protection) for eligibility details.
 
 ## Related
 
 <CardGroup>
   <Card title="Sequences and routing" href="/concepts/sequences">
-    Ways in to an experience, and how Fanfare picks one for each customer.
+    How entry paths work and how Fanfare routes each customer to the right sequence.
   </Card>
   <Card title="Add and gate sequences" href="/guide/create/sequences">
-    Add a distribution to a sequence, step by step.
+    Step-by-step instructions for adding distributions to a sequence.
   </Card>
   <Card title="What locks, and when" href="/concepts/what-locks-when">
-    What you can change once a distribution opens, and Deactivate.
+    Which settings stay editable after a distribution opens, and how Deactivate works.
   </Card>
   <Card title="What your customers see" href="/guide/drop/what-customers-see">
-    Each stage of each type, from the customer's side.
+    Preview every stage and customer message across all five distribution types.
   </Card>
 </CardGroup>

@@ -1,145 +1,143 @@
 ---
 title: Stock
-description: How Fanfare keeps a drop from selling more than you have, how units are split between sequences, and what happens when your numbers change mid-drop.
+description: How Fanfare prevents overselling, splits inventory across sequences, and handles mid-drop stock changes and over-allocations.
 ---
 
 import { StockFlowFigure } from "/snippets/figures/stock-flow.jsx";
 
-Stock is how many of each size a drop may sell. When Fanfare keeps the count, every unit is tracked from the moment it arrives to the moment it sells, and your experiences can never be promised more than you have.
+Stock controls how many units of each product and size a drop can sell. When Fanfare manages your inventory, every unit is tracked from initial supply through allocation and checkout—so your drops can never sell more than you actually have.
 
-## Who keeps the count
+## Choosing who manages stock
 
-Every product has a **Stock management** setting, chosen when you create it.
+Every product has a **Stock management** mode set when you create it:
 
-| Setting | Where the count lives | Which checkout may sell it | What caps a drop |
+| Mode | Where the count lives | Eligible checkouts | What caps a drop |
 | --- | --- | --- | --- |
-| **Fanfare-managed** | In Fanfare. Every change is recorded in the product's **Stock history**. | Fanfare checkout only | The units allocated to the experience, and each sequence's share of them |
-| **Not managed** | Nowhere. "No count. Sequence limits are the only cap." | Whichever checkout your organisation uses | Each sequence's limit per size, if you set one |
-| **Shopify-managed** | In Shopify | Shopify checkout only | Each sequence's limit per size, and Shopify's own stock at checkout |
+| **Fanfare-managed** | In Fanfare (every change is logged in **Stock history**) | Fanfare checkout only | Experience allocations and each sequence's share |
+| **Not managed** | Nowhere (per-sequence caps only) | Any checkout your organization uses | Each sequence's per-size limit, if set |
+| **Shopify-managed** | In Shopify | Shopify checkout only | Each sequence's per-size limit, plus Shopify's live stock at checkout |
 
-Three rules about this choice are explained in full where you make it:
+Keep three rules in mind when setting up products:
 
-- The choice is permanent. See [Add products](/guide/create/products).
-- On a Not managed product, the quantity and **When sold out** setting do not cap sales, and Shopify-managed cannot be chosen in the Fanfare admin. See [Manage stock](/guide/create/stock).
-- An experience cannot offer Fanfare-managed and Shopify-managed products together. Not managed products can sit with either. See [Manage stock](/guide/create/stock).
+- **The choice is permanent:** Once a product is created, you can't switch its **Stock management** mode. See [Add products](/guide/create/products).
+- **How checkout shapes your options:** **Fanfare-managed** requires Fanfare checkout. Organizations using an external checkout create **Not managed** products in the admin (where the product-level quantity and **When sold out** settings don't cap sales), while products synced from Shopify are **Shopify-managed** (you can't select **Shopify-managed** manually in the admin). See [Checkout options](/concepts/checkout-options) and [Manage stock](/guide/create/stock).
+- **Don't mix Fanfare-managed and Shopify-managed products:** One experience can't combine both, though **Not managed** products can appear alongside either.
 
-Your checkout decides which settings you get. Fanfare-managed needs Fanfare checkout: an organisation that takes payment on its own checkout creates Not managed products in the admin, and its products synced from Shopify are Shopify-managed. What a stock number means on your own checkout is explained in [Checkout options](/concepts/checkout-options).
+Unless noted otherwise, the rest of this page covers **Fanfare-managed** products.
 
-The rest of this page is about Fanfare-managed goods, except where it says otherwise.
+## How units move through a drop
 
-## How units flow through a drop
+Every Fanfare-managed unit progresses through five stages:
 
-A Fanfare-managed unit moves through five stages:
+1. **Supply** — Opening stock entered at product creation, plus every receipt, adjustment, write-off, and return recorded since.
+2. **Allocated** — Units reserved from Supply for a specific experience, size by size.
+3. **Assigned to a sequence** — Each sequence gets its own slice of the experience's allocation. Units reserved for the experience but not yet given to a sequence stay **Unassigned**.
+4. **In checkout** — Held exclusively for a customer during their payment window. See [Admission and the payment window](/concepts/admission-and-payment).
+5. **Sold** — Payment captured.
 
-1. **Supply**: the opening stock you entered when you created the product, plus every receipt, adjustment, write-off and return recorded since.
-2. **Allocated** to an experience: an experience reserves units from Supply, size by size.
-3. Split across its sequences: a sequence is one way in to an experience, and each sequence gets its own share. Units the experience holds but has not given to a sequence are **Unassigned**.
-4. **In checkout**: a customer who has the right to buy holds a unit while they pay. See [Admission and the payment window](/concepts/admission-and-payment).
-5. **Sold**: the payment was captured.
+Sequences never share stock—a sequence sells only the units allocated to it, even if another sequence in the same experience still has units left. See [Sequences and routing](/concepts/sequences).
 
-Units are not shared between sequences. A sequence sells only its own units, even when another sequence still has some left. See [Sequences and routing](/concepts/sequences).
+On any product page, the **Stock by SKU** panel tracks these counts per size:
 
-The product's **Stock by SKU** panel shows these figures for each size.
-
-| Figure | What it means |
+| Metric | What it means |
 | --- | --- |
-| **Supply** | Opening stock plus every recorded change. |
-| **Sold** | Units whose payment was captured. A refund does not reduce it. |
-| **On hand** | Supply − Sold. |
-| **Allocated** | The units all your experiences hold of this size. |
-| **Available** | Supply − Allocated: what can still go into an experience. An over-allocated size shows "Over-allocated by [count]" here. |
-| **At risk** | Units in live checkouts that On hand no longer covers. Normally 0. |
+| **Supply** | Opening stock plus all recorded receipts, adjustments, write-offs, and restocked returns. |
+| **Sold** | Units with captured payment (refunds don't reduce this number). |
+| **On hand** | `Supply − Sold`. |
+| **Allocated** | Total units reserved across all your experiences for this size. |
+| **Available** | `Supply − Allocated`: units free to allocate to an experience. If negative, displays **Over-allocated by [count]**. |
+| **At risk** | Units currently in live checkouts that **On hand** no longer covers (normally `0`). |
+
 <StockFlowFigure />
 
-## Each sequence has its own limit per size
+## Per-sequence stock limits
 
-Each sequence has a number for each size it offers: the most it may sell. You set it on the sequence's **Stock** card with **Edit allocations**; the steps are in [Allocate stock to a drop](/guide/create/stock-allocation). For Fanfare-managed goods those numbers come out of the experience's allocation, so the sequences together can never hold more than the experience does.
+Each sequence sets the maximum number of units it can sell for every size it offers. Configure these on the sequence's **Stock** card with **Edit allocations**—see [Allocate stock to a drop](/guide/create/stock-allocation). For Fanfare-managed products, sequence limits draw directly from the experience's allocation so sequences can never collectively exceed what the experience holds.
 
 <Warning>
-  A size you do not give a number starts at 0 and shows **Opens sold out**. This is always true for Fanfare-managed goods and on any sequence that runs a Dutch auction. Customers cannot buy that size until you give it units. Check every size on every sequence before the drop.
+  Any size left without a number starts at `0` and displays **Opens sold out**. This always applies to Fanfare-managed products and to every sequence running a Dutch auction. Customers can't buy that size until you allocate units—check every size on every sequence before launch.
 </Warning>
 
-What a size of goods Fanfare does not manage starts at depends on the sequence and your checkout: see [Allocate stock to a drop](/guide/create/stock-allocation).
+For products Fanfare doesn't manage, default starting limits depend on your checkout and distribution type (see [Allocate stock to a drop](/guide/create/stock-allocation)). **No limit** is available only for products Fanfare doesn't manage, and never on a Dutch auction sequence—sizes set to **No limit** never sell out, though Fanfare still tracks **Sold** and **In checkout** counts.
 
-**No limit** exists only for goods Fanfare does not manage, and never on a sequence that runs a Dutch auction. A size with no limit is never stopped or shown as sold out; Fanfare still counts what sold and what is in checkout.
+## What changes once a drop opens
 
-## What changes when a drop opens
+Live stock counting begins about 10 minutes before a sequence opens. Each size on its **Stock** card moves from **Not counting yet** → **Preparing** → **Ready** → **Selling**, exposing live **Sold**, **In checkout**, and **Remaining** counts.
 
-Counting starts about 10 minutes before a sequence opens. The sizes on its **Stock** card move from **Not counting yet** through **Preparing** to **Ready**. When the drop opens they show **Selling**, and from then on **Sold**, **In checkout** and **Remaining** are live figures.
+Once counting begins:
 
-From that point:
-
-- Allocations can't change while the experience is live.
-- On a sequence that is counting, a size can still go up, by up to the experience's **Unassigned** units, but never down. Units come out of a sequence only through **Move units**, which moves them to another sequence of the same experience or back to Unassigned. The steps are in [Change things mid-drop](/guide/drop/live-controls).
-- While a draw is still selecting winners, moving units into or out of its sequence raises or lowers its **Winner count** by the units moved. You can't set a draw's winner count above the units in its sizes. See [Draw](/concepts/distributions/draw).
+- **Experience-level allocations lock** while the experience is live.
+- **You can top up, not trim directly:** On a counting sequence, you can raise a size's limit using the experience's **Unassigned** units, but you can't lower it directly. To move units out of a live sequence—either to another sequence in the same experience or back to **Unassigned**—use **Move units**. See [Change things mid-drop](/guide/drop/live-controls).
+- **Draws stay in sync:** Moving units into or out of a sequence with an active draw raises or lowers its **Winner count** by the same number, and you can't set a draw's **Winner count** higher than the units available across its sizes. See [Draw](/concepts/distributions/draw).
 
 <Note>
-  A sequence can offer at most 256 size combinations: pairs of product and size, or for a **Mystery Box**, products. Above that, while it counts any size, new customers are refused: a queue, draw or timed release admits nobody and auctions refuse bids. The sequence's **Stock** card warns you. Remove products or sizes until it offers 256 or fewer.
+  A single sequence supports up to **256** size combinations (product-and-size pairs, or 256 products for a **Mystery Box**). Above 256, Fanfare blocks new entries and auction bids while the sequence is counting and displays a warning on the **Stock** card—remove products or sizes to bring it back within the limit.
 </Note>
 
-## When supply drops below what is allocated
+## Handling over-allocated stock
 
-If you record a write-off or a downward adjustment, Supply can fall below Allocated. The size is then over-allocated: **Available** shows "Over-allocated by [count]", and the product's **Stock by SKU** panel shows a banner for it. Fanfare then acts in this order:
+If a write-off or downward stock adjustment pushes **Supply** below **Allocated**, the affected size becomes over-allocated: **Available** displays **Over-allocated by [count]** and a warning banner appears in **Stock by SKU**. Fanfare resolves the shortfall in a strict order:
 
-1. Live experiences give units back first, newest first: first the Unassigned units of every live experience, then the units their live sequences have not handed to a customer, counting or not. An experience that shows **Ended** still counts as live while a distribution in it has entrants or customers in checkout.
-2. Units in checkout stay with their customer. If On hand no longer covers them, they show as **At risk**.
-3. If anything is still short, even one unit, every distribution that sells the size and has not started counting is held in full, even in a live experience, and even when an earlier distribution of its sequence is selling. It shows **Held: stock** and does not start selling until the size fits again.
+1. **Live experiences return spare units first (newest first):** Fanfare reclaims **Unassigned** units from live experiences first, then uncommitted units from live sequences (whether counting or not). Note that an **Ended** experience still counts as live while entrants or active checkouts remain.
+2. **Active checkouts stay protected:** Units currently **In checkout** stay with those shoppers. If **On hand** drops below those checkouts, the uncovered units are flagged as **At risk**.
+3. **Upcoming distributions pause if any shortfall remains:** Even a 1-unit shortfall puts every distribution selling that size that hasn't started counting on hold (**Held: stock**)—even inside a live experience where an earlier distribution is already selling.
 
-The ways out are recording a receipt, or lowering the allocation of an experience that has not opened yet with **Resolve**. Once the size fits, held sequences start selling at Fanfare's next stock check. The full warnings and the steps are in [Manage stock](/guide/create/stock).
+To clear a hold, either record a stock receipt or select **Resolve** to lower an upcoming experience's allocation. Once **Supply** covers **Allocated** again, held sequences resume automatically on Fanfare's next stock check. See [Manage stock](/guide/create/stock).
 
-<Frame caption="A negative Available means the size is over-allocated.">
+<Frame caption="A negative Available count means the size is over-allocated and upcoming distributions are held until resolved.">
   <img src="/images/guide/concepts-stock-product-panel.webp" alt="The Stock by SKU panel for a product, with the US 11 size over-allocated: its Available cell reads Over-allocated by 18, and a banner names Summer Drop as the held experience with a Resolve button." />
 </Frame>
 
-## When a drop ends
+## Releasing unsold stock after a drop
 
-When every distribution in a sequence has ended or been deactivated, and nothing can still sell (no customer is still in checkout), Fanfare releases the sequence. Each of its allocations drops to what it sold, and the rest returns to the experience's **Unassigned** units. Once at least one of its sequences is released and none of the others still holds Fanfare-managed units, the experience's **Allocated** shrinks to what they sold, so the unsold units show again in **Available** for your next experience.
+Once every distribution in a sequence has ended or been deactivated and no customers remain in checkout, Fanfare automatically releases the sequence: its allocations shrink to match what sold, and leftover units return to the experience's **Unassigned** pool.
 
-Release records no stock change, so **Supply** stays the same. A released sequence shows **Released** and is final: its stock can't change and units can't be moved into it.
+Once at least one sequence is released and no other sequence still holds active Fanfare-managed units, the experience's **Allocated** count shrinks to what sold—putting all unsold units straight back into **Available** for your next drop. Releasing doesn't log a stock adjustment, so **Supply** stays unchanged. Once a sequence shows **Released**, it's final: its stock can't be edited and no units can be moved into it.
 
-## Refunds do not restock
+## Refunds don't restock automatically
 
-**Sold** is not reduced by a refund, and a refunded unit goes back into Supply only if someone returns it to stock, either by ticking it when submitting the refund or later with **Return to stock** on the order. This applies to Fanfare-managed goods only. See [Orders and refunds](/guide/learn/orders).
+Issuing a refund never reduces **Sold** and doesn't automatically add the unit back to **Supply**. To restock a refunded Fanfare-managed unit, check the return-to-stock option when issuing the refund or select **Return to stock** on the order afterward. See [Orders and refunds](/guide/learn/orders).
 
-## Worked example
+## Example: a mid-drop write-off
 
-Northbound Supply Co. has 200 Phantom Stitch Anoraks in size M, Fanfare-managed. The experience "Phantom Stitch Anorak Drop" is allocated 150 of them: 50 to Inner Circle Early Access, a queue from 10:00 to 11:00, and 100 to Public Draw, a draw that opens at 11:00. Nothing is Unassigned.
+Suppose Northbound Supply Co. has **200** Fanfare-managed Phantom Stitch Anoraks in size M. **Phantom Stitch Anorak Drop** is allocated **150** units—**50** to **Inner Circle Early Access** (a queue from 10:00 to 11:00) and **100** to **Public Draw** (opening at 11:00), with `0` **Unassigned**.
 
-At 10:30 the queue has sold 20 and 5 customers are paying.
+By 10:30, the queue has sold **20** units and **5** shoppers are currently in checkout:
 
-| Where | Figures for size M |
+| View | Size M counts |
 | --- | --- |
-| Product's **Stock by SKU** | **Supply** 200, **Allocated** 150, **Available** 50, **Sold** 20, **On hand** 180, **At risk** 0 |
-| Inner Circle Early Access **Stock** card | **Allocated** 50, **Sold** 20, **In checkout** 5, **Remaining** 25 |
-| Public Draw **Stock** card | **Allocated** 100, **Not counting yet** |
+| Product **Stock by SKU** | **Supply** 200 · **Allocated** 150 · **Available** 50 · **Sold** 20 · **On hand** 180 · **At risk** 0 |
+| **Inner Circle Early Access** Stock card | **Allocated** 50 · **Sold** 20 · **In checkout** 5 · **Remaining** 25 |
+| **Public Draw** Stock card | **Allocated** 100 · **Not counting yet** |
 
-At 10:30 you record a write-off of 80 damaged units. Supply drops to 120, which is 30 short of the 150 allocated.
+At 10:30, your warehouse discovers 80 damaged jackets and you record an 80-unit write-off. **Supply** drops to **120**—30 units short of the 150 allocated:
 
-1. The experience is live, so it gives back first. It has nothing Unassigned. Inner Circle Early Access gives back its 25 units nobody holds; its allocation drops to 25 and its **Remaining** to 0.
-2. The 5 units in checkout stay with their customers. On hand is 100, which covers them, so **At risk** stays 0.
-3. Allocated is now 125 against a Supply of 120, so **Available** shows −5. Public Draw has not started counting, so it is held: it will not start selling at 11:00 until the size fits.
+1. **Live experience gives back first:** There are no **Unassigned** units, so **Inner Circle Early Access** returns its 25 remaining uncommitted units. Its allocation drops to `25` and **Remaining** drops to `0`.
+2. **Active checkouts keep their holds:** The 5 units **In checkout** remain untouched. **On hand** is still `100` (`120 − 20`), which easily covers them, so **At risk** stays `0`.
+3. **Upcoming draw is held:** Total **Allocated** is now `125` (`25 + 100`) against **Supply** of `120`, leaving **Available** at `−5`. Because **Public Draw** hasn't started counting yet, it switches to **Held: stock** and won't start selling at 11:00 until the 5-unit gap closes.
 
-Because the experience is already live, **Resolve** cannot lower its allocation. Record a receipt of at least 5 M before 11:00. If any of the 5 checkouts lapse, the shortfall shrinks by the same number.
+Because the experience is already live, **Resolve** can't lower its allocation. To let **Public Draw** open on time, record a receipt for at least 5 size M units before 11:00—or, if any of the 5 in-flight checkouts expire unpaid, each lapsed unit reduces the shortfall by 1.
 
 ## On Shopify
 
-Products in the Fanfare app in Shopify come from Shopify. A product brought in while your organisation takes payment on its own checkout, as an organisation created by installing the app does, is Shopify-managed: Shopify keeps the count, and you change stock in your Shopify admin. See [Products from Shopify](/guide/shopify/products).
+Products in the Fanfare app in Shopify sync directly from your Shopify catalog:
 
-A product brought in while your organisation takes payment on Fanfare checkout can be Fanfare-managed. If it is, Fanfare's count is separate from Shopify's: set the units aside for your drops and take them off sale in Shopify yourself. See [Manage stock](/guide/create/stock).
+- **Shopify-managed (default):** When your organization uses external/Shopify checkout (the default when installing the app), synced products are **Shopify-managed**—Shopify owns the inventory count and you update stock in Shopify admin. See [Products from Shopify](/guide/shopify/products).
+- **Fanfare-managed (if using Fanfare checkout):** Products imported while connected to Fanfare checkout can use **Fanfare-managed** stock. Because Fanfare tracks that inventory independently from Shopify, set those units aside for your drop and take them off sale in Shopify yourself. See [Manage stock](/guide/create/stock).
 
 ## Related
 
 <CardGroup>
   <Card title="Manage stock" href="/guide/create/stock">
-    The stock management choice, Adjust stock, stock history and over-allocated sizes.
+    Choose stock management modes, adjust stock, inspect stock history, and resolve over-allocations.
   </Card>
   <Card title="Allocate stock to a drop" href="/guide/create/stock-allocation">
-    Allocate units to an experience and split them across its sequences.
+    Reserve units for an experience and split allocations across sequences.
   </Card>
   <Card title="Change things mid-drop" href="/guide/drop/live-controls">
     Move units between sequences while a drop is live.
   </Card>
   <Card title="Checkout options" href="/concepts/checkout-options">
-    What a stock number means on each checkout.
+    See how inventory counts behave on each checkout processor.
   </Card>
 </CardGroup>

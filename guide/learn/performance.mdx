@@ -1,226 +1,233 @@
 ---
 title: Read your results
-description: Where Fanfare shows how your drops went, and what each number on Home and the Performance tabs counts.
+description: Track drop performance across Home and the Performance tabs, and understand what each metric counts.
 ---
 
-When a drop is over, you want to know how many people came, how many bought and what it earned. Fanfare reports this in four places, and each counts slightly differently.
+Once a drop wraps up—or while it's still running—you want to know how many people showed up, how many bought, and how much revenue it brought in. Fanfare reports those numbers in four places, each scoped slightly differently so you can zoom out across your whole store or drill into a single queue or draw.
 
-## Before you start
+<Note>
+  A sequence is one way into an experience (see [Sequences and routing](/concepts/sequences)). On the **Performance** tabs, Fanfare refers to each sequence as a **drop** (as in **By drop** and **All drops**). Results appear once at least one sequence has a distribution.
+</Note>
 
-- An experience has results once one of its sequences has a distribution. A sequence is one way in to an experience: see [Sequences and routing](/concepts/sequences).
-- The Performance tabs call each sequence a "drop", as in **By drop** and **All drops**.
+## Where to find your results
 
-## Where your results are
-
-| Place | How to get there | What it covers |
+| View | How to open it | Scope |
 | --- | --- | --- |
-| Home metrics panel | **Home** in the main menu (the page is titled Dashboard), at the top of the page | Activity across all your experiences in a recent period |
-| Experience **Performance** tab | Open the experience, then **Performance** in its side menu | Every sequence of the experience, all time |
-| Sequence **Performance** tab | **Performance** in the sequence's side menu; **View performance** on the sequence card's menu or on the sequence's **Performance** card; or, once a sequence has ended, the link "Orders and revenue are on the Performance tab" on its card in the experience's **Overview** | One sequence, one distribution at a time or the whole sequence |
-| Sequence **Performance** card | At the top of every tab of a sequence page | One sequence over the period last chosen on Home |
+| **Home** metrics panel | **Home** in the sidebar (titled **Dashboard**) | All experiences over a rolling time window |
+| Experience **Performance** tab | Open an experience → **Performance** | Every sequence in that experience, all time |
+| Sequence **Performance** tab | Open a sequence → **Performance**, select **View performance** on a sequence card or Performance card, or follow the results link on a finished sequence in the experience **Overview** | One sequence—either combined or one distribution at a time |
+| Sequence **Performance** card | Top of every tab on a sequence page | One sequence over the time window last selected on **Home** |
 
-On the Performance tabs each distribution carries a phase: **Upcoming**, **Live**, **Settling** or **Closed**, and a sequence with no distribution shows **Draft**. **Settling** means entry has ended but the distribution is not finished: a draw has not been drawn yet, an auction has not closed, or admitted customers can still pay. The figures may still change. These phases are not the status chips on your experiences list: see [Experiences](/concepts/experiences).
+Every distribution on the **Performance** tabs shows a phase: **Upcoming**, **Live**, **Settling**, or **Closed** (sequences without a distribution show **Draft**). **Settling** means entry has closed, but final numbers can still move—a draw hasn't been picked yet, an auction hasn't closed, or admitted customers are still inside their payment window. These phases are separate from the status badges on your experiences list; see [Experiences](/concepts/experiences).
 
 ## Read the Home metrics panel
 
-1. Open **Home**.
-2. Choose a period: **Last 24 hours**, **7 days**, **30 days** or **90 days**. Fanfare remembers your choice in this browser.
-3. Read the five cards: **Views**, **Entries**, **Wins**, **Paid orders** and **Net revenue**.
-4. Under the cards, choose **Views**, **Entries**, **Wins** or **Paid orders** to chart that metric over the period. The chart starts on **Entries**. **Net revenue** has no chart.
+<Steps>
+  <Step title="Pick a rolling time window">
+    Open **Home** and select **Last 24 hours**, **7 days** (default), **30 days**, or **90 days**. Fanfare remembers your choice in this browser. Periods are rolling—**7 days** means the last 7 × 24 hours, not the current calendar week.
+  </Step>
+  <Step title="Review the five headline cards">
+    Check **Views**, **Entries**, **Wins**, **Paid orders**, and **Net revenue**. Each card includes a breakdown underneath:
+    - **Views** breaks down by customer segment (Champions, Loyal, At-Risk, New, Lost), showing up to five segments (so rows may not sum to the total).
+    - **Entries** and **Wins** break down by distribution type.
+    - **Paid orders** and **Net revenue** break down by your top four experiences plus **Other**. **Net revenue** also displays gross revenue underneath.
+  </Step>
+  <Step title="Explore the trend chart">
+    Below the cards, switch the chart between **Views**, **Entries** (default), **Wins**, and **Paid orders** to spot spikes over time. (**Net revenue** doesn't have a chart.)
+  </Step>
+</Steps>
 
-Periods are rolling: "7 days" means the last 7 × 24 hours, not this calendar week.
+Metrics refresh automatically every 30 seconds while the tab is open. Toggle **Auto-refresh On** to pause automatic updates, or select **Refresh** to reload immediately. If there's no activity in your chosen window, the panel displays faded **Sample data**—switch to a longer period to see historical numbers.
 
-Each card shows a total and a breakdown: **Views** by customer segment (Champions, Loyal, At-Risk, New, Lost), **Entries** and **Wins** by distribution type, and **Paid orders** and **Net revenue** by experience, with your top four experiences and the rest under "Other". **Views** lists at most five segments, so its rows may not add up to the total. **Net revenue** also shows the gross amount beneath it.
-
-**Refresh** reloads the panel now. **Auto-refresh On** reloads it every 30 seconds; select it to switch to **Auto-refresh Off**.
 {/* image: guide-learn-performance-home */}
 
 <Warning>
-  **Paid orders** counts fully refunded orders too. They add nothing to **Net revenue**, so a refund lowers revenue but not the order count. The **Paid orders** card and the **Paid orders** chart can also disagree: the card counts orders by order date, while the chart places each order when its payment was captured (or, for orders synced from your store, at the store's order time) and does not reflect refunds or cancellations.
-</Warning>
+  **Paid orders** includes fully refunded orders. Because refunds reduce **Net revenue** to zero for those orders without removing them from the order count, a refund lowers revenue while keeping **Paid orders** unchanged.
 
-If nothing happened in the chosen period, faded example figures under a **Sample data** card replace the panel, even for an established organisation. Choose a longer period.
+  The **Paid orders** card and the **Paid orders** chart can also differ slightly: the card groups orders by order date, while the chart plots payment capture time (or external store order time for synced orders) and doesn't reflect refunds or cancellations.
+</Warning>
 
 ## Read an experience's Performance tab
 
-What the tab shows depends on how many sequences the experience has.
+What appears on an experience's **Performance** tab depends on its sequences:
 
-| Sequences | What you see |
-| --- | --- |
-| None | "No drops yet" |
-| One | That sequence's own Performance view, described in [the next section](#read-a-sequences-performance-tab) |
-| Two or more, all of them drafts | "Nothing to measure yet", with a link to each draft |
-| Two or more | The experience overview, described below |
-
-Adding a second sequence, even an empty draft, switches the tab to the overview. Drafts are listed below the table and not counted.
+- **No sequences:** Shows an empty state until you add a drop.
+- **One sequence:** Opens that sequence's own Performance view directly (see [Read a sequence's Performance tab](#read-a-sequences-performance-tab)).
+- **Two or more sequences (all drafts):** Lists links to each draft until a distribution is added.
+- **Two or more sequences (at least one with a distribution):** Opens the experience overview below. Any draft sequences appear below the table and aren't included in totals.
 
 ### Launch so far
 
-The tiles at the top cover every sequence of the experience since the start.
+The headline tiles summarize every sequence in the experience since launch:
 
 | Tile | What it shows |
 | --- | --- |
-| **Revenue** | Net revenue: what customers paid minus refunds. |
-| **Paid orders** | Paid orders, with the number of distributions that have opened. |
-| **Units sold** | Units on paid orders. "of N offered" appears only when no distribution that has opened is a queue or a timed release, because those have no fixed number of units on offer. |
-| **Entrants** | Distinct customers who entered any sequence, with the share who came back for another one. |
-| **Next drop** | A countdown to the next distribution to open, with its name and time. It shows only when nothing is live. |
+| **Revenue** | Net revenue (customer payments minus refunds). |
+| **Paid orders** | Paid orders across the experience, along with how many distributions have opened. |
+| **Units sold** | Units on paid orders. **"of N offered"** appears only when no opened distribution is a queue or timed release, since those don't have a fixed unit cap. |
+| **Entrants** | Distinct customers who entered any sequence, along with the share who returned for another sequence. |
+| **Next drop** | Countdown to the next scheduled distribution when nothing is currently live. |
 
-While a distribution is live, a **Live now** tile and live cards appear instead; see [Watch a live drop](/guide/drop/watch-live).
+While a distribution is active, **Live now** and live monitoring cards replace **Next drop**. See [Watch a live drop](/guide/drop/watch-live).
 
-<Frame caption="The overview sums every drop of the experience; each row of By drop opens that drop's results.">
-  <img src="/images/guide/guide-learn-performance-overview.webp" alt="The experience overview with Launch so far tiles for revenue, paid orders, units sold, entrants and live now, above a By drop table with one row per drop and an All drops total." />
+<Frame caption="The experience overview totals every drop in the experience; select any row in By drop to inspect that sequence.">
+  <img src="/images/guide/guide-learn-performance-overview.webp" alt="The experience overview with Launch so far tiles for revenue, paid orders, units sold, entrants, and live now, above a By drop table with one row per drop and an All drops total." />
 </Frame>
 
 ### Insights
 
-Findings about finished sequences are marked **Needs attention** or **Worth knowing**.
+Once sequences close, Fanfare surfaces automated findings labeled **Needs attention** or **Worth knowing** to help you spot friction or inventory imbalances:
 
-| Finding | When it appears |
+| Insight | Trigger |
 | --- | --- |
-| Admitted customers let their admission lapse (**Needs attention**) | At least 10 people, and more than 10% of those admitted, did not pay in time. |
-| Entrants missed out (**Needs attention**) | At least 10 people, and more than 25% of entrants, were either turned away when stock sold out or still waiting in the queue at close. |
-| One size sold out while another lagged (**Worth knowing**) | Every size has an allocation, and a size of a product sold out while another size of the same product sold less than half of its allocation. On a distribution's own screen this appears only when the sequence has a single distribution. |
-| Repeat entrants (**Worth knowing**) | At least two sequences have closed and some customers entered more than one. |
+| **Admitted customers let their admission lapse** (**Needs attention**) | At least 10 people—and more than 10% of admitted shoppers—didn't pay before their window expired. |
+| **Entrants missed out** (**Needs attention**) | At least 10 people—and more than 25% of entrants—were turned away after sellout or were still waiting when the queue closed. |
+| **One size sold out while another lagged** (**Worth knowing**) | Every size has an allocation, and one size sold out while another size of the same product sold less than half its allocation. (On a single distribution's screen, this appears only when the sequence has one distribution.) |
+| **Repeat entrants** (**Worth knowing**) | At least two sequences have closed and some customers entered more than one. |
 
-Insights never appear while **Settling**. They appear in two places, and a finding can show in one but not the other:
+Insights never appear while a distribution is **Settling**. You'll see them in two places:
 
-- On a closed queue's own screen in the sequence Performance tab. **View drop** opens the sequence's **Overview** tab.
-- On the experience overview, at most four at a time, and only for sequences that have fully closed. One distribution still to open keeps the whole sequence out. **View** followed by the sequence name opens that sequence's Performance tab.
+- **Closed queue results** on the sequence **Performance** tab, with a **View drop** link to the sequence's **Overview**.
+- **Experience overview** (up to four insights at a time) for sequences that have completely closed. If a sequence still has an upcoming distribution, it's excluded until all of its distributions finish.
 
-Why admitted customers lapse is explained in [Admission and the payment window](/concepts/admission-and-payment).
+To learn why admitted shoppers lapse during checkout, see [Admission and the payment window](/concepts/admission-and-payment).
 
 ### By drop
 
-The **By drop** table has one row per sequence. Select a row to open that sequence's Performance tab.
+The **By drop** table lists one row per sequence. Select any row to open that sequence's **Performance** tab.
 
 | Column | What it shows |
 | --- | --- |
-| **Drop** | The sequence name, its priority (such as P1) and the types of its distributions in time order, such as Queue → Draw |
-| **Status** | Its phase and when it opens, closes or closed |
-| **Entrants** | Distinct customers who entered it |
-| **Orders** | Paid orders |
-| **Revenue** | Net revenue |
-| **Sold** | The share of units on offer that sold, or the units sold when there is no fixed number on offer, or "—" before it opens |
+| **Drop** | Sequence name, routing priority (such as P1), and distribution flow in chronological order (for example, Queue → Draw). |
+| **Status** | Current phase and opening or closing time. |
+| **Entrants** | Distinct customers who entered that sequence. |
+| **Orders** | Paid orders. |
+| **Revenue** | Net revenue. |
+| **Sold** | Share of offered units sold, units sold when there's no fixed cap, or "—" before opening. |
 
-The table is sorted by priority, lowest number first. Priority is set by the order you created the sequences in and cannot be changed in the admin: see [Sequences and routing](/concepts/sequences). Select **Entrants**, **Orders**, **Revenue** or **Sold** to sort by that column, highest first, or **Drop** to return to priority order; select a header again to reverse it. **Status** does not sort. A sequence with two or more distributions has a chevron that lists them, each linking to its own results. When some of a sequence's paid orders cannot be matched to one of its distributions, they count in the sequence's row. They are listed separately as "Not linked to a distribution" only when you open the chevron of a sequence with two or more distributions.
+Rows sort by priority (creation order, which can't be changed in the admin; see [Sequences and routing](/concepts/sequences)). Select **Entrants**, **Orders**, **Revenue**, or **Sold** to sort highest first, or **Drop** to return to priority order; select a column header again to reverse it.
 
-In the **All drops** footer, **Entrants** is marked "distinct": each customer counts once, so it is usually lower than the column added up.
+Sequences with multiple distributions expand via the chevron to link to each distribution's results. If any paid orders in a sequence can't be matched to a specific distribution, they still count in the sequence row and appear under **"Not linked to a distribution"** when you expand a multi-distribution sequence.
+
+In the **All drops** footer, **Entrants** is deduplicated across sequences—each customer counts once, so the total is usually lower than the sum of individual rows.
 
 ## Read a sequence's Performance tab
 
-A sequence with no distribution shows "Nothing to report yet". A sequence with one distribution shows that distribution's screen. With two or more, a switcher sits above the screen: a **Whole sequence** step, then one step per distribution in time order. On a narrow screen, or from five distributions, the switcher becomes a **Distribution** drop-down with arrows for the earlier and later distribution.
+When a sequence has a single distribution, its **Performance** tab opens directly to that distribution. With two or more distributions, a switcher at the top lets you toggle between **Whole sequence** and each individual distribution in time order (switching to a **Distribution** dropdown on narrow screens or with five or more distributions).
 
-The tab opens on the most recently opened live distribution, else the most recently opened settling one, else the next to open, else the last to close.
+By default, the tab opens on the most recently opened **Live** distribution—falling back to **Settling**, then the next **Upcoming**, then the most recently **Closed**.
+
 ### Whole sequence
 
-**Whole sequence** shows **Across the sequence** tiles (**Net revenue**, **Paid orders**, **Units sold**, **Entrants**) and a **By distribution** table of each distribution's own totals.
+**Whole sequence** displays **Across the sequence** summary tiles (**Net revenue**, **Paid orders**, **Units sold**, **Entrants**) above a **By distribution** breakdown table.
 
 <Note>
-  **Entrants** here is "Counted in each distribution": a customer who entered two distributions counts twice. The experience overview counts them once, so the same people can give a higher number here.
+  **Entrants** in **Whole sequence** counts a customer once per distribution they entered ("Counted in each distribution"). Because the experience overview deduplicates across sequences, the same group of shoppers can produce a higher number here.
 </Note>
 
-<Frame caption="Whole sequence adds up the distributions of one sequence.">
-  <img src="/images/guide/guide-learn-performance-whole-sequence.webp" alt="A sequence Performance tab with Whole sequence ringed in the switcher, showing Across the sequence tiles and a By distribution table of three distributions." />
+<Frame caption="Whole sequence combines totals across every distribution in a single sequence.">
+  <img src="/images/guide/guide-learn-performance-whole-sequence.webp" alt="A sequence Performance tab with Whole sequence highlighted in the switcher, showing Across the sequence tiles and a By distribution table of three distributions." />
 </Frame>
 
 ### Before a distribution opens
 
-**Before opening** shows **Opens in**, a countdown to the opening time. Fanfare also forecasts demand: **Expected entrants** is the middle value of the entrant counts of up to five of this experience's most recently closed distributions of the same type, and **Range** shows the fewest and most entrants they drew. It needs at least two such distributions; until then you see "No forecast yet".
+Before launch, the **Before opening** view shows an **Opens in** countdown along with a demand forecast:
+
+- **Expected entrants** — The median entrant count from up to five of this experience's most recently closed distributions of the same type.
+- **Range** — The lowest and highest entrant counts across those prior distributions.
+
+Fanfare needs at least two closed distributions of the same type in the same experience to build a forecast. Until then, you'll see **"No forecast yet"**.
 
 ### Results when settling or closed
 
-Once entry ends, the screen shows these sections from top to bottom. A section with nothing to show is left out.
+Once entry closes, the distribution view shows the sections below (omitting any section with no data):
 
-- While **Settling**, a line at the top says admitted customers can still pay, so the figures may change.
-- **Results**: **Entrants**, **Admitted**, **Paid orders**, **Units sold** and **Net revenue**. Where an earlier distribution of the same type in this experience closed before this one opened, **Entrants**, **Admitted** and **Paid orders** compare against it, and so does **Units sold** when the sequence has more than one distribution. Otherwise **Units sold** shows the units allocated. **Net revenue** shows the gross amount instead. The comparison is labelled with the name of the earlier distribution's sequence, which may be this one.
-- Insights, on a closed queue (see [Insights](#insights)).
-- **Entry to payment**: entered, admitted and paid, each with its share of the step before.
-- **Activity since open**: entries, admissions and paid orders over time.
-- **Sizes**: units sold per size and when each sold out. When the sequence has exactly one distribution, the **Allocated** column is filled in and a chart shows each size selling out over time. Otherwise **Allocated** shows "—", because stock is allocated to a sequence, not to each distribution: see [Stock](/concepts/stock).
-- **How queue places ended**: customers who held a place in a queue, by what ended it: **Admission lapsed**, **Still waiting at close**, **Left the queue**, **Turned away, sold out** or **Other**.
-- **Changes after opening**: settings changed once the distribution had opened.
-- **Announcements**: how many people were sent messages by email and SMS, and how many were delivered, opened and clicked.
+- **Settling notice** — While **Settling**, a banner notes that admitted shoppers can still complete payment and numbers may continue to change.
+- **Results** — **Entrants**, **Admitted**, **Paid orders**, **Units sold**, and **Net revenue** (with gross revenue underneath). If an earlier distribution of the same type in this experience closed before this one opened, **Entrants**, **Admitted**, and **Paid orders** compare against it—and **Units sold** does too on multi-distribution sequences (otherwise **Units sold** shows allocated units).
+- **Insights** — Automated findings on closed queues (see [Insights](#insights)).
+- **Entry to payment** — Funnel showing entered, admitted, and paid counts with step-to-step conversion rates.
+- **Activity since open** — Time-series chart of entries, admissions, and paid orders.
+- **Sizes** — Units sold per size and sellout times. When a sequence has a single distribution, **Allocated** is populated alongside a size sellout chart; multi-distribution sequences show "—" for **Allocated** because stock is allocated per sequence, not per distribution (see [Stock](/concepts/stock)).
+- **How queue places ended** — Breakdown of queue outcomes: **Admission lapsed**, **Still waiting at close**, **Left the queue**, **Turned away, sold out**, and **Other**.
+- **Changes after opening** — Any settings adjusted while the distribution was live.
+- **Announcements** — Email and SMS delivery, open, and click counts.
 
 <Warning>
-  Only queues have a results screen of their own. Draws, auctions, timed releases and appointments use the queue's screens. While they are live, "Waiting in queue" reads 0. Appointments always show 0 admitted. Their results have no **How queue places ended** section and no insights. Use **Entrants**, **Paid orders**, **Units sold** and **Net revenue** for these types.
+  Draws, auctions, timed releases, and appointments currently share the queue results layout. While live, **"Waiting in queue"** reads 0, and appointments always show 0 **Admitted**. Their finished views omit **How queue places ended** and insights—focus on **Entrants**, **Paid orders**, **Units sold**, and **Net revenue** for these distribution types.
 </Warning>
 
-<Frame>
+<Frame caption="Closed queue results pair headline metrics and comparisons with funnel conversion, size sellout timing, and queue outcomes.">
   <img src="/images/guide/guide-learn-performance-closed-results.webp" alt="The results of a closed queue: Results tiles with comparison lines, attention and info insight cards, the Entry to payment bars, an Activity since open chart, the Sizes table, and the How queue places ended chart." />
 </Frame>
 
 ## The Performance card on a sequence page
 
-Every tab of a sequence page has a **Performance** card with counts for a recent period: **Entries**, **Denials**, a wins row for each type the sequence uses (**Queue grants**, **Draw winners** with **Lapsed winners**, **Auction winners**), **Paid orders**, **Conversion** and **Revenue**.
+Every tab inside a sequence includes a compact **Performance** card tracking **Entries**, **Denials**, distribution-specific wins (**Queue grants**, **Draw winners** with **Lapsed winners**, **Auction winners**), **Paid orders**, **Conversion**, and **Revenue**.
 
 <Note>
-  The card has no period selector. It uses the period you last chose on Home in this browser, and changing it there changes every sequence's card. The card does not refresh on its own: reload the page for current figures.
+  This card uses the time period you last selected on **Home** in the same browser—changing the period on **Home** updates every sequence's card. It doesn't auto-refresh; reload the page for the latest numbers. Orders that aren't attributed to a specific drop are excluded from its totals.
 </Note>
 
-If the card says some of the experience's orders are not attributed to a drop, those orders are left out of its counts.
-
-## What each number counts
+## Metric definitions
 
 <Warning>
-  Three similar words count three different things. **Entries** on Home adds up entry actions across all distributions, so one customer who enters three distributions counts three times. **Entries** on a sequence's **Performance** card counts entries made in the chosen period. **Entrants** on the Performance tabs counts distinct customers, except in **Whole sequence**, which counts a customer once per distribution entered.
+  Three similar labels count different things:
+  - **Entries** on **Home** counts every entry action across distributions—one customer entering three distributions counts three times.
+  - **Entries** on a sequence's **Performance** card counts entry actions during the selected Home window.
+  - **Entrants** on the **Performance** tabs counts distinct customers, except in **Whole sequence**, where a customer counts once per distribution entered.
 </Warning>
 
-<Frame caption="The same three customers give 4 Entries, 3 Entrants and 2 Wins, because each number counts something different.">
-  <img src="/images/guide/guide-learn-performance-three-counts.webp" alt="Three customers enter distributions: Customer A enters a draw and a queue, and Customers B and C enter only the queue. A is drawn in the draw and B is let through the queue, giving 4 Entries on Home, 3 Entrants on the experience overview and 2 Wins on Home." />
+<Frame caption="Three customers produce 4 Entries, 3 Entrants, and 2 Wins depending on whether actions, unique people, or admissions are counted.">
+  <img src="/images/guide/guide-learn-performance-three-counts.webp" alt="Three customers enter distributions: Customer A enters a draw and a queue, and Customers B and C enter only the queue. A is drawn in the draw and B is let through the queue, giving 4 Entries on Home, 3 Entrants on the experience overview, and 2 Wins on Home." />
 </Frame>
 
-| Metric | Where you see it | What it counts | Watch out for |
+| Metric | Where it appears | What it counts | Watch out for |
 | --- | --- | --- | --- |
-| **Views** | Home | Visits to your experience pages, by customer segment | Comes from the customer's browser, while the other cards come from Fanfare's own records |
-| **Entries** (Home) | Home | Entries into queues, draws, auctions and timed releases, plus appointment bookings | Each entry counts, not each customer |
-| **Entries** (card) | Sequence **Performance** card | Entries made in the period | Not a count of distinct customers |
-| **Entrants** | Performance tabs | Distinct customers who entered | Summed per distribution in **Whole sequence**; distinct across sequences in **All drops** |
-| **Admitted** | Sequence Performance tab | Distinct customers given the right to buy: let through a queue, drawn, winning an auction, or entering a timed release | Always 0 for appointments |
-| **Wins** | Home | Customers let through a queue, drawn in a draw, or winning an auction | Timed releases and appointments never count. A queue win is permission to buy, not a purchase |
-| **Paid orders** | Everywhere | Orders whose payment was taken, including those later refunded in part or in full; cancelled and test orders excluded | Refunded orders still count. Purchases made in your own checkout are never counted, because Fanfare does not see them ([Checkout options](/concepts/checkout-options)) |
-| **Net revenue** / **Revenue** | Everywhere | Order totals minus refunds, as recorded in Fanfare; a fully refunded order adds nothing | "Revenue" on the experience overview is net. Gross is order totals before refunds. It shows under net revenue on Home and on a distribution's results, and on the sequence's **Performance** card when refunds make it differ |
-| **Units sold** | Performance tabs | Units on paid orders | |
-| Units offered ("of N offered") | Performance tabs | A draw: its number of winners. An English auction: 1. A Dutch auction: its quantity. An appointment: places per slot times the number of slots | None for queues and timed releases, or for an appointment without both an opening and a closing time. Appointment slots depend on [location hours](/guide/create/locations) |
-| **Allocated** | **Sizes** on a distribution's results | Stock allocated to the sequence, per size | Shown only when the sequence has one distribution |
-| **Conversion** | Sequence **Performance** card | Paid orders divided by entries in the period | Counts orders made in the period whether or not those buyers entered in it |
-| **Denials** | Sequence **Performance** card | Entries refused in the period | In a draw, a customer who was drawn at any point is not counted |
-| **Lapsed winners** | Sequence **Performance** card | Draw winners whose place lapsed in the period | Draws only |
-| "Not linked to a distribution" | **By drop**, **By distribution** | Paid orders of the sequence that cannot be matched to one of its distributions | Counted in the sequence's totals |
-| "Not attributed" | Home, **Paid orders** and **Net revenue** breakdowns | Paid orders with no experience | |
+| **Views** | Home | Visits to your experience pages by customer segment | Tracked in the customer's browser rather than Fanfare's server records |
+| **Entries** (Home) | Home | Entries into queues, draws, auctions, and timed releases, plus appointment bookings | Counts every entry action, not unique customers |
+| **Entries** (card) | Sequence **Performance** card | Entry actions within the selected Home window | Not deduplicated by customer |
+| **Entrants** | Performance tabs | Distinct customers who entered | Summed per distribution in **Whole sequence**; deduplicated across sequences in **All drops** |
+| **Admitted** | Sequence **Performance** tab | Distinct customers granted permission to buy (admitted from a queue, picked in a draw, won an auction, or entered a timed release) | Always 0 for appointments |
+| **Wins** | Home | Customers admitted from a queue, picked in a draw, or winning an auction | Excludes timed releases and appointments; a queue win means permission to buy, not a completed purchase |
+| **Paid orders** | Everywhere | Orders with captured payment, including partial or full refunds; excludes canceled and test orders | Still includes refunded orders; purchases completed on an external checkout aren't tracked (see [Checkout options](/concepts/checkout-options)) |
+| **Net revenue** / **Revenue** | Everywhere | Order totals minus refunds recorded in Fanfare (fully refunded orders contribute $0) | **Revenue** on the experience overview is net; gross revenue appears beneath net revenue on Home and distribution results, and on the sequence **Performance** card when refunds differ |
+| **Units sold** | Performance tabs | Total units across paid orders | |
+| **Units offered** ("of N offered") | Performance tabs | Draw: winner count. English auction: 1. Dutch auction: quantity. Appointment: places per slot × number of slots | Omitted for queues, timed releases, and appointments missing an open or close time; appointment slots depend on [location hours](/guide/create/locations) |
+| **Allocated** | **Sizes** table on distribution results | Stock allocated to the sequence per size | Shown only when the sequence has one distribution |
+| **Conversion** | Sequence **Performance** card | Paid orders divided by entries in the period | Includes orders placed in the period even if the buyer entered earlier |
+| **Denials** | Sequence **Performance** card | Refused entry attempts in the period | In a draw, customers picked at any point aren't counted |
+| **Lapsed winners** | Sequence **Performance** card | Draw winners whose payment window expired in the period | Draws only |
+| **"Not linked to a distribution"** | **By drop**, **By distribution** | Sequence paid orders that can't be matched to a single distribution | Included in the sequence's totals |
+| **"Not attributed"** | Home **Paid orders** and **Net revenue** breakdowns | Paid orders not tied to an experience | |
 
-If you delete a distribution, its results screen and its step in the switcher go, but its paid orders stay in the sequence's totals under "Not linked to a distribution".
+If you delete a distribution, its individual screen disappears, but its paid orders remain in the sequence totals under **"Not linked to a distribution"**.
 
-The Orders list keeps its own totals, and its gross figure includes unpaid orders: see [Orders and refunds](/guide/learn/orders). Fanfare's fees on paid orders are in [Billing and usage](/guide/account/billing).
+<Tip>
+  Looking for gross order volume including unpaid orders? Check [Orders and refunds](/guide/learn/orders). For Fanfare's per-order checkout fees, see [Billing and usage](/guide/account/billing).
+</Tip>
 
-## How current the figures are
+## Data freshness, time zones, and currencies
 
-- Closed results refresh about every minute, and settling ones about every 30 seconds.
-- **Entrants** on the experience overview can be up to a minute behind.
-- Insights on the experience overview can be up to five minutes behind.
-- Forecasts and comparisons with an earlier distribution can be up to an hour old.
-- Updates pause while the browser tab is hidden.
-
-Times on the Performance tabs are in the experience's time zone. The Home chart uses your browser's time zone. Money tiles round to whole units of the currency.
-
-## Things to know before you go live
-
-- Revenue in more than one currency is never converted or added together. The experience overview shows "—" for **Revenue** in **Launch so far** and in **By drop**, **Whole sequence** shows "—" for **Net revenue**, the **Net revenue** tile disappears from a distribution's results, and Home shows only the currency with the largest total, with "+N more" for the others.
+- **Refresh intervals:** Settling results update roughly every 30 seconds; closed results refresh about every minute. Experience overview **Entrants** can lag up to 1 minute, overview **Insights** up to 5 minutes, and forecasts or prior-drop comparisons up to 1 hour. Updates pause while the browser tab is hidden.
+- **Time zones and rounding:** Performance tabs use the experience's time zone, while the **Home** chart uses your browser's local time zone. Currency tiles round to whole units.
+- **Multiple currencies:** Fanfare never converts or combines revenue across currencies. If an experience spans multiple currencies, **Revenue** / **Net revenue** displays "—" on the experience overview and **Whole sequence**, the **Net revenue** tile is hidden on distribution results, and **Home** displays the largest currency with **"+N more"**.
 
 ## On Shopify
 
-The Home metrics panel and both Performance tabs are the same in the Fanfare app in Shopify. Until checkout protection is on and the product widget is on your theme, Home also shows a **Finish setting up Fanfare** card above the panel: see [Storefront setup](/guide/shopify/storefront-setup).
+**Home** and both **Performance** tabs work the same inside the Fanfare Shopify app. Until storefront setup is complete, **Home** displays a **Finish setting up Fanfare** card above the metrics panel—see [Storefront setup](/guide/shopify/storefront-setup).
 
-Refunds and cancellations made in Shopify do not reach Fanfare, so **Paid orders** and **Net revenue** still count those orders in full: see [Orders with Shopify checkout](/guide/shopify/orders).
+<Note>
+  Refunds and cancellations processed in Shopify don't sync back to Fanfare, so **Paid orders** and **Net revenue** continue counting those orders in full. See [Orders with Shopify checkout](/guide/shopify/orders).
+</Note>
 
 ## Troubleshooting
 
 <AccordionGroup>
-  <Accordion title="Home has stopped updating">
-    Auto-refresh switches itself off after a loading error and stays off until you turn it back on or open the page again. Select **Auto-refresh Off** to turn it back on, or select **Refresh**.
+  <Accordion title="Home metrics stopped refreshing automatically">
+    Auto-refresh turns itself off after a network or loading error. Select **Auto-refresh Off** to turn it back on, or select **Refresh** to reload immediately.
   </Accordion>
-  <Accordion title="The experience Performance tab says &quot;Unable to load performance data for this experience.&quot;">
-    The overview could not be loaded. Select **Try again**. If someone deleted the experience while you had the tab open, reloading the page shows that it was deleted.
+  <Accordion title="The experience Performance tab failed to load">
+    Select **Try again** to reload the overview. If the error persists, refresh the page to confirm the experience is still active.
   </Accordion>
 </AccordionGroup>
 
@@ -228,15 +235,15 @@ Refunds and cancellations made in Shopify do not reach Fanfare, so **Paid orders
 
 <CardGroup>
   <Card title="Watch a live drop" href="/guide/drop/watch-live">
-    The live screens and what each number means while a drop runs.
+    Monitor queues, admissions, and sales in real time while a drop is running.
   </Card>
   <Card title="Orders and refunds" href="/guide/learn/orders">
-    Find, refund and cancel orders.
+    Search orders, issue refunds, and decide whether items return to stock.
   </Card>
   <Card title="Customer profiles" href="/guide/learn/customers">
-    One customer's history across your drops.
+    Inspect an individual customer's spend, invites, and drop history.
   </Card>
   <Card title="Set up the next drop from this one" href="/guide/learn/next-drop">
-    Turn these results into audiences and settings for next time.
+    Turn drop results into audiences, loyalty rewards, and settings for your next launch.
   </Card>
 </CardGroup>
