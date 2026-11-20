@@ -1,215 +1,208 @@
 ---
 title: Orders and refunds
-description: Find an order, read its status, refund it, and decide whether refunded items go back into stock.
+description: Find orders, check payment statuses, issue full or partial refunds, and decide whether refunded items return to stock.
 ---
 
-The **Orders** page lists every order in your organisation: native orders paid through Fanfare checkout, and orders synced from your store. Use it to find one order, check what happened to its payment, refund or cancel it, and decide whether refunded items go back into stock. Every plan can do all of this. The plan sets only the Fanfare fee on each order: see [Payments and fees](/guide/account/payments).
+The **Orders** page brings together every order across your organization—both native orders paid through Fanfare checkout and orders synced from your external store. Use it to look up an order, trace its payment history, cancel an uncaptured order, issue a refund, and decide whether returned items go back into inventory.
 
-## Before you start
-
-- Refunds go through your connected Stripe account. Connecting Stripe is covered in [Payments and fees](/guide/account/payments).
-- Any member of your organisation can refund and record stock decisions, not only admins.
+Order management and refunds are available on every plan (your plan sets only the per-order take rate—see [Payments and fees](/guide/account/payments)). Refunds are processed through your connected Stripe account, and any team member in your organization can issue refunds and record stock decisions.
 
 ## Where to find orders
 
-- **Orders** in the sidebar lists every order in the organisation.
-- **Orders** in an experience's side nav shows the same list for that experience only. Opening an order from it takes you to the same order page.
+- **Orders** in the sidebar shows every order across your organization.
+- **Orders** inside an experience's navigation filters the same view to that experience.
+- **Customer profiles** include an **Orders for this experience** link on any drop where a customer purchased—it opens *all* orders for that experience, not just that customer's. See [Customer profiles](/guide/learn/customers).
 
-The customer's name on an order opens their profile. On the profile, an experience the customer bought from has an **Orders for this experience** link to that experience's order list. See [Customer profiles](/guide/learn/customers).
-
-<Frame caption="The Orders list, with summary cards computed over every order that matches the filters.">
-  <img src="/images/guide/guide-learn-orders-list.webp" alt="The Orders page showing Total orders, Gross revenue, Refunded and Average order value cards above a table of orders with status, total and placed date, with the status filter outlined." />
+<Frame caption="The Orders list with summary cards calculated across every order matching your current search and filters.">
+  <img src="/images/guide/guide-learn-orders-list.webp" alt="The Orders page showing Total orders, Gross revenue, Refunded, and Average order value cards above a table of orders with status, total, and placed date, with the status filter highlighted." />
 </Frame>
 
-## The summary cards
+## Summary cards
 
-Four cards sit above the list: **Total orders**, **Gross revenue**, **Refunded** and **Average order value**. They count every order that matches the current search and filters, not only the page you are looking at. Test orders are left out, and the cards say "Test orders are excluded" when the filtered list contains one. If you have orders in more than one currency, you get one row of cards per currency, each headed by its currency code, with no combined total.
+Four cards sit above the table: **Total orders**, **Gross revenue**, **Refunded**, and **Average order value**. They calculate totals across all orders matching your current search and filters—not just the current page—and automatically exclude test orders. If your filtered results span multiple currencies, Fanfare displays a separate row of cards per currency without combining them.
 
 <Warning>
-  **Gross revenue** and **Average order value** include orders that were never paid: Draft, Pending payment, Payment failed and Cancelled. Refunds are shown beside them in **Refunded**, not subtracted. To see money you actually took, set **Order status** to **Paid**, then to **Partially refunded**, and read the cards for each.
+  **Gross revenue** and **Average order value** include unpaid orders (**Draft**, **Pending payment**, **Payment failed**, and **Cancelled**) and don't subtract refunds. To check collected payments here, filter **Order status** to **Paid**, then to **Partially refunded**, and read the cards for each—or check **Net revenue** on **Home** and the **Performance** tabs (see [Read your results](/guide/learn/performance)).
 </Warning>
-
-The Performance tabs and Home use a different measure, net revenue, which counts only paid orders and takes refunds off. See [Read your results](/guide/learn/performance).
 
 ## Find an order
 
-1. Open **Orders** from the sidebar.
-2. Type in **Search orders, customers, or experiences...**. Search matches a customer's name, email or phone, an experience name, the order ID from your store, or the full Fanfare order ID.
-3. Narrow the list with **Order status**, **Payment status** or **Source** (the store an order was synced from, such as Shopify).
-4. Select an order to open it.
+<Steps>
+  <Step title="Open Orders">
+    Select **Orders** in the sidebar (or inside a specific experience).
+  </Step>
+  <Step title="Search by customer, experience, or ID">
+    Type in **Search orders, customers, or experiences...** to match a customer's name, email, or phone number, an experience name, your external store's order ID, or a full Fanfare order ID.
+  </Step>
+  <Step title="Filter and sort">
+    Narrow results by **Order status**, **Payment status**, or **Source** (such as Shopify), and sort by **Placed** (**Asc** or **Desc**). Select any row to open the order page.
+  </Step>
+</Steps>
 
-The 8-character reference shown on each order does not match in search. To find an order by its Fanfare ID, use **Copy order ID** on its row, which copies the full ID, and search for that.
+<Tip>
+  Search doesn't match the 8-character short reference displayed in the table. To search by Fanfare ID, use **Copy order ID** on the row to copy the full ID. Your active search and filters stay in the page URL, so you can share a filtered view with a teammate.
+</Tip>
 
-The list shows 10 orders per page, most recently recorded first, with Previous and Next. Only **Placed** can be sorted: select its header and choose **Asc** or **Desc**. **Clear filters** resets the three filters but leaves your search text in place. The page address keeps your search and filters, so you can share a link to a filtered list with a colleague.
+**Clear filters** resets the dropdown filters while keeping your search query intact.
 
-## Read the list
+### Reading the list and order statuses
 
-| Column | What it shows |
-| --- | --- |
-| **Order** | The 8-character reference, which opens the order; a copy button (**Copy order ID**); a **Test** chip on test orders. Below: the store the order came from and the experience name. |
-| **Customer** | The customer's name, or their email or phone when there is no name, with the next contact detail below. |
-| **Items** | The first item and its SKU, then "+N more" or the item count. |
-| **Status** | The order status (see below). Below it, the payment status when it adds something, or a sync problem such as "Shopify sync: Failed". |
-| **Total** | The order total, with the amount refunded below it when there has been a refund. |
-| **Placed** | The date, with how long ago below it. Hover for the exact time. |
-| (menu) | **Refund**, **Cancel** and **View source**, where the order allows them. A greyed-out menu means none is allowed. |
-
-Test orders appear among real orders on a hatched background.
-
-### Order statuses
+Each row shows the **Order** reference (with **Copy order ID** and a **Test** badge on test orders), **Customer**, **Items**, **Status** (plus payment status details or sync issues like `"Shopify sync: Failed"`), **Total** (with any refunded amount underneath), **Placed** date (hover for the exact timestamp), and a row action menu for **Refund**, **Cancel**, or **View source**.
 
 | Status | What it means |
 | --- | --- |
-| **Draft** | The buyer is still inside their payment window and has not paid. See [Admission and the payment window](/concepts/admission-and-payment). |
-| **Pending payment** | Not yet paid in full. Read the payment status below it: for orders synced from your store this can be an authorised payment not yet taken (**Authorized**), a part payment (**Partially paid**) or a voided payment (**Voided**); a Fanfare order still waiting for its payment shows no second line. |
-| **Paid** | The payment was taken. A full refund still in progress shows here, with the refunded amount under the total, until it completes. |
-| **Partially refunded** | Some of the payment has been refunded. |
-| **Refunded** | The whole payment has been refunded. |
-| **Payment failed** | The payment did not go through. |
-| **Cancelled** | The order was cancelled. |
+| **Draft** | The buyer is still inside their payment window and hasn't paid yet. See [Admission and the payment window](/concepts/admission-and-payment). |
+| **Pending payment** | Payment hasn't been captured in full. Synced store orders may also show **Authorized**, **Partially paid**, or **Voided** underneath. |
+| **Paid** | Payment was captured. Orders with a full refund still processing remain here until the refund completes. |
+| **Partially refunded** | Part of the payment has been refunded. |
+| **Refunded** | The entire payment has been refunded. |
+| **Payment failed** | Payment didn't go through. |
+| **Cancelled** | The order was canceled. |
 
-A Fanfare order that was cancelled shows payment status **Failed** in the list (its **Payment** card reads Cancelled). Filtering **Payment status** to **Failed** therefore includes cancelled Fanfare orders as well as payments that failed.
+<Note>
+  Canceled native Fanfare orders display **Failed** as their payment status in the list (while showing **Cancelled** on their **Payment** card), so filtering **Payment status** to **Failed** includes canceled Fanfare orders as well.
+</Note>
 
 ## The order page
 
-The header shows "Order" and the 8-character reference, the status, the experience name, and an **Actions** button. A test order carries a "Test order" banner: "Excluded from revenue, purchase limits, and customer metrics".
+Opening an order shows the 8-character reference, status, experience name, and an **Actions** menu in the header (test orders also display a banner confirming they're excluded from revenue, purchase limits, and customer metrics).
 
-<Frame caption="The order page. Refund is under Actions.">
-  <img src="/images/guide/guide-learn-orders-detail.webp" alt="An order page for a paid order with the Actions button ringed, the Payment card showing order total, refunded and remaining refundable amounts and a Fanfare fee row, the Items card, the Timeline, and the Customer &amp; addresses card." />
+<Frame caption="Inspect payment details, items, timeline events, and issue refunds from the Actions menu on the order page.">
+  <img src="/images/guide/guide-learn-orders-detail.webp" alt="An order page for a paid order with the Actions button highlighted, the Payment card showing order total, refunded and remaining refundable amounts and a Fanfare fee row, the Items card, the Timeline, and the Customer &amp; addresses card." />
 </Frame>
 
-| Card | What it shows |
-| --- | --- |
-| **Payment** | **Order total**, **Refunded** and **Remaining refundable**. Then, when there is a payment record: **Provider** (Stripe or Shopify), **Payment status**, **Amount**, **Fanfare fee** (once payment was taken, unless the order is cancelled), and **Reference**, the payment provider's reference for the payment. At the foot of the card: **Vendor** ("Native" for orders made in Fanfare, otherwise the store's name), **External order ID**, **Sync status**, **Last synced** and a **View source** link. |
-| **Items** | Each product with its variant, quantity, line total and price each, and its stock state after a refund. Below, **Tax**, **Shipping**, **Discount** and **Duties** appear only when they are not zero. For an order synced from your store, the order total is the figure to trust, even where the lines do not add up to it. |
-| **Timeline** | Order placed, payment captured, failed or cancelled, and each refund (marked **Full** or **Partial**, with its reason) or cancellation. |
-| **Customer & addresses** | **Name**, **Email**, **Phone**, **Shipping address** and **Billing address**. The name opens the customer's profile. |
+- **Payment** — **Order total**, **Refunded**, **Remaining refundable**, **Provider** (Stripe or Shopify), **Payment status**, **Amount**, **Fanfare fee**, and provider **Reference**. At the bottom, you'll see **Vendor** (`Native` for Fanfare checkout, or your external store name), **External order ID**, **Sync status**, **Last synced**, and **View source**.
+- **Items** — Products, variants, quantities, line totals, unit prices, and post-refund stock status, plus **Tax**, **Shipping**, **Discount**, and **Duties** when nonzero. For external store orders, rely on the order total if synced line items don't add up to it.
+- **Timeline** — Chronological log of order placement, payment capture or failure, cancellations, and every **Full** or **Partial** refund with its reason.
+- **Customer & addresses** — **Name** (links to their customer profile), **Email**, **Phone**, **Shipping address**, and **Billing address**.
 
-## What you can do in each state
+### Available actions by status
 
 | Status | **Refund** | **View source** |
 | --- | --- | --- |
-| Draft | No | Synced orders only |
-| Pending payment | No | Synced orders only |
-| Paid | Yes | Synced orders only |
-| Partially refunded | Usually, while a balance remains | Synced orders only |
-| Refunded, Payment failed, Cancelled | No | Synced orders only |
+| **Draft** | No | Synced orders only |
+| **Pending payment** | No | Synced orders only |
+| **Paid** | Native orders only | Synced orders only |
+| **Partially refunded** | Native orders with remaining balance | Synced orders only |
+| **Refunded**, **Payment failed**, **Cancelled** | No | Synced orders only |
 
-Refund applies only to native orders paid through Fanfare checkout. **View source** appears when the order came from a store that provided a link to it. If **Actions** is greyed out, nothing is allowed on this order.
-
-If a refund fails after the order was fully refunded, **Refund** may not be offered for the remaining balance. Refund it in your Stripe Dashboard.
-
-**Cancel** is offered on a Fanfare order whose payment has not been taken yet, such as one in **Pending payment**. The **Cancel order** dialogue cancels the payment before it is taken and marks the order **Cancelled**. Once the payment has been taken, refund the order instead. To understand when payment is taken, see [Checkout options](/concepts/checkout-options) and [Admission and the payment window](/concepts/admission-and-payment).
+- **Cancel** appears on native Fanfare orders whose payment hasn't been captured yet (such as **Pending payment**). Confirming the **Cancel order** dialog voids the payment before capture and marks the order **Cancelled**. Once payment is captured, refund the order instead. See [Checkout options](/concepts/checkout-options) and [Admission and the payment window](/concepts/admission-and-payment).
+- **Refund** applies only to native Fanfare checkout orders. If a refund fails after a full refund was previously attempted, **Refund** may not reappear for the remaining balance—issue it from your Stripe Dashboard instead.
+- **View source** opens the order in your external store when the store provides a link.
 
 ## Refund an order
 
-1. Open the order and select **Actions** > **Refund**. The **Create refund** dialogue opens.
-2. Check **Refund amount**.
+<Steps>
+  <Step title="Open the refund dialog">
+    Open the order page and select **Actions → Refund** to open the **Create refund** dialog.
+  </Step>
+  <Step title="Verify the refund amount">
+    Confirm **Refund amount** for a full refund, or enter a smaller amount for a partial refund (minimum one cent; commas work as decimal separators; the amount can't have more decimal places than the currency allows).
 
-   <Warning>
-     **Refund amount** is filled in with the full remaining balance. If you submit without changing it, you refund everything left on the order. The refund is sent to Stripe as soon as you submit, and a refund cannot be undone.
-   </Warning>
+    <Warning>
+      **Refund amount** pre-fills with the full remaining balance. Submitting sends the refund to Stripe immediately and can't be undone—double-check the amount before continuing.
+    </Warning>
+  </Step>
+  <Step title="Choose which items return to stock">
+    If Fanfare manages stock for items on the order, check each sellable item under **Return to stock**. For multi-unit items, enter the quantity in **Units back in stock (1 to N)**. Items you leave unchecked are recorded as kept out of stock (you can still return them later from the order page).
+  </Step>
+  <Step title="Add a reason and submit">
+    Optionally enter a **Reason**, then select **Submit refund** (or **Submit refund and return N units to stock**).
+  </Step>
+</Steps>
 
-   For a partial refund, type the amount. A comma works as the decimal point. The smallest refund is one cent, and an amount with more decimal places than the currency allows is refused.
-3. If the order has items whose stock Fanfare manages, a **Return to stock** section lists them. Tick each item that came back sellable. For an item with more than one unit left, enter how many in **Units back in stock (1 to N)**. Items whose stock Fanfare does not manage carry a note that there is nothing to return.
-4. Optionally add a **Reason**.
-5. Select **Submit refund**, or **Submit refund and return N units to stock** when you ticked items.
-
-<Frame caption="The refund amount starts at the full remaining balance.">
-  <img src="/images/guide/guide-learn-orders-refund-dialog.webp" alt="The Create refund dialogue with the refund amount ringed, two ticked items with a units back in stock box on one, and a submit button that names the units going back to stock." />
+<Frame caption="Refund amount pre-fills with the full remaining balance; check items under Return to stock to restore inventory at the same time.">
+  <img src="/images/guide/guide-learn-orders-refund-dialog.webp" alt="The Create refund dialog with the refund amount highlighted, two checked items with a units back in stock field on one, and a submit button naming the units returning to stock." />
 </Frame>
 
-Items you leave unticked are recorded as kept out of stock. You can still return them later from the order page.
+### What happens after you submit
 
-### After you submit
+- **Completed immediately:** Your refund and stock choices are recorded right away.
+- **Pending in Stripe:** Pending refunds immediately count toward **Refunded** and **Remaining refundable** (if one later fails, the balance is restored). However, the stock choices you made in the dialog are discarded—make them again on the order page once the refund completes.
+- **Failed:** No items are returned to stock.
 
-Without a **Return to stock** section, you see "Refund submitted". With one, what you see depends on Stripe:
+You can issue multiple partial refunds until the remaining balance reaches zero.
 
-- The refund completes. You see "Refund submitted" and your stock choices are recorded.
-- The refund is still pending. You see "Refund is pending. Return to stock can be chosen once it completes." The stock choices you made in the dialogue are dropped. Once the refund completes, make them again on the order page.
-- The refund fails. You see "The refund did not go through, so no items were returned to stock."
-
-A pending refund already counts in **Refunded** and **Remaining refundable**. If it later fails, the balance comes back.
-
-You can refund again while a balance remains. Each refund appears on the timeline marked **Full** or **Partial**.
-
-### Refund from the list
-
-The menu on a row also offers **Refund**. It opens the same dialogue without the **Return to stock** section. Refunded items are left as "No stock decision recorded" until you decide on the order page.
+<Note>
+  You can also select **Refund** from an order's row menu in the Orders list. That shortcut skips the **Return to stock** section, leaving refunded items as **"No stock decision recorded"** until you decide on the order page.
+</Note>
 
 ## Decide stock after a refund
 
-When a refunded item has no stock decision yet, the order page shows "Refund recorded. No stock decision yet for …" with a **Go to item** button that takes you to it.
+When a refunded order has Fanfare-managed items awaiting a stock decision, a banner on the order page links directly to them via **Go to item**.
 
-<Frame caption="Each refunded item waits for a stock decision.">
-  <img src="/images/guide/guide-learn-orders-stock-decision.webp" alt="A refunded order page with a notice that a refund was recorded and no stock decision has been made yet, and an item showing No stock decision recorded with Return to stock (ringed) and Keep out of stock buttons." />
+<Frame caption="Refunded items without a stock decision display Return to stock and Keep out of stock actions directly on the order page.">
+  <img src="/images/guide/guide-learn-orders-stock-decision.webp" alt="A refunded order page with a notice that a refund was recorded and no stock decision has been made yet, and an item showing No stock decision recorded with Return to stock highlighted and Keep out of stock buttons." />
 </Frame>
 
-For each item, choose:
+For each eligible item, choose:
 
-- **Return to stock** adds the units back to **Supply**. It does not lower **Sold** or add them to any drop's allocation: to sell them again, allocate them to a drop ([Allocate stock to a drop](/guide/create/stock-allocation)). For an item with one unit left, it happens at once. For several, a dialogue asks how many came back sellable.
-- **Keep out of stock** records that the item is not going back. You can still return it later.
+- **Return to stock** — Adds the units back to your product's **Supply**. It doesn't lower **Sold** or automatically add units back into a drop's allocation—to sell them again, allocate them to a drop (see [Allocate stock to a drop](/guide/create/stock-allocation)). Single units return immediately; multi-unit lines ask how many came back sellable. Fanfare prevents returning the same unit twice.
+- **Keep out of stock** — Records that the item isn't returning to sellable inventory. You can still return it later if needed.
 
-An item then shows "Returned to stock", "Kept out of stock", a count such as "2 of 3 returned to stock" while some units are back, or "Not managed · no stock to return" for a product whose stock Fanfare does not manage. Returning an item never adds the same unit twice.
+Only non-test orders with a completed refund and a non-deleted, Fanfare-managed product can be returned to stock. See [Manage stock](/guide/create/stock) for how returned units affect supply and where to find pending returns on the product page.
 
-Only items of products whose stock Fanfare manages, and that have not been deleted, on an order that is not a test order and has a completed refund, can be returned. What returned units do to your supply, and the product page's list of refunded items not yet returned, are covered in [Manage stock](/guide/create/stock).
+## External store orders
 
-## Orders from your store
-
-An order synced from an external store shows the store's name as its **Vendor**, its **External order ID** and its **Sync status**. Use **View source** to open it in the store's admin.
+Orders synced from an external store show the store's name under **Vendor**, along with its **External order ID** and **Sync status**. Select **View source** to open the order in your store's admin.
 
 <Warning>
-  An order synced from an external store, such as Shopify, cannot be refunded in Fanfare. Its only action is **View source**, and only when the store provided a link. Make the refund in that store.
+  Orders synced from an external store (such as Shopify) can't be refunded in Fanfare. Process refunds directly in that store.
 </Warning>
 
-## Refunds and fees
+## Refunds, fees, and loyalty points
 
-The Fanfare fee on an order is not returned when you refund it, and Stripe charges its processing fees to your Stripe account; see Stripe's documentation for how refunds affect them. Fee rates are covered in [Payments and fees](/guide/account/payments), and fees on your bill in [Billing and usage](/guide/account/billing).
-
-A refund you make in your Stripe Dashboard is recorded on the order as well. Do not repeat it in Fanfare.
-
-A refund does not take back the **Purchase** points the order earned. To take them back, deduct them by hand with the "Refund adjustment" reason described in [Run a loyalty programme](/guide/learn/loyalty).
+- **Fees:** Fanfare's per-order fee isn't returned when you refund an order. Check Stripe's documentation for how refunds affect Stripe processing fees, and see [Payments and fees](/guide/account/payments) and [Billing and usage](/guide/account/billing) for rate and billing details.
+- **Stripe Dashboard refunds:** Any refund issued directly in your Stripe Dashboard syncs back to the Fanfare order automatically—don't submit it a second time in Fanfare.
+- **Loyalty points:** Refunding an order doesn't automatically deduct the **Purchase** points the customer earned. To claw them back, deduct them manually on the customer's profile using the **Refund adjustment** reason (see [Run a loyalty program](/guide/learn/loyalty)).
 
 ## Test orders
 
-Test orders are placed through a test payment method. They are listed with real orders, with a **Test** chip, a hatched row and a "Test order" banner. They are excluded from revenue, purchase limits and customer metrics, and their items cannot be returned to stock. Where test orders come from, and order limits per customer, are covered in [Add and gate sequences](/guide/create/sequences).
+Orders placed with a test payment method appear alongside live orders with a **Test** badge, hatched row background, and a **"Test order"** banner. They're excluded from revenue, purchase limits, and customer metrics, and their items can't be returned to stock. See [Add and gate sequences](/guide/create/sequences) for test orders and purchase limits.
 
 ## On Shopify
 
-The lists and the order page are the same in the Fanfare app in Shopify. Taking payment with Fanfare checkout is not available there, so orders paid through Shopify checkout show **Vendor** "Shopify", offer at most **View source**, and are refunded in Shopify. A refund you make in Shopify is not passed back to Fanfare: the Fanfare order still shows **Paid**.
+The **Orders** list and order detail page work the same inside the Fanfare Shopify app. Because Fanfare checkout isn't used in the Shopify app, orders completed through Shopify checkout show **Vendor** as **Shopify**, offer at most **View source**, and must be refunded in Shopify. Refunds issued in Shopify don't sync back to Fanfare, so the order continues showing **Paid** in Fanfare.
 
-The order page in the Fanfare app in Shopify also has a panel to push a Fanfare order to Shopify or link it to a Shopify order. See [Orders with Shopify checkout](/guide/shopify/orders).
+In the Shopify app, the order page also includes a panel to push a Fanfare order to Shopify or link it to an existing Shopify order. See [Orders with Shopify checkout](/guide/shopify/orders).
 
 ## Troubleshooting
 
 <AccordionGroup>
-  <Accordion title="Refund is missing from Actions">
-    - The order was synced from your store. Refund it there.
-    - The payment has not been taken yet. A Fanfare order in this state may offer **Cancel** instead.
-    - The order is already fully refunded, or a full refund is still in progress.
-    - The order is Draft: the buyer is still in their payment window.
+  <Accordion title="Refund isn't available under Actions">
+    Check whether one of the following applies:
+    - The order was synced from an external store (refund it in that store instead).
+    - Payment hasn't been captured yet—use **Cancel** if available.
+    - The order is already fully refunded or has a full refund in progress.
+    - The order is still in **Draft** while the buyer is in their payment window.
   </Accordion>
-  <Accordion title="The refund amount is refused">
-    - It is more than the remaining balance. The balance already counts refunds still in progress.
-    - It has more decimal places than the currency allows.
-    - It is under one cent.
+  <Accordion title="My refund amount isn't accepted">
+    Make sure the amount is at least one cent, doesn't exceed the currency's decimal precision, and doesn't exceed **Remaining refundable** (which already accounts for pending refunds).
   </Accordion>
-  <Accordion title="Search does not find the order">
-    The 8-character reference does not match in search. Use **Copy order ID** on the order's row, or search by the customer, the experience or your store's order ID.
+  <Accordion title="Search doesn't find an order by its short reference">
+    The 8-character short reference isn't searchable. Use **Copy order ID** on the row to search by the full Fanfare ID, or search by customer details, experience name, or external store order ID.
   </Accordion>
-  <Accordion title="Return to stock is not offered">
-    - The refund is still pending. Come back once it completes.
-    - Fanfare does not manage stock for that product, or the product has been deleted.
-    - It is a test order.
+  <Accordion title="Return to stock isn't available on a refunded item">
+    Items can be returned to stock only after the refund completes in Stripe, on non-test orders, for non-deleted products whose stock is managed by Fanfare.
   </Accordion>
 </AccordionGroup>
 
 ## Related
 
 <CardGroup>
-  <Card title="Payments and fees" href="/guide/account/payments">Connect Stripe and see the Fanfare checkout fee.</Card>
-  <Card title="Manage stock" href="/guide/create/stock">What returned units do to supply.</Card>
-  <Card title="Read your results" href="/guide/learn/performance">Paid orders and net revenue.</Card>
-  <Card title="Customer profiles" href="/guide/learn/customers">The customer behind an order.</Card>
-  <Card title="Orders with Shopify checkout" href="/guide/shopify/orders">Push and link orders to Shopify.</Card>
+  <Card title="Payments and fees" href="/guide/account/payments">
+    Connect Stripe and review your Fanfare take rate.
+  </Card>
+  <Card title="Manage stock" href="/guide/create/stock">
+    Track product supply and see how returned units are handled.
+  </Card>
+  <Card title="Read your results" href="/guide/learn/performance">
+    Compare paid orders and net revenue across your drops.
+  </Card>
+  <Card title="Customer profiles" href="/guide/learn/customers">
+    View the customer behind any order.
+  </Card>
+  <Card title="Orders with Shopify checkout" href="/guide/shopify/orders">
+    Push Fanfare orders to Shopify or link them to Shopify orders.
+  </Card>
 </CardGroup>

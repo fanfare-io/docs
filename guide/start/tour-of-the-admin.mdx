@@ -1,149 +1,111 @@
 ---
 title: A tour of the admin
-description: What you see on Home after you sign in, where each part of Fanfare lives, and where to find billing, your team and settings.
+description: Find your way around Home, the sidebar, the user menu, and settings in the Fanfare admin.
 ---
 
-When you sign in to the Fanfare admin, you land on **Home**. If you followed a link to a particular page while signed out, Fanfare takes you there instead. From Home, everything sits in one of two places: the sidebar on the left, which holds the areas of Fanfare you work in day to day, and the user menu at the foot of the sidebar, which holds your account, your team and billing.
+When you sign in to [admin.fanfare.io](https://admin.fanfare.io), you land on **Home**. Everything in Fanfare lives in one of two places: the **sidebar** on the left for your day-to-day drops and settings, and the **user menu** at the bottom left for your team, profile, and billing.
 
 {/* image: guide-start-tour-of-the-admin-home-and-sidebar */}
 
 ## The sidebar
 
-The sidebar lists the areas of Fanfare in this order:
+Use the left sidebar to move between the main areas of your workspace:
 
-| Item | What lives there | Guide |
+| Section | What you'll manage here | Guide |
 | --- | --- | --- |
-| Home | Totals for your organisation, and the Experience Calendar. | This page |
-| Products | Your catalogue: products, variants and stock. | [Add products](/guide/create/products) |
-| Experiences | Your experiences, with their sequences and distributions. | [Create an experience](/guide/create/experiences) |
-| Audiences | Groups of customers you can let into a sequence. | [Build audiences](/guide/create/audiences) |
-| Customers | Your customers' profiles. | [Customer profiles](/guide/learn/customers) |
-| Orders | Your orders and refunds. | [Orders and refunds](/guide/learn/orders) |
-| Loyalty | Points, tiers and loyalty settings. | [Run a loyalty programme](/guide/learn/loyalty) |
-| Design Studio | Your brand, templates and widget designs. | [Set your brand](/guide/create/brand) |
-| Locations | Your stores and venues, with their opening hours. | [Locations and opening hours](/guide/create/locations) |
-| Settings | Organisation, payments, integrations and developer settings. | [Settings](#settings) below |
+| **Home** | Organization performance overview and the Experience Calendar. | This page |
+| **Products** | Your catalog of products, variants, and stock. | [Add products](/guide/create/products) |
+| **Experiences** | Your drops, along with their sequences and distributions. | [Create an experience](/guide/create/experiences) |
+| **Audiences** | Customer segments you can use to gate access to drops. | [Build audiences](/guide/create/audiences) |
+| **Customers** | Profiles and activity history for customers who enter your drops. | [Customer profiles](/guide/learn/customers) |
+| **Orders** | Paid orders and refunds. | [Orders and refunds](/guide/learn/orders) |
+| **Loyalty** | Points, tiers, and loyalty program rules. | [Run a loyalty program](/guide/learn/loyalty) |
+| **Design Studio** | Your brand settings, page templates, and widget designs. | [Set your brand](/guide/create/brand) |
+| **Locations** | Physical stores and venues with opening hours for appointments. | [Locations and opening hours](/guide/create/locations) |
+| **Settings** | Organization details, payments, integrations, and developer keys. | [Settings](#settings) below |
 
-On a medium-width screen the sidebar shrinks to a rail of icons. On a phone-sized screen it is hidden until you open it. Use the toggle at the top left of the page to open or close it.
-
-No sidebar item is ever locked. When your plan does not include a feature, the page itself usually tells you, with an "Available on …" badge and an upgrade link. A few places give no reason: some template menu items are disabled with no explanation, and a restricted organisation template takes you straight to the plans table. See [Plans and what they unlock](/guide/start/plans).
+Every section stays visible in the sidebar regardless of your plan. If a specific feature requires a higher plan, you'll see an upgrade prompt on that page rather than a locked navigation item. See [Plans and what they unlock](/guide/start/plans).
 
 ## The user menu
 
-Select your name at the foot of the sidebar to open the user menu:
+Select your name at the bottom of the sidebar to open the user menu:
 
-- **Account**: despite its name, this is your organisation, not you. It opens a dialogue with your organisation's members and invitations. See [Team members](/guide/account/team).
-- **Profile**: you, the person signed in.
-- **Billing**: your plan and payment details. See [Billing and usage](/guide/account/billing).
-- **Usage**: Fanfare's fees on your paid orders.
-- **Sign Out**.
-
-Billing and Usage are not in the sidebar or in Settings.
+- **Account** — Manage your organization's team members and invitations. See [Team members](/guide/account/team).
+- **Profile** — Manage your personal account details.
+- **Billing** — View or change your plan and payment method. See [Billing and usage](/guide/account/billing).
+- **Usage** — Review Fanfare's per-order fees on your paid orders.
+- **Sign Out** — Sign out of the Fanfare admin.
 
 {/* image: guide-start-tour-of-the-admin-user-menu */}
 
 ## Home
 
-The sidebar calls this page **Home**, and the page itself is headed **Dashboard**. They are the same page.
+**Home** (titled **Dashboard** at the top of the page) gives you a live snapshot of your organization's activity and upcoming schedule.
 
-### The numbers
+### Performance metrics
 
-Across the top of Home you choose a period: **Last 24 hours**, **7 days**, **30 days** or **90 days**. The default is 7 days. Fanfare remembers your choice in this browser only.
+Choose a date range at the top—**Last 24 hours**, **7 days** (default), **30 days**, or **90 days**—to view five headline cards: **Views**, **Entries**, **Wins**, **Paid orders**, and **Net revenue**. Below the cards, a chart plots **Entries** over time, and you can switch it to **Views**, **Wins**, or **Paid orders**. See [Read your results](/guide/learn/performance) for metric definitions.
 
-Five cards show your organisation's totals for that period: **Views**, **Entries**, **Wins**, **Paid orders** and **Net revenue**. Below them, a chart plots one of them across the period. It starts on **Entries** ("Entries over time"), and you can switch it to **Views**, **Wins** or **Paid orders**. What each number counts is explained in [Read your results](/guide/learn/performance).
+Metrics refresh automatically every 30 seconds while Home is on screen (pausing in background tabs). You can toggle **Auto-refresh On** to pause automatic updates or select **Refresh** to update on demand. If metrics fail to load, auto-refresh turns off until you turn it back on.
 
-The numbers update every 30 seconds while Home is on screen. In a background tab they pause, and catch up when you come back. The Experience Calendar does not refresh with them. The button beside **Refresh** shows **Auto-refresh On**; select it to turn automatic updates off, and select it again to turn them back on. Select **Refresh** to update straight away. If the numbers fail to load, Fanfare shows an error and turns auto-refresh off. It stays off until you turn it back on.
+If there's no activity in the selected time range, the cards and chart display faded **Sample data** until real customer activity comes in. Until you create your first experience, **Home** also shows **Quick Actions** shortcuts for **Create Experience**, **Create Dynamic Audience**, and **Create Product**.
 
-### When there is nothing to show yet
+### Experience Calendar
 
-If every total in the period is zero, the cards and the chart show faded example numbers under a **Sample data** label, with the message "No activity in this period yet". These are not your figures. Your real numbers replace them as soon as customers interact with your experiences. A live organisation can see sample data too: a quiet 24-hour window with no activity at all looks the same.
+Once you've created an experience, the **Experience Calendar** takes the place of Quick Actions. It displays one month at a time alongside a list of every drop running that month.
 
-Whenever your organisation has no experiences, Home also shows **Quick Actions** with three shortcuts: **Create Experience**, **Create Dynamic Audience** and **Create Product**. Once it has one, the Experience Calendar takes their place.
-
-### The Experience Calendar
-
-The **Experience Calendar** shows one month at a time. Move between months, or select the **Today** button (a house icon) to come back to the current month. Select a day to highlight the experience running on it and scroll the list to its row. When several experiences run that day, a short list opens so you can choose one.
-
-Beside the calendar, a list shows every experience that is running at any point in the month, one row each, with its dates and its status chip. Select a row to open the experience. The **Status** filter narrows both the list and the days marked on the calendar to **All**, **Upcoming**, **Active** or **Closed**. It judges each experience by its opening and closing times alone, so its groups do not always match the words on a row's status chip. When you deactivate an experience before its closing time, the calendar treats it as **Closed** from the moment you deactivated it. If you deactivate it before it opens, it leaves the calendar.
+- Select a day on the calendar to jump to the drop running on it, or select any row in the list to open that experience.
+- Use the **Status** filter (**All**, **Upcoming**, **Active**, **Closed**) to narrow the list and calendar markers.
+- Deactivating an experience before it opens removes it from the calendar; deactivating it mid-drop marks it as **Closed**.
 
 <Note>
-  The calendar places experiences by the time on your own computer, not your organisation's time zone. If a colleague in another time zone opens Home, an experience that opens late in the evening can appear on the next or previous day for them.
+  The calendar loads your 100 most recently created experiences that have both an opening and a closing time. It uses your computer's local time zone rather than your organization's default time zone, so late-evening drops can appear on adjacent days for teammates in other zones.
 </Note>
-
-The calendar loads only your 100 most recently created experiences. An experience appears only when it has both an opening and a closing time. If any part of it is set to open with no closing time, the experience has no closing time either, and it does not appear.
 
 ## Settings
 
-**Settings** in the sidebar opens on **Organization**. A side menu groups the rest:
+Selecting **Settings** in the sidebar opens **Organization**, with the remaining settings grouped on the left:
 
-| Group | Item | Guide |
+| Group | Page | Guide |
 | --- | --- | --- |
-| General | **Organization** | [Organisation settings](/guide/account/organization) |
-| General | **Email Sender** | [Sender identity and sending domain](/guide/create/email-sender) |
-| General | **Tours & Tips** | [The getting-started tour](#the-getting-started-tour) below |
-| Commerce | **Payments** | [Payments and fees](/guide/account/payments) |
-| Commerce | **Variant Options** | [Add products](/guide/create/products) |
-| Connections | **Integrations** | [Integrations](/guide/account/integrations) |
-| Developer | **API Keys** | [API keys and embedding](/guide/account/developer) |
-| Developer | **Embedding** | [API keys and embedding](/guide/account/developer) |
+| **General** | **Organization** | [Organization settings](/guide/account/organization) |
+| **General** | **Email Sender** | [Sender identity and sending domain](/guide/create/email-sender) |
+| **General** | **Tours & Tips** | Replay the interactive onboarding tour anytime |
+| **Commerce** | **Payments** | [Payments and fees](/guide/account/payments) |
+| **Commerce** | **Variant Options** | [Add products](/guide/create/products) |
+| **Connections** | **Integrations** | [Integrations](/guide/account/integrations) |
+| **Developer** | **API Keys** | [API keys and embedding](/guide/account/developer) |
+| **Developer** | **Embedding** | [API keys and embedding](/guide/account/developer) |
 
-Your team is not in Settings: manage it from **Account** in the user menu.
+## Guided tour and billing alerts
 
-## The page header
-
-At the top of most pages, the header shows the page's title, or a trail of breadcrumbs when you are inside an area. The design editors use the full screen and have no header. The house icon at the start of the breadcrumbs takes you back to Home.
-
-## Billing banners
-
-When your payment fails, your subscription is cancelled, your trial is about to end or a cancellation is scheduled, a banner appears above every page except Billing and Usage, with a button to fix it. [Billing and usage](/guide/account/billing) explains each one.
-
-## The getting-started tour
-
-The first time you sign in, Fanfare offers a short tour that opens with "Welcome to Fanfare". Choose **Start the tour** or **I'll explore on my own**. The tour has four steps: a welcome, then the **Experiences**, **Customers** and **Settings** items in the sidebar. On a phone-sized screen, where the sidebar is hidden, you see only the welcome.
-
-To see it again, open **Settings → Tours & Tips**, where it is listed as "Getting started with Fanfare", and select **Replay**. If you never finished or skipped it in this browser, the button reads **Start**.
-
-Fanfare remembers that you have seen the tour in this browser only. When you sign in on a new browser or device, the tour is offered again.
-
-## If a page will not load
-
-- "We can't find that page": the address is wrong or the page has moved. Select **Go to Dashboard** or **Go Back**.
-- "Something went wrong on our end": select **Try again**. If it keeps happening, select **Contact Support**, or open **Details for support** and select **Copy details** to paste them into a message to support.
-- "You don't have access to this page": your role does not include it. Ask an admin in your organisation. See [Team members](/guide/account/team).
-
-## Worked example: finding your way on day one
-
-A new operator joins Northbound Supply Co. They sign in and land on Home.
-
-1. The cards show the last 7 days. They switch the period to **30 days** to see the month.
-2. In the Experience Calendar list they see "Phantom Stitch Anorak Drop" with its dates and status chip, alongside "Eternal Bloom No. 1 Auction".
-3. They select the "Phantom Stitch Anorak Drop" row, and the experience opens.
-4. They want to check which plan the organisation is on. Billing is not in the sidebar, so they select their name at the foot of the sidebar and choose **Billing**.
+- **Onboarding tour:** The first time you sign in, Fanfare offers a quick walkthrough of key areas in the sidebar. You can replay it anytime from **Settings → Tours & Tips**.
+- **Billing banners:** If your trial is ending soon, a payment fails, or a subscription cancellation is scheduled, a banner appears at the top of the app with a direct link to resolve it. See [Billing and usage](/guide/account/billing).
 
 ## On Shopify
 
-The Fanfare app in Shopify has no Fanfare sidebar and no user menu. Its navigation sits in Shopify's own left-hand menu. The Fanfare app name at the top opens Home, and under it are Products, Experiences, Audiences, Customers, Orders, Loyalty, Design Studio, Locations, Billing, Usage and Settings. So:
+Inside Shopify, Fanfare uses Shopify's left-hand navigation instead of its own sidebar and user menu:
 
-- **Billing** and **Usage** are top-level items. **Billing** takes you out of the app to Shopify's plan page.
-- There is no **Account**, **Profile** or **Sign Out**.
-- Home adds a "Finish setting up Fanfare" checklist, which changes to "Fanfare is set up on your store" once both steps are done, and **Quick Actions** offers **Create Location** in place of **Create Product**.
-- Settings adds **Storefront setup** and has no **Tours & Tips**. The first-run tour is "Setting up Fanfare on your store". To replay it, open **Settings → Storefront setup** and select **Replay** on the Setup walkthrough card.
+- **Billing** and **Usage** appear directly as top-level items under the Fanfare app, and **Billing** opens Shopify's plan page.
+- There is no **Account**, **Profile**, or **Sign Out** menu—access is managed through Shopify staff permissions.
+- **Home** includes a storefront setup checklist, and **Quick Actions** shows **Create Location** instead of **Create Product** (since products come from your Shopify catalog).
+- **Settings** adds **Storefront setup** (where you can also replay the storefront setup walkthrough) and omits **Tours & Tips**.
 
-See [Fanfare in Shopify](/guide/shopify/overview) and [Storefront setup](/guide/shopify/storefront-setup).
+See [Fanfare in Shopify](/guide/shopify/overview) and [Storefront setup](/guide/shopify/storefront-setup) for more details.
 
 ## Related
 
 <CardGroup>
   <Card title="Your first drop" href="/guide/start/your-first-drop">
-    Sign up, set up your organisation and run your first experience.
+    Create your organization and launch your first experience.
   </Card>
   <Card title="Plans and what they unlock" href="/guide/start/plans">
-    What each plan includes, and what a locked feature looks like.
+    See what each plan includes and how plan limits work.
   </Card>
   <Card title="Read your results" href="/guide/learn/performance">
-    What each number on Home counts.
+    Understand every metric shown on Home and in Performance.
   </Card>
   <Card title="Team members" href="/guide/account/team">
-    Invite colleagues from Account.
+    Invite teammates and manage organization access.
   </Card>
 </CardGroup>

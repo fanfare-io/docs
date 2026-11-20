@@ -1,110 +1,104 @@
 ---
 title: Timed release
-description: How a timed release opens a sale at a set time for everyone who can enter, and why it can sell out at the moment customers get in.
+description: Launch a product at a set time for everyone at once—first come, first served—with instant stock holds and no waiting room.
 ---
 
-A timed release opens the sale at a set time for everyone who can enter the sequence. There is no line and no pacing: first come, first served. In the admin it is **Timed Release**, described as "Open access at a set time, first come first served." When you create an experience, its card reads "Set a specific time when access opens for everyone. Ideal for standard releases." Choose it when you want the product on sale at a known moment for whoever turns up. If you expect more people than your stock and want them let in at a steady rate, use a queue instead, which paces admissions. The five types are compared in [Distributions](/concepts/distributions/overview).
+A **timed release** opens your drop to everyone in the sequence at a scheduled time—first come, first served, with no waiting room and no admission pacing. Choose a timed release for standard launches where you want a clean countdown into immediate checkout access.
 
-A sequence is one way in to an experience, and a timed release is one of the distributions a sequence can run. Your customers do not see the words "Timed Release". Their page shows the heading "Flash Sale", with an "Enter sale" button. If you see those on your customer page, that is your timed release.
+If you expect heavy demand spikes and want to pace checkout traffic smoothly, use a [queue](/concepts/distributions/queue) instead. See [Distributions](/concepts/distributions/overview) to compare all five types.
+
+<Tip>
+  On your customer-facing page, a timed release displays as **"Flash Sale"** with an **"Enter sale"** button—helpful to recognize when previewing your drop.
+</Tip>
 
 ## How it works
 
-You set when the release opens and when it closes. The time zone starts as the experience's and can be changed with **Time zone**. The other settings are **Allow guest access** (off by default, and unavailable on a sequence gated by an audience) and **Automatic entry** (off by default). There is no payment step to configure. The steps are in [Set up a timed release](/guide/create/timed-release).
+Set **Opens**, **Closes**, and **Time zone** (defaults to your experience's time zone), plus optional **Allow guest access** (off by default; unavailable when gated by an audience) and **Automatic entry** (off by default). There's no payment collection step to configure. See [Set up a timed release](/guide/create/timed-release) for step-by-step setup.
 
-Before the release opens, customers see "Coming Soon" with a countdown. Signed-in customers can join the sequence's waitlist with "Enter waitlist"; others see "Sign in to get notified". See [Waitlists](/concepts/waitlists).
+Before **Opens**, customers see a **"Coming Soon"** countdown and can join the sequence waitlist via **"Enter waitlist"** (signed-out visitors see **"Sign in to get notified"**). See [Waitlists](/concepts/waitlists).
 
-At the opening time the sale goes live. Each customer selects "Enter sale", choosing their item first if the sequence offers a choice.
+Once the sale opens, shoppers pick their item or size (if applicable) and click **Enter sale** to claim a spot.
 
 ### Entering holds a unit
 
-On a sequence that counts stock, each customer who enters holds one unit of the item they chose from that moment, while they shop and pay. The unit is theirs until one of these happens:
+On a stock-counted sequence, clicking **Enter sale** reserves one unit of the shopper's chosen item immediately while they check out. That hold remains in place until:
 
-- They pay, and the unit is sold.
-- Their time to complete the purchase runs out, and the unit goes back on sale.
+- They complete payment and purchase the unit, or
+- Their 30-minute checkout window expires and the unit returns to available stock.
 
-A customer cannot give the unit back early: once they are in, it stays held until they pay or their time ends.
-
-When no unit is free, entry is refused. The customer stays on the sale and sees "That option just sold out — pick another" beside the "Enter sale" button, or beside the item picker, where they can choose another item. Fanfare does not let them in on its own: if a unit has come back by the time they select "Enter sale" again, they get in.
-
-Once the release closes, customers who did not get in see "Ended", with "This event has ended. Thank you for your interest. This distribution is no longer available." and no button.
-
-Until the drop's stock is ready, a customer can see "Not ready yet. Try again in a moment.", in place of the item choice or after selecting "Enter sale".
+Shoppers can't release a hold early. If all units of an option are already held or sold, Fanfare keeps the shopper on the page and displays **"That option just sold out — pick another"** beside **Enter sale** or the item picker. They can choose a different size or click **Enter sale** again later—if another shopper's hold expires in the meantime, they'll get in.
 
 <Warning>
-  A timed release can sell out at the moment of entry, not at checkout. Customers who were refused while others held units may get in later, when someone's time to pay runs out and that unit goes back on sale.
+  Timed releases can sell out at the moment of entry rather than checkout. Shoppers who see an option sold out may still claim a unit later if someone else's checkout window expires.
 </Warning>
 
-<Frame caption="On a sequence that counts stock, each customer who enters holds one unit until they pay or their time runs out.">
+<Frame caption="On a stock-counted sequence, entering a timed release holds one unit until the shopper pays or their checkout window expires.">
   <img src="/images/guide/concepts-timed-release-entry-holds-a-unit.webp" alt="Units on sale sit in a row. A customer who enters holds one unit until they pay or their time runs out. If they pay, the unit is sold. If their time runs out, the unit goes back on sale. When no unit is free, entry is refused: the customer stays on the sale and sees &quot;That option just sold out — pick another&quot; next to &quot;Enter sale&quot;, which they can select again. They get in if a unit has come back." />
 </Frame>
 
-Entry holds a unit in the same way whether the product's stock is managed in Fanfare or in Shopify.
+Stock holds work identically whether inventory is managed in Fanfare or Shopify. However, on sequences running only timed releases, externally managed products (including Shopify-managed inventory) default to **no limit** on Fanfare's side so entry isn't capped before checkout. See [Stock](/concepts/stock) for details on counted vs. unlimited sizes.
 
-On a sequence that runs only timed releases, sizes of goods Fanfare does not manage, including products whose stock Shopify manages, start with no limit, so entry never runs out on Fanfare's side. See [Stock](/concepts/stock) for how counting and "no limit" work.
+### Automatic entry on counted sequences
 
-### Automatic entry on a counted sequence
+When **Automatic entry** is on, Fanfare normally admits shoppers automatically as soon as they reach the drop. On a timed release whose sequence counts a size that can run out, automatic entry isn't active—shoppers click **Enter sale** themselves (your toggle setting is still saved). If no size has a stock cap and there's no item selector, automatic entry works as expected.
 
-**Automatic entry** enters everyone who reaches the distribution without them selecting anything. On a timed release whose sequence counts a size that can run out, it is not offered to customers, even when you switch it on. The admin says so beside the switch: "Automatic entry is not offered to shoppers while this sequence counts a size that can run out: they tap Enter themselves. The setting is kept as you set it." If no size has a limit and customers have no item to choose, automatic entry stays available.
+### Not compatible with Mystery Box
 
-### Mystery Box
+Timed releases can't run on a sequence using **Mystery Box** product selection. You can't add a timed release to a Mystery Box sequence—or switch a sequence with a timed release to Mystery Box—without seeing **"Timed release can't be combined with Mystery Box products"**. See [Sequences and routing](/concepts/sequences).
 
-A timed release cannot run on a sequence that assigns products by weight. You cannot add one to a Mystery Box sequence, and you cannot switch a sequence that has one to Mystery Box: the admin answers "Timed release can't be combined with Mystery Box products". Product selection is explained in [Sequences and routing](/concepts/sequences).
+### Payment and take rate
 
-### Payment
+Customers always pay at checkout after entering—there are no card pre-authorizations on timed releases. Every admitted shopper gets a fixed **30-minute payment window** (not configurable). If their window expires while the release is still open, they see **"Access expired"** and can return to click **Enter sale** again.
 
-Customers always pay after they enter, at checkout. There is no card hold. Once in, they see "You're in" with a "Your checkout time" countdown and a "Continue to checkout" button. If their time runs out on the page, they see "Access expired", "Your access has expired." While the release is still open, they can come back to the sale and select "Enter sale" again.
+See [Admission and the payment window](/concepts/admission-and-payment) for more on checkout windows. Orders paid through Fanfare checkout or Shopify checkout use the lower **Timed-release take rate**—see [Payments and fees](/guide/account/payments).
 
-The payment window on a timed release is 30 minutes from the moment the customer enters. It is fixed: a timed release has no setting to change it.
+## Good to know
 
-Payment windows in general are covered in [Admission and payment](/concepts/admission-and-payment). On orders paid through Fanfare checkout, Fanfare's fee on timed-release orders uses its own rate, the **Timed-release take rate**. See [Payments and fees](/guide/account/payments).
+- **Guest shoppers:** When **Allow guest access** is enabled, guests don't receive emails or texts and can only return to their session from the same browser. See [Customers and identity](/concepts/customers).
+- **Loyalty points:** Entering a timed release doesn't award participation points, though completed purchases still earn purchase points as usual. See [Loyalty and Fanfair](/concepts/loyalty).
+- **No overlapping windows:** Distributions in one sequence can't overlap. Use separate sequences to run timed releases simultaneously for different audiences. See [Distributions](/concepts/distributions/overview).
+- **Customer-visible names:** Your distribution name appears in default waitlist "opens soon" emails, so give it a clear public title. See [Waitlists](/concepts/waitlists).
+- **Minimal locking:** Beyond standard schedule rules, timed releases have no extra settings that lock after opening. See [What locks, and when](/concepts/what-locks-when).
 
-## Rules that surprise people
+## Lifecycle and deactivation
 
-- Guests (when **Allow guest access** is on) get no emails or texts and can only come back in the same browser. See [Customers](/concepts/customers).
-- Entering or completing a timed release earns no participation points, though the order itself earns purchase points as any order does. See [Loyalty](/concepts/loyalty).
-- Distribution windows in one sequence cannot overlap. To run timed releases at different times for different groups, use separate sequences. See [Distributions](/concepts/distributions/overview) and [Sequences and routing](/concepts/sequences).
-- The default "opens soon" email to the waitlist uses the distribution's name, so name the release as you want customers to read it. See [Waitlists](/concepts/waitlists).
-- Nothing about a timed release locks once it opens beyond the schedule rules every type shares. See [What locks when](/concepts/what-locks-when).
+A timed release moves from **Scheduled** to **Live** at **Opens**, and to **Ended** at **Closes** with no settling phase.
 
-## Lifecycle
-
-A timed release is **Scheduled** before it opens, **Live** while it is open, and **Ended** after it closes. One you deactivate before it closes shows **Ended early**. There is no settling phase: nothing is drawn or decided after it closes.
-
-**Deactivate** stops it at once. The admin warns "It stops now. Shoppers can't buy from the release any more.", or for one that has not opened, "It won't open, so shoppers won't be able to buy from the release." Customers who are in but have not started paying lose their place; those who have already started paying can finish within their payment window. This cannot be undone. Paid orders are kept. See [Stop a drop](/guide/drop/deactivate).
+Choosing **Deactivate** ends the release immediately (showing **Ended early** if stopped before **Closes**). Admitted shoppers who haven't started checkout lose their hold, while shoppers already checking out can finish paying within their 30-minute window. Paid orders stay intact, and deactivation can't be undone. See [Stop a drop](/guide/drop/deactivate).
 
 ## What your customers see
 
-- Before opening: "Coming Soon" with a countdown, and "Enter waitlist" for signed-in customers.
-- While open: "Flash Sale" with a "Window closes in" countdown and "Enter sale", with an item choice if the sequence offers one.
-- Once in: "You're in" with a "Your checkout time" countdown and a "Continue to checkout" button.
-- When nothing is free: the note "That option just sold out — pick another", with "Enter sale" still there to try again; once the release has closed, "Ended".
-- After their time ran out: "Access expired". While the release is open, they can select "Enter sale" again.
+- **Before opening:** **"Coming Soon"** with a countdown and **"Enter waitlist"** for signed-in shoppers.
+- **While live:** **"Flash Sale"** with a **"Window closes in"** countdown, optional item selector, and **Enter sale**.
+- **Admitted:** **"You're in"** with a **"Your checkout time"** countdown and **Continue to checkout**.
+- **Sold out:** **"That option just sold out — pick another"** alongside **Enter sale** while live; **"Ended"** once the release closes.
+- **Window expired:** **"Access expired"** (they can click **Enter sale** again while the release remains open).
 
-The full journey and its messages are in [What your customers see](/guide/drop/what-customers-see).
+See [What your customers see](/guide/drop/what-customers-see) for every stage and notification.
 
-## Worked example
+## Example: running a timed release
 
-Northbound Supply Co. is releasing the KaiZen Relic. The experience "KaiZen Relic Release" has a sequence, "Sneaker Club Release", gated by the Sneaker Club audience, so guest access is off. It runs a timed release open for four hours. Say, for example, that the sequence counts 300 pairs.
+Northbound Supply Co. launches the KaiZen Relic through a **Sneaker Club Release** sequence gated to their Sneaker Club audience (so guest access is off). The timed release runs for four hours with 300 pairs counted in stock:
 
-1. At the opening time, Sneaker Club members sign in and select "Enter sale". The first 300 to enter each hold one pair and see "You're in" with their "Your checkout time" countdown.
-2. Customer 301 selects "Enter sale" a moment later. Every pair is held, so they see "That option just sold out — pick another" and stay on the sale page. They have not bought anything, and nobody has refused them for good.
-3. One of the first 300 does not finish paying before their countdown ends. Their pair goes back on sale.
-4. Customer 301 selects "Enter sale" again, gets in, holds that pair and completes the purchase.
-5. Four hours after opening the release closes. Anyone who did not get in now sees "Ended", with no button.
+1. At **Opens**, Sneaker Club members sign in and click **Enter sale**. The first 300 shoppers immediately hold one pair each and see **"You're in"** with their 30-minute checkout countdown.
+2. Shopper 301 clicks **Enter sale** moments later. All 300 pairs are currently held, so they see **"That option just sold out — pick another"** and stay on the page.
+3. One of the first 300 shoppers lets their checkout window expire without paying, automatically releasing their pair back into stock.
+4. Shopper 301 clicks **Enter sale** again, claims the returned pair, and completes checkout.
+5. Four hours later, the release closes and remaining visitors see **"Ended"**.
 
 ## Related
 
 <CardGroup>
   <Card title="Set up a timed release" href="/guide/create/timed-release">
-    The settings and the steps to add one to a sequence.
+    Step-by-step instructions and settings for adding a timed release.
   </Card>
   <Card title="Distributions" href="/concepts/distributions/overview">
-    The five distribution types and how their windows work.
+    Compare all five distribution types and how their schedules work.
   </Card>
   <Card title="Stock" href="/concepts/stock">
-    How a sequence counts stock, and when a size has no limit.
+    Understand counted stock, holds, and unlimited sizes.
   </Card>
   <Card title="What your customers see" href="/guide/drop/what-customers-see">
-    Every stage of the customer's journey and the messages they receive.
+    Preview every customer screen and notification.
   </Card>
 </CardGroup>

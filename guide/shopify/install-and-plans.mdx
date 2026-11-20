@@ -1,125 +1,160 @@
 ---
 title: Install and choose a plan
-description: Install the Fanfare app on your Shopify store, approve a plan on Shopify's plan page, and fix what stops you getting into the app.
+description: Install the Fanfare app from Shopify, approve your plan, understand usage billing, and resolve access issues.
 ---
 
-You install Fanfare from Shopify, and you pay for it through Shopify. There is no separate Fanfare sign-up or sign-in: installing the app creates your Fanfare organisation, and every store then approves a plan on Shopify's own plan page before it can use the app. This page covers the install, choosing and changing a plan, how Fanfare's fees reach your Shopify bill, and what to do when the app will not let you in.
+You install and pay for Fanfare directly through Shopify—no separate Fanfare sign-up or login required. Installing the app creates your Fanfare organization automatically, then prompts you to approve a plan on Shopify's plan page before opening the app.
+
+This guide covers installation, choosing or changing plans, how Fanfare's per-order fees appear on your Shopify bill, and how to handle permissions or access blocks.
 
 ## Before you start
 
-- You can install apps on the store and approve the permissions Shopify asks for.
-- Your store's currency is one Fanfare can price.
+- Your Shopify staff account has permission to install apps and approve app permissions.
+- Your store uses a currency supported by Fanfare.
 
-Fanfare can price every currency Shopify offers except USD Coin (USDC), the Venezuelan digital bolívar (VED), the Kiribati dollar (KID), and the withdrawn or placeholder codes VEF, BYR, LTL, LVL and XXX.
+Fanfare supports every currency Shopify offers except USD Coin (USDC), Venezuelan digital bolívar (VED), Kiribati dollar (KID), and withdrawn or placeholder codes (VEF, BYR, LTL, LVL, XXX).
 
 <Warning>
-  If Fanfare cannot price your store's currency, the whole app shows only one message: "Fanfare isn't available for stores priced in … yet. Change your store's currency to use Fanfare.", with your currency code in place of the dots. No other page is reachable, not even Billing. Change the store's currency in Shopify and open the app again; the check runs every time a page loads.
+  If your store uses an unsupported currency, the entire app displays a single notice: `"Fanfare isn't available for stores priced in … yet. Change your store's currency to use Fanfare."` (with your currency code filled in), and no other pages—including **Billing**—are accessible. Update your store's currency in Shopify and reopen Fanfare; the currency check runs automatically on every page load.
 </Warning>
 
 {/* image: install-and-plans-currency-notice */}
 
 ## Install the app
 
-1. Install the Fanfare app from Shopify.
-2. Approve the permissions Shopify shows.
-3. Shopify opens the Fanfare app. Fanfare creates your organisation automatically, in your store's currency. There is no step to connect an existing Fanfare organisation.
+<Steps>
+  <Step title="Install from Shopify">
+    Install the Fanfare app from Shopify and approve the requested permissions.
+  </Step>
+  <Step title="Automatic organization setup">
+    Shopify opens Fanfare and automatically creates your organization using your store's currency. There's no step to link an existing Fanfare organization.
+  </Step>
+  <Step title="Continue to plan selection">
+    Because your store doesn't have a plan yet, Fanfare sends you straight to Shopify's plan page.
+  </Step>
+</Steps>
 
-The app opens on Shopify's plan page next, because your store has no plan yet.
+## Choose your plan
 
-## Choose a plan the first time
-
-Until Shopify confirms a plan for your store, opening any part of the Fanfare app sends you to Shopify's plan page, or to **Confirming your plan** if you have just approved one. Only the Billing pages, including **Usage**, stay reachable in the meantime.
+Until Shopify confirms a plan for your store, opening any Fanfare screen redirects you to Shopify's plan page—or to **Confirming your plan** if you've just approved one. Only **Billing** and **Usage** remain accessible in the meantime.
 
 <Warning>
-  Every store must approve a plan on Shopify's plan page before it can use Fanfare, Starter included, unless it is comped or still on an older Fanfare subscription (see below). Until you do, you cannot reach Home, Experiences or any other page.
+  Every store must approve a plan on Shopify's plan page—including the free **Starter** plan—before using Fanfare (unless your store is comped or on an older Fanfare subscription). You won't be able to open **Home**, **Experiences**, or other screens until you approve a plan.
 </Warning>
 
-1. On Shopify's plan page, pick a plan: Starter, Growth or Pro. Enterprise appears there only for a store Fanfare has set it up for.
-2. Approve it in Shopify.
-3. Shopify sends you back to Fanfare. If Fanfare can confirm the plan straight away, the app opens; otherwise you see a page titled **Confirming your plan** until it does.
+<Steps>
+  <Step title="Pick a plan">
+    On Shopify's plan page, choose **Starter**, **Growth**, or **Pro**. **Enterprise** appears only if Fanfare has configured a custom plan for your store.
+  </Step>
+  <Step title="Approve in Shopify">
+    Confirm your selection in Shopify.
+  </Step>
+  <Step title="Return to Fanfare">
+    Shopify redirects you back to Fanfare. If your plan confirms immediately, the app opens; otherwise you'll see **Confirming your plan** until confirmation completes.
+  </Step>
+</Steps>
 
 {/* image: install-and-plans-plan-page */}
 
-What each plan unlocks, and what happens to things you already built when you move to a lower plan, is on [Plans and what they unlock](/guide/start/plans).
+To compare plan features, take rates, and downgrade rules, see [Plans and what they unlock](/guide/start/plans).
 
 ### While Fanfare confirms your plan
 
-Shopify can take a moment to tell Fanfare about a plan you have just approved. The **Confirming your plan** page says "Fanfare is confirming the plan you approved. This usually takes a few seconds, and can take a few minutes." The page rechecks on its own and opens the app as soon as the plan is confirmed. You do not need to reload it.
+Shopify can take a moment to notify Fanfare after you approve a plan. While you wait, **Confirming your plan** displays `"Fanfare is confirming the plan you approved. This usually takes a few seconds, and can take a few minutes."` and rechecks automatically—no need to refresh.
 
-If the plan is still not confirmed after about seven minutes, the page stops checking and says "Fanfare is still confirming your plan, which is taking longer than usual. Please contact Fanfare support so we can finish setting it up." Where you reached the page from Fanfare rather than straight from Shopify, it also shows **Try again**, which takes you back into the app.
-
-If Fanfare cannot tell which plan you approved, the page says so and shows **Continue to Fanfare**, which also takes you back into the app. If either button brings you back to this page, wait a few minutes before trying again, or contact Fanfare support.
+- **If confirmation takes more than ~7 minutes:** The page stops checking and displays `"Fanfare is still confirming your plan, which is taking longer than usual. Please contact Fanfare support so we can finish setting it up."` If you opened the page from inside Fanfare rather than directly from Shopify, you'll also see **Try again**.
+- **If Fanfare can't identify the approved plan:** The page lets you know and offers **Continue to Fanfare** to return to the app. If either button loops you back to the confirmation screen, wait a few minutes and retry, or contact Fanfare support.
 
 {/* image: install-and-plans-confirming */}
 
-### After the app opens
+### Next: finish storefront setup
 
-The app starts a short setup tour. Finish both storefront steps before you run a drop: checkout protection, which Fanfare usually turns on for you at install, and the product widget, which you add to your theme yourself. Once a product is in an experience, checkout protection refuses ordinary checkouts of it even if the widget is not on your theme, and without the widget customers have no way to take part from the product page. Check both on **Settings → Storefront setup**; see [Storefront setup](/guide/shopify/storefront-setup). For a first drop from start to finish, follow [Your first drop on Shopify](/guide/start/your-first-drop-on-shopify).
+Once the app opens, a short setup tour guides you through the two storefront steps required before your first drop: confirming **checkout protection** is on (usually enabled automatically at install) and adding the **product widget** to your theme.
+
+Keep in mind that as soon as you add a product to an experience, checkout protection blocks ordinary checkouts even if the widget isn't on your theme yet—and without the widget, shoppers can't enter your drop from the product page. Check both statuses under **Settings → Storefront setup** (see [Storefront setup](/guide/shopify/storefront-setup)), or follow the full walkthrough in [Your first drop on Shopify](/guide/start/your-first-drop-on-shopify).
 
 ## Change your plan later
 
-1. In Shopify admin, open the Fanfare app's menu and select **Billing**.
-2. Fanfare opens Shopify's plan page in place of the Fanfare app. If nothing happens, select **Open it here if it didn't open.**
-3. Pick and approve the new plan in Shopify. Shopify sends you back to Fanfare, as on first install: the app opens, or **Confirming your plan** shows until Fanfare confirms the plan.
+<Steps>
+  <Step title="Open Billing">
+    In Shopify admin, open the Fanfare menu and select **Billing**.
+  </Step>
+  <Step title="Switch on Shopify's plan page">
+    Fanfare opens Shopify's plan page automatically. If your browser blocks the redirect, select **Open it here if it didn't open.**
+  </Step>
+  <Step title="Approve your new plan">
+    Choose and approve your new plan in Shopify. You'll return directly to Fanfare (or briefly see **Confirming your plan** while Shopify confirms the change).
+  </Step>
+</Steps>
 
 {/* image: install-and-plans-nav */}
 
-The Fanfare app in Shopify has no plan cards, prices, invoices, payment method or cancel screens. All of that is on Shopify's side. If someone in your organisation also uses the Fanfare admin outside Shopify, its billing page shows "Billed through Shopify", and every plan button there reads **Manage in Shopify** and is disabled; see [Billing and usage](/guide/account/billing).
+All subscription management—plan cards, invoices, payment methods, and cancellation—lives in Shopify. If anyone on your team opens the standalone Fanfare admin, its billing page displays `"Billed through Shopify"` with disabled **Manage in Shopify** buttons. See [Billing and usage](/guide/account/billing).
 
-If your plan is cancelled or stops being active, opening the app sends you back to Shopify's plan page, and only the Billing pages stay reachable until you approve a plan again, Starter included. What happens to experiences you already built is on [Plans and what they unlock](/guide/start/plans).
+If your subscription is canceled or lapses, opening Fanfare sends you back to Shopify's plan page (only **Billing** and **Usage** stay accessible) until you approve a plan again, including **Starter**. Live drops continue serving shoppers in the background—see [Plans and what they unlock](/guide/start/plans).
 
 ### Stores on an older Fanfare subscription
 
-If your store subscribed to Fanfare before the current plans, the app lets you in on that subscription and shows a banner. It gives the date your existing subscription stays active until, in UTC, and says "The Fanfare plan you choose in Shopify starts when it ends." When Shopify gives no end date, the banner says the subscription stays active "until its current billing period ends". Any plan you choose in Shopify starts only when the old subscription ends.
+If your store subscribed before Fanfare's current Shopify plans launched, the app lets you in on your existing subscription and displays a banner showing your active end date (in UTC) with the note `"The Fanfare plan you choose in Shopify starts when it ends."` (or `"until its current billing period ends"` if Shopify doesn't provide an end date). Any new Shopify plan you select begins once your legacy subscription ends.
 
 ### Comped stores
 
-A store that Fanfare provides at no charge sees "Your plan is comped: Fanfare provides it at no charge, so there is no plan to choose or pay for here." when it opens **Billing**, and is never sent to Shopify's plan page.
+If Fanfare provides your store's plan at no charge, opening **Billing** shows `"Your plan is comped: Fanfare provides it at no charge, so there is no plan to choose or pay for here."` and never redirects you to Shopify's plan page.
 
 ## Fanfare's fees on Shopify checkout orders
 
-When a customer buys through a Fanfare experience and pays at Shopify's checkout, Fanfare's fee on that order is normally charged on your Shopify bill, in US dollars. Fees are calculated on your sales in your store currency and converted to USD at the daily reference rate for the date the order was paid, in UTC. **Usage** in the Fanfare menu shows the fees recorded in each Shopify billing cycle, where each one is charged, and any fee that was not billed and why. How to read that page is on [Billing and usage](/guide/account/billing), and the rates are on [Payments and fees](/guide/account/payments).
+When customers purchase through a Fanfare experience and pay in Shopify checkout, Fanfare's per-order take-rate fee is billed as a Shopify usage charge in US dollars. Fees are calculated in your store's currency and converted to USD using the daily UTC reference rate for the date the order was paid.
+
+Open **Usage** in the Fanfare menu to review fees recorded in each Shopify billing cycle, where each fee is charged, and any fee that wasn't billed and why. See [Billing and usage](/guide/account/billing) and [Payments and fees](/guide/account/payments) for details.
 
 ## Approve new permissions
 
-Fanfare sometimes needs a permission your store has not granted.
+Occasionally Fanfare needs an additional Shopify permission your store hasn't granted yet:
 
-- If a permission Fanfare's store connection needs is missing, opening the app sends you to approve it. Until you do, syncing a product, importing an order and pushing an order to Shopify ask you to reconnect the store.
-- Two permissions work differently: reading your store's themes, and reading your store's locations, which Fanfare uses to count inventory. Fanfare asks for both at install, with the rest. If either is missing, Fanfare does not send you to approve it and the rest of the app keeps working, but **Settings → Storefront setup** shows the product widget step as **Couldn't check** (themes), or inventory counts for products from Shopify stop updating (locations).
+- **Core store connection permissions:** If a required permission is missing, opening Fanfare prompts you to approve it. Until approved, syncing products, importing orders, and pushing orders to Shopify will ask you to reconnect your store.
+- **Theme and location permissions:** Fanfare requests permission to read your store's themes and inventory locations during install. If either is missing later, the app won't prompt you on open and most features keep working—however, **Settings → Storefront setup** shows **Couldn't check** for the product widget (missing themes permission), or Shopify inventory counts stop updating (missing locations permission).
 
-Which staff in your store can open the Fanfare app, and what they can do in it, is on [Fanfare in Shopify](/guide/shopify/overview).
+To review who on your Shopify team can open Fanfare and what they can change, see [Who can use the app](/guide/shopify/overview#who-can-use-the-app).
 
 ## Uninstall the app
 
-You uninstall Fanfare in Shopify, like any other app. When you do:
+Uninstall Fanfare from Shopify's app settings like any other app:
 
-- Your Fanfare organisation moves to Starter, cancelled.
-- Fees in the Shopify billing cycle that is open are billed when that cycle ends, unless the billing window closes first. Fees after that are not billed. **Usage** marks any fee that was not billed.
+- Your Fanfare organization immediately moves to a canceled **Starter** state.
+- Any usage fees accrued in your current Shopify billing cycle are billed when that cycle closes (unless the billing window ends first). Fees after uninstall aren't billed and are marked accordingly in **Usage**.
 
-If you install Fanfare again, you approve a plan on Shopify's plan page again before you can use the app.
+If you reinstall Fanfare later, you'll approve a plan on Shopify's plan page again before using the app.
 
 ## Troubleshooting
 
 <AccordionGroup>
   <Accordion title="The app says Fanfare isn't available for my store's currency">
-    Fanfare cannot price your store's currency, so the whole app is replaced by this message and nothing else is reachable. Change your store's currency in Shopify, then open the Fanfare app again. The check runs on every page load, so the app opens as soon as the currency is one Fanfare supports.
+    Fanfare doesn't support pricing in your store's current currency, so the notice replaces all app screens. Change your store's currency in Shopify settings and reopen Fanfare—the check runs automatically on every load.
   </Accordion>
   <Accordion title="I'm stuck on 'Confirming your plan'">
-    Wait on the page: it rechecks by itself for about seven minutes and opens the app once Shopify confirms the plan. If it then asks you to contact Fanfare support, do so. If it shows **Try again** or **Continue to Fanfare**, select it to go back into the app. If you land on the same page again, wait a few minutes before trying again, or contact Fanfare support.
+    Leave the page open—it checks automatically for about 7 minutes and opens Fanfare as soon as Shopify confirms your plan. If it prompts you to contact Fanfare support, reach out so we can complete setup. If you see **Try again** or **Continue to Fanfare**, select it; if it brings you back to the confirmation screen, wait a few minutes before retrying or contact support.
   </Accordion>
-  <Accordion title="Shopify's plan page did not open">
-    Selecting **Billing** opens Shopify's plan page in place of the Fanfare app. If your browser blocked it, select **Open it here if it didn't open.** on the page that stays behind.
+  <Accordion title="Shopify's plan page didn't open">
+    Selecting **Billing** redirects to Shopify's plan page. If your browser blocked the redirect, select **Open it here if it didn't open.** on the fallback screen.
   </Accordion>
-  <Accordion title="I'm asked to approve permissions again">
-    Fanfare needs a permission your store has not granted yet, and its store connection depends on it. Approve it to get back into the app. What stops working while a permission is missing is under [Approve new permissions](#approve-new-permissions).
+  <Accordion title="I'm being asked to approve permissions again">
+    Fanfare requires an updated Shopify permission for its store connection. Approve the prompt to restore access. See [Approve new permissions](#approve-new-permissions) for what pauses while a permission is missing.
   </Accordion>
 </AccordionGroup>
 
 ## Related
 
 <CardGroup>
-  <Card title="Storefront setup" href="/guide/shopify/storefront-setup">Turn on checkout protection and add the product widget.</Card>
-  <Card title="Plans and what they unlock" href="/guide/start/plans">What each plan includes.</Card>
-  <Card title="Billing and usage" href="/guide/account/billing">Read the Usage page.</Card>
-  <Card title="Fanfare in Shopify" href="/guide/shopify/overview">What is the same and what differs from the Fanfare admin.</Card>
+  <Card title="Storefront setup" href="/guide/shopify/storefront-setup">
+    Enable checkout protection and add the product widget to your theme.
+  </Card>
+  <Card title="Plans and what they unlock" href="/guide/start/plans">
+    Compare monthly pricing, take rates, and included features.
+  </Card>
+  <Card title="Billing and usage" href="/guide/account/billing">
+    Track usage fees and billing cycles on the Usage page.
+  </Card>
+  <Card title="Fanfare in Shopify" href="/guide/shopify/overview">
+    See what's the same and what differs from the standalone Fanfare admin.
+  </Card>
 </CardGroup>

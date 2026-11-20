@@ -1,59 +1,65 @@
 ---
 title: What Fanfare does
-description: What Fanfare does for a limited-product drop, and which part of this guide to read first.
+description: How Fanfare powers limited-product drops, and where to start in this guide.
 ---
 
-Fanfare runs the release of a limited product. You decide who can buy it, when, and how: through a queue, a draw, an auction, a timed release, or bookable appointments. These are the five [distribution types](/concepts/distributions/overview). Customers enter on a page Fanfare hosts for you, on a page of your own website, or on your Shopify store's product page. Fanfare lets them in and gives each one a payment window, a limited time to pay; an appointment books a time slot instead and takes no payment. It keeps a profile of every customer who signs in, and records the orders paid through Fanfare checkout, or through Shopify checkout for products a Fanfare experience protects, so your next drop can start from what this one taught you. See [Checkout options](/concepts/checkout-options).
+Fanfare helps you run fair, controlled drops for high-demand products. You choose who gets access, when the drop opens, and how customers claim a spot—through a queue, draw, auction, timed release, or bookable appointment.
 
-## The pieces you set up
+You can run drops on a page Fanfare hosts for you, embedded on your own website, or directly on your Shopify product page. As customers enter and check out, Fanfare manages timed payment windows, builds customer profiles, and tracks orders from Fanfare checkout and protected Shopify checkouts—giving you the data to make your next drop even stronger.
 
-An experience holds everything for one drop: its sequences, and the distributions each sequence runs. A sequence is one way in to an experience. See [The model in one page](/concepts/overview).
+## How drops fit together
 
-## Where customers take part
+Every drop starts with an **experience**, which holds your products, schedule, and design. Inside an experience, you create one or more **sequences**—separate entry paths, such as an early-access tier for VIPs followed by a public release. Each sequence runs one or more **distributions** (like a queue or draw) to decide who gets the right to buy.
 
-- A page Fanfare hosts, on Growth and above. See [Build and publish the hosted page](/guide/create/hosted-page).
-- A page of your own website, where your developer adds the Fanfare widget. See [Run it on your own site](/guide/create/your-own-site).
-- Your Shopify store, on the product page, once the Fanfare app's storefront setup is done. See [Storefront setup](/guide/shopify/storefront-setup).
+See [The model in one page](/concepts/overview) for the full picture, or compare all five [distribution types](/concepts/distributions/overview) and [checkout options](/concepts/checkout-options).
 
-## How this guide is organised
+## Where customers participate
 
-The guide follows a drop from start to finish, and then into the next one.
+- **A Fanfare-hosted page** — Launch a branded drop page without writing code (available on Growth and above). See [Build and publish the hosted page](/guide/create/hosted-page).
+- **Your own website** — Embed the Fanfare widget directly on your site with help from your developer. See [Run it on your own site](/guide/create/your-own-site).
+- **Your Shopify store** — Run drops directly on your Shopify product pages with checkout protection. See [Storefront setup](/guide/shopify/storefront-setup).
 
-<Frame caption="The guide follows a drop through Create, Drop and Learn, and back to Create for the next drop.">
-  <img src="/images/guide/guide-start-welcome-loop.webp" alt="A loop of three stages from left to right: Create, with its sections Design it, Stage it and Hype it; Drop, with Run it live; and Learn, with After the sellout. Arrows run from Create to Drop to Learn, and an arrow labelled the next drop runs from Learn back to Create." />
+## How this guide is organized
+
+This guide follows the lifecycle of a drop from planning to post-drop insights—and back into your next launch.
+
+<Frame caption="The guide follows a drop through Create, Drop, and Learn, then feeds into your next launch.">
+  <img src="/images/guide/guide-start-welcome-loop.webp" alt="A loop of three stages from left to right: Create, with its sections Design it, Stage it and Hype it; Drop, with Run it live; and Learn, with After the sellout. Arrows run from Create to Drop to Learn, and an arrow labeled the next drop runs from Learn back to Create." />
 </Frame>
 
-| Stage | What it covers | Start with |
+| Stage | What you'll do | Start with |
 | --- | --- | --- |
-| Create | Design it: products, stock, the experience and its sequences. Stage it: your brand, templates, and the hosted page or your own site. Hype it: announcements, invites and the waitlist. | [Add products](/guide/create/products) |
-| Drop | Run it live: what must be true before doors open, watching the drop, changes you can make mid-drop, stopping a drop, and what your customers see. | [Before doors open](/guide/drop/preflight) |
-| Learn | Your results, orders, customer profiles, loyalty, and setting up the next drop from this one. | [Read your results](/guide/learn/performance) |
+| **Create** | **Design it:** add products, set up stock, and configure your experience and sequences. **Stage it:** set your brand, customize widgets, and publish your page. **Hype it:** schedule announcements, invites, and waitlists. | [Add products](/guide/create/products) |
+| **Drop** | Run your pre-launch checklist, monitor the drop in real time, make live adjustments if needed, and preview what customers see. | [Before doors open](/guide/drop/preflight) |
+| **Learn** | Review drop performance, manage orders and refunds, explore customer profiles and loyalty, and turn results into your next launch. | [Read your results](/guide/learn/performance) |
 
-## Which docs are for you
+## Where to start
 
-| You use | Start here |
+| If you're using... | Start here |
 | --- | --- |
-| The Fanfare admin at admin.fanfare.io. You get in with **Sign in**, or **Create an account** if you are new. If sign-up is closed, **Create an account** shows "Join the Fanfare waitlist" instead, and Fanfare emails you when your invitation is ready. | [Your first drop](/guide/start/your-first-drop), then [A tour of the admin](/guide/start/tour-of-the-admin) |
-| The Fanfare app in Shopify. You install it from Shopify and choose a plan on Shopify's plan page before the app opens. There is no separate Fanfare sign-up. The drop usually runs on your Shopify product page, once storefront setup is done, and customers pay in Shopify checkout. | [Your first drop on Shopify](/guide/start/your-first-drop-on-shopify) and [Fanfare in Shopify](/guide/shopify/overview) |
-| A developer putting Fanfare on your own website. | [API keys and embedding](/guide/account/developer) for the keys, then the [SDK docs](https://docs.fanfare.io/sdk/components/react) |
+| **The Fanfare admin** (`admin.fanfare.io`) — Create your account, configure your organization, and run drops on a hosted page or your own site. | [Your first drop](/guide/start/your-first-drop), then [A tour of the admin](/guide/start/tour-of-the-admin) |
+| **The Fanfare app in Shopify** — Install from the Shopify App Store (no separate Fanfare sign-up needed), run drops on your product pages, and take payment in Shopify checkout. | [Your first drop on Shopify](/guide/start/your-first-drop-on-shopify) and [Fanfare in Shopify](/guide/shopify/overview) |
+| **A custom storefront integration** — Embed Fanfare on your own website or app using our SDK. | [API keys and embedding](/guide/account/developer), then the [React SDK docs](/sdk/components/react) |
 
-This guide serves both the Fanfare admin and the Fanfare app in Shopify. Where the Fanfare app in Shopify works differently, the page says so in an **On Shopify** section.
+<Note>
+  This guide covers both the standalone Fanfare admin and the Shopify app. Whenever behavior differs on Shopify, you'll see an **On Shopify** section explaining the difference.
+</Note>
 
-Your plan decides what you can create and edit, and Starter is free. See [Plans and what they unlock](/guide/start/plans).
+Fanfare's **Starter** plan is free, and higher plans unlock additional features and lower per-order fees. See [Plans and what they unlock](/guide/start/plans).
 
 ## Related
 
 <CardGroup>
   <Card title="The model in one page" href="/concepts/overview">
-    Experiences, sequences and distributions, and how a customer moves through them.
+    How experiences, sequences, and distributions work together.
   </Card>
   <Card title="Distributions" href="/concepts/distributions/overview">
-    The five types compared.
+    Compare queues, draws, auctions, timed releases, and appointments.
   </Card>
   <Card title="Your first drop" href="/guide/start/your-first-drop">
-    Sign up and run a drop from start to finish.
+    Create your account and launch your first experience step by step.
   </Card>
   <Card title="Plans and what they unlock" href="/guide/start/plans">
-    What each plan lets you create and edit.
+    Compare monthly pricing, per-order fees, and features across plans.
   </Card>
 </CardGroup>

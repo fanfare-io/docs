@@ -1,127 +1,139 @@
 ---
 title: Checkout protection
-description: What the Fanfare checkout rule stops on your Shopify store, what customers see when it refuses them, and what can leave a product unprotected.
+description: How Fanfare protects drop products in Shopify checkout, how long protection lasts, auction requirements, and how to fix sync issues.
 ---
 
-Checkout protection is a checkout rule that runs on Shopify's servers on every checkout. It refuses a protected product unless the customer got access through your experience, so nobody can skip your queue or draw with a direct cart or checkout link. Use this page to check that a drop is protected, to understand a refusal a customer reports, to set up an auction that Shopify can charge, and to repair a product whose protection did not update. Turning the rule on is covered in [Storefront setup](/guide/shopify/storefront-setup).
+Checkout protection is a server-side Shopify checkout rule that runs on every checkout. It blocks any protected product unless the shopper earned access through your experience—preventing bots and shoppers from bypassing your queue or draw with direct cart or checkout links.
 
-This page applies only to the Fanfare app in Shopify.
+Use this page to verify protection before launch, understand the messages shoppers see if a checkout is blocked, review Shopify auction requirements, and repair products whose protection failed to sync. For initial setup, see [Storefront setup](/guide/shopify/storefront-setup).
+
+<Info>
+  Checkout protection applies only to the Fanfare app in Shopify.
+</Info>
 
 ## Before you start
 
 - The Fanfare app is installed on your store.
-- Checkout protection is turned on. If the **Checkout protection** card on **Settings → Storefront setup** shows **Turned off**, **Not turned on** or **Couldn't check**, follow [Storefront setup](/guide/shopify/storefront-setup) first.
+- **Checkout protection** shows **On** under **Settings → Storefront setup**. If it displays **Turned off**, **Not turned on**, or **Couldn't check**, complete [Storefront setup](/guide/shopify/storefront-setup) first.
 
-**Turned off** means the Fanfare rule is switched off in Shopify or has **Allow all customers to complete checkout** ticked, and Fanfare never changes a rule you have edited, so you must fix it in Shopify: see [Storefront setup](/guide/shopify/storefront-setup).
+If you see **Turned off**, the rule is disabled in Shopify or has **Allow all customers to complete checkout** checked. Because Fanfare never modifies a rule you've edited, re-enable it in Shopify's checkout settings—see [Storefront setup](/guide/shopify/storefront-setup).
 
 {/* image: checkout-protection-status-on */}
 
-## Which products are protected, and for how long
+## When protection starts and ends
 
-A product becomes protected when you create an experience that includes it, or add it to an existing experience, whatever the experience's status: a Draft protects it just as a Live one does. It stays protected while any experience includes it: a product in several experiences is released only when none of them includes it.
+A product becomes protected the moment you add it to an experience—regardless of status, including **Draft** experiences—and stays protected for as long as *any* experience includes it. If a product belongs to multiple experiences, it remains protected until none of them include it.
 
 While a product is protected:
 
-- With checkout protection on, Shopify refuses any ordinary checkout of it. Only a customer who got access through your experience can check out.
-- If the product widget is on your theme, the product page shows the widget in place of your buy buttons, including before the drop opens and after it has ended.
+- Shopify blocks all ordinary checkouts; only shoppers granted access through your experience can check out.
+- On product pages with the widget installed, the widget replaces your standard buy buttons before, during, and after the drop.
 
 <Warning>
-  A product stays protected after its drop has ended, and **Deactivate** does not release it. Customers cannot buy it the normal way, from the product page or through a cart link, until no experience includes it: delete the experience or remove the product from it, and do the same in any other experience that includes the product. If the experience is **Live** or **Scheduled**, deactivate it first; you can delete it once nothing in it is still on hold. You cannot remove a product while the experience still holds units of it.
+  Checkout protection stays active after a drop ends—and **Deactivate** does not lift it. Shoppers can't buy the product normally until no experience includes it: remove the product from the experience or delete the experience (and repeat for any other experience containing it). For a **Live** or **Scheduled** experience, deactivate it first, then delete it once its wind-down wait ends (see [Stop a drop](/guide/drop/deactivate#when-delete-is-available)). During wind-down, **Delete** is refused even though the button looks available, and you can't remove a product while the experience still holds allocated units.
 </Warning>
 
-Buy buttons elsewhere in your theme, such as quick-add buttons on a collection page, bypass the widget. The checkout rule still refuses those carts. See [Storefront setup](/guide/shopify/storefront-setup).
+Buy buttons elsewhere in your theme—such as quick-add buttons on collection pages—bypass the widget, but checkout protection still blocks those carts at checkout. See [Storefront setup](/guide/shopify/storefront-setup).
 
 ## Check that a drop is protected
 
-1. Open **Settings → Storefront setup** and confirm the **Checkout protection** card shows **On**, which means the rule is turned on and blocking. This tells you the rule is running on your store. It does not tell you which products it covers.
-2. Confirm that no "Shopify gating could not be updated" message appeared after you last saved the experience. That message means a product's protection did not update: see [When protection did not update](#when-protection-did-not-update).
-3. Optionally, test it yourself. Add the product to a cart without going through the widget, for example with a direct cart link, and try to check out. A protected product is refused with "Please claim access to this product before adding it to your cart".
+<Steps>
+  <Step title="Confirm the rule is On">
+    Open **Settings → Storefront setup** and verify the **Checkout protection** card shows **On**. This confirms the rule is active store-wide (it doesn't list individual protected products).
+  </Step>
+  <Step title="Verify no gating sync warning appeared">
+    Make sure you didn't see a `"Shopify gating could not be updated"` warning the last time you saved the experience. If you did, see [When protection did not update](#when-protection-did-not-update).
+  </Step>
+  <Step title="Test with a direct cart link (optional)">
+    Add the product to your cart outside the widget (for example, via a direct cart link) and attempt to check out. A protected product should be blocked with `"Please claim access to this product before adding it to your cart"`.
+  </Step>
+</Steps>
 
-The **Fanfare experiences** block on a product page in Shopify admin lists the experiences Fanfare has recorded for that product. It is not proof that the product is protected: that record can be correct while the product's protection failed to update.
+<Note>
+  The **Fanfare experiences** block on a Shopify product page only shows Fanfare's record of attached experiences—it isn't proof that checkout protection synced cleanly.
+</Note>
 
 {/* image: checkout-protection-refusal */}
 
-## What customers see
+## Messages customers see at checkout
 
-The rule lets a protected product through only when the checkout matches the access the customer got through your experience. When the rule refuses a checkout, the customer sees one of these messages. They are in English only, whatever language your store uses.
+Checkout protection only lets a protected product through when the cart matches the shopper's granted access. If Shopify blocks a checkout, the shopper sees one of these English-only messages (regardless of your store's language):
 
-| Message | When it appears | What to tell the customer |
+| Message | Why it appeared | What to tell the shopper |
 | --- | --- | --- |
-| "Please claim access to this product before adding it to your cart" | The product is protected and the customer did not get access through your experience, for example they used a direct cart link or a quick-add button. Also when their payment window has ended. | Go to the product page and take part in the drop through the widget. |
-| "Your access to this product has expired — please return to the product page to renew it" | The customer's access has expired. | Return to the product page and take part again. |
-| "This product is reserved for a different account. Please sign in with the account that claimed it" | The customer is signed in to a different store account from the one that got access. | Sign in with the account they used for the drop. |
-| "These products can't be purchased together — please check out separately" | The cart holds products from more than one experience. | Check out each product separately. |
-| "You can buy at most [number] of [product] in this checkout." | The cart holds more of the product than its limit allows. | Reduce the quantity to the number shown. |
-| "You have reached the purchase limit for [product]." | The customer has no more of the product they can buy. | Nothing more can be bought on this access. |
-| "Unable to add [product] to the cart as its not currently available for purchase." | The cart holds a protected product or variant that the customer's access does not cover. | Remove it and check out only what the widget added. |
-| "Unable to add to cart as the product is not currently available for purchase" | The customer's access could not be read. | Return to the product page and check out from the widget again, which gives the cart fresh access. If the message comes back, contact Fanfare support. |
-| "Your reserved item must be checked out once, at quantity 1, at its reserved price and with no discount. Please return to the product page to complete your purchase" | An auction winner's checkout does not match the winning bid. See [Auctions on Shopify](#auctions-on-shopify). | Return to the product page and check out once, at quantity 1, with no discount on the item. |
-| "Your reserved item can only be bought in [currency]. Please check out in [currency] to complete your purchase" | An auction winner is checking out in a different currency from the one the bid was won in. | Check out in the currency named. |
-| "Internal cart validation error", or a message starting "Invalid date format" | Something went wrong on Fanfare's side. | Contact Fanfare support. |
+| `"Please claim access to this product before adding it to your cart"` | The shopper added a protected product without earning access (e.g., via a direct cart link or quick-add button), or their payment window expired. | Go to the product page and enter the drop through the widget. |
+| `"Your access to this product has expired — please return to the product page to renew it"` | The shopper's access expired before checkout completed. | Return to the product page and re-enter through the widget. |
+| `"This product is reserved for a different account. Please sign in with the account that claimed it"` | The shopper is signed in to a different customer account than the one granted access. | Sign in with the account used to enter the drop. |
+| `"These products can't be purchased together — please check out separately"` | The cart contains protected products from more than one experience. | Check out each product separately. |
+| `"You can buy at most [number] of [product] in this checkout."` | The cart exceeds the experience's per-checkout quantity limit. | Lower the quantity to the allowed maximum. |
+| `"You have reached the purchase limit for [product]."` | The shopper has already hit their total purchase limit. | No additional units can be purchased with this access. |
+| `"Unable to add [product] to the cart as its not currently available for purchase."` | The cart includes a protected product or variant not covered by the shopper's access. | Remove the extra item and check out only what the widget added. |
+| `"Unable to add to cart as the product is not currently available for purchase"` | Checkout couldn't verify the shopper's access. | Return to the product page and check out from the widget again for fresh access. Contact Fanfare support if it persists. |
+| `"Your reserved item must be checked out once, at quantity 1, at its reserved price and with no discount. Please return to the product page to complete your purchase"` | An auction winner's cart doesn't match the winning bid rules. See [Auctions on Shopify](#auctions-on-shopify). | Return to the product page and check out once at quantity 1 with no discounts applied. |
+| `"Your reserved item can only be bought in [currency]. Please check out in [currency] to complete your purchase"` | An auction winner is checking out in a different currency than the winning bid. | Switch to the named currency to complete checkout. |
+| `"Internal cart validation error"` or a message starting `"Invalid date format"` | An unexpected error occurred on Fanfare's side. | Contact Fanfare support. |
 
-For what customers see at every other stage of a drop, see [What your customers see](/guide/drop/what-customers-see).
+For what shoppers experience at every other stage of a drop, see [What your customers see](/guide/drop/what-customers-see).
 
-## When access runs out
+## When a shopper's payment window expires
 
-A customer who gets access has a payment window to check out in. When it ends, Fanfare takes their access back from the cart, so the rule refuses the checkout with "Please claim access to this product before adding it to your cart". The units they held go back to the drop after a further short hold. How the payment window works is explained in [Admission and the payment window](/concepts/admission-and-payment).
+Every admitted shopper gets a set payment window to complete checkout. Once that window expires, Fanfare revokes cart access—blocking checkout with `"Please claim access to this product before adding it to your cart"`—and returns their held units to the drop after a brief hold. See [Admission and the payment window](/concepts/admission-and-payment).
 
 ## Auctions on Shopify
 
-Auction is offered only when your store's checkout can charge the winning bid. That needs all of these:
+Auctions are available on Shopify only when your store's checkout can enforce and charge the winning bid. All four requirements must be met:
 
-- your store is on Shopify Plus;
-- you have approved Fanfare's latest permissions in Shopify, so Fanfare can set up auction pricing on your store;
-- checkout protection is **On**;
-- your store's currency is still the same as your Fanfare organisation's currency.
+- Your store is on **Shopify Plus**.
+- You've approved Fanfare's latest Shopify permissions so Fanfare can configure auction pricing.
+- **Checkout protection** is **On**.
+- Your store's currency still matches your Fanfare organization's currency.
 
-When any of them is missing and your Fanfare plan includes Auction, Auction is shown locked with "Needs a checkout that charges the winning bid". Upgrading your Fanfare plan does not lift this lock. If your plan does not include Auction, the card shows the plan lock instead: see [Plans and what they unlock](/guide/start/plans).
+If any requirement above is missing, the **Auction** option appears locked with `"Needs a checkout that charges the winning bid"`—upgrading your Fanfare plan won't unlock it.
 
 <Warning>
-  Auctions need Shopify Plus and checkout protection On. If you turn the checkout rule off, or change your store's currency, after setting up an auction, Fanfare can no longer charge the winning bid and the auction's winners cannot check out. Keep the rule on and the currency unchanged until every winner has paid.
+  Auctions require **Shopify Plus** and **Checkout protection: On**. Turning off checkout protection or changing your store's currency after creating an auction stops Fanfare from charging winning bids and prevents winners from checking out. Keep both unchanged until every winner has paid.
 </Warning>
 
 {/* image: checkout-protection-auction-locked */}
 
-A winning bidder must check out once, at quantity 1, at the winning price, with no discount on the item, including an automatic discount your store applies. Make sure no automatic discount covers an auctioned product, or the winner cannot check out. Any other checkout is refused with the "Your reserved item must be checked out once…" message. If a paid auction order still does not match the winning bid, it is not brought into Fanfare and it is not refunded automatically: see [Orders with Shopify checkout](/guide/shopify/orders).
+<Warning>
+  **No automatic discounts on auctioned products:** Winning bidders must check out once, at quantity 1, at the exact winning price, with no discounts of any kind—including store-wide automatic discounts. Exclude auctioned products from every automatic discount in Shopify, or winners will be blocked with `"Your reserved item must be checked out once…"`. If a paid auction order still comes through at a mismatched price or quantity, it won't sync to Fanfare and isn't refunded automatically—see [Orders with Shopify checkout](/guide/shopify/orders).
+</Warning>
 
-How auctions work is in [Auction](/concepts/distributions/auction); setting one up is in [Set up an auction](/guide/create/auction).
+Learn more in [Auction](/concepts/distributions/auction) and [Set up an auction](/guide/create/auction).
 
 ## When protection did not update
 
-Creating or deleting an experience in the Fanfare app in Shopify, or changing its products, also updates the protection on each affected product. Sometimes the experience saves or deletes but that update fails. You then see a warning that names the affected products:
+Whenever you create an experience, delete one, or change its attached products in Shopify, Fanfare updates checkout protection for each affected product. Occasionally the experience saves or deletes, but the Shopify gating update fails. When that happens, Fanfare displays a warning listing the affected Shopify product IDs:
 
-- After a save, it starts "Experience saved, but Shopify gating could not be updated for", followed by the affected products.
-- After a delete, it starts "Experience deleted, but Shopify gating could not be removed for", followed by the affected products.
+- **After saving:** `"Experience saved, but Shopify gating could not be updated for ..."`
+- **After deleting:** `"Experience deleted, but Shopify gating could not be removed for ..."`
 
-In both messages, the affected products are identified by their Shopify product IDs, not their titles. If the message names an ID that is not a product, Fanfare could not read the experience's products: contact Fanfare support.
+Products are identified by their Shopify product IDs rather than titles. If the warning lists an ID that isn't a product, Fanfare couldn't read the experience's product list—contact Fanfare support.
 
 <Warning>
-  A save or delete can succeed without updating protection. Until it is fixed, a product in a saved experience may be unprotected, so anyone can buy it without going through your drop. A product from a deleted experience may show your normal buy buttons but keep refusing them at checkout until its product page is next viewed with the widget on your theme.
+  A save or delete can complete without updating checkout protection. Until repaired, a product in a saved experience may remain unprotected (allowing normal checkout outside your drop), and a product from a deleted experience may display normal buy buttons while still blocking checkout until refreshed.
 </Warning>
 
-To repair it:
+How to repair each case:
 
-- After a save in the experience's settings: the warning stays in the settings window. Save again from that window, and Fanfare retries updating each product's protection.
-- After creating an experience: the warning stays on screen until you close it. Saving the experience's settings afterwards does not retry the update unless you change the experience's products. Do not open the drop until the product is protected: test it as in [Check that a drop is protected](#check-that-a-drop-is-protected), and contact Fanfare support with the product IDs from the warning.
-- After a delete: view the product's page on your storefront. If the product widget is on your theme, Fanfare sees that the experience was deleted and removes the product's protection the next time the page is viewed. The message also mentions changing the product in Shopify; you cannot make that change there, and you do not need to. If the product still refuses ordinary checkouts after that, contact Fanfare support.
-
-## Things to know before you go live
-
-- Auction winners must check out once, at quantity 1, at the winning price, with no discount on the item, including an automatic discount your store applies.
+- **After saving experience settings:** The warning remains visible in the settings window. Save again from that window to retry updating protection for each product.
+- **After creating a new experience:** The warning stays on screen until dismissed. Saving experience settings later won't retry gating unless you modify the experience's products. Don't launch the drop until protection is verified—test it using [Check that a drop is protected](#check-that-a-drop-is-protected) and send the product IDs from the warning to Fanfare support.
+- **After deleting an experience:** Visit the product page on your live storefront (with the Fanfare Product Widget installed). Loading the page lets Fanfare detect the deletion and remove protection automatically. You can ignore the warning's mention of changing the product in Shopify—no Shopify edit is needed. If normal checkouts remain blocked afterward, contact Fanfare support.
 
 ## Related
 
 <CardGroup>
   <Card title="Storefront setup" href="/guide/shopify/storefront-setup">
-    Turn on the checkout rule and add the product widget to your theme.
+    Enable the checkout rule and add the product widget to your theme.
   </Card>
   <Card title="Admission and the payment window" href="/concepts/admission-and-payment">
-    How long a customer has to check out once they get access.
+    See how long admitted shoppers have to complete checkout.
   </Card>
   <Card title="Orders with Shopify checkout" href="/guide/shopify/orders">
-    How orders reach Fanfare, and what to do when one does not.
+    Learn how drop orders sync to Fanfare and how to import missing orders.
   </Card>
   <Card title="What your customers see" href="/guide/drop/what-customers-see">
-    Every stage of a drop from the customer's side.
+    Walk through every stage of a drop from the shopper's perspective.
   </Card>
 </CardGroup>

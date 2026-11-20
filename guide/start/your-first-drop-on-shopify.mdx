@@ -1,109 +1,116 @@
 ---
 title: Your first drop on Shopify
-description: The steps, in order, to run your first Fanfare drop on a product in your Shopify store, from installing the app to checking that the product is protected.
+description: Install the Fanfare app, set up your Shopify storefront, and launch your first protected drop.
 ---
 
-This page walks you through your first drop on a Shopify store, from installing the Fanfare app to the day after the drop. The Fanfare app in Shopify has no separate sign-up: installing it from Shopify creates your Fanfare organisation. Each step below says what to do and links to the page that covers it in full, with its settings and what can go wrong.
+This walkthrough takes you from installing the Fanfare app in Shopify to reviewing results after your first drop. There's no separate Fanfare sign-up—installing the app creates your Fanfare organization automatically, and customers complete checkout right in Shopify.
 
 ## Before you start
 
-- Your store's currency is one Fanfare can price. If it is not, the app shows only a message asking you to change it: see [Install and choose a plan](/guide/shopify/install-and-plans).
-- You can install apps on the store, and change its checkout settings and its published theme in Shopify admin.
+- Your store uses a currency supported by Fanfare. See [Install and choose a plan](/guide/shopify/install-and-plans).
+- Your Shopify staff account has permission to install apps, update checkout settings, and edit your published theme.
 
-## 1. Install the app and choose a plan
+## Step 1: Install the app and choose a plan
 
-Install the Fanfare app from Shopify and approve the permissions it asks for. Fanfare creates your organisation automatically, in your store's currency. Before you can use the app, you approve a plan on Shopify's plan page, Starter included; after you approve it you may see **Confirming your plan** for a moment while Fanfare checks with Shopify. See [Install and choose a plan](/guide/shopify/install-and-plans).
+Install the Fanfare app from Shopify and approve the requested permissions. Fanfare creates your organization automatically using your store's currency, then opens Shopify's plan page so you can choose a plan (including the free **Starter** plan). See [Install and choose a plan](/guide/shopify/install-and-plans).
 
-Everyone on your store's staff who can open the Fanfare app can change every Fanfare setting, including API keys and the email sender: see [Who can use the app](/guide/shopify/overview#who-can-use-the-app).
+<Note>
+  Any Shopify staff member who can open the Fanfare app has full admin permissions inside Fanfare, including managing API keys and email sender settings. Review your Shopify staff permissions accordingly—see [Who can use the app](/guide/shopify/overview#who-can-use-the-app).
+</Note>
 
-## 2. Set up your storefront
+## Step 2: Set up your storefront
 
-Once the app opens, Home (the page headed **Dashboard**) shows "Finish setting up Fanfare" with how many of its two steps are done, such as "1 of 2 done", and the "Setting up Fanfare on your store" tour walks you through the same two steps. Both are done on **Settings → Storefront setup**.
+Before running your first drop, complete the two setup steps under **Settings → Storefront setup** (also tracked by the setup checklist on **Home**):
 
-- **Turn on checkout protection.** Fanfare usually turns this on for you at install. Check that the **Checkout protection** card shows **On**.
-- **Add the product widget to your theme.** Select **Add to product page**. The theme editor opens with the Fanfare Product Widget block ready to place: drag it to where your buy buttons sit, then save. If your store uses more than one product template, add it to every template that sells a product you will drop.
+1. **Confirm checkout protection is on.** Fanfare usually enables checkout protection automatically during installation. Check that the **Checkout protection** card shows **On**.
+2. **Add the product widget to your theme.** Select **Add to product page** to open the Shopify theme editor with the Fanfare Product Widget ready to place. Drag it to where your buy buttons appear, then save. If you use multiple product templates for drops, add the widget to each one.
 
-When both are done, Home shows "Fanfare is set up on your store".
-
-Your drop does not work until both steps are done: checkout protection blocks every other way to buy the product, and the widget is how customers get in. [Storefront setup](/guide/shopify/storefront-setup) has the full steps in Shopify admin, and the settings that can quietly leave protection off.
+Both steps are required before your drop goes live: checkout protection blocks direct cart links and normal checkouts for protected products, while the widget gives customers a way to enter your drop. See [Storefront setup](/guide/shopify/storefront-setup) for full theme setup instructions.
 
 {/* image: your-first-drop-on-shopify-home-checklist */}
 
 {/* image: your-first-drop-on-shopify-storefront-setup-done */}
 
-## 3. Create the experience on your product
+## Step 3: Create an experience for your product
 
-An experience is the drop you are running: the products on offer, the time zone, and every way customers can get in. On Shopify you do not create the product in Fanfare first. You pick it from your Shopify catalogue inside the experience wizard, so bringing in the product and creating the experience are one step.
+On Shopify, you don't need to recreate products in Fanfare—you pick them straight from your Shopify catalog while setting up the experience.
 
-1. Open **Experiences** and select **Create Experience**. You can also start from the product's page in Shopify admin: choose **Create Fanfare experience** from the page's actions and then **Create in Fanfare**, or, while the product has no experience yet, select **Start a Fanfare experience** in the **Fanfare experiences** block. The wizard then opens with the product already attached. See [Fanfare inside Shopify admin](/guide/shopify/in-shopify-admin).
-2. On **Experience type**, choose **Queue**, **Draw**, **Auction** or **Timed Release**. Appointment is not offered in the Fanfare app in Shopify. **Auction** stays locked with "Needs a checkout that charges the winning bid" unless your store's checkout can charge the winning bid: see [Auctions on Shopify](/guide/shopify/checkout-protection#auctions-on-shopify). For a first drop, a [queue](/guide/create/queue) or a [timed release](/guide/create/timed-release) is the simplest choice.
-3. On **Configure Experience**, pick your product. Shopify's product picker opens: you pick whole products, not single variants, and Fanfare copies each one in with all its variants. An experience can hold up to 10 products. Product details that come from Shopify are read-only in Fanfare; after you change a product in Shopify, select **Sync from Shopify** on its page in Fanfare to bring the change in at once. See [Products from Shopify](/guide/shopify/products).
+1. Open **Experiences** and select **Create Experience**. You can also start directly from a product page in Shopify admin using **Create Fanfare experience** (or **Start a Fanfare experience** in the **Fanfare experiences** block) to pre-attach that product. See [Fanfare inside Shopify admin](/guide/shopify/in-shopify-admin).
+2. Choose a drop type: **Queue**, **Draw**, **Timed Release**, or **Auction**. For a first drop, a [queue](/guide/create/queue) or [timed release](/guide/create/timed-release) is the quickest to set up.
+   - **Auction** is available when your store's checkout supports charging the winning bid. See [Auctions on Shopify](/guide/shopify/checkout-protection#auctions-on-shopify).
+   - **Appointment** is not available in the Shopify app.
+3. On **Configure Experience**, pick up to 10 products from your Shopify catalog. Fanfare imports each product with all of its variants. Product details stay read-only in Fanfare—if you edit a product in Shopify later, use **Sync from Shopify** on the product's Fanfare page to pull in changes right away. See [Products from Shopify](/guide/shopify/products).
 
    <Warning>
-     Your product is protected from the moment you create the experience, whatever its status, and it stays protected after the drop ends, even if you deactivate the experience. Customers cannot buy it the normal way, from the product page or through a cart link, until you delete the experience or remove the product from it, and neither is always possible straight after the drop. See [Checkout protection](/guide/shopify/checkout-protection).
+     Checkout protection starts as soon as you add a product to an experience—even before the drop opens—and stays active after the drop ends, including if you deactivate it. Customers won't be able to buy the product normally until you remove it from the experience or delete the experience. See [Checkout protection](/guide/shopify/checkout-protection).
    </Warning>
 
-4. Enter an **Experience Name**. Set **Time Zone** first, then **Opens At** and **Closes At**.
+4. Enter an **Experience Name**, select your **Time Zone**, and set your **Opens At** and **Closes At** times.
 
    <Note>
-     **Opens At** starts at the next minute. If you leave it, the drop opens almost as soon as you create it, so set the opening time before you go on. See [Create an experience](/guide/create/experiences).
+     **Opens At** defaults to the next minute, and drops open automatically at their scheduled time. Update **Opens At** before finishing so your drop doesn't go live immediately. See [Create an experience](/guide/create/experiences).
    </Note>
 
-5. On **Stock**, set how many units this drop can sell. Shopify keeps the count for a product that comes from Shopify. See [Allocate stock to a drop](/guide/create/stock-allocation).
-6. Complete the steps for your type. For a queue or a draw, the **Payment** step has nothing to choose: customers pay in Shopify checkout, so Fanfare collects no payment. A timed release has no **Payment** step.
-7. On **Access**, choose who can enter. On **Review & launch**, check each row, then select **Create experience**.
-
-If a message that stays on screen says Shopify gating could not be updated for a product, that product may not be protected: see [When protection did not update](/guide/shopify/checkout-protection#when-protection-did-not-update).
+5. On **Stock**, set how many units this drop can sell. Shopify remains the source of truth for inventory counts on imported products. See [Allocate stock to a drop](/guide/create/stock-allocation).
+6. Complete the remaining configuration steps for your drop type. Because customers pay in Shopify checkout, there's no Fanfare payment collection to configure.
+7. On **Access**, choose who can enter, then review your settings and select **Create experience**.
 
 {/* image: your-first-drop-on-shopify-product-picker */}
 
-## 4. Make it look right
+## Step 4: Match your store's look
 
-The widget's look comes from Fanfare, not from the Shopify theme editor, so every experience on your store matches. You can set your brand's colours and fonts on any plan; choosing widget designs in **Design Studio** needs Growth or above. If you set no brand font, the widget uses your theme's font. See [Set your brand](/guide/create/brand) and [Templates and widget designs](/guide/create/templates).
+The product widget takes its styling from Fanfare rather than your Shopify theme settings, keeping every drop consistent across your store.
 
-A hosted page is optional, and is available on Growth and above: see [Build and publish the hosted page](/guide/create/hosted-page). A hosted page cannot hand customers to Shopify checkout, so customers who are let in there see no checkout button. Run the drop on your product page.
+- Customize your brand colors and fonts in **Design Studio** on any plan (widget design templates require Growth or above). If you don't set a custom font, the widget inherits your Shopify theme's font automatically. See [Set your brand](/guide/create/brand) and [Templates and widget designs](/guide/create/templates).
+- Preview how the widget replaces your buy buttons directly in the Shopify theme editor. See [Storefront setup](/guide/shopify/storefront-setup).
 
-To see what the widget replaces on your product page before the drop, use the preview in the theme editor: see [Storefront setup](/guide/shopify/storefront-setup).
+<Note>
+  Run Shopify drops on your store's product page rather than a Fanfare-hosted page—hosted pages can't hand customers off to Shopify checkout.
+</Note>
 
-## 5. Tell customers
+## Step 5: Announce your drop
 
-Save a postal address in **Settings → Email Sender** first: Fanfare will not save or schedule an email announcement without it. See [Sender identity and sending domain](/guide/create/email-sender). Then schedule your announcements from the experience's **Marketing Hub**: see [Announcements](/guide/create/announcements).
+Save a business postal address in **Settings → Email Sender** first (required before scheduling email announcements), then schedule your emails from the experience's **Marketing Hub**. See [Sender identity and sending domain](/guide/create/email-sender) and [Announcements](/guide/create/announcements).
 
-Test sends go to your own Shopify staff account's email address, and only when Shopify has verified that address.
+Test emails are sent to your Shopify staff account's email address once Shopify has verified it.
 
-## 6. Confirm the drop is protected
+## Step 6: Verify checkout protection
 
-Before doors open, run the three checks in [Check that a drop is protected](/guide/shopify/checkout-protection#check-that-a-drop-is-protected):
+Before doors open, run a quick check to confirm your product is protected:
 
-1. The **Checkout protection** card on **Settings → Storefront setup** shows **On**.
-2. No "Shopify gating could not be updated" message appeared after you last saved the experience.
-3. Optionally, a test checkout of the product that does not go through the widget, for example from a direct cart link, is refused.
+1. Open **Settings → Storefront setup** and verify **Checkout protection** shows **On**.
+2. Confirm you didn't see a gating sync warning when saving the experience (if you did, see [When protection did not update](/guide/shopify/checkout-protection#when-protection-did-not-update)).
+3. Optionally, try checking out the product through a direct cart link without going through the widget to confirm Shopify blocks the checkout.
 
-## 7. Watch it
+See [Check that a drop is protected](/guide/shopify/checkout-protection#check-that-a-drop-is-protected) for details.
 
-While the drop is live, follow it in the Fanfare app: see [Watch a live drop](/guide/drop/watch-live). To see the same moment from your customers' side, see [What your customers see](/guide/drop/what-customers-see).
+## Step 7: Watch your drop live
+
+Follow traffic, entries, and sales in real time from the Fanfare app—see [Watch a live drop](/guide/drop/watch-live) and [What your customers see](/guide/drop/what-customers-see).
 
 {/* image: your-first-drop-on-shopify-widget-live */}
 
-Paid orders from your experience reach **Orders** in the Fanfare app on their own. Cancelling or refunding an order in Shopify does not change it in Fanfare. See [Orders with Shopify checkout](/guide/shopify/orders).
+Paid orders from your drop sync automatically to **Orders** in Fanfare. If you refund or cancel an order in Shopify, handle that in Shopify—those changes don't sync back to Fanfare. See [Orders with Shopify checkout](/guide/shopify/orders).
 
-## 8. After the drop
+## Step 8: Wrap up after the drop
 
-Your product stays protected until you delete the experience or remove the product from it. Neither is always possible straight away: you cannot remove a product while the experience still holds units of it, and after the drop ends, **Delete** waits for admissions to wind down. Plan for that if you want to sell it normally again: see [Checkout protection](/guide/shopify/checkout-protection) and [Stop a drop](/guide/drop/deactivate). Your results are in [Read your results](/guide/learn/performance).
+Review how your drop performed in [Read your results](/guide/learn/performance).
+
+If you plan to sell the product normally again after the drop, remove it from the experience or delete the experience so checkout protection is lifted. Keep in mind that you can't remove a product while the experience holds allocated units, and deleting an experience waits until active checkout holds finish winding down. See [Checkout protection](/guide/shopify/checkout-protection) and [Stop a drop](/guide/drop/deactivate).
 
 ## Related
 
 <CardGroup>
   <Card title="Storefront setup" href="/guide/shopify/storefront-setup">
-    Turn on checkout protection and add the product widget to your theme.
+    Enable checkout protection and add the product widget to your theme.
   </Card>
   <Card title="Checkout protection" href="/guide/shopify/checkout-protection">
-    Which products are protected, for how long, and how to check.
+    How product protection works, how long it lasts, and how to verify it.
   </Card>
   <Card title="Fanfare in Shopify" href="/guide/shopify/overview">
-    What differs from the Fanfare admin, and who can use the app.
+    How the Shopify app compares to the standalone Fanfare admin.
   </Card>
   <Card title="Your first drop" href="/guide/start/your-first-drop">
-    The same walkthrough in the standalone Fanfare admin.
+    The standalone walkthrough for admin.fanfare.io.
   </Card>
 </CardGroup>

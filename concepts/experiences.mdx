@@ -1,147 +1,147 @@
 ---
 title: Experiences
-description: What an experience is, how to read the status of a drop, and when it actually goes live.
+description: How experiences organize your drop, how status chips roll up, and how schedules control when a drop goes live.
 ---
 
-An experience is the container for one drop. It holds a name, a time zone, up to 10 products, its design and, on Growth and above, its hosted page (see [Design](/concepts/design)), its announcements, and one or more sequences. You create one experience per drop, and everything you see about that drop in the Fanfare admin hangs off it. Who can get in, and how, is set on the sequences inside it, not on the experience: see [Sequences and routing](/concepts/sequences).
+An **experience** is the home for a single drop. It brings together your drop's name, time zone, up to 10 products, design and hosted page (on Growth and above), announcements, and one or more sequences. You create one experience per drop, and everything you configure or monitor for that release lives inside it.
+
+Access rules—who can enter and how they get the right to buy—live on the sequences inside the experience rather than on the experience itself. See [Sequences and routing](/concepts/sequences).
 
 ## What an experience holds
 
-An experience contains sequences, and each sequence contains distributions:
+Every experience is built in three layers:
 
-- **Experience**: the products on offer, the time zone, the design and page, and the announcements.
-- **Sequence**: one way in to the experience, with its own gates, its own share of the stock and a waitlist.- **Distribution**: the way customers get access inside a sequence: a queue, draw, auction, timed release or appointment. A sequence can run several, one after another.
+- **Experience** — Your products, time zone, design and hosted page (see [Design](/concepts/design)), and announcements.
+- **Sequence** — A dedicated entry path with its own access gates, stock allocation, order limits, and waitlist.
+- **Distribution** — The release mechanism inside a sequence: a queue, draw, auction, timed release, or appointment. A sequence can run multiple distributions back-to-back.
 
-When you finish **Experiences → Create Experience**, Fanfare builds all three in one go: the experience, one sequence with the same name as the experience, and one distribution. The wizard's first step, **Experience type**, picks only the type of that first distribution. You can add sequences and distributions of other types later, and the Experiences list's **Types** column shows every type an experience holds.
+When you complete **Experiences → Create Experience**, Fanfare creates all three at once: the experience, a first sequence with the same name, and your first distribution. The **Experience type** step simply picks the type of that first distribution—you can add more sequences and mix distribution types afterward, and the **Types** column in your Experiences list displays every type included in the drop.
 
-Appointment is available on Growth and above. The other four types are available on every plan. See [Distributions](/concepts/distributions/overview) and [Plans](/guide/start/plans).
+Appointments require **Growth** or above; queues, draws, auctions, and timed releases are included on every plan. See [Distributions](/concepts/distributions/overview) and [Plans](/guide/start/plans).
 
 ## Status chips
 
-Every experience and sequence shows one status chip: **Draft**, **Scheduled**, **Live**, **Ended early** or **Ended**.
+Every experience and sequence displays a status chip: **Draft**, **Scheduled**, **Live**, **Ended early**, or **Ended**.
 
-A distribution's card shows its own status, which comes from its window: **Upcoming** (or "Opens" with the date) before it opens, **Live** while it is open, **Ended** after it closes, and **Ended early** when it was deactivated before its end. An auction's card shows its phase instead, such as **Bidding** or **Settled**. When each type's window opens and ends is explained in [Distributions](/concepts/distributions/overview).
+Individual distribution cards show their own status based on their schedule: **Upcoming** (or the opening date) before opening, **Live** while open, **Ended** after closing, and **Ended early** if deactivated before closing. Auction cards show their current phase instead, such as **Bidding** or **Settled**. See [Distributions](/concepts/distributions/overview) for how each format's window works.
 
-A sequence takes its chip from its distributions, and the experience takes its chip from its sequences, in the same way, with a distribution that has not opened yet counting as **Scheduled**. The first of these that any child has wins:
+A sequence rolls up its chip from its distributions, and the experience rolls up its chip from its sequences (with upcoming distributions counting as **Scheduled**). The highest-priority status below wins:
 
-| Order | Chip | When the experience shows it |
+| Priority | Chip | When it appears |
 | --- | --- | --- |
-| 1 | **Live** | At least one distribution is open. |
-| 2 | **Scheduled** | Nothing is open, and at least one distribution has not opened yet. |
-| 3 | **Ended early** | Nothing is open or still to come, and at least one distribution was deactivated before its end. |
-| 4 | **Ended** | Every distribution has run to its end. |
-| none | **Draft** | The experience has no distributions. |
+| 1 | **Live** | At least one distribution is currently open. |
+| 2 | **Scheduled** | Nothing is open, and at least one distribution is scheduled to open later. |
+| 3 | **Ended early** | Nothing is open or upcoming, and at least one distribution was deactivated before its scheduled close. |
+| 4 | **Ended** | Every distribution ran to its scheduled close. |
+| — | **Draft** | The experience has no distributions yet. |
 
-So one live sequence makes the whole experience **Live**, even if every other sequence has finished. The chip is not what customers see: if the experience has a published hosted page, deactivating any one sequence or distribution makes that page show the whole experience as ended, including for sequences still running. See [What locks when](/concepts/what-locks-when). A deactivated distribution is never relabelled **Ended** because a sibling ran on schedule.
+A single live sequence makes the whole experience **Live**, even if other sequences have already finished. Likewise, a deactivated distribution never changes to **Ended** just because another sequence finished on schedule.
 
-**Draft** only means there is no distribution yet. It does not mean unpublished. The wizard always creates a distribution, so a new experience starts at **Scheduled** or **Live**.
+<Note>
+  **Draft** only means an experience has no distributions yet—not that it's unpublished. Because **Create Experience** always creates an initial distribution, new experiences start as **Scheduled** or **Live**.
+</Note>
+
+<Warning>
+  Status chips are for your admin view. If an experience has a published hosted page, deactivating any single sequence or distribution marks the entire hosted page as ended for visitors—even if other sequences are still running. See [What locks, and when](/concepts/what-locks-when).
+</Warning>
 
 <Frame caption="The experience chip shows Live whenever any distribution is open, and falls back to Scheduled in the gap between them.">
   <img src="/images/guide/concepts-experiences-status-rollup.webp" alt="A timeline of five moments for the Phantom Stitch Anorak Drop: before anything opens, while the Inner Circle Early Access queue runs, the gap between the two, while the Public Draw takes entries, and after both close. The queue and draw cards go from Upcoming to Live to Ended, and the experience chip above them follows: Scheduled, Live, Scheduled, Live, Ended. A second panel shows the experience chip and both cards turning Ended early when the experience is deactivated partway through the queue." />
 </Frame>
 
-## There is no launch button
+## Going live: no separate launch button
 
-An experience does not wait to be published. It is **Scheduled** as soon as a distribution has a future opening time, and **Live** the moment that distribution opens. Selecting **Create experience** on the **Review & launch** step schedules the drop.
+Experiences go live automatically on schedule—there's no manual publish or launch step to trigger. As soon as a distribution has a future opening time, the experience is **Scheduled**, and the moment that time arrives, it flips to **Live**.
 
-If you leave the wizard's opening time as it is, the drop opens almost as soon as you select **Create experience**: see [Create an experience](/guide/create/experiences).
+Selecting **Create experience** on the **Review & launch** step schedules the drop right away. If you leave the wizard's default opening time unchanged, your drop opens almost immediately—see [Create an experience](/guide/create/experiences).
 
-The **Review & launch** step says "You can still tweak anything after publishing." That overstates it: not everything can be changed afterwards, and deactivating cannot be undone. See [What locks when](/concepts/what-locks-when).
+<Tip>
+  Double-check your key settings before the first window opens. While many details stay editable after creation, several settings lock once a distribution opens, and **Deactivate** can't be undone. See [What locks, and when](/concepts/what-locks-when).
+</Tip>
 
-## Opens and Closes are worked out, not set
+## How Opens and Closes are calculated
 
-The experience's **Opens** and **Closes** are not fields you fill in. Fanfare works them out from the distributions:
+An experience's **Opens** and **Closes** times aren't separate fields—Fanfare calculates them automatically from your distributions:
 
-- **Opens** is the earliest opening time among its distributions.
-- **Closes** is the latest close among them. If a distribution has an opening time but no end time and has not been deactivated, **Closes** shows a dash.
-- Deactivating brings **Closes** forward: a distribution that was running is counted as closing at the moment it was deactivated, and one deactivated before it opened is left out.
+- **Opens** is the earliest opening time across all distributions.
+- **Closes** is the latest closing time across all distributions. If an active distribution has an opening time but no end time, **Closes** displays a dash.
+- **Deactivating pulls Closes forward:** A distribution deactivated while running closes at the moment you deactivated it, and one deactivated before opening is excluded.
 
-To move them, change the distributions' windows. Announcements timed relative to the experience's opening or close move when **Opens** or **Closes** move.
+To shift an experience's overall window, edit its distributions' schedules. Any announcements timed relative to the experience's opening or close automatically move with it.
 
-The Experiences list's strip "Live now and opening in the next 14 days" lists experiences whose **Opens** has passed and whose **Closes** has not, and those whose **Opens** is in the next 14 days. Its cards read **Opens** and **Closes**, so in a gap between sequences a card can show **Live** while the experience's chip shows **Scheduled**.
+<Note>
+  On the Experiences list, the **Live now and opening in the next 14 days** strip uses overall **Opens** and **Closes** times. During a gap between two sequences, a card in that strip may read **Live** even while the experience's status chip shows **Scheduled**.
+</Note>
 
-## Read an experience at a glance
+## Checking a drop at a glance
 
-Open an experience to see where it stands. The header shows:
+Open any experience to check its live state from the header and **Overview** tab:
 
-- the status chip
-- "Sequences: N" with a count per chip, for example "Sequences: 2 (1 Live | 1 Scheduled)"
-- **Opens** and **Closes**, in the experience's time zone
-- **Deactivated** with the date of the latest deactivation, once everything has stopped and anything in the experience was deactivated
-
-The **Overview** tab starts with the "What happens next" card:
-
-- the next moment, such as "Queue opens" or "Winners drawn", with a countdown to it
-- one lane per sequence, listing its moments in order, with who the sequence is for and, except for appointment-only sequences, its waitlist
-- "Times in" and the experience's time zone, with a **Show in my time** switch when your browser's time zone differs from the experience's
-- which products it sells, and who counts the stock, for example "Fanfare counts stock", "Shopify counts stock" or "Counted per sequence: each sequence stops selling at its own limits". Stock is explained in [Stock](/concepts/stock).
-
-When nothing is left to happen, the card says "Everything scheduled has happened." When nothing has a time yet, it says "Nothing is scheduled yet. Add a distribution to a sequence to give it a time."
+- **Header:** Shows the status chip, a sequence breakdown by status (such as `Sequences: 2 (1 Live | 1 Scheduled)`), overall **Opens** and **Closes** in the experience's time zone, and a **Deactivated** timestamp once everything has stopped if anything was ended early.
+- **What happens next card:** Highlights the next upcoming milestone (such as a queue opening or winners being drawn) with a live countdown, a timeline lane per sequence (including its audience and waitlist, except for appointment-only sequences), a **Show in my time** toggle whenever your browser time zone differs from the experience's, and a summary of your products and who counts their stock (see [Stock](/concepts/stock)).
 
 <Frame caption="The header and the What happens next card show where a drop stands and what happens next.">
   <img src="/images/guide/concepts-experiences-header-next-up.webp" alt="The top of an experience's Overview, with a ringed Live status chip, a sequences summary of one Live and one Scheduled, the opening and closing times, and the What happens next card counting down to the next moment, with a lane for each of two sequences." />
 </Frame>
 
-The rest of the **Overview** and the **Performance** tab are covered in [Read your results](/guide/learn/performance).
+For metrics and post-drop reporting in the rest of **Overview** and **Performance**, see [Read your results](/guide/learn/performance).
 
-## Time zone
+## Time zones
 
-Each experience has its own time zone. The Experiences list, the header and the "What happens next" card show times in that zone.
+Each experience has its own time zone, which governs every timestamp shown in the Experiences list, header, and **What happens next** card.
 
-Customers see the widget's "Opens" time in their own time zone, and countdowns run to the same moment wherever they are. A date on the hosted page taken from the **Experience opening time** or **Experience closing time** shows in the experience's zone. See [What your customers see](/guide/drop/what-customers-see).
+For shoppers, widget opening times automatically display in their local time zone and countdowns tick down to the exact same instant worldwide. Dates placed on a hosted page using the **Experience opening time** or **Experience closing time** dynamic fields display in the experience's time zone. See [What your customers see](/guide/drop/what-customers-see).
 
-You can change the time zone later, but the change behaves differently depending on whether anything in the experience has opened yet. See [Create an experience](/guide/create/experiences).
+You can change an experience's time zone after creation, though behavior depends on whether any distribution has opened yet. See [Create an experience](/guide/create/experiences).
 
-## How an experience ends
+## Ending or deleting an experience
 
-An experience reads **Ended** once every distribution's window has closed. It reads **Ended early** once everything has stopped and at least one distribution was deactivated before its end. Deactivate and Delete are both one-way: what each does is explained in [What locks when](/concepts/what-locks-when), and the steps are in [Stop a drop](/guide/drop/deactivate).
+An experience moves to **Ended** once every distribution closes on schedule, or **Ended early** once everything stops if any distribution was deactivated beforehand. Both **Deactivate** and **Delete** are permanent—see [What locks, and when](/concepts/what-locks-when) and [Stop a drop](/guide/drop/deactivate).
 
-Deleting an experience keeps its orders. An old link to a deleted experience opens a page saying it was deleted, with "It was deleted on" and the date, and "Its orders are still in Orders."
+Deleting an experience never deletes its orders. If someone opens an old link to a deleted experience, Fanfare confirms when it was deleted and reminds them that its orders remain available in **Orders**.
 
-## Worked example: a members' queue, then a public draw
+## Example: how status changes across a two-sequence drop
 
-Northbound Supply Co. runs "Phantom Stitch Anorak Drop" with two sequences: "Inner Circle Early Access", running a queue that is open now and closes tomorrow, and "Public Draw", running a draw that opens in two days. Here is what the header chip and the "What happens next" card show as time passes.
+Suppose Northbound Supply Co. runs **Phantom Stitch Anorak Drop** with two sequences: **Inner Circle Early Access** (a queue open today through tomorrow) and **Public Draw** (a draw opening in two days). Here's how status rolls up as the drop progresses:
 
-| When | Inner Circle Early Access | Public Draw | Experience chip | Next moment on the card |
+| Stage | Inner Circle Early Access | Public Draw | Experience chip | Next milestone |
 | --- | --- | --- | --- | --- |
-| Now, while the queue runs | **Live** | **Scheduled** | **Live** | "Queue closes", in the Inner Circle Early Access lane |
-| After the queue closes, before the draw opens | **Ended** | **Scheduled** | **Scheduled** | "Entries open", in the Public Draw lane |
-| While the draw takes entries | **Ended** | **Live** | **Live** | The draw's next moment, such as "Winners drawn" |
-| After both have closed | **Ended** | **Ended** | **Ended** | "Everything scheduled has happened." |
-| Experience deactivated while the queue runs | **Ended early** | **Ended early** | **Ended early** | Deactivated distributions drop off the card. With nothing left, it can read "Nothing is scheduled yet." |
+| While the queue is open | **Live** | **Scheduled** | **Live** | Queue closes (Inner Circle Early Access) |
+| Gap between queue and draw | **Ended** | **Scheduled** | **Scheduled** | Entries open (Public Draw) |
+| While the draw accepts entries | **Ended** | **Live** | **Live** | Next draw milestone (for example, Winners drawn) |
+| After both close | **Ended** | **Ended** | **Ended** | Everything scheduled has happened |
+| Experience deactivated mid-queue | **Ended early** | **Ended early** | **Ended early** | Deactivated distributions drop off the card |
 
-Announcements and waitlist emails are moments too, so the card shows one of those first if it comes sooner.
-
-Deactivating in the gap between the two sequences would also read **Ended early**, because the draw was stopped before it opened, while the queue's card stays **Ended**.
+Scheduled announcements and waitlist reminders count as milestones too, so the **What happens next** card displays one first if it's due sooner. Deactivating the experience during the gap between sequences also sets the experience chip to **Ended early** because the draw was stopped before opening, while the completed queue stays **Ended**.
 
 ## On Shopify
 
-- The Fanfare app in Shopify never offers Appointment. Its **Experience type** step and the empty Experiences list offer Queue, Draw, Auction and Timed Release.
-- You can start an experience from a product in Shopify admin: the Fanfare experiences block on the product page has a **Start a Fanfare experience** button when the product has none.
-- That block labels each experience **Active**, **Upcoming** or **Closed**, not with the status chips above.
-- Saving an experience can report that Shopify gating could not be updated for some products, and deleting one that it could not be removed.
+- **No Appointments:** The Fanfare app in Shopify offers Queue, Draw, Auction, and Timed Release only.
+- **Launch from a Shopify product:** On any Shopify product page with no Fanfare experience, the Fanfare block includes a **Start a Fanfare experience** button.
+- **Different status labels in Shopify admin:** That product-page block labels experiences **Active**, **Upcoming**, or **Closed** rather than using the five chips above.
+- **Checkout-gating sync:** Saving or deleting an experience updates Shopify product gating automatically and alerts you if any product couldn't be updated.
 
-All three are covered in [Fanfare inside Shopify admin](/guide/shopify/in-shopify-admin).
+See [Fanfare inside Shopify admin](/guide/shopify/in-shopify-admin) for details.
 
 ## Related
 
 <CardGroup>
   <Card title="Sequences and routing" href="/concepts/sequences">
-    One way in to an experience, and how Fanfare picks one for each customer.
+    How entry paths work and how Fanfare routes each customer.
   </Card>
   <Card title="Distributions" href="/concepts/distributions/overview">
-    The five types, their windows and when each one ends.
+    Compare all five distribution types and how their schedules work.
   </Card>
   <Card title="Create an experience" href="/guide/create/experiences">
-    The wizard, the opening-time default and the time zone.
+    Walk through the setup wizard, default opening times, and time zones.
   </Card>
-  <Card title="What locks when" href="/concepts/what-locks-when">
-    What you can still change once something opens, and what Deactivate does.
+  <Card title="What locks, and when" href="/concepts/what-locks-when">
+    See what stays editable after a drop opens and what Deactivate does.
   </Card>
   <Card title="Stop a drop" href="/guide/drop/deactivate">
-    Deactivate and Delete, step by step.
+    Deactivate or delete an experience step by step.
   </Card>
   <Card title="Design" href="/concepts/design">
-    The hosted page, brand and widget for each experience.
+    Configure your hosted page, brand styling, and storefront widget.
   </Card>
 </CardGroup>

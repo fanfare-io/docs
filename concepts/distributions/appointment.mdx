@@ -1,92 +1,88 @@
 ---
 title: Appointment
-description: How an appointment lets customers book a time slot, online or at one of your locations, how the slots are made, and why the set-up freezes once people have booked.
+description: Offer bookable time slots for in-store fittings, pickups, trunk shows, or online sessions—and learn how slots are generated and locked once bookings arrive.
 ---
 
-An appointment lets customers book a time to come in, for a fitting, a trunk show or a private viewing, or a time slot online. In the admin it is described as "Offer bookable time slots.", and the experience wizard puts it as "Give customers a scheduled time to shop or access your product. Great for reducing congestion." You choose the days it runs, how long each slot is, the gap between slots and how many people each slot takes. Fanfare cuts the slots from your location's opening hours, and customers pick one.
+An **appointment** lets customers reserve a scheduled time slot—ideal for in-store fittings, trunk shows, private viewings, pickups, or online consultations. You define the date range, slot length, buffer between slots, and capacity per slot; Fanfare generates the bookable schedule from your location's opening hours so shoppers can pick a time that works for them.
 
-<Info>Available on Growth and above.</Info>
+<Info>
+  Available on **Growth** and above. On Starter, appointments appear grayed out with an upgrade link. Any appointment created on a higher plan continues running and remains editable if you downgrade later.
+</Info>
 
-On Starter, the appointment choice is greyed out and shows that it is available on a higher plan. An appointment made on a higher plan keeps working if you later move down to Starter.
+## How appointments differ from product drops
 
-A sequence is one way in to an experience. An appointment is one of the five distributions a sequence can run, alongside queue, draw, auction and timed release.
+While queues, draws, auctions, and timed releases allocate inventory, appointments reserve time:
 
-## How it differs from the other distributions
+- **No inventory allocated:** Appointments reserve time slots without assigning products or deducting stock.
+- **No checkout or Fanfare fees:** Customers don't pay when booking, there's no payment step during setup, and Fanfare charges no per-order fees.
+- **Sign-in required:** Guest access isn't supported. While an appointment is open or scheduled, its entire sequence requires shoppers to sign in—even if another distribution in that sequence allows guests. See [Sequences and routing](/concepts/sequences).
+- **No waitlist:** Sequences running only appointments take bookings directly rather than maintaining a waitlist (the sequence has no **Waitlist** tab). To notify customers when booking opens, send an [announcement](/guide/create/announcements).
 
-An appointment hands out time, not products: the other four types decide who gets the right to buy.
+## How bookable slots are generated
 
-- No product or stock is given out. The admin says: "Appointments don't hand out products".
-- Fanfare takes no payment for an appointment and charges no fee. There is no payment step when you set one up.
-- Customers always have to sign in to book. While an appointment is open or scheduled, its whole sequence asks for sign-in, even if another distribution in it allows guests: see [Sequences and routing](/concepts/sequences).
-- A sequence that runs only appointments shows no waitlist in the admin. The sequence has no **Waitlist** tab, and when no sequence in the experience takes a waitlist, the experience's **Waitlist** page says "Appointment sequences take bookings rather than a waitlist". To tell people when booking opens, send an [announcement](/guide/create/announcements).
+Fanfare builds your slot schedule from three inputs:
 
-## How the slots are made
-
-**The window.** **First bookable slot** and **Closes** set the first and last moments a slot can fall in. A slot that would start before **First bookable slot**, or end after **Closes**, is dropped.
+- **Date window:** **First bookable slot** and **Closes** (**Closes At** in the experience wizard) bound which slots exist. Any slot that would start before **First bookable slot** or end after **Closes** is excluded.
+- **Opening hours:**
+  - **Physical Location** — Slots follow the location's opening hours in the location's time zone (even if the appointment's **Time Zone** differs). Closed days have no slots; locations without opening hours default to 09:00–17:00 daily.
+  - **Online** — Slots run 09:00–17:00 daily in the appointment's **Time Zone**.
+- **Slot sizing and capacity:** Starting at opening time, Fanfare lays out slots of **Slot duration**, separated by **Buffer**, stopping after the last full slot that fits before closing time. Each slot accepts up to **Max capacity per slot** bookings before showing as full.
 
 <Note>
-  **First bookable slot** is not when booking starts. As the admin puts it: "Customers can book as soon as the page is live." If your page goes live a week before the first slot, customers can book from that day. To control when booking starts, control when the page goes live.
+  **First bookable slot** controls which slots appear—not when customers can start booking. Customers can book as soon as your page goes live. To control when booking opens, control when you publish the page.
 </Note>
 
-**The opening hours.** Inside the window, each day's slots are cut from opening hours.
+See [Set up appointments](/guide/create/appointment) for every field and its limits, and [Locations and opening hours](/guide/create/locations) to configure store hours.
 
-- With a **Physical Location**, slots follow that location's opening hours, in the location's time zone. The location's time zone is used even when the appointment's **Time Zone** is different. A location with no opening hours set gets 09:00 to 17:00 every day.
-- With **Online**, there is no location, and slots run from 09:00 to 17:00 every day in the appointment's **Time Zone**.
-- A day the location is closed has no slots.
-
-**The slot settings.** Starting at opening time, Fanfare lays out slots of **Slot duration**, with a gap of **Buffer** between one slot's end and the next one's start. A slot must finish by closing time, so a day ends with the last slot that fits. Each slot takes up to **Max capacity per slot** people. When a slot is full, customers can no longer pick it.
-
-The two places you can create an appointment start with different slot settings: see [Set up appointments](/guide/create/appointment), which lists every field with its limits. Opening hours are set on the location.
-
-<Frame caption="Slots are cut from each day's opening hours, and the window drops those that start before First bookable slot or end after Closes.">
+<Frame caption="Slots are generated from each day's opening hours, and the window drops any slot starting before First bookable slot or ending after Closes.">
   <img src="/images/guide/concepts-appointment-slot-grid.webp" alt="The SoHo Trunk Show week as eight day columns from Thursday to the following Thursday. Each open day runs from 10:00 opening to 18:00 closing and holds twelve 30-minute slots, 10 minutes apart, with two places each. The last slot ends at 17:50, leaving 10 minutes over. Sunday is closed and has no slots. A First bookable slot line at Thursday 14:00 drops the six earlier slots on the first day, and a Closes line at the last Thursday 12:00 drops every slot after 11:20." />
 </Frame>
 
-## Bookings freeze the set-up
+## Bookings lock your setup
 
-As soon as one customer books, you can no longer change **Slot duration**, **Buffer**, **Max capacity per slot**, the location, **First bookable slot**, **Closes** (**Closes At** in the experience wizard) or **Time Zone**. The settings stay locked while any booking stands, and the edit screen says why: "[count] bookings stand on this appointment; slot configuration, window and location cannot change until they end or are cancelled." A booking stops counting once its slot has ended or it has been cancelled.
+As soon as the first customer books, **Slot duration**, **Buffer**, **Max capacity per slot**, the location, **First bookable slot**, **Closes**, and **Time Zone** lock. They stay locked as long as any active booking exists—a booking stops counting once its slot ends or it's canceled.
 
-Two limits on the window apply whether or not anyone has booked. Once the first bookable slot has passed, you can move **First bookable slot** earlier but not later. Once the appointment has ended, its window cannot change.
+While any booking stands at a physical location, that location's opening hours and time zone lock too. See [Locations and opening hours](/guide/create/locations).
 
-While any booking stands at a location, its opening hours and time zone cannot change either: see [Locations and opening hours](/guide/create/locations).
+Two window rules apply regardless of bookings: once **First bookable slot** passes, you can move it earlier but not later, and once the appointment ends, its window can't change.
 
-<Note>
-  Get the set-up right before the page goes live. Once the first customer books, the only ways to change the slots are to wait until every booked slot has ended or to cancel the bookings. Cancelling a booking tells the customer and cannot be undone.
-</Note>
+<Warning>
+  Double-check your slot configuration and location hours before publishing your page. Once a customer books, changing slot settings requires waiting for all booked slots to end or canceling existing bookings—which notifies every affected customer and can't be undone.
+</Warning>
 
-## What customers can do
+## Booking experience and management
 
-A signed-in customer picks a day, then a time, and books it. They can add the booking to their calendar, reschedule it or cancel it, and hold one booking per appointment at a time. Once the slot has started, the booking can no longer be rescheduled, and once it has ended, it can no longer be cancelled.
+Signed-in customers pick a day and time, add the appointment to their calendar, and can hold **one active booking per appointment** at a time. They can reschedule anytime before the slot starts and cancel anytime before the slot ends.
 
-Customers receive a message when their booking is confirmed, cancelled or moved to a new time: see [What your customers see](/guide/drop/what-customers-see). Fanfare sends no reminder before the slot.
+Customers automatically receive confirmation, reschedule, and cancellation messages (see [What your customers see](/guide/drop/what-customers-see)). Fanfare doesn't send pre-slot reminder notifications.
 
-You can cancel a single booking yourself from the sequence's **Overview**, for a slot in the coming week that has not ended yet: the customer is told. The steps are in [Change things mid-drop](/guide/drop/live-controls). The admin has no way to mark a customer as checked in or as a no-show.
+From the sequence's **Overview** tab, you can cancel any individual booking for an upcoming slot within the next 7 days before it ends; the customer is notified automatically. See [Change things mid-drop](/guide/drop/live-controls). (Fanfare doesn't currently track check-ins or no-shows in the admin.)
 
-## Watching bookings
+## Monitoring upcoming bookings
 
-On the sequence's **Overview**, below the **Distributions** card, a panel headed with the appointment's name and location shows today and the six days after it, with each day's slots and the people booked into the slot you select. Bookings further ahead do not appear there until their day comes into that week. Times are shown in the location's time zone, or in the appointment's **Time Zone** when it has no location; the panel does not name the zone. Days outside the window read "not in window", and days the location is closed read "closed".
+On the sequence's **Overview** tab, the appointment panel displays a rolling 7-day strip (today plus the next 6 days) showing booked counts per day and the attendee list for each slot. Bookings further out appear automatically once their date enters that 7-day window. Times display in the location's time zone (or the appointment's **Time Zone** for online appointments), with days outside your schedule labeled **"not in window"** or **"closed"**.
 
-<Frame>
+<Frame caption="Review booked counts and attendee details across the next seven days from the sequence Overview.">
   <img src="/images/guide/concepts-appointment-operational-view.webp" alt="The appointment panel for an upcoming appointment, showing a seven-day strip with booked counts and one day's 30-minute slots, with the slot grid highlighted." />
 </Frame>
 
-## Lifecycle
+## Lifecycle and deactivation
 
-An appointment is **Scheduled** (its panel on the **Overview** shows **Upcoming**) until its **First bookable slot**, **Live** until it **Closes**, and then **Ended**. Bookings can come in while it is still Scheduled. An appointment has no settling phase: it ends when its window closes.
+An appointment moves from **Scheduled** (labeled **Upcoming** on the **Overview** panel) until **First bookable slot**, to **Live** until **Closes**, and then to **Ended** with no settling phase. Customers can book while it's still **Scheduled** as long as your page is live.
 
-If you deactivate an appointment while it is scheduled or live, it shows **Ended early**. Every booking whose slot has not ended is cancelled, each customer is sent the cancellation message, and the admin shows the progress as it cancels them. Deactivate cannot be undone: see [Stop a drop](/guide/drop/deactivate).
+Choosing **Deactivate** while scheduled or live sets the status to **Ended early**, cancels every unended booking, and sends each affected customer a cancellation notice. Deactivating can't be undone; see [Stop a drop](/guide/drop/deactivate).
 
-An appointment's window cannot overlap another distribution's window in the same sequence: see [Distributions](/concepts/distributions/overview).
+Like all distributions, an appointment can't overlap another distribution in the same sequence. See [Distributions](/concepts/distributions/overview).
 
-## Worked example: a trunk show at the SoHo Flagship
+## Example: a trunk show at the SoHo Flagship
 
-The experience "Aether Loafer Trunk Show" has one sequence, "SoHo Fittings", which runs the appointment "SoHo Trunk Show" at the SoHo Flagship location:
+Northbound Supply Co. runs the **Aether Loafer Trunk Show** at their SoHo Flagship location with these settings:
 
-- **Slot duration**: 30 minutes
-- **Buffer**: 10 minutes
-- **Max capacity per slot**: 2
+- **Slot duration:** 30 minutes
+- **Buffer:** 10 minutes
+- **Max capacity per slot:** 2
 
-SoHo Flagship opens 10:00 to 18:00 Monday to Saturday and is closed on Sunday. Each slot starts 40 minutes after the one before:
+SoHo Flagship is open 10:00–18:00 Monday through Saturday and closed Sunday. With a 30-minute slot and 10-minute buffer, each slot starts 40 minutes after the previous one:
 
 | Slot | Starts | Ends |
 | --- | --- | --- |
@@ -103,29 +99,29 @@ SoHo Flagship opens 10:00 to 18:00 Monday to Saturday and is closed on Sunday. E
 | 11 | 16:40 | 17:10 |
 | 12 | 17:20 | 17:50 |
 
-A slot starting at 18:00 would end after closing, so there are 12 slots a day with two places each: 24 fittings. Sunday has none.
+A slot starting at 18:00 would run past closing, so each open day yields 12 slots with 2 spots each (24 fittings per day), and Sunday has none.
 
-Now the window. **First bookable slot** is Thursday at 14:00, and **Closes** is the following Thursday at 12:00. On the first Thursday, the six slots before 14:00 are dropped and slots 7 to 12 remain. On the last Thursday, only slots 1 to 3 end by 12:00, so slots 4 to 12 are dropped.
+With **First bookable slot** set to Thursday at 14:00 and **Closes** set to the following Thursday at 12:00, slots 1–6 are excluded on the first Thursday, and slots 4–12 are excluded on the final Thursday (since slot 4 finishes after 12:00).
 
-The page goes live on Monday, and the first customer books Thursday's 14:00 slot on Tuesday. From that moment the set-up is frozen, and so are the SoHo Flagship's opening hours. To switch to 45-minute fittings, the team has to wait until every booked slot has passed or cancel the bookings.
+When the page goes live Monday and the first customer books Thursday's 14:00 slot on Tuesday, both the appointment setup and SoHo Flagship's opening hours lock. Switching to 45-minute fittings requires waiting until every booked slot passes or canceling those bookings first.
 
 ## On Shopify
 
-The Fanfare app in Shopify does not offer appointments. They are left out of the choices when you create an experience and when you add a distribution to a sequence. On Shopify, customers can buy a product only through its experience, and an appointment never lets anyone buy, so an appointment beside a Shopify product would leave that product unbuyable. For the same reason, in the Fanfare admin an experience that uses a Shopify product can't have an appointment either: use a product created in Fanfare for that experience instead.
+Appointments aren't available in the Fanfare Shopify app on any plan, and they can't be added in the Fanfare admin to an experience backed by a Shopify product. Because Shopify products can only be purchased through their experience—and appointments don't sell products—attaching an appointment would leave that Shopify product unbuyable. To run appointments from the Fanfare admin, create a product directly in Fanfare for that experience instead.
 
 ## Related
 
 <CardGroup>
   <Card title="Set up appointments" href="/guide/create/appointment">
-    Every appointment field, its default and limits, and the steps.
+    Configure appointment fields, limits, and location schedules step by step.
   </Card>
   <Card title="Locations and opening hours" href="/guide/create/locations">
-    Create locations and set the hours slots are cut from.
+    Add physical locations and set the opening hours slots are generated from.
   </Card>
   <Card title="Change things mid-drop" href="/guide/drop/live-controls">
-    Cancel a single booking, and what else you can change live.
+    Cancel individual bookings and see what else you can adjust live.
   </Card>
   <Card title="What your customers see" href="/guide/drop/what-customers-see">
-    The booking screens and the messages customers receive.
+    Preview the booking flow and every customer notification.
   </Card>
 </CardGroup>

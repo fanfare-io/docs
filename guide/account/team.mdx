@@ -1,165 +1,164 @@
 ---
 title: Team members
-description: Invite colleagues to your Fanfare organisation, understand what an admin can do that a member cannot, and sign in to the Fanfare admin.
+description: Invite teammates to your Fanfare organization, compare admin and member permissions, and manage how you sign in.
 ---
 
-Everyone who works on your drops can have their own sign-in to the Fanfare admin. You invite them by email from the **Account** dialogue, and each person joins your organisation as an admin or a member. Members can run most of Fanfare day to day. An admin is needed for payments, billing, developer settings, the email sender, text messaging, building and publishing experience pages, and deactivating a live experience. On the Fanfare app in Shopify, none of this applies: see [On Shopify](#on-shopify).
+Everyone on your team can have their own Fanfare login. You invite teammates by email from the **Account** dialog as either an **admin** or a **member**—members handle day-to-day drops, while admins manage payments, billing, developer keys, email and SMS setup, hosted pages, and stopping live drops.
+
+<Note>
+  **Using Shopify?** Team access is managed through your Shopify store's staff permissions instead of Fanfare roles. See [On Shopify](#on-shopify).
+</Note>
 
 ## Before you start
 
-- You are signed in to the Fanfare admin at admin.fanfare.io.
-- You know the email address your colleague will sign in with.
+- You're signed in to the Fanfare admin at [admin.fanfare.io](https://admin.fanfare.io).
+- You have your teammate's work email address ready.
 
 ## Where team management lives
 
-Team management is not under **Settings**. Open the user menu at the foot of the sidebar (your name and email) and choose **Account**. Despite its name, **Account** opens your organisation's profile, with its members and invitations. Your own sign-in details are under **Profile** in the same menu.
+Team management lives in the user menu at the bottom of the sidebar—not under **Settings**. Select your name and email, then choose **Account** to manage your organization's members and pending invitations. Your personal login details live under **Profile** in the same menu.
 
 {/* image: guide-account-team-user-menu-account */}
 
-The rest of the user menu and the admin's layout are covered in [A tour of the admin](/guide/start/tour-of-the-admin).
+For a full walkthrough of the sidebar and user menu, see [A tour of the admin](/guide/start/tour-of-the-admin).
 
 ## Invite a team member
 
-1. Open the user menu at the foot of the sidebar and choose **Account**.
-2. Go to the organisation's members.
-3. Send an invitation to your colleague's email address.
+1. Open the user menu at the bottom of the sidebar and select **Account**.
+2. Go to your organization's members list.
+3. Send an invitation to your teammate's email address.
 
 {/* image: guide-account-team-account-dialog */}
 
-Your colleague receives an email with a link. What they do next is in [Accept an invitation](#accept-an-invitation).
-
-Fanfare's plans do not limit the number of team members.
+Your teammate will receive an invitation email with a link to join—see [Accept an invitation](#accept-an-invitation). Fanfare plans don't limit how many team members you can invite.
 
 ## Admins and members
 
-Fanfare acts on two roles: admin and member. The person who created the organisation is an admin.
+Fanfare uses two roles: **Admin** and **Member**. Whoever creates the organization starts as an admin.
 
 | Action | Admin | Member |
-| --- | --- | --- |
-| Change the checkout processor (**Settings → Organization**) | Yes | No |
-| Edit allowed origins in **Settings → Embedding** | Yes | No |
-| **Rotate secret key** in **Settings → API Keys** | Yes | No |
-| Connect, manage or disconnect the Stripe account (**Settings → Payments**) | Yes | No |
-| Change plan, cancel, reactivate, open the billing portal | Yes | No: sees **Billing** read-only |
-| Change the email sender, or see, add, check or remove a sending domain (**Settings → Email Sender**) | Yes | No: sees the sender read-only |
-| Any Twilio action: connect, edit, disconnect | Yes | No |
-| Finish connecting Meta, Discord or Telegram | Yes | No: can start, and is refused at the last step |
-| Create an experience's page, change or reset its template, save or publish the page, or archive it | Yes | No: can open the page editor read-only |
-| **Deactivate** an experience, sequence or distribution | Yes | No: sees the button and is refused |
-| Edit company name, website, subdomain, country, currency, time zone, language and default channel | Yes | Yes |
-| Connect Klaviyo, Mailchimp or Google Analytics; disconnect any integration other than Twilio | Yes | Yes |
-| Refund or cancel an order; return items to stock | Yes | Yes |
-| Everything else: experiences, sequences, products, audiences, announcements, Design Studio templates | Yes | Yes |
+| --- | :-: | :-: |
+| Change the checkout processor (**Settings → Organization**) | ✓ |  |
+| Edit allowed embedding origins (**Settings → Embedding**) | ✓ |  |
+| **Rotate secret key** (**Settings → API Keys**) | ✓ |  |
+| Connect, manage, or disconnect Stripe (**Settings → Payments**) | ✓ |  |
+| Change plan, cancel, reactivate, or open the billing portal (**Billing**) | ✓ | Read-only |
+| Edit email sender or manage sending domains (**Settings → Email Sender**) | ✓ | Read-only |
+| Connect, edit, or disconnect Twilio | ✓ |  |
+| Finish connecting Meta, Discord, or Telegram | ✓ |  |
+| Create a hosted page, change or reset its template, save, publish, or archive it | ✓ | Read-only |
+| **Deactivate** an experience, sequence, or distribution | ✓ |  |
+| Edit company name, website, subdomain, country, currency, time zone, language, and default messaging channel | ✓ | ✓ |
+| Connect Klaviyo, Mailchimp, or Google Analytics; disconnect any integration except Twilio | ✓ | ✓ |
+| Refund or cancel orders and return items to stock | ✓ | ✓ |
+| Manage experiences, sequences, products, audiences, announcements, and Design Studio templates | ✓ | ✓ |
 
 <Warning>
-  Members, not only admins, can change what customers see. A member can rename the company, change the subdomain (the address customers use), the currency, the time zone and the default channel, and the change reaches customers' pages within moments. See [Organisation settings](/guide/account/organization) for what each setting does. Any member can also refund and cancel orders: see [Orders and refunds](/guide/learn/orders). A member can also disconnect Meta, Discord or Telegram, and any posts scheduled through that account will not go out. Invite people as members only if you trust them with these. Admin is still needed for the checkout processor and payments.
+  Members can make changes that affect live customers immediately, including renaming your organization, changing your subdomain, updating currency or time zone, refunding or canceling orders ([Orders and refunds](/guide/learn/orders)), and disconnecting Meta, Discord, or Telegram (which stops scheduled posts). Only invite people you trust with those actions. See [Organization settings](/guide/account/organization) for details on each setting.
 </Warning>
 
-For the detail of each area, see [Billing and usage](/guide/account/billing), [Payments and fees](/guide/account/payments) and [Integrations](/guide/account/integrations).
+For role details in each area, see [Billing and usage](/guide/account/billing), [Payments and fees](/guide/account/payments), and [Integrations](/guide/account/integrations).
 
 ## Change a member's role or remove them
 
-Fanfare has no screen of its own for this. Membership is managed from **Account** in the user menu.
+Open the user menu at the bottom of the sidebar and select **Account** to update a teammate's role or remove them from your organization.
 
 ## Accept an invitation
 
-Open the link in the invitation email. What happens depends on whether you already have a Fanfare account.
+Open the link in your invitation email to join your team's organization.
 
 <Warning>
-  The Fanfare admin works with one organisation at a time and has no way to switch between them. You cannot create a second organisation. If you already run your own Fanfare organisation and accept an invitation with the same email, you may not be able to choose which one opens when you next sign in, so ask to be invited with a different email address.
+  The Fanfare admin works with one organization at a time and has no organization switcher. You can't create a second organization, and joining a second one through an invite with the same email can leave you unable to choose which organization opens when you sign in—so if you already run your own Fanfare organization, ask your teammate to invite you using a different email address.
 </Warning>
 
-### You are new to Fanfare
+### If you're new to Fanfare
 
-1. Open the link in the invitation email. A sign-up form opens. It asks only for your name and a password: the email address is the one the invitation was sent to, and there is no Google option.
-2. Enter **First name**, **Last name** and **Password** (at least 8 characters).
+1. Open the link in your invitation email. The form uses the email address the invitation was sent to; there's no email field (Google sign-up isn't used for invite links).
+2. Enter your **First name**, **Last name**, and a **Password** (at least 8 characters).
 3. Select **Create account**.
-4. Fanfare shows "Setting up your workspace..." and then opens the admin on the organisation that invited you. You are not asked to name or create an organisation.
+
+You'll be signed in and taken straight into the organization that invited you—no organization setup needed.
 
 <Frame caption="An invitation link asks only for your name and a password.">
-  <img src="/images/guide/guide-account-team-invitee-signup.webp" alt="The Create your Fanfare account form opened from an invitation, with first name, last name and password fields and no email field or Google button." />
+  <img src="/images/guide/guide-account-team-invitee-signup.webp" alt="The Create your Fanfare account form opened from an invitation, with first name, last name, and password fields and no email field or Google button." />
 </Frame>
 
-### You already have an account
+### If you already have an account
 
-1. Open the link in the invitation email.
-2. Fanfare shows "Accepting your invitation…" and then opens the admin on the organisation that invited you.
+1. Open the link in your invitation email.
+2. If two-step verification is turned on for your account, enter your authenticator code or a backup code.
 
-If your account uses two-step verification, you are asked for your authenticator code or a backup code, and then the admin opens on the organisation that invited you.
+Fanfare accepts the invitation automatically and opens your team's organization.
 
 ## Sign in
 
-The **Sign in to Fanfare** screen offers several ways in.
+Choose whichever sign-in method fits your account on the **Sign in to Fanfare** screen:
 
-| Method | What you do |
+| Method | How to sign in |
 | --- | --- |
-| Password | Enter **Work email** and **Password**, then **Sign in**. |
-| Emailed code | Enter **Work email**, select **Email me a code**, and type the 6-digit code from the email. The screen says the code expires in 10 minutes. |
-| Passkey | Select **Use a passkey**. In browsers that support it, you can also pick a saved passkey when you click into the **Work email** field. |
-| Google | Select **Continue with Google**. |
+| **Password** | Enter your **Work email** and **Password**, then select **Sign in**. |
+| **Emailed code** | Enter your **Work email**, select **Email me a code**, and enter the 6-digit code sent to your inbox (codes expire after 10 minutes). |
+| **Passkey** | Select **Use a passkey**, or choose a saved passkey from your browser when clicking into **Work email**. |
+| **Google** | Select **Continue with Google**. |
 
-If two-step verification is on for your account, after your password or emailed code you see **Two-step verification**. Enter the 6-digit code from your authenticator app, or select **Use a backup code** and enter one of the backup codes you saved, then select **Verify**.
-
-After signing in you land on the page you were trying to open, or on **Home**.
-
-6-digit code fields submit on their own when you type the sixth digit, and a wrong code is cleared so you can type it again. A backup code needs **Verify**.
+If two-step verification is enabled, enter the 6-digit code from your authenticator app (it submits automatically once all six digits are entered), or select **Use a backup code**, paste a saved code, and select **Verify**.
 
 <Note>
-  Two-step verification here works with an authenticator app or backup codes only. An account whose only second step is a text message cannot finish signing in.
-</Note>
-
-<Note>
-  If your password has appeared in a known data breach, Fanfare will not let you sign in with it. Reset your password using the steps below.
+  Two-step verification on the admin sign-in screen supports authenticator apps and backup codes only—SMS-only second factors aren't supported. Also, if your password appears in a known data breach, Fanfare requires you to reset it before signing in.
 </Note>
 
 ### Reset a forgotten password
 
 1. On the sign-in screen, select **Forgot password?**.
 2. Enter your **Work email** and select **Send reset code**.
-3. Type the 6-digit code from the email and select **Continue**.
-4. Enter a **New password** of at least 8 characters.
-5. Leave **Sign out of all other devices** ticked to sign out everywhere else, or untick it to stay signed in on your other devices. It is ticked by default.
-6. Select **Update password and sign in**.
+3. Enter the 6-digit code from your email and select **Continue**.
+4. Enter a **New password** (at least 8 characters).
+5. Leave **Sign out of all other devices** checked to end other active sessions, or uncheck it to stay signed in elsewhere.
+6. Select **Update password and sign in** (and complete two-step verification if enabled).
 
-If two-step verification is on, you are asked for your second step before you reach the admin.
+### Update your profile or sign out
 
-### Your own account and signing out
-
-Your password and sign-in methods are under **Profile** in the user menu. To sign out, choose **Sign Out** in the same menu.
-
-New to Fanfare and not invited by anyone? Create your own account and organisation: see [Your first drop](/guide/start/your-first-drop).
+Manage your password and sign-in methods under **Profile** in the user menu, or choose **Sign Out** to end your session. If you're creating a brand-new organization instead of joining a team, see [Your first drop](/guide/start/your-first-drop).
 
 ## On Shopify
 
-The Fanfare app in Shopify has no invitations, members or roles. There is no **Account**, **Profile** or **Sign Out** inside the app: who can open it is decided by your store's staff permissions in Shopify. See [Fanfare in Shopify](/guide/shopify/overview).
+Inside the Fanfare Shopify app, there are no invitations, Fanfare roles, or **Account** / **Profile** / **Sign Out** menus—access is controlled entirely by your Shopify store's staff permissions. See [Fanfare in Shopify](/guide/shopify/overview).
 
 <Warning>
-  On Shopify, everyone who can open the Fanfare app has admin powers in Fanfare. That includes rotating the secret key, changing the checkout processor and **Embedding**, connecting integrations and publishing experience pages. Messages elsewhere in this guide that say "ask an admin" do not apply. Limit who can open the app in Shopify accordingly.
+  Every Shopify staff member who can open the Fanfare app has full admin permissions in Fanfare, including rotating the secret key, changing the checkout processor and **Embedding** allowlist, connecting integrations, and publishing hosted pages. Restrict who can open the Fanfare app in your Shopify staff settings accordingly.
 </Warning>
 
 ## Troubleshooting
 
 <AccordionGroup>
-  <Accordion title="This invitation is for another account">
-    You are signed in as someone other than the person the invitation was sent to. Select **Sign out and continue**. Fanfare signs you out and carries on with the invitation, so you can accept it with the account it was sent to. If you have already accepted the invitation, you do not need a new one: sign in with the account it was sent to.
+  <Accordion title="I see 'This invitation is for another account'">
+    You're currently signed in with a different email address than the one the invitation was sent to. Select **Sign out and continue** to switch accounts and accept the invite. If you've already accepted it earlier, simply sign in with the invited email address.
 
     <Frame>
-  <img src="/images/guide/guide-account-team-invitation-wrong-account.webp" alt="The invitation screen saying the invitation is for another account, showing the signed-in email and a ringed Sign out and continue button." />
-</Frame>
+      <img src="/images/guide/guide-account-team-invitation-wrong-account.webp" alt="The invitation screen saying the invitation is for another account, showing the signed-in email and a Sign out and continue button." />
+    </Frame>
   </Accordion>
-  <Accordion title="This invitation can't be used">
-    The invitation may have expired or been revoked. Ask whoever invited you to send a new one.
+  <Accordion title="I see 'This invitation can't be used'">
+    The invitation link has expired or been revoked. Ask an admin in the organization to send you a fresh invite.
   </Accordion>
-  <Accordion title="Setting up your workspace... appears, then you are signed out">
-    Fanfare could not open your organisation and signed you out without saying why. Sign in again.
+  <Accordion title="I was signed out while opening my organization">
+    Fanfare couldn't load your organization session and signed you out automatically. Sign in again to continue, and contact [support@fanfare.io](mailto:support@fanfare.io) if it keeps happening.
   </Accordion>
 </AccordionGroup>
 
 ## Related
 
 <CardGroup>
-  <Card title="Organisation settings" href="/guide/account/organization">Company details, subdomain, region and checkout.</Card>
-  <Card title="Billing and usage" href="/guide/account/billing">Plans, and who can change them.</Card>
-  <Card title="Integrations" href="/guide/account/integrations">Which connections need an admin.</Card>
-  <Card title="A tour of the admin" href="/guide/start/tour-of-the-admin">The sidebar, the user menu and where things live.</Card>
+  <Card title="Organization settings" href="/guide/account/organization">
+    Company details, subdomain, region, and checkout processor.
+  </Card>
+  <Card title="Billing and usage" href="/guide/account/billing">
+    Manage your plan and see who can make billing changes.
+  </Card>
+  <Card title="Integrations" href="/guide/account/integrations">
+    See which marketing and messaging connections require an admin.
+  </Card>
+  <Card title="A tour of the admin" href="/guide/start/tour-of-the-admin">
+    Find your way around the sidebar, user menu, and settings.
+  </Card>
 </CardGroup>

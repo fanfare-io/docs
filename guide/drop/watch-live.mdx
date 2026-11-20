@@ -1,194 +1,189 @@
 ---
 title: Watch a live drop
-description: Where to look while an experience is live, and what each number on the live screens counts.
+description: Follow real-time traffic, queue movement, stock, and sales while your drop is live.
 ---
 
-Your experience is open and customers are arriving. This page shows where to look and what each number counts, from the experience header down to the per-sequence live screen. The Performance screens are read-only. The cards and views on the **Overview** are not: they carry actions such as **Pause queue**, **Deactivate**, **Move units** and cancelling a booking, which [Change things mid-drop](/guide/drop/live-controls) covers. To see the same moment from the customer's side, see [What your customers see](/guide/drop/what-customers-see).
+Once doors open, Fanfare gives you live views from the experience level all the way down to individual sizes, bids, and bookings.
 
-Everyone in your organisation sees the same figures, revenue included.
+The **Performance** views are read-only monitoring dashboards. Live actions—like **Pause queue**, **Move units**, canceling a booking, or **Deactivate**—live on the **Overview** tabs (see [Change things mid-drop](/guide/drop/live-controls)). To see what customers experience at the same moment, see [What your customers see](/guide/drop/what-customers-see).
 
-## Before you start
+<Note>
+  Keep the browser tab visible while monitoring—live screens pause automatic refreshes when the tab is in the background. Everyone in your organization sees the same figures, including revenue.
+</Note>
 
-- The experience has at least one sequence with a distribution that is open now. A sequence is one way in to an experience.
-- Keep the browser tab in front. The live screens stop refreshing while the tab is hidden.
+## Check experience status at a glance
 
-## Read the experience at a glance
+Open your experience from **Experiences** to see its live status right in the header:
 
-Open the experience from **Experiences**. The header tells you where things stand:
+- **Status chip:** **Draft**, **Scheduled**, **Live**, **Ended**, or **Ended early**. See [Experiences](/concepts/experiences).
+- **Sequences:** Total count broken down by status (for example, `2 (1 Live | 1 Scheduled)`).
+- **Opens** and **Closes:** Shown in the experience's time zone.
 
-- The status chip: Draft, Scheduled, Live, Ended or Ended early. [Experiences](/concepts/experiences) explains what each one means.
-- **Sequences**: the number of sequences, with a count per status, for example "2 (1 Live | 1 Scheduled)".
-- **Opens** and **Closes**, in the experience's time zone.
+Just below the header, the **What happens next** card counts down to the next scheduled milestone for each sequence (such as a queue opening or winners being drawn). Times appear in the experience's time zone; if your browser is in a different time zone, use **Show in my time** to convert them.
 
-The **What happens next** card at the top of the **Overview** counts down to the next scheduled moment, such as a queue opening or winners being drawn. It has one lane per sequence (the first five, then **Show all [count] sequences**). Times are in the experience's zone, labelled "Times in [zone]". When your browser is in a different zone, a **Show in my time** switch appears.
-
-<Frame caption="The header and What happens next show the experience's state without opening Performance.">
+<Frame caption="The experience header and What happens next card give you an instant status check without opening Performance.">
   <img src="/images/guide/guide-drop-watch-live-experience-header.webp" alt="The header of an experience showing a ringed Live chip, two sequences (one live, one scheduled), the open and close times, and the What happens next card with a lane for each sequence." />
 </Frame>
 
-## Watch the Sequences card
+## Monitor sequences and stock on Overview
 
-Further down the **Overview**, the **Sequences** card has one card per sequence. While the sequence and the experience are both live, each sequence card shows live tiles for the distribution that is running:
+### The Sequences card
 
-| Distribution | Tiles |
+Further down the experience **Overview**, the **Sequences** card displays live status tiles for every active sequence:
+
+| Distribution type | Live tiles shown |
 | --- | --- |
-| Queue | in queue, awaiting checkout, pop rate (customers let in per minute), drain time (estimated minutes to clear the line), and a bar for how far through its window it is |
-| Draw | entries, winners, odds, and a bar for how far through its window it is. While winners pay: entered, the number of winner places (with the odds beside it), claimed, the number of places lost unpaid (labelled with how many are still pending), and a **Claims** progress bar |
-| Appointment | booked, fill, next slot, cancelled |
-| Auction | a price ladder with the leading price and the time it settles |
+| **Queue** | People in queue, awaiting checkout, pop rate (admissions per minute), estimated drain time, and window progress bar. A **Paused** badge appears if the queue is paused. |
+| **Draw** | During entry: entries, winners, odds, and window progress bar. While winners pay: entrants, winner places (with odds), claimed, unpaid places lost, and a **Claims** progress bar. |
+| **Appointment** | Booked, fill rate, next slot, and canceled. |
+| **Auction** | Price ladder with the leading price and settlement time. |
 
-A **Paused** badge appears when a live queue is paused. Under the tiles, a line shows the waitlist size, scheduled announcements and the next distribution to open.
+Underneath the tiles, each card summarizes waitlist size, scheduled announcements, and the next distribution to open.
 
-## Watch the sequence page
+### The sequence Overview
 
-Open a sequence with **View**. On its **Overview**:
+Select **View** on any sequence to drill into its **Overview**:
 
-- The **Distributions** card shows the live distribution first, as a larger card with the same tiles as the sequence card. Every other distribution shows a compact row with its status and schedule.
-- The **Stock** card shows each size's **Allocated**, **Sold**, **In checkout**, **Remaining** and **Status**, and **Unassigned** when the experience has unassigned units to show. The figures update about every 5 seconds. [Stock](/concepts/stock) explains each status.
-- An auction or appointment adds its own view below the **Distributions** card. See [Monitor a live auction](#monitor-a-live-auction) and [Monitor live appointments](#monitor-live-appointments).
+- **Distributions card:** Highlights the live distribution at the top with its live tiles, followed by compact rows for upcoming or ended distributions.
+- **Stock card:** Tracks **Allocated**, **Sold**, **In checkout**, **Remaining**, and **Status** for every size (plus **Unassigned** units when available), updating about every 5 seconds. See [Stock](/concepts/stock).
+- **Auction and appointment views:** Live auctions and appointments render dedicated control panels below the **Distributions** card. See [Monitor a live auction](#monitor-a-live-auction) and [Monitor live appointments](#monitor-live-appointments).
 
-The **Performance** card above every tab of the sequence page counts activity over the period chosen on Home. It does not refresh on its own: reload the page to update it.
+<Note>
+  The summary **Performance** card pinned above the tabs on a sequence page reflects the date range selected on **Home** and doesn't auto-refresh—reload the page to update it.
+</Note>
 
 ## Open the Performance view
 
-You can open the **Performance** view from any of these places:
+Open **Performance** from any of these spots:
 
-- In the experience's side navigation, select **Performance**.
-- On a sequence page, select **Performance** in its navigation, or **View performance** on the **Performance** card.
-- On a sequence card, open the menu and select **View performance**.
-- On a live card in the experience overview, select **Open performance**.
+- **Performance** in the experience's left navigation.
+- **Performance** in a sequence's navigation, or **View performance** on its summary card.
+- **View performance** from a sequence card's menu, or **Open performance** on a live card in the experience overview.
 
-What the experience's **Performance** item shows depends on how many sequences the experience has. With one, it shows that sequence's Performance screen directly. With two or more, it shows the experience overview.
+If your experience has **one sequence**, the experience's **Performance** view opens that sequence's live screen directly. If it has **two or more sequences**—even if the second is still a draft—it opens the multi-sequence experience overview.
 
-<Note>
-  Adding a second sequence switches the experience's **Performance** item to the overview, even if the new sequence is an empty draft.
-</Note>
+## The experience overview (multi-sequence drops)
 
-## The experience overview while something is live
+When an experience has multiple sequences, the overview labels each sequence as a "drop" (**By drop**, **Next drop**).
 
-With two or more sequences, the overview calls each sequence a "drop" ("By drop", "Next drop").
+While any distribution is active, **Launch so far** adds a **Live now** tile, and up to four live cards appear below it (active distributions first, followed by settling ones). Each card shows when its data was last updated and its refresh interval.
 
-The **Launch so far** card adds a **Live now** tile while any distribution is live. Below it, up to four live cards show what is running: live distributions first, then settling ones. When more are running, a line reads "[count] more live or settling, in By drop below". Each card shows "As of" the time its figures were taken and how often it refreshes.
-
-| Live card | Tiles |
+| Live card | Metrics shown |
 | --- | --- |
-| Live queue | **In line** (people waiting now), **Sold**, **Revenue** (net), **Pace** (units sold per minute over about the last 10 minutes), and bars of units sold since open |
-| Every other type, and a settling queue | **Entrants**, **Paid orders**, **Revenue** (net), **Sold** |
+| **Live queue** | **In line** (waiting right now), **Sold**, **Revenue** (net), **Pace** (units sold per minute over roughly the last 10 minutes), and a bar chart of units sold since open. |
+| **All other types (and settling queues)** | **Entrants**, **Paid orders**, **Revenue** (net), and **Sold**. |
 
 <Warning>
-  **Live now** adds two different things. A live queue contributes the people in line right now. Every other live type contributes everyone who has entered so far. With a queue and a draw live at once, the total mixes current queue length with cumulative draw entries. Read the live cards to see each part.
+  **Live now combines two different counts.** Live queues contribute the number of people waiting in line *right now*, while every other live distribution type contributes *all cumulative entrants* so far. If a queue and a draw are live at the same time, read the individual live cards to separate current queue depth from total draw entries.
 </Warning>
 
-The rest of the overview, including **By drop** and the insight cards, is explained in [Read your results](/guide/learn/performance).
+For **By drop** tables, insight cards, and post-drop metrics, see [Read your results](/guide/learn/performance).
 
-<Frame caption="Live now sums people in line for queues and entrants for every other type.">
-  <img src="/images/guide/guide-drop-watch-live-overview-live-now.webp" alt="The experience overview with a Launch so far headline of revenue, paid orders, units sold, entrants and a highlighted Live now tile showing 2,140 in line for a queue, above a live queue card with In line, Sold, Revenue and Pace." />
+<Frame caption="Live now sums current people in line for queues with cumulative entrants for every other distribution type.">
+  <img src="/images/guide/guide-drop-watch-live-overview-live-now.webp" alt="The experience overview with a Launch so far headline of revenue, paid orders, units sold, entrants, and a highlighted Live now tile showing 2,140 in line for a queue, above a live queue card with In line, Sold, Revenue, and Pace." />
 </Frame>
 
-## The sequence Performance screen while live
+## The sequence live screen
 
-When a sequence has two or more distributions, a switcher across the top lets you pick one, or **Whole sequence** for totals. It opens on the most recently opened live distribution. Your choice is kept in the page link, so you can share it. With one distribution there is no switcher.
+When a sequence has multiple distributions, a switcher at the top lets you choose a specific distribution or **Whole sequence** for combined totals (it opens on the most recently opened live distribution, and the selection stays in the URL so you can share the link).
 
-A live distribution's screen has a **Watch** / **Run** toggle, with "Refreshes every … s" beside it. **Watch** is selected when the screen opens. The toggle is not kept in the link and goes back to **Watch** when you reload.
+Use the **Watch** / **Run** toggle at the top to switch between live monitoring and quick access to settings (the toggle isn't kept in the URL and resets to **Watch** on reload).
 
 <Warning>
-  Only queues have a live screen of their own. A draw, auction, timed release or appointment shows the queue's screen, so **Waiting in queue** and Run's **In queue** always read 0 for them. For appointments, **Awaiting checkout** and the "admitted" count also always read 0. For these types, read **Entrants**, **Units sold** with its paid-orders line, and **Revenue**, and use the auction or appointment view on the sequence's **Overview** for anything specific to the type.
+  Only queues have a dedicated live layout. Draws, auctions, timed releases, and appointments share the queue layout, so **Waiting in queue** (in **Watch**) and **In queue** (in **Run**) always read `0` for them—and for appointments, **Awaiting checkout** and admitted counts also read `0`. For those types, focus on **Entrants**, **Units sold**, and **Revenue**, and use the dedicated auction or appointment panels on the sequence's **Overview**.
 </Warning>
 
-### Watch
+### Watch mode
 
-**Right now** counts the distribution since it opened:
+**Watch** is the default monitoring screen for a live distribution. At the top, **Right now** tracks live headline counts since opening:
 
-| Cell | What it counts |
+| Metric | What it counts |
 | --- | --- |
-| **Entrants** | Different customers who have entered. The line below gives how many of them were let in ("N admitted"). |
-| **Waiting in queue** | People in the queue's line at this moment. |
-| **Awaiting checkout** | Customers let in who have not yet started checking out ("Admitted, not yet reserved"). |
-| **Units sold** | Units on paid orders. The line below reads "of N allocated", or the number of paid orders when allocation cannot be shown. |
-| **Revenue** | Net revenue, with gross below. Hidden until there are sales, and whenever sales are in more than one currency. |
+| **Entrants** | Unique customers who have entered, with total admissions (`N admitted`) underneath. |
+| **Waiting in queue** | Customers waiting in the queue line right now. |
+| **Awaiting checkout** | Admitted customers who haven't started checkout yet. |
+| **Units sold** | Units on paid orders, shown against allocation (`of N allocated`) or paired with paid order count. |
+| **Revenue** | Net revenue, with gross revenue underneath. Hidden until sales occur or when orders span multiple currencies. |
 
-**Pace since open** shows entries and units sold in each interval since the distribution opened.
+Below **Right now**, three live panels track momentum and inventory:
 
-**Play by play** lists notable moments, newest first: a size selling out, a setting set or changed, and an announcement sent. Settings appear as plain lowercase words, for example "admission expiration seconds", and their values are not converted, so a payment window reads in seconds. The list shown after close uses friendlier names.
-
-**Sizes** shows a tile per size, grouped by product when there are several. Each tile moves from **Selling** to **Last call** at 80% of its allocation sold, then to **Gone**.
+- **Pace since open:** Interval charts plotting entries and units sold since doors opened.
+- **Play by play:** A newest-first feed of notable drop events—sizes selling out, setting changes, and announcements sent.
+- **Sizes:** A tile per size (grouped by product when selling multiple items) that progresses from **Selling** to **Last call** (at 80% sold) to **Gone**.
 
 <Note>
-  The allocation figures on this screen ("of N allocated" and the size meters), **Last call**, **Gone** and the size sold-out moments in **Play by play** need a sequence with exactly one distribution. With two or more, sizes show units sold only.
+  Allocation progress (`of N allocated`), size meters, **Last call** / **Gone** badges, and size sold-out events in **Play by play** only appear when a sequence has a single distribution. In multi-distribution sequences, **Sizes** shows units sold only.
 </Note>
 
-<Frame caption="Watch shows what is happening right now.">
-  <img src="/images/guide/guide-drop-watch-live-watch.webp" alt="The live Performance screen in Watch mode, with the Right now card (entrants, waiting in queue, awaiting checkout, units sold, revenue) highlighted above pace charts, a play-by-play feed and a size board." />
+<Frame caption="Watch mode tracks live queue depth, sales pace, notable events, and size sell-through.">
+  <img src="/images/guide/guide-drop-watch-live-watch.webp" alt="The live Performance screen in Watch mode, with the Right now card (entrants, waiting in queue, awaiting checkout, units sold, revenue) highlighted above pace charts, a play-by-play feed, and a size board." />
 </Frame>
 
-### Run
+### Run mode
 
-**Flow through the drop** shows where customers are between joining and paying: **In queue** (with entrants so far), **Awaiting checkout** (with admitted so far) and **Paid orders** (with units sold).
+Switch to **Run** for a funnel view and quick links to live controls:
 
-**Change a setting** shows links for a live queue (**Admit rate**, **Admission window**) or a live draw (**Admission window**, **Capacity**). Other types have none. Every link opens the same distribution settings editor on the sequence's **Overview**, not a particular field, and changes nothing by itself. What you can change mid-drop, and how, is in [Change things mid-drop](/guide/drop/live-controls).
+- **Flow through the drop:** Shows how customers are moving from **In queue** (with total entrants) to **Awaiting checkout** (with total admitted) to **Paid orders** (with units sold).
+- **Change a setting:** Shortcut links for live queues (**Admit rate**, **Admission window**) and live draws (**Admission window**, **Capacity**). Selecting any link opens the distribution's settings editor on the sequence's **Overview** without changing anything until you save. See [Change things mid-drop](/guide/drop/live-controls).
 
-<Frame caption="The Run links open the distribution's settings editor.">
+<Frame caption="Run mode shows funnel flow and shortcuts straight to the distribution's settings editor.">
   <img src="/images/guide/guide-drop-watch-live-run.webp" alt="The live Performance screen in Run mode, with three stages from in queue to paid orders and a highlighted Change a setting card holding Admit rate and Admission window links." />
 </Frame>
 
 ## How fresh the numbers are
 
-- The live screens and the overview refresh about every 5 seconds while the browser tab is visible, and pause while it is hidden.
-- A figure can occasionally be up to two minutes old while it is being recalculated.
-- The **Entrants** tile in **Launch so far** can lag by up to a minute. The live cards' figures follow the 5-second refresh.
-- The sequence page's **Performance** card does not refresh on its own.
+- Live screens and the experience overview refresh roughly every **5 seconds** while the browser tab is active, and pause when the tab is hidden.
+- Individual figures can occasionally lag by up to **2 minutes** during recalculations.
+- **Entrants** inside **Launch so far** can lag by up to **1 minute** (use the individual live cards for 5-second updates).
+- The summary **Performance** card on a sequence page doesn't auto-refresh.
 
 ## When Live starts and stops
 
-A queue's line opens five minutes before its **Opens** time: customers can join, but nobody is let in before **Opens**. During those five minutes its Performance screen already reads Live, while its card on the sequence page still shows when it opens.
-
-The experience and sequence status chips still read Scheduled during those five minutes, unless something else in the experience or sequence is already live.
-
-A queue stays Live past its close time while people are still in line, although nobody still waiting is let in after close. While it does, it shows no end time: the distribution switcher reads "Live now", and the overview's live card shows no close time.
-
-After entry ends, a distribution reads **Settling** while customers who were let in can still pay: a draw before its results are settled, an auction before its payment window closes, or any distribution with customers still inside their payment window. The screen shows "Admitted consumers can still pay, so these figures may change." It refreshes every 30 seconds, or every 5 seconds while another distribution in the sequence is still live. Final results are explained in [Read your results](/guide/learn/performance).
+- **Queue waiting room (5 minutes before open):** Customers can join a queue's waiting room 5 minutes before **Opens**, though no one is admitted until **Opens**. During those 5 minutes, the queue's Performance screen already shows **Live**, while the experience and sequence chips stay **Scheduled** (unless another distribution is already live).
+- **Queue clearing after close:** A queue stays **Live** past its **Closes** time while people are still waiting in line, though no one waiting is admitted after close. While clearing, the close time is hidden and the switcher reads **Live now**.
+- **Settling:** After entry closes, a distribution moves to **Settling** while admitted customers or winners still have time to pay (or while a draw settles results). Figures can continue changing during this window and refresh every **30 seconds** (or every **5 seconds** if another distribution in the sequence is still live). For final post-drop reporting, see [Read your results](/guide/learn/performance).
 
 ## Monitor a live auction
 
-On the sequence's **Overview**, each auction has its own view below the **Distributions** card, titled **English auction** or **Dutch auction**, with a phase badge: Upcoming, Bidding, Settling, Settled, Ended or Ended early.
+On the sequence's **Overview**, each auction gets a dedicated **English auction** or **Dutch auction** panel below the **Distributions** card, complete with a phase badge (**Upcoming**, **Bidding**, **Settling**, **Settled**, **Ended**, or **Ended early**) and a live status headline (for example, `"Bidding is open — [name] leads at [amount] across [count] bids."`).
 
-A sentence at the top says where the auction stands, for example "Bidding is open — [name] leads at [amount] across [count] bids."
-
-| Auction | Cards |
+| Auction type | Live cards shown |
 | --- | --- |
-| English | **Highest bid** (with **Bids** and **Bidders**), **Reserve** (with whether it is met), **Settles** (a countdown while bidding, with the scheduled time and any **Extension**), **Winner** (with **Payment**: Awaiting payment, Checking out, Paid or Unpaid) |
-| Dutch | **Current price** (with **Start** and **Floor**), **Units left** (with **Sold**), **Next drop** (when the price next falls, and by how much), **Winners** (with **Paid**, **Awaiting** and **Unpaid**) |
+| **English** | **Highest bid** (with **Bids** and **Bidders**), **Reserve** (whether it's met), **Settles** (countdown, scheduled time, and any **Extension**), and **Winner** (with **Payment** status: Awaiting payment, Checking out, Paid, or Unpaid). |
+| **Dutch** | **Current price** (with **Start** and **Floor**), **Units left** (with **Sold**), **Next drop** (countdown and drop amount), and **Winners** (with **Paid**, **Awaiting**, and **Unpaid**). |
 
-Below them, an event stream lists bids and moments such as "Anti-snipe extension +[minutes]m", "Reserve met" and "Price drop".
+Below the cards, an event stream logs live bids and milestones such as anti-snipe extensions, reserve met, and price drops.
 
-<Frame>
-  <img src="/images/guide/guide-drop-watch-live-auction.webp" alt="The English auction view with a sentence naming the leading bidder and amount, cards for highest bid, reserve, settle time and winner, and a list of bids." />
+<Frame caption="The live English auction view tracks the leading bid, reserve status, settlement countdown, and bid stream.">
+  <img src="/images/guide/guide-drop-watch-live-auction.webp" alt="The English auction view with a sentence naming the leading bidder and amount, cards for highest bid, reserve, settle time, and winner, and a list of bids." />
 </Frame>
 
 ## Monitor live appointments
 
-When the sequence's distribution is an appointment, its own view sits below the **Distributions** card, headed with the appointment's name and location. It shows a strip of days with bookings against capacity, then the slots for the selected day. Days outside the window read "not in window", and days the location is closed read "closed". Select a slot to see **Slot Attendees**, each with a status: Confirmed, Checked In, Cancelled or Completed. Times are in the appointment's time zone. The view does not name the zone. To cancel a booking, see [Change things mid-drop](/guide/drop/live-controls).
+When a sequence runs an appointment distribution, a dedicated panel appears below the **Distributions** card showing the appointment name, location, a day strip with booking counts against capacity, and the time slots for the selected day (days outside the window read `not in window`; closed days read `closed`).
+
+Select any time slot to inspect **Slot Attendees** and their status (**Confirmed**, **Checked In**, **Cancelled**, or **Completed**). All slot times appear in the appointment's time zone, though the view doesn't name the time zone. To cancel a booking, see [Change things mid-drop](/guide/drop/live-controls#cancel-a-booking).
 
 ## On Shopify
 
-The **Performance** view and the live screens are the same in the Fanfare app in Shopify. Appointments are not offered there, so there is no appointment view.
+The **Performance** views and live screens work the same way inside the Fanfare app in Shopify, except appointments aren't offered so there's no appointment view.
 
 ## Related
 
 <CardGroup>
   <Card title="Change things mid-drop" href="/guide/drop/live-controls">
-    Pause a queue, change a setting, move units or cancel a booking.
+    Pause a queue, adjust settings, move units, or cancel a booking.
   </Card>
   <Card title="Read your results" href="/guide/learn/performance">
-    Home metrics, By drop, insights and final results after close.
+    Understand Home metrics, By drop breakdowns, and final post-drop results.
   </Card>
   <Card title="Before doors open" href="/guide/drop/preflight">
-    The countdown and expected entrants before a distribution opens.
+    Pre-launch checklist, automatic locks, and demand forecasts.
   </Card>
   <Card title="Stop a drop" href="/guide/drop/deactivate">
-    Deactivate a distribution, sequence or experience.
+    Deactivate or delete a distribution, sequence, or experience.
   </Card>
   <Card title="Troubleshooting a live drop" href="/guide/drop/troubleshooting">
-    What to check when something looks wrong.
+    Quick fixes when something looks wrong mid-drop.
   </Card>
 </CardGroup>

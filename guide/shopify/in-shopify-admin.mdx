@@ -1,114 +1,114 @@
 ---
 title: Fanfare inside Shopify admin
-description: The Fanfare experiences block on a Shopify product page, and the two Fanfare actions you can start from a product or an order in Shopify admin.
+description: Check attached drops and launch Fanfare workflows directly from Shopify product and order pages.
 ---
 
-The Fanfare app adds one block and two actions to Shopify admin. The **Fanfare experiences** block on a product page shows which experiences use that product. The **Create Fanfare experience** action on a product, and the **Import order into Fanfare** action on an order, open the right place in the Fanfare app so you do not have to find it yourself. The block only reads, and the actions only open Fanfare. Product setup and experience design stay in Fanfare.
+The Fanfare app adds one status block and two shortcuts directly inside Shopify admin so you don't have to hunt for the right screen:
 
-Opening the Fanfare app needs a plan: see [Install and choose a plan](/guide/shopify/install-and-plans). This block is not the **Fanfare Product Widget** your customers see on your storefront; that is on [Storefront setup](/guide/shopify/storefront-setup).
+- **Fanfare experiences block (product pages):** Shows which Fanfare experiences include that product.
+- **Create Fanfare experience (product actions):** Imports the product and opens experience creation with it pre-attached.
+- **Import order into Fanfare (order actions):** Opens the Fanfare import screen prefilled with that order.
+
+The block is read-only and the actions simply launch the relevant workflow inside Fanfare—all drop configuration stays in the Fanfare app. (Opening Fanfare requires an active plan; see [Install and choose a plan](/guide/shopify/install-and-plans). For the customer-facing storefront block, see [Storefront setup](/guide/shopify/storefront-setup).)
 
 ## Before you start
 
 - The Fanfare app is installed on your store.
-- You can open products and orders in Shopify admin.
+- Your Shopify staff account can view products and orders in Shopify admin.
 
 ## See which experiences use a product
 
-Open a product in Shopify admin (**Products**, then the product). The **Fanfare experiences** block sits on the product page.
+Open any product in Shopify admin (**Products** → select a product) to view the **Fanfare experiences** block.
 
-The block lists experiences only for a product that is already in Fanfare. It reads what Fanfare holds and never brings the product in or syncs it.
+The block reads what Fanfare already holds and never imports or syncs a product on its own.
 
 <Note>
-  A Shopify product you have never picked for an experience is not in Fanfare, so its block shows **No Fanfare experience yet.** and the summary **Not linked**. That is expected, even for a product you meant to use. Bring the product in by starting an experience for it, as described below, or see [Products from Shopify](/guide/shopify/products).
-
-  The block also shows this empty state when Fanfare is slow to answer: see [Troubleshooting](#troubleshooting) before you start a new experience.
+  Any Shopify product you haven't picked for an experience yet displays **No Fanfare experience yet.** with the summary **Not linked**—that's expected. Note that slow responses can also show this empty state temporarily; check [Troubleshooting](#troubleshooting) before creating a duplicate experience.
 </Note>
 
-### The collapsed summary
+### Collapsed summary
 
-When the block is collapsed, one line sums up the product's experiences.
+When collapsed, the block summarizes the product's experiences in a single line:
 
-| The summary says | What it means |
+| Summary | What it means |
 | --- | --- |
-| Not linked | No experience uses this product, or the product is not in Fanfare. The block also shows this while it is loading, when it could not load, and when Fanfare took too long to answer. |
-| *Experience name* · Opens *date* | One experience, not open yet. |
-| *Experience name* · Closes *date* | One experience, open now. |
-| *Experience name* · Closed *date* | One experience, closed. |
-| *Experience name* · Live now | One experience that has opened and has no closing time, or that has no opening or closing time at all (see below). |
-| *N* experiences · *K* live | Several experiences, *K* of them shown as **Active**. |
-| *N* experiences · opens *date* (shown in lower case, such as "opens nov 21") | Several experiences, none open, at least one still to open. The date is the next one to open. |
-| *N* experiences · all closed | Several experiences, all closed. |
+| `Not linked` | No experience includes this product, or it hasn't been imported into Fanfare (also shown while loading or if the request timed out). |
+| *Experience name* · Opens *date* | One upcoming experience. |
+| *Experience name* · Closes *date* | One currently open experience. |
+| *Experience name* · Closed *date* | One closed experience. |
+| *Experience name* · Live now | One open experience with no closing time, or an experience with no open/close timestamps yet. |
+| *N* experiences · *K* live | Multiple experiences, with *K* marked **Active**. |
+| *N* experiences · opens *date* (lowercase, e.g., `opens nov 21`) | Multiple experiences, none open yet; date shows the next one to open. |
+| *N* experiences · all closed | Multiple experiences, all closed. |
 
-### The expanded list
+### Expanded list
 
-Expand the block to see up to five experiences. Open ones come first, then those still to open, then closed ones. Each row shows:
+Expand the block to see up to five experiences, ordered open first, then upcoming, then closed. Each row shows:
 
-- the experience's name, and **Manage →**, which opens that experience in the Fanfare app
-- a badge: **Active**, **Upcoming** or **Closed**
-- a date, such as "Opens Nov 21" or "Closed Nov 30", with the weekday when the date is within two weeks, such as "Closes Fri, Nov 22". An open experience with no closing time shows no date.
-- the distribution types the experience uses, such as Queue or Draw
+- The experience name and a **Manage →** link straight into Fanfare
+- A badge: **Active**, **Upcoming**, or **Closed**
+- A UTC date (including the weekday when within two weeks, e.g., `Closes Fri, Nov 22`), or no date for an open experience without a closing time
+- The distribution types used (such as Queue or Draw)
 
-When more than five experiences use the product, **+ N more →** below the list opens the product in the Fanfare app, which lists its experiences.
+If more than five experiences include the product, select **+ N more →** to open the product's full list in Fanfare.
 
-The badges and the words "Live now" and "all closed" belong to this block. They are not the status chips the Fanfare app shows on an experience (Draft, Scheduled, Live, Ended, Ended early), which are explained on [Experiences](/concepts/experiences). The block works out its badge from the experience's opening and closing times alone: **Upcoming** before it opens, **Closed** after it closes, and **Active** otherwise, including when the experience has no opening or closing time.
-
-So **Active** does not always mean customers can join. A draft experience has no distributions, so it has no opening or closing time and shows as **Active** ("Live now" when it is the product's only experience). A deactivated experience shows as **Closed** if any of its distributions had opened before you deactivated it; if none had, it has no times left and also shows as **Active**. Select **Manage →** to see the experience's status in the Fanfare app.
-
-Dates in the block are shown in UTC, not in your store's or the experience's time zone.
+<Info>
+  **Badges vs. Fanfare experience statuses:** The block calculates **Active**, **Upcoming**, and **Closed** strictly from opening and closing timestamps (shown in **UTC**, not your store's time zone)—not from Fanfare's full status chips (**Draft**, **Scheduled**, **Live**, **Ended**, **Ended early**; see [Experiences](/concepts/experiences)). Because drafts and deactivated experiences with no opened distributions have no schedule timestamps, they appear as **Active** (or `Live now`) here. Select **Manage →** to check true status in Fanfare.
+</Info>
 
 {/* image: in-shopify-admin-block-list */}
 
-The block tells you which experiences use the product. It does not tell you whether checkout protection is working for it: check that on [Checkout protection](/guide/shopify/checkout-protection).
+Remember that this block only reflects attached experiences—it doesn't verify checkout protection. See [Check that a drop is protected](/guide/shopify/checkout-protection#check-that-a-drop-is-protected).
 
-## Start an experience from a product
+## Start an experience from a product page
 
-You can start an experience from the product itself instead of picking the product inside Fanfare. There are two ways in, and both end in the same place.
+You can launch experience creation right from a Shopify product page in two ways:
 
-**From the block** (only when the product has no experience yet):
-
-1. Open the product in Shopify admin.
-2. In the **Fanfare experiences** block, under **No Fanfare experience yet.**, select **Start a Fanfare experience**.
+- **From the Fanfare experiences block** (when no experience exists yet): Open the product in Shopify admin and select **Start a Fanfare experience** under **No Fanfare experience yet.**
 
 {/* image: in-shopify-admin-block-empty */}
 
-**From the product's actions** (whether or not the product already has experiences):
-
-1. Open the product in Shopify admin.
-2. Open the product page's actions and choose **Create Fanfare experience**.
-3. In the window that opens, select **Create in Fanfare**. **Cancel** closes it without doing anything.
+- **From the product's actions menu** (works whether or not experiences already exist): Open the product, open the actions menu, choose **Create Fanfare experience**, and select **Create in Fanfare** (**Cancel** closes without changes).
 
 {/* image: in-shopify-admin-create-action */}
 
-Either way, the Fanfare app opens on experience creation. Before it shows, Fanfare brings the product in from Shopify, or refreshes it if it is already there, and attaches it to the new experience. The product stays in **Products** even if you leave without creating the experience. The experience is named after the product, as "*product title* experience", until you change the name. From there you set up the experience as usual: see [Create an experience](/guide/create/experiences).
+Either path opens Fanfare's experience builder with the product automatically imported (or refreshed), attached, and pre-named *product title* experience until you rename it. The product stays in **Products** even if you exit without saving the experience. From there, configure your drop as usual—see [Create an experience](/guide/create/experiences).
 
 <Note>
-  If your store's connection to Fanfare needs renewing, Fanfare shows "Reconnect Shopify before syncing this product." instead of experience creation. Reconnect the store as described in [Install and choose a plan](/guide/shopify/install-and-plans), then start again from the product.
-  If Fanfare cannot read or bring in the product, it shows why instead of experience creation. Most of these messages read the same as those for **Sync from Shopify**, which are listed on [Products from Shopify](/guide/shopify/products); here they replace the page instead of appearing as a notification. If the product no longer exists in Shopify, Fanfare shows "We can't find that page" instead.
+  If your Shopify store connection needs to be renewed, Fanfare shows `"Reconnect Shopify before syncing this product."` instead of the experience builder—reconnect via [Install and choose a plan](/guide/shopify/install-and-plans) and try again. Other product sync errors match those listed under [Products from Shopify](/guide/shopify/products) (displayed full-page instead of as a toast), and deleted products display `"We can't find that page"`.
 </Note>
 
 ## Import an order from an order page
 
-An order page in Shopify admin has an **Import order into Fanfare** action, for a paid order that should have reached Fanfare and did not. Its window explains that it opens the Fanfare import page with the order already filled in. **Open import page** only opens that page: nothing is imported until you select **Import order** there. The steps, the conditions an order must meet and the failure messages are on [Orders with Shopify checkout](/guide/shopify/orders).
+On any Shopify order page, choose **Import order into Fanfare** from the actions menu to bring in a paid drop order that didn't sync automatically. Selecting **Open import page** opens Fanfare with the order ID prefilled—nothing is imported until you select **Import order** inside Fanfare. See [Orders with Shopify checkout](/guide/shopify/orders) for eligibility rules, steps, and error messages.
 
 ## Troubleshooting
 
 <AccordionGroup>
   <Accordion title="The block says it couldn't load Fanfare experiences">
-    "Couldn't load Fanfare experiences for this product." means Fanfare could not return this product's experiences. Reload the product page to try again.
+    `"Couldn't load Fanfare experiences for this product."` means Fanfare couldn't retrieve the product's experiences. Reload the product page to try again.
   </Accordion>
-  <Accordion title="The block shows no experience for a product that has some">
-    If Fanfare does not answer within about 10 seconds, the block stops waiting and shows **No Fanfare experience yet.**, with the summary **Not linked**, even when the product has experiences. It shows no error in this case. Reload the product page before you rely on the empty state.
+  <Accordion title="The block shows no experiences for a product that has them">
+    If Fanfare doesn't respond within about 10 seconds, the block falls back silently to **No Fanfare experience yet.** (`Not linked`) without showing an error. Reload the product page before relying on the empty state.
   </Accordion>
   <Accordion title="The block or an action says it needs a product or order context">
-    "This block needs a Shopify product context.", "This action needs a Shopify product context." and "This action needs a Shopify order context." mean Shopify did not tell Fanfare which product or order you are on.
+    Messages like `"This block needs a Shopify product context."`, `"This action needs a Shopify product context."`, or `"This action needs a Shopify order context."` mean Shopify didn't pass the current product or order to Fanfare. Reload the page from **Products** or **Orders** in Shopify admin.
   </Accordion>
 </AccordionGroup>
 
 ## Related
 
 <CardGroup>
-  <Card title="Products from Shopify" href="/guide/shopify/products">Bring products in from Shopify and keep them synced.</Card>
-  <Card title="Create an experience" href="/guide/create/experiences">The experience creation steps, including what differs in the Fanfare app in Shopify.</Card>
-  <Card title="Orders with Shopify checkout" href="/guide/shopify/orders">Import an order that did not arrive, and what each failure means.</Card>
-  <Card title="Fanfare in Shopify" href="/guide/shopify/overview">Everything else that differs in the Fanfare app in Shopify.</Card>
+  <Card title="Products from Shopify" href="/guide/shopify/products">
+    Import products from Shopify and keep details and inventory synced.
+  </Card>
+  <Card title="Create an experience" href="/guide/create/experiences">
+    Walk through experience setup, including Shopify-specific steps.
+  </Card>
+  <Card title="Orders with Shopify checkout" href="/guide/shopify/orders">
+    Manually import missing drop orders and troubleshoot import errors.
+  </Card>
+  <Card title="Fanfare in Shopify" href="/guide/shopify/overview">
+    Compare the Shopify app with the standalone Fanfare admin.
+  </Card>
 </CardGroup>

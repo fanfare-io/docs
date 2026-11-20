@@ -1,113 +1,121 @@
 ---
 title: Status reference
-description: Every status label the Fanfare admin shows on experiences, distributions, orders, audiences and elsewhere, what each one means, and where it is explained.
+description: What every status label in the Fanfare admin means across experiences, distributions, orders, audiences, and account settings.
 ---
 
-Every status label the Fanfare admin shows, with a link to the page that explains it. You never set a status: Fanfare works each one out. There is no launch or publish step for an experience: see [Experiences](/concepts/experiences).
+Fanfare calculates every status automatically—you never set a status manually, and there's no separate launch or publish step for an experience (see [Experiences](/concepts/experiences)). Use this page to look up any status badge you see in the admin.
 
 ## Experiences and sequences
 
-A sequence is one way in to an experience. Each experience and sequence shows one chip.
+A sequence is one entry path into an experience. Each experience and sequence displays a single status chip.
 
 | Chip | What it means |
 | --- | --- |
-| **Live** | At least one distribution is open. On the experience's **Overview** and the sequence's page, a draw still picking winners or waiting for them to pay also counts, even after entry has closed; the **Experiences** list goes by the windows alone. |
-| **Scheduled** | Nothing is open, and at least one distribution has not opened yet. |
-| **Ended early** | Nothing is open or still to come, and at least one distribution was deactivated before its end. |
-| **Ended** | Every distribution has run to its end. |
-| **Draft** | There is no distribution yet; it does not mean unpublished. |
+| **Live** | At least one distribution is open. On the experience **Overview** and sequence pages, a draw still selecting winners or waiting for winners to pay also counts as **Live** even after entry closes. The **Experiences** list goes by distribution windows alone. |
+| **Scheduled** | Nothing is open yet, and at least one distribution is scheduled for the future. |
+| **Ended early** | Nothing is open or upcoming, and at least one distribution was deactivated before its scheduled close. |
+| **Ended** | Every distribution ran to its scheduled end. |
+| **Draft** | No distribution has been added yet (doesn't mean unpublished). |
 
-The first chip in this order that any child has wins, so one live sequence makes the experience **Live**. Customers do not see the chip: see [What your customers see](/guide/drop/what-customers-see). With a published hosted page, deactivating any one distribution or sequence makes the page show the whole experience as ended, even while the chip reads **Live** ([What locks, and when](/concepts/what-locks-when)).
+The first status in this list that any child has wins, so one **Live** sequence makes the entire experience **Live**. Customers never see these internal chips—see [What your customers see](/guide/drop/what-customers-see). On a published hosted page, deactivating any distribution or sequence marks the entire experience as ended for shoppers, even if the admin chip still reads **Live** (see [What locks, and when](/concepts/what-locks-when)).
 
-<Frame caption="Every experience shows one status chip, worked out from its distributions.">
+<Frame caption="Every experience displays one status chip, calculated from its distributions.">
   <img src="/images/guide/guide-reference-statuses-experiences-list.webp" alt="The Experiences list with a status chip on each row: Ended, Live, and Scheduled (with a Held: stock chip)." />
 </Frame>
 
-- **Deactivated** and a date in the header: everything has stopped and something was deactivated ([Stop a drop](/guide/drop/deactivate)).
-- "Sequences: 2 (1 Live | 1 Scheduled)" in the header counts sequences by chip ([Experiences](/concepts/experiences)).
-- "… was deleted" on an old link: the experience or sequence was deleted ([Stop a drop](/guide/drop/deactivate)).
+- **Deactivated** with a date in the header: Everything has stopped and at least one part was deactivated ([Stop a drop](/guide/drop/deactivate)).
+- `"Sequences: 2 (1 Live | 1 Scheduled)"` in the header: Summarizes your sequences by status chip ([Experiences](/concepts/experiences)).
+- `"… was deleted"` on a saved link: The experience or sequence has been deleted ([Stop a drop](/guide/drop/deactivate)).
 
 ## Distributions
 
-| Status | Card on the sequence shows | What it means |
+| Status | Sequence card shows | What it means |
 | --- | --- | --- |
-| Scheduled | "Opens" with the time or date, or **Upcoming** | Its **Opens** time has not come yet. |
-| Live | **Live** | Its window is open, or it is a draw still picking winners or waiting for them to pay. |
-| Ended | **Ended** | Its window has closed (for a draw, once it has finished), or you deactivated it after the window had already ended. |
+| Scheduled | `"Opens"` with the time or date, or **Upcoming** | Its **Opens** time hasn't arrived yet. |
+| Live | **Live** | Its window is open, or it's a draw still selecting winners or waiting for payment. |
+| Ended | **Ended** | Its window closed (or for a draw, all selections finished), or you deactivated it after its window had already ended. |
 | Ended early | **Ended early** | You deactivated it before its window ended. |
 
-Windows per type: [Distributions](/concepts/distributions/overview). What you can change at each stage: [What locks, and when](/concepts/what-locks-when).
+See [Distributions](/concepts/distributions/overview) for how windows work by type, and [What locks, and when](/concepts/what-locks-when) for what you can edit at each stage.
 
-- A queue shows Scheduled during its 5-minute waiting room, though customers can already join ([Queue](/concepts/distributions/queue)).
-- **Paused** sits beside a paused queue's **Live** chip. **Admit rate** 0 shows no **Paused** badge ([Change things mid-drop](/guide/drop/live-controls)).
-- **Performance** labels each drop **Upcoming**, **Live**, **Settling**, **Closed** or **Draft**. **Settling** means entry has ended but admitted customers can still pay ([Watch a live drop](/guide/drop/watch-live)).
-- An auction's view shows a phase: **Upcoming**, **Bidding**, **Settling**, **Settled**, **Ended** or **Ended early** ([Auction](/concepts/distributions/auction), [Watch a live drop](/guide/drop/watch-live)).
-- A draw's card reads **Live** while it is still picking winners or waiting for them to pay, even after entry has closed, and **Ended** once the draw has finished ([Distributions](/concepts/distributions/overview)).
-- "Deactivated" and a date on a card: you deactivated it ([Stop a drop](/guide/drop/deactivate)).
+- **Waiting room:** A queue displays Scheduled during its 5-minute waiting room, even though shoppers can already join ([Queue](/concepts/distributions/queue)).
+- **Paused queues:** **Paused** appears next to a paused queue's **Live** chip. Setting **Admit rate** to 0 doesn't show a **Paused** badge ([Change things mid-drop](/guide/drop/live-controls)).
+- **Performance labels:** **Performance** labels each drop **Upcoming**, **Live**, **Settling**, **Closed**, or **Draft**. **Settling** means entry closed, but admitted customers can still pay ([Watch a live drop](/guide/drop/watch-live)).
+- **Auction phases:** Auction views display a phase: **Upcoming**, **Bidding**, **Settling**, **Settled**, **Ended**, or **Ended early** ([Auction](/concepts/distributions/auction), [Watch a live drop](/guide/drop/watch-live)).
+- **Draws settling:** A draw card stays **Live** while selecting winners or waiting for payment—even after entry closes—and switches to **Ended** once complete ([Distributions](/concepts/distributions/overview)).
+- **Deactivated cards:** `"Deactivated"` with a date appears on any distribution you deactivated ([Stop a drop](/guide/drop/deactivate)).
 
 ## Orders
 
 | Status | What it means |
 | --- | --- |
-| **Draft** | Not yet paid. With Fanfare checkout, an order appears once the customer submits payment, so a customer who never tried to pay has no order. |
+| **Draft** | Not yet paid. With Fanfare checkout, an order only appears once a customer submits payment, so shoppers who never attempt checkout don't create an order. |
 | **Pending payment** | Not yet paid in full. |
-| **Paid** | The payment was taken. |
-| **Partially refunded** | Some of the payment has been refunded. |
-| **Refunded** | The whole payment has been refunded. |
-| **Payment failed** | The payment did not go through. |
-| **Cancelled** | The order was cancelled. |
+| **Paid** | Payment has been captured. |
+| **Partially refunded** | Part of the payment has been refunded. |
+| **Refunded** | The full payment has been refunded. |
+| **Payment failed** | Payment didn't go through. |
+| **Cancelled** | The order was canceled. |
 
-All are explained in [Orders and refunds](/guide/learn/orders), as are these:
+All order and payment statuses are covered in [Orders and refunds](/guide/learn/orders), including these details:
 
-- On a synced order, **Pending payment** can carry **Authorized**, **Partially paid** or **Voided** below it.
-- A cancelled Fanfare order shows payment status **Failed**, so the **Failed** filter includes it.
-- **Test** marks a test order: listed, but excluded from revenue, purchase limits and customer metrics.
-- Refunded items show "Returned to stock", "Kept out of stock", "2 of 3 returned to stock", "No stock decision recorded" or "Not managed · no stock to return".
-- **Gross revenue** includes orders that were never paid.
+- On synced orders, **Pending payment** can show **Authorized**, **Partially paid**, or **Voided** underneath.
+- A canceled Fanfare order shows payment status **Failed** in the list, so filtering by **Failed** includes it.
+- **Test** flags test orders—they appear in **Orders**, but are excluded from revenue, purchase limits, and customer metrics.
+- Refunded items display `"Returned to stock"`, `"Kept out of stock"`, `"2 of 3 returned to stock"`, `"No stock decision recorded"`, or `"Not managed · no stock to return"`.
+- **Gross revenue** includes unpaid orders.
 
 ## Audiences
 
-Creating or editing audiences needs Growth or above ([plans](/guide/start/plans)). A **Dynamic** audience shows its status in the **Status** column. A list shows it in the **Access** row on its page, which never reads **Refreshing** or **Held**.
+Creating or editing audiences requires Growth or above ([Plans and what they unlock](/guide/start/plans)). **Dynamic** audiences show their status in the **Status** column, while static and imported lists show it in the **Access** row on the audience page (and never display **Refreshing** or **Held**).
 
 | Status | What it means | Who can enter |
 | --- | --- | --- |
-| **Not built yet**, **Queued**, **Building** | The first build has not finished. | Nobody. |
+| **Not built yet**, **Queued**, **Building** | The first build hasn't finished yet. | Nobody. |
 | **Build failed** | The first build failed. | Nobody, until a build succeeds. |
-| **Live** | The latest build is in place. | Its members. |
-| **Refreshing** | A rebuild of the same rules is queued or running. | The members from the last build. |
-| **Updating** | You saved a change and the new build has not finished. | Mostly the members from before your change; a customer re-checked in the meantime is judged by the new rules. |
-| **Update failed** | The build of your latest change failed. | The members from before your change. |
-| **Held** | A drop the audience gates is open, so full rebuilds wait until it closes. | The members from the last build, plus or minus customers re-checked since. |
+| **Live** | The latest build is active. | Current audience members. |
+| **Refreshing** | A rebuild with the same rules is queued or running. | Members from the previous build. |
+| **Updating** | You saved rule changes and the new build is still running. | Mostly members from before your change; anyone re-checked during the build is evaluated against the new rules. |
+| **Update failed** | The build for your latest rule change failed. | Members from before your change. |
+| **Held** | A drop gated by this audience is currently open, so full rebuilds wait until it closes. | Members from the last build, plus or minus anyone re-checked since. |
 
-A new audience admits nobody until its first build reads **Live** ([Audiences and access codes](/concepts/audiences)).
+A new audience admits no one until its first build reaches **Live** ([Audiences and access codes](/concepts/audiences)).
 
 ## Other status labels
 
 | Where | Labels | Explained in |
 | --- | --- | --- |
-| People on a sequence's waitlist | **Waitlisted**, **Converted**, **Left**, **Removed**; filter **On the list**, **Left**, **All** | [Waitlists](/concepts/waitlists) |
-| Each size on a sequence's **Stock** card | **Not counting yet**, **Preparing**, **Ready**, **Selling**, **Opens sold out**, **Held: stock** or "Over-allocated by N", **Paused**, **Ended**, **Released**, "Sold out right now", "Last N in checkout"; "N at risk" for units in checkout that stock on hand no longer covers | [Stock](/concepts/stock) |
+| Sequence waitlist members | **Waitlisted**, **Converted**, **Left**, **Removed** (filters: **On the list**, **Left**, **All**) | [Waitlists](/concepts/waitlists) |
+| Variants on a sequence's **Stock** card | **Not counting yet**, **Preparing**, **Ready**, **Selling**, **Opens sold out**, **Held: stock** or `"Over-allocated by N"`, **Paused**, **Ended**, **Released**, `"Sold out right now"`, `"Last N in checkout"`, and `"N at risk"` (units in checkout not covered by stock on hand) | [Stock](/concepts/stock) |
 | Live **Sizes** tiles | **Selling**, **Last call**, **Gone** | [Watch a live drop](/guide/drop/watch-live) |
-| Appointment attendees | Confirmed, Checked In, Cancelled, Completed | [Set up appointments](/guide/create/appointment) |
-| Plan badge on **Billing** | **Trial**, **Active**, **Past due**, **Ends** and a date (or **Cancelling**), **Cancelled**, **Inactive**, **Pending**, **No subscription** | [Billing and usage](/guide/account/billing) |
-| Stripe account | "Setup not finished", "Action needed", "Active" | [Payments and fees](/guide/account/payments) |
+| Appointment attendees | **Confirmed**, **Checked In**, **Cancelled**, **Completed** | [Set up appointments](/guide/create/appointment) |
+| Plan badge on **Billing** | **Trial**, **Active**, **Past due**, **Ends** + date (or **Cancelling**), **Cancelled**, **Inactive**, **Pending**, **No subscription** | [Billing and usage](/guide/account/billing) |
+| Stripe account | `"Setup not finished"`, `"Action needed"`, `"Active"` | [Payments and fees](/guide/account/payments) |
 | Sending domains | **Waiting for DNS**, **Verified**, **Needs attention**, **Failed**, **Removing**, **Unknown** | [Sender identity and sending domain](/guide/create/email-sender) |
 | Designs and templates | **Draft**, **Live** | [Templates and widget designs](/guide/create/templates) |
 | Announcements agenda | **Needs attention**, **Up next**, **Recently sent**, **Won't send**, **Cancelled** | [Announcements](/guide/create/announcements) |
 
 ## On Shopify
 
-- An order from Shopify checkout shows **Sync status** Synced; the list flags problems such as "Shopify sync: Failed" ([Orders with Shopify checkout](/guide/shopify/orders)).
-- A product deleted in Shopify shows **Source missing** ([Products from Shopify](/guide/shopify/products)).
-- The **Fanfare experiences** block on a product's page in Shopify admin labels experiences **Active**, **Upcoming** or **Closed** ([Fanfare inside Shopify admin](/guide/shopify/in-shopify-admin)).
-- The Fanfare app in Shopify offers no appointments, so attendee statuses do not apply.
-- A plan billed through Shopify is changed from the Fanfare app in Shopify ([Billing and usage](/guide/account/billing), [Install and choose a plan](/guide/shopify/install-and-plans)).
+- **Order sync status:** Shopify checkout orders show **Sync status** Synced, and the list flags sync issues such as `"Shopify sync: Failed"` ([Orders with Shopify checkout](/guide/shopify/orders)).
+- **Deleted Shopify products:** A product deleted in Shopify displays **Source missing** ([Products from Shopify](/guide/shopify/products)).
+- **Inside Shopify admin:** The **Fanfare experiences** block on a Shopify product page labels experiences **Active**, **Upcoming**, or **Closed** ([Fanfare inside Shopify admin](/guide/shopify/in-shopify-admin)).
+- **No appointments:** Appointments aren't available in the Shopify app, so attendee statuses don't apply.
+- **Shopify-billed plans:** Manage plan changes from inside the Fanfare app in Shopify ([Billing and usage](/guide/account/billing), [Install and choose a plan](/guide/shopify/install-and-plans)).
 
 ## Related
 
 <CardGroup>
-  <Card title="Experiences" href="/concepts/experiences" />
-  <Card title="Distributions" href="/concepts/distributions/overview" />
-  <Card title="Watch a live drop" href="/guide/drop/watch-live" />
-  <Card title="Stop a drop" href="/guide/drop/deactivate" />
+  <Card title="Experiences" href="/concepts/experiences">
+    How experiences roll up sequences, schedules, and statuses.
+  </Card>
+  <Card title="Distributions" href="/concepts/distributions/overview">
+    Compare queues, draws, auctions, timed releases, and appointments.
+  </Card>
+  <Card title="Watch a live drop" href="/guide/drop/watch-live">
+    Monitor live status, stock tiles, and settling windows in real time.
+  </Card>
+  <Card title="Stop a drop" href="/guide/drop/deactivate">
+    Understand Deactivate, Ended early, and Delete timing.
+  </Card>
 </CardGroup>

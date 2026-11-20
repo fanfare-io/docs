@@ -1,196 +1,206 @@
 ---
 title: Manage stock
-description: Decide who keeps the stock count for a product, then record stock coming in or going out without breaking a drop that is live or about to open.
+description: Choose who tracks inventory for each product, record receipts and adjustments, and resolve over-allocations before a drop opens.
 ---
 
-Before you create a product, decide who keeps its stock count. If Fanfare keeps it, every unit that arrives, goes missing or is counted again is recorded on the product page, and Fanfare uses that count to decide how many units your experiences can sell.
-Giving an experience its units and splitting them across sequences is covered in [Allocate stock to a drop](/guide/create/stock-allocation). Why stock works this way is in [Stock](/concepts/stock).
+Before you create a product, decide who keeps its stock count. When Fanfare manages stock, every unit that arrives, gets damaged, or gets recounted is logged on the product page, and Fanfare uses that ledger to control how many units your drops can sell.
+
+To assign units to an experience and split them across sequences, see [Allocate stock to a drop](/guide/create/stock-allocation). For the underlying inventory model, see [Stock](/concepts/stock).
 
 ## Before you start
 
-- To record stock changes, the product must be **Fanfare-managed**. Read [Choose who keeps the stock count](#choose-who-keeps-the-stock-count) before you create it.
-- Fanfare-managed stock needs your organisation to take payment through Fanfare checkout.
+- Recording stock changes requires a **Fanfare-managed** product—choose this when creating the product. See [Choose who keeps the stock count](#choose-who-keeps-the-stock-count).
+- Fanfare-managed stock is available only when your organization uses **Fanfare checkout**.
 
 ## Choose who keeps the stock count
 
-**Stock management** decides who counts the units of a product. You choose it in the Create Product wizard, and it is permanent: see [Add products](/guide/create/products).
+You choose **Stock management** in the Create Product wizard, and the choice is permanent. See [Add products](/guide/create/products).
 
-| Option | What it means for your drops |
+| Option | How it works for your drops |
 | --- | --- |
-| **Fanfare-managed** | Fanfare keeps the count. You record every change in stock, and Fanfare uses the count to decide how many units each experience can sell. This is the default. |
-| **Not managed** | No count. Sequence limits are the only cap; under your own checkout they limit passes held at once, not units sold. (A sequence is one way in to an experience.) |
-| **Shopify-managed** | Shopify keeps the count. You cannot choose this in the Fanfare admin: a product only becomes Shopify-managed when it is brought in from Shopify. See [On Shopify](#on-shopify). |
+| **Fanfare-managed** | Fanfare tracks the count (default). You log receipts, adjustments, and write-offs, and Fanfare enforces how many units each experience can sell. |
+| **Not managed** | Fanfare doesn't track product inventory. Sequence limits are the only cap—and with your own external checkout, those cap concurrent passes rather than units sold. |
+| **Shopify-managed** | Shopify keeps the count. Assigned automatically to products imported from Shopify (not selectable in the Fanfare admin). See [On Shopify](#on-shopify). |
 
-Which options you get depends on your organisation's checkout processor:
+Your organization's checkout processor determines which options are available:
 
-- **Fanfare** (Fanfare checkout): you choose **Fanfare-managed** or **Not managed**.
-- **External**: there is no choice. Fanfare cannot count sales it does not take payment for, so every product you create is **Not managed**.
+- **Fanfare checkout:** Choose **Fanfare-managed** or **Not managed**.
+- **External checkout:** Every product you create is automatically **Not managed**, because Fanfare can't count sales completed outside its checkout.
 
-While any Fanfare-managed product exists, your organisation cannot switch its checkout processor to **External**: you would have to delete those products first. See [Organisation settings](/guide/account/organization).
+You can't switch your checkout processor from **Fanfare** to **External** while any Fanfare-managed product exists—you'd need to delete those products first. See [Organization settings](/guide/account/organization).
 
 <Warning>
-  On a **Not managed** product, the **Quantity** and **Inventory policy** fields do not stop sales. Even **Deny when out of stock** does not cap what an experience sells: the only cap is the stock limit you set on each sequence, and if customers pay in your own checkout rather than Fanfare's or Shopify's, that limit caps passes held at once, not units sold. See [Allocate stock to a drop](/guide/create/stock-allocation). If you need Fanfare to stop at the units you have, choose **Fanfare-managed** when you create the product.
+  On a **Not managed** product, **Quantity** and **Inventory policy** (including **Deny when out of stock**) don't cap sales. The only cap is the limit you set on each sequence—and with external checkout, that limits active passes held at once, not units sold. See [Allocate stock to a drop](/guide/create/stock-allocation). If you need Fanfare to stop selling at your exact unit count, choose **Fanfare-managed** when creating the product.
 </Warning>
 
-An experience cannot offer Fanfare-managed and Shopify-managed products together. Not managed products can sit alongside either.
+An experience can't combine **Fanfare-managed** and **Shopify-managed** products, though **Not managed** products can appear alongside either.
 
 ## Read the stock figures
 
-For a Fanfare-managed product, the product page shows these figures for each size. (The stock screens call each variant a size.)
+For **Fanfare-managed** products, Fanfare displays six stock figures per variant (labeled **size** on stock screens):
 
-| Figure | Meaning |
+| Figure | What it means |
 | --- | --- |
-| **Supply** | Every unit you have recorded: opening stock, receipts, adjustments, write-offs and returns. |
-| **Sold** | Units with a captured payment. Refunds do not reduce it. |
-| **On hand** | Supply minus Sold. |
-| **Allocated** | Units your experiences have reserved. |
-| **Available** | Supply minus Allocated: what can still go into an experience. Below zero, the size is over-allocated. |
-| **At risk** | While the size is over-allocated, units in live checkouts that stock no longer covers. Otherwise 0 (shown as — in **Stock by SKU**). |
+| **Supply** | Total units recorded: opening stock, receipts, adjustments, write-offs, and restocked returns. |
+| **Sold** | Units with captured payment. Refunds never reduce this count. |
+| **On hand** | **Supply** minus **Sold**. |
+| **Allocated** | Units reserved across your experiences. |
+| **Available** | **Supply** minus **Allocated**—units you can still allocate to an experience. Below zero means the size is over-allocated. |
+| **At risk** | Units in active checkouts that stock no longer covers while a size is over-allocated. Otherwise `0` (shown as `—` in **Stock by SKU**). |
 
-You find them in three places:
+You'll see these numbers in three places on the product page:
 
-- **The header cards**: **Supply** (with Sold and On hand), **Available** (with Allocated, and a line for each over-allocated size) and **At risk**.
-- **The Variants card**: **On hand** and **Available** for each size. In the variant editor, **On hand** is read-only: sales lower it, and every change to **Supply** moves it.
-- **Stock by SKU**: the full table, one row per size. Select a size to expand it into the experiences that hold it, each with its status, units in checkout on a live experience ("In checkout [count]"), units not yet given to a sequence ("Unassigned [count]"), and units sold and allocated. Use the **Allocations** and **Stock history** toggle to switch between this table and the history.
+- **Summary cards at the top:** **Supply** (with Sold and On hand), **Available** (with Allocated and any over-allocated sizes), and **At risk**.
+- **Variants card:** **On hand** and **Available** per size. **On hand** is read-only—sales decrease it and stock changes adjust it through **Supply**.
+- **Stock by SKU:** The full breakdown table, one row per size. Expand any size to see every experience holding it, its status, units currently in checkout, **Unassigned** units, and units sold and allocated. Toggle between **Allocations** and **Stock history** at the top of the card.
 
-<Frame caption="Available is what can still go into an experience.">
+<Frame caption="Available shows how many units you can still allocate to an experience.">
   <img src="/images/guide/stock-by-sku.webp" alt="The Stock by SKU table for a Fanfare-managed product, showing each size's supply, sold, on-hand, allocated and available units, with the Available column ringed and US 9 expanded to show the Autumn, Spring and Summer experiences that hold it" />
 </Frame>
 
-**Sold** is not reduced by refunds, and refunded units return to stock only when you return them from the order. See [Orders and refunds](/guide/learn/orders). Under the table, **Refunded, not returned to stock:** lists the orders still waiting on that decision.
+Refunding an order never reduces **Sold** and doesn't automatically add units back to **Supply**—you choose whether to restock them from the order page. See [Orders and refunds](/guide/learn/orders). Orders awaiting that decision appear under **Refunded, not returned to stock:** below the table.
 
 ## Record a stock change
 
-For a Fanfare-managed product, the count changes only when you record a change. Every change is kept in the product's stock history with your reason.
+On a Fanfare-managed product, inventory changes only when you log an entry. Every entry stays in **Stock history** with your reason.
 
 You can open **Adjust stock** from:
 
-- a size's menu in the **Variants** card;
-- the **Adjust stock** button in the variant editor;
-- **Stock history**, beside the size filter;
-- the **Record a receipt of at least …** button on the over-allocation banner, in the Resolve dialogue, or on the result screen after a change, which opens a receipt for that size with the type fixed.
+- A size's menu in the **Variants** card
+- The **Adjust stock** button in the variant editor
+- **Stock history**, next to the size filter
+- Any **Record a receipt of at least …** button on an over-allocation banner, the Resolve dialog, or a confirmation screen (pre-set as a receipt for that size)
 
-To record a change:
+To log a change:
 
-1. Choose the **Size**, if the product has more than one.
-2. Choose the **Type**: **Receipt** when new units arrive, **Adjustment** for a count correction (choose **Add** or **Remove**), or **Write-off** for units lost, damaged or otherwise unsellable.
-3. Enter the **Units**.
-4. Enter a **Reason**, or select a shortcut such as **Purchase order received** or **Damaged**. The reason is required and is kept in the stock history.
-5. Read the preview of the figures after the change, and any notice under it.
-6. Select the record button. It names the change, for example **Record receipt of 20**. It becomes available once the dialogue has read the current stock; if that read fails, close the dialogue and open it again.
-
-The result screen shows the figures before and after, and which experiences gave units back or are now held. Select **Done** to close it. You cannot close the dialogue while it is recording.
+1. Select the **Size** (if the product has more than one).
+2. Choose the **Type**:
+   - **Receipt:** New inventory arriving.
+   - **Adjustment:** A count correction (**Add** or **Remove**).
+   - **Write-off:** Units that are lost, damaged, or unsellable.
+3. Enter the number of **Units**.
+4. Enter a **Reason** (required), or pick a quick shortcut like **Purchase order received** or **Damaged**.
+5. Review the before-and-after preview and any warnings underneath.
+6. Select the record button (for example, **Record receipt of 20**), review the summary, and select **Done**.
 
 <Warning>
-  A **Write-off** or a downward **Adjustment** that leaves less supply than your experiences have allocated is always recorded: Fanfare does not block it. The preview warns you first with "Allocated … would exceed supply" (or, if no experience holds the size, "Supply would go to …"). Once you record:
+  Fanfare never blocks a **Write-off** or downward **Adjustment**, even if it drops **Supply** below what your experiences have allocated. The preview warns you first—and once you confirm:
 
-  - Units nobody holds are taken back from live experiences, newest first, including one that shows **Ended** while customers are still checking out: see [Stock](/concepts/stock). If some are still being taken back when the result shows, it says so and Fanfare finishes on its own.
-  - Units already in a customer's checkout stay with that customer and can still be bought.
-  - Any shortfall left over, however small, holds in full every distribution of the size that has not started selling yet, including a later one in a sequence that is already selling: see [Fix an over-allocated size](#fix-an-over-allocated-size).
+  - Unclaimed units are automatically reclaimed from live experiences (newest first, including ended drops that still have active checkouts; see [Stock](/concepts/stock)).
+  - Units already in a shopper's checkout stay with that shopper and can still be purchased.
+  - Any remaining shortfall—even a single unit—places a hold on every distribution of that size that hasn't started selling yet, including later distributions in an already-running sequence. See [Fix an over-allocated size](#fix-an-over-allocated-size).
 
-  Orders completed from at-risk checkouts then need a refund, or a receipt of new units to cover them. A recorded change cannot be removed from the history; to correct one, record another change.
+  Orders completed from at-risk checkouts will need either a refund or a new receipt to cover them. Recorded entries can't be deleted from history—if you make a mistake, record a correcting adjustment.
 </Warning>
 
-<Frame caption="The preview tells you before you record whether the change will take units from your experiences.">
-  <img src="/images/guide/stock-adjust-write-off.webp" alt="The Adjust stock dialogue for size US 11 with a write-off of 45 entered, showing supply and on hand before and after, and a warning that allocated stock (74) would exceed supply (35) by 39" />
+<Frame caption="Before you confirm, the preview warns you if a write-off or downward adjustment will pull stock from active experiences.">
+  <img src="/images/guide/stock-adjust-write-off.webp" alt="The Adjust stock dialog for size US 11 with a write-off of 45 entered, showing supply and on hand before and after, and a warning that allocated stock (74) would exceed supply (35) by 39" />
 </Frame>
 
 <Note>
-  If Fanfare does not confirm a change, the dialogue says it may already be recorded. Select the record button again without changing anything: Fanfare treats it as the same change, so it cannot be counted twice. If you edit any field first, the dialogue may lock and ask you to check **Stock history** instead. If you close the dialogue instead, check **Stock history** before you record the change again, or you may count it twice.
+  If a connection issue prevents confirmation, click the record button again without editing any fields—Fanfare treats it as the same request so it won't double-count. If you edit a field or close the dialog first, check **Stock history** before submitting again.
 </Note>
 
 ## Fix an over-allocated size
 
-A size is over-allocated when your experiences hold more units than its supply. **Stock by SKU** puts that size first, shows **Over-allocated by** in its **Available** column, and shows a banner headed "[size] is over-allocated by [count]". The banner offers:
+A size becomes over-allocated when your experiences hold more units than its **Supply**. **Stock by SKU** pins that size to the top and displays an alert banner with three ways to fix it:
 
-- **Resolve**, which opens the Resolve dialogue;
-- **Reduce [experience] [size] to [count]**, for each held experience whose allocation can be lowered;
-- **Record a receipt of at least [count] × [size]**, which opens **Adjust stock** as a receipt.
+- **Resolve:** Opens the Resolve dialog to compare options.
+- **Reduce [experience] [size] to [count]:** One-click reduction for each eligible held experience.
+- **Record a receipt of at least [count] × [size]:** Opens **Adjust stock** pre-filled as a receipt.
 
-In the Resolve dialogue, choose an option of the form "Set [experience] [size] to [count]" and select **Apply**. **Apply** is available only when that change alone makes the size fit supply; if it does not, the dialogue tells you how many units to receive instead, and you can record that receipt from the dialogue. Some experiences cannot be lowered here, and the dialogue says why:
+In the **Resolve** dialog, pick an experience reduction and select **Apply** (enabled when that single reduction closes the gap), or record a receipt directly from the dialog. Some experiences can't be reduced here:
 
-- A released experience: its allocation already equals what it sold.
-- A closed experience whose stock has not been released yet: its allocation stays with it.
-- A live experience: units sold and in checkout stay with it, so it cannot go lower.
+- **Released experiences:** Their allocation already matches what they sold.
+- **Closed experiences awaiting release:** Their allocation remains attached until release finishes.
+- **Live experiences:** Units already sold or in checkout can't be reduced.
 
-When the size fits supply again, the panel shows "[size] now fits supply. Held experiences start selling once Fanfare's next stock check seeds them."
+Once **Available** is back to `0` or higher, held experiences automatically start selling on Fanfare's next stock check (about once a minute).
 
 <Warning>
-  An over-allocated size, even by one unit, holds every experience that offers it and whose sequences have not started selling: these show a **Held: stock** badge. It also holds a later distribution in a sequence that is already selling. Nothing held starts selling at its open time. Held sequences start selling only once **Available** is back to 0 or more, at Fanfare's next stock check after that. Fanfare checks stock about once a minute. Once its open time has passed, its own allocation can no longer be lowered: lower another experience that has not opened yet, or record a receipt. Check the banner before an experience opens. For what customers see at each stage, see [What your customers see](/guide/drop/what-customers-see).
+  Over-allocating a size by even 1 unit holds every upcoming experience that offers it (**Held: stock** badge) as well as any later distributions in an already-running sequence. Held distributions won't open on schedule—they wait until **Available** returns to `0` or higher. Once a held experience's opening time passes, you can't lower its own allocation; you'll need to reduce another upcoming experience or record a receipt. Always check for over-allocation banners before doors open. See [What your customers see](/guide/drop/what-customers-see).
 </Warning>
 
-<Frame caption="A held experience does not start selling until the size fits supply.">
+<Frame caption="A held experience won't start selling until the over-allocated size fits supply again.">
   <img src="/images/guide/stock-over-allocated-banner.webp" alt="The Stock by SKU card with a red banner saying US 11 is over-allocated by 18 and naming the held experience, with Resolve, Reduce and Record a receipt buttons above the size's experience rows and their status badges" />
 </Frame>
 
 ## Stock history
 
-Select **Stock history** in **Stock by SKU**, or a size's **History** link to open it filtered to that size. Filter with **All sizes** or a single size. Each entry shows the **Date**, the **Size** (when not filtered), the **Type**, the **Units** (signed, so removals are negative), **Supply after**, and the **Reason**. The types are **Opening stock**, **Receipt**, **Adjustment**, **Write-off** and **Return** (units returned to stock from a refunded order). A size that has been removed shows as **Removed size**. Select **Show older changes** to load earlier entries.
+Switch to **Stock history** in **Stock by SKU** (or select a size's **History** link to filter directly to that size). Filter by **All sizes** or an individual size to view each entry's **Date**, **Size**, **Type** (**Opening stock**, **Receipt**, **Adjustment**, **Write-off**, or **Return**), signed **Units**, **Supply after**, and **Reason**. Removed sizes appear as **Removed size**. Select **Show older changes** to load earlier entries.
 
 <Frame>
-  <img src="/images/guide/stock-history.webp" alt="The Stock history view of a product, listing opening stock, a receipt, a write-off and an adjustment with their dates, sizes, units, supply afterwards and reasons" />
+  <img src="/images/guide/stock-history.webp" alt="The Stock history view of a product, listing opening stock, a receipt, a write-off, and an adjustment with their dates, sizes, units, supply afterward, and reasons" />
 </Frame>
 
 ## Field reference
 
-**Adjust stock**
+### Adjust stock
 
 | Setting | What it does | Default |
 | --- | --- | --- |
-| **Size** | The size the change applies to. Shown when the product has more than one, except for a receipt opened from a **Record a receipt of at least …** button. | The size you opened it from; from **Stock history** with **All sizes**, the first size |
-| **Type** | **Receipt** adds units, **Write-off** removes them, **Adjustment** goes either way with **Add** or **Remove**. | **Receipt** |
-| **Units** | How many units the change adds or removes: 1 to 1,000,000. You cannot record until it is above 0. | 0 |
-| **Reason** | Why the stock changed. Required, and kept in the stock history. Shortcuts fill it in and stay editable. | Empty |
+| **Size** | Which variant the change applies to (shown on multi-variant products unless pre-locked from a receipt shortcut). | The size you opened it from (or first size from **All sizes**) |
+| **Type** | **Receipt** adds units, **Write-off** removes units, **Adjustment** lets you **Add** or **Remove**. | **Receipt** |
+| **Units** | Number of units to add or remove (`1` to `1,000,000`). | `0` |
+| **Reason** | Required note saved to **Stock history**. Shortcuts pre-fill editable text. | Empty |
 
-**Product settings that decide stock**
+### Product stock settings
 
-| Setting | What it does | Default | Can you change it once it is live? |
+| Setting | What it does | Default | Editable while live? |
 | --- | --- | --- | --- |
-| **Stock management** | Who keeps the stock count. | **Fanfare-managed** (Fanfare checkout); **Not managed** (external checkout) | No. Fixed when the product is created. |
-| **Opening stock** | Fanfare-managed only. The units a size starts with, entered when you create the product or add a new size; it becomes that size's starting **Supply**. | 0 | No. Once the size exists, use **Adjust stock**. |
+| **Stock management** | Who tracks the product's inventory. | **Fanfare-managed** (Fanfare checkout); **Not managed** (external checkout) | No—locked at creation |
+| **Opening stock** | Starting **Supply** for a **Fanfare-managed** size when creating a product or adding a variant. | `0` | No—use **Adjust stock** once the size exists |
 
 ## Things to know before you go live
 
-- Allocations are fixed while an experience is live. See [Allocate stock to a drop](/guide/create/stock-allocation).
-- Fanfare-managed variants cannot be deleted from the admin. See [Add products](/guide/create/products).
+- Experience allocations lock once a drop goes live. See [Allocate stock to a drop](/guide/create/stock-allocation).
+- You can't delete **Fanfare-managed** variants from the admin. See [Add products](/guide/create/products).
 
 ## On Shopify
 
-An organisation created through the Fanfare app in Shopify starts with an **External** checkout processor. While it stays External, every product you bring in from Shopify is **Shopify-managed**: Shopify keeps the count, and **Fanfare-managed** is not offered. For a Shopify-managed product:
+Organizations installed through the Shopify app start on **External** checkout, so every product imported from Shopify is **Shopify-managed**—Shopify tracks inventory and **Fanfare-managed** isn't offered:
 
-- The product page says "Stock changes for Shopify-managed products are made in your Shopify admin. Adjust stock is not offered here." It has no **Stock by SKU** and no stock history.
-- The Products list shows "—" in the **Stock** column, with the hover text "Shopify keeps the count."
+- Adjust stock, **Stock by SKU**, and **Stock history** don't appear on Shopify-managed products; update stock in Shopify admin instead.
+- The **Products** list shows `—` in the **Stock** column.
 
-If an organisation admin switches the checkout processor to **Fanfare** in [Organisation settings](/guide/account/organization), products you bring in from Shopify after that are Fanfare-managed, and when you create a product you get the same choice as in the Fanfare admin. Products that already exist keep their stock management.
+If an organization admin switches checkout to **Fanfare** in [Organization settings](/guide/account/organization), products imported from Shopify afterward become **Fanfare-managed**, and newly created products offer the standard stock management choice. Existing products keep their original stock mode.
 
 <Note>
-  For a Fanfare-managed product you bring in from Shopify, Fanfare's count and Shopify's count do not sync. Enter only the units you are setting aside for Fanfare drops, and take the same units off sale in Shopify. If you do not, the same units can sell twice: once in Shopify and once in an experience.
+  Fanfare-managed products imported from Shopify don't sync stock counts with Shopify in either direction. Enter only the units you've set aside for Fanfare drops and take those units off sale in Shopify so the same inventory can't sell twice.
 </Note>
 
-See [Products from Shopify](/guide/shopify/products).
+See [Products from Shopify](/guide/shopify/products) for full sync details.
 
 ## Troubleshooting
 
 <AccordionGroup>
   <Accordion title="I can't choose Fanfare-managed">
-    Your organisation's checkout processor is **External**, so every product you create is **Not managed**. Fanfare-managed stock needs payments to go through Fanfare checkout. Products already created stay **Not managed** even if the processor changes. To change the processor, see [Organisation settings](/guide/account/organization).
+    Your organization's checkout processor is set to **External**, so all new products are **Not managed**. Fanfare-managed stock requires Fanfare checkout. Existing products stay **Not managed** even if you switch processors later. See [Organization settings](/guide/account/organization).
   </Accordion>
-  <Accordion title="Adjust stock isn't offered">
-    The product is **Not managed** or **Shopify-managed**. Only Fanfare-managed products have a stock count to change. The **Variants** card header shows which one a product is, for example "Stock management: Not managed". This cannot be changed on an existing product.
+  <Accordion title="Adjust stock isn't available">
+    The product is **Not managed** or **Shopify-managed**—only **Fanfare-managed** products track an editable stock ledger. Check the stock mode in the **Variants** card header. This setting can't be changed after product creation.
   </Accordion>
-  <Accordion title="Couldn't load stock figures">
-    Fanfare could not read the product's stock. Select **Try again**. If figures were already showing, the panel says "These figures may be out of date." instead: select **Reload**.
+  <Accordion title="Stock figures didn't load">
+    Select **Try again** (or **Reload** if stale figures are shown) to refresh the stock ledger.
   </Accordion>
   <Accordion title="An experience shows Held: stock">
-    A size it holds is over-allocated, so its sequences do not start selling. Open the product, find the banner in **Stock by SKU**, and record a receipt or lower the allocation of an experience that has not opened. See [Fix an over-allocated size](#fix-an-over-allocated-size).
+    One of its sizes is over-allocated, blocking its sequences from starting. Open the product, locate the alert banner in **Stock by SKU**, and either record a receipt or reduce an upcoming experience's allocation. See [Fix an over-allocated size](#fix-an-over-allocated-size).
   </Accordion>
 </AccordionGroup>
 
 ## Related
 
 <CardGroup>
-  <Card title="Allocate stock to a drop" href="/guide/create/stock-allocation">Give an experience its units, split them across sequences, and move units.</Card>
-  <Card title="Stock" href="/concepts/stock">How supply, allocations and sales fit together.</Card>
-  <Card title="Add products" href="/guide/create/products">Create products and choose their stock management.</Card>
-  <Card title="Orders and refunds" href="/guide/learn/orders">Return refunded units to stock.</Card>
+  <Card title="Allocate stock to a drop" href="/guide/create/stock-allocation">
+    Reserve units for an experience, split them across sequences, and move stock mid-drop.
+  </Card>
+  <Card title="Stock" href="/concepts/stock">
+    How supply, allocations, and sales fit together.
+  </Card>
+  <Card title="Add products" href="/guide/create/products">
+    Create products and choose their stock management mode.
+  </Card>
+  <Card title="Orders and refunds" href="/guide/learn/orders">
+    Return refunded units back to stock.
+  </Card>
 </CardGroup>

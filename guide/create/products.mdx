@@ -1,191 +1,218 @@
 ---
 title: Add products
-description: Create products in the Fanfare admin, by hand or with Autofill, and set up their variants, prices and images before you attach them to an experience.
+description: Create products manually or with Autofill, then configure their variants, prices, and images before attaching them to a drop.
 ---
 
-A product is anything an experience sells or gives access to. You add it to Fanfare once, with its variants, prices and images, and then attach it to as many experiences as you like. The one choice on this page that you cannot take back is **Stock management**, who keeps the count of how many units exist: read [Manage stock](/guide/create/stock) before you create the product.
+A product is anything your drop sells or gives access to. You add it to Fanfare once—along with its variants, prices, and images—and attach it to as many experiences as you like.
+
+Before you create your first product, decide on **Stock management** (who tracks how many units exist). It's the one setting on a product you can't change later—read [Manage stock](/guide/create/stock) before saving.
 
 {/* image: products-list */}
 
 ## Before you start
 
-- Decide who should keep the stock count for this product. See [Manage stock](/guide/create/stock#choose-who-keeps-the-stock-count).
-- If the product comes in sizes, colours or other options, [set those options up](#set-up-variant-options) under **Settings → Variant Options** first.
-- Have your images ready as JPEG, PNG, GIF or WebP files of up to 50 MB each.
+- Decide who keeps the stock count for this product. See [Manage stock](/guide/create/stock#choose-who-keeps-the-stock-count).
+- If your product comes in sizes, colors, or other options, [set up those options](#set-up-variant-options) under **Settings → Variant Options** first.
+- Have your product images ready as JPEG, PNG, GIF, or WebP files (up to 50 MB each).
 
 ## Create a product
 
-1. Open **Products** and select **Create Product**.
-2. On **Product Details**, enter a **Name**. **Description**, **Product URL** and **Handle** are optional. The handle fills in from the name until you edit it.
-3. Under **Stock management**, choose **Fanfare-managed** (the default) or **Not managed**. **Shopify-managed** is shown but cannot be picked: a product becomes Shopify-managed only when it comes in from Shopify. If your organisation takes payment outside Fanfare, the section offers no choice and every product you create is **Not managed**. See [Manage stock](/guide/create/stock) for what each option means.
+<Steps>
+  <Step title="Enter product details and choose stock management">
+    Open **Products** and select **Create Product**. On **Product Details**, enter a unique **Name**. **Description**, **Product URL**, and **Handle** are optional (the handle fills in automatically from the name until you edit it).
 
-<Warning>
-  **Stock management** cannot be changed after the product is created. A product created as **Not managed** can never become **Fanfare-managed**, so Fanfare will never count it or stop a drop selling more units than you have. If you choose wrongly, the only way out is to create the product again with the right choice. Product names must be unique, so either [delete the old product](#delete-a-product) first or give the new one a different name.
-</Warning>
+    Under **Stock management**, choose **Fanfare-managed** (default) or **Not managed**. **Shopify-managed** is only assigned to products imported from Shopify. If your organization uses external checkout, every product is created as **Not managed**. See [Manage stock](/guide/create/stock) to compare options.
 
-4. Select **Next**. On **Media**, drag in your images or select them from your computer. This step is optional.
-5. Select **Next**. On **Variants & Inventory**, choose **Simple product** for a product with one price and one SKU, or **Product with variants** for sizes, colours or other options.
-6. Fill in the variant details. For a simple product, enter the **SKU**, the **Price**, and then **Opening stock** (Fanfare-managed) or **Quantity** and **Inventory policy** (Not managed). On a Not managed product, **Quantity** and **Inventory policy** do not cap sales; see [Manage stock](/guide/create/stock). For variants, see [Add variants](#add-variants).
-7. Select **Create**.
+    <Warning>
+      **Stock management** locks permanently once you create the product. You can't switch a **Not managed** product to **Fanfare-managed** later, which means Fanfare won't track inventory or stop a drop from overselling it. If you choose the wrong option, you'll need to recreate the product—and because product names must be unique, [delete the old product](#delete-a-product) first or use a different name.
+    </Warning>
 
-Fanfare shows **Product created** and returns you to the Products list. Open the new product from there to add more.
+    <Frame caption="Choosing Not managed displays a reminder that this setting can't be changed later.">
+      <img src="/images/guide/products-create-stock-management.webp" alt="The Product Details step of the Create Product form, with Not managed selected under Stock management and a notice saying Not managed is permanent for this product." />
+    </Frame>
+  </Step>
+  <Step title="Upload product images (optional)">
+    Select **Next** to open **Media**, then drag in your images or choose files from your computer.
+  </Step>
+  <Step title="Add variants and inventory">
+    Select **Next** to open **Variants & Inventory**. Choose **Simple product** for a single price and SKU, or **Product with variants** for sizes, colors, or other options:
 
-<Frame caption="Choosing Not managed shows a reminder that the choice cannot be undone.">
-  <img src="/images/guide/products-create-stock-management.webp" alt="The Product Details step of the Create Product form, with Not managed selected under Stock management and a notice saying Not managed is permanent for this product." />
-</Frame>
+    - **Simple product:** Enter the **SKU**, **Price**, and either **Opening stock** (Fanfare-managed) or **Quantity** and **Inventory policy** (Not managed). On a Not managed product, **Quantity** and **Inventory policy** are for reference only and don't cap sales—see [Manage stock](/guide/create/stock).
+    - **Product with variants:** Follow [Add variants](#add-variants) below.
+
+    Select **Create** to save your product and return to the **Products** list.
+  </Step>
+</Steps>
 
 <Note>
-  The wizard keeps your progress in the browser tab while you work. Images you add on **Media** are lost if you refresh the page before you select **Create**, and the whole draft is lost if you close the tab.
+  The wizard saves your draft in your current browser tab while you work. Refreshing the page clears any images added on **Media**, and closing the tab discards the draft.
 </Note>
 
 ## Autofill from a store link
 
-If the product already has a page on an online store, Fanfare can fill in the name, description, images and variants from it for you to check.
+If your product already lives on an online store, Fanfare can pull in its name, description, images, and variants so you don't have to enter them by hand.
 
-<Info>Available on Growth and above. On Starter you can type the link, but the **Autofill** button stays disabled and an upgrade prompt shows below it.</Info>
+<Info>
+  Available on Growth and above. On Starter, you can enter a link, but **Autofill** stays locked until you upgrade.
+</Info>
 
-1. On **Product Details**, paste the full link, starting with `https://`, into **Product page link**.
-2. Select **Autofill**. If you have already entered anything, Fanfare asks **Replace what you've entered?** first: Autofill replaces the details, images and variants in the form. Select **Replace and autofill** to go ahead.
-3. Wait while Fanfare reads the page. This usually takes 15 to 40 seconds.
-4. Read the **Needs your decision** list, if one appears, and act on each item.
-5. Check every step of the wizard, choose **Stock management** yourself, and select **Create**. The product exists only once you select **Create**.
+1. On **Product Details**, paste the full URL (starting with `https://`) into **Product page link**.
+2. Select **Autofill**. If you've already typed details into the form, select **Replace and autofill** to confirm overwriting them.
+3. Wait 15–40 seconds while Fanfare reads the page.
+4. Review any items listed under **Needs your decision** and resolve them.
+5. Check every step of the wizard, choose **Stock management**, and select **Create**. Nothing is saved until you select **Create**.
 
 | Limit | Value |
 | --- | --- |
-| Autofills per organisation | 25 a day, and 3 a minute |
-| Images copied | Up to 12 |
-| Variants kept | Up to 100. Fanfare tells you how many it found and keeps the first 100. |
-| Options worked out from the page text | Up to 3 |
+| Autofills per organization | 25 per day, up to 3 per minute |
+| Images imported | Up to 12 |
+| Variants imported | Up to 100 (keeps the first 100 found) |
+| Options inferred from page text | Up to 3 |
 
-**Needs your decision** lists what Autofill could not settle for you, for example:
+Common **Needs your decision** prompts include:
 
-- The store prices in a different currency from yours, so prices were left blank. Enter every price yourself.
-- An option of yours is locked, so values it does not allow, and the variants that use them, were left out.
-- A product with the same name already exists. Change the name before you create this one.
-- The variants came from the page text, or could not be confirmed and the product was set up as a simple product. Check each variant and its price, or add variants on the last step.
+- **Currency mismatch:** The store uses a different currency than your organization, so prices were left blank—enter each price yourself.
+- **Locked variant option:** One of your organization's options is locked, so unrecognized values and their variants were skipped.
+- **Duplicate name:** A product with that name already exists—rename this one before saving.
+- **Unconfirmed variants:** Variants were inferred from page text or couldn't be confirmed (falling back to a simple product)—double-check each variant and price on the final step.
 
 <Note>
-  Autofill adds any option it does not recognise, and any new value for an option that is not locked, to your organisation's variant options straight away. They stay under **Settings → Variant Options** even if you cancel the wizard.
+  Autofill immediately adds any unrecognized options—and any new values for unlocked options—to **Settings → Variant Options**. They remain there even if you cancel the wizard.
 </Note>
 
-If Autofill fails, the message says why. It can say Autofill is not available at the moment, even on a plan that includes it. You can always fill in the form yourself.
+If Autofill fails or is temporarily unavailable, you can always fill out the form manually.
 
 ## Add variants
 
-A variant is one version of the product that a customer can buy, such as the medium in black, with its own SKU and price.
+A variant is a buyable version of your product—such as Medium in Black—with its own SKU and price.
 
 ### Set up variant options
 
-Options such as Size or Colour, and their values such as M or Black, are shared by every product in your organisation. Manage them under **Settings → Variant Options**.
+Options like Size or Color, along with their values (such as M or Black), are shared across every product in your organization under **Settings → Variant Options**.
 
-1. Select **Add Option**, enter a **Name**, and select **Create**. Or select **Use Template**, choose a category such as Clothing or Footwear, choose the options you want, and select **Apply Options (N selected)**.
-2. Add values to each option. You can edit, reorder and delete them. You cannot delete a value that any product's variants use, even though the confirmation says those variants will not be affected.
-3. Drag options into the order you want.
+1. Select **Add Option**, enter a **Name**, and select **Create**—or select **Use Template** to apply a preset category like Clothing or Footwear.
+2. Add values to each option. You can edit or reorder values anytime, and delete a value as long as no product variant uses it.
+3. Drag options into the order you want them to appear.
 
-You cannot delete an option while products use it.
+You can't delete an option while any product uses it.
 
-If you follow the **Create option** link from the wizard's option picker to **Settings → Variant Options**, any images you added on **Media** are lost.
+<Tip>
+  Set up your variant options before starting the Create Product wizard. Following **Create option** from the wizard's option picker navigates away and clears any images you uploaded on **Media**.
+</Tip>
 
 ### Add variants to a product
 
 On **Variants & Inventory** in the wizard, or in the **Variants** card on an existing product:
 
-1. On an existing product that already has variants, select **Edit options** first. Under **Options**, pick the options this product uses, then pick or type values for each. **Add all** adds every value of an option. A value you type that does not exist yet is added to your organisation's options straight away. On an existing product, the values you pick are kept only until you leave the page: create the variants that use them before you go.
-2. Check **SKU format** and its **Preview**. The format must include every option you picked, or Fanfare cannot generate distinct SKUs.
-3. Select **Create all N** to make every combination at once, or **Create your first variant** to add them one at a time. Once the product has a variant, **Add Variant** adds another.
-4. Give every variant a **Price** and an **SKU**. Each SKU must be different within the product, and SKUs are case-sensitive.
+1. On an existing product that already has variants, select **Edit options** first. Under **Options**, choose the options this product uses, then select or type values for each (use **Add all** to select every value). Typing a new value adds it to your organization's options right away. On an existing product, selected values aren't saved until you create variants that use them.
+2. Check **SKU format** and its **Preview**. Make sure the format includes every selected option so Fanfare can generate unique SKUs.
+3. Select **Create all N** to generate every combination at once, or **Create your first variant** (then **Add Variant**) to add them one by one.
+4. Enter a **Price** and a unique, case-sensitive **SKU** for every variant.
 
 {/* image: products-create-variants */}
 
-On an existing product, **Create N missing** makes the combinations you do not have yet. Fanfare asks you to confirm and then saves them straight away, each with the first variant's price (or 0.00 if there is none) and a stock of 0. Check prices and stock afterwards.
+On an existing product, **Create N missing** adds any combinations that don't exist yet. Confirm to save them immediately—each starts with the first variant's price (or `0.00`) and `0` stock, so review their prices and stock afterward.
 
-Options and values that a variant uses cannot be removed from the product.
+Once a variant uses an option or value, that option or value can't be removed from the product.
 
-### Prices
+### Pricing rules
 
-If your organisation takes payment through Fanfare checkout, every price must be something your currency can charge: no more than two decimal places (whole amounts for currencies such as JPY and HUF), and not below the smallest charge for your currency, for example 0.50 in USD or EUR and 0.30 in GBP. A price of 0 is always allowed. With an external checkout processor these limits do not apply.
+With Fanfare checkout, every price must be chargeable in your organization's currency:
+
+- Up to two decimal places (or whole amounts for zero-decimal currencies like JPY and HUF).
+- At least your currency's minimum charge (for example, $0.50 USD, €0.50 EUR, or £0.30 GBP).
+- `0` is always allowed for free items.
+
+External checkout doesn't enforce these minimums.
 
 ## Add and arrange images
 
-- In the wizard, add images on **Media**. Images found by Autofill already appear there.
-- On an existing product, select the + tile under the gallery and choose files from your computer. Each upload saves straight away.
-- Reorder by dragging thumbnails. The first image is the product's main image.
-- Remove an image by pointing at the large preview and selecting the bin icon that appears in its corner.
+- **In the wizard:** Add images on **Media**. Any images imported by Autofill appear here too.
+- **On an existing product:** Select the **+** tile below the gallery to upload files from your computer. Uploads save right away.
+- **Reorder:** Drag thumbnails into the order you want. The first image is your product's main image.
+- **Remove:** Hover over the large preview and select the trash icon in the corner.
 
 <Note>
-  Removing an image from an existing product deletes it immediately. There is no confirmation and no undo.
+  Removing an image from an existing product deletes it immediately with no confirmation and no undo.
 </Note>
 
 ## Edit a product
 
-Open the product from **Products**. You can rename it directly in the page heading, which saves at once, or change **Name**, **Description**, **Product URL** and **Handle** in the form and save from the bar that appears. Saving the form takes you back to the Products list.
+Open any product from **Products**. You can rename it inline by clicking the title at the top (which saves right away), or update **Name**, **Description**, **Product URL**, and **Handle** in the form and save from the action bar.
 
 <Warning>
-  Price and SKU changes reach experiences that offer the product, including live ones. While a pre-authorised drop that holds one amount for everything on offer includes the product, Fanfare refuses any price other than the drop's amount until the drop has ended and its payment windows have closed. Deleting the experience also lifts the refusal.
+  Price and SKU updates apply immediately to every experience offering the product, including live drops. If the product is in a pre-authorized drop that holds a single fixed amount, Fanfare blocks price changes that don't match that amount until the drop ends and all payment windows close (or the experience is deleted).
 </Warning>
 
-With Fanfare checkout, a customer pays the price in force when they first submit payment, so a customer in a payment window who has not yet submitted payment pays the new price. Auction winners pay their winning price.
+With Fanfare checkout, shoppers pay the price active when they submit payment—so a customer inside a payment window who hasn't submitted yet pays the updated price. Auction winners always pay their winning bid.
 
 ## Field reference
 
-| Setting | What it does | Default | Can you change it once it is live? |
+| Setting | What it does | Default | Editable while live? |
 | --- | --- | --- | --- |
-| **Name** | The product's name. It must be different from the names of your other products. | None (required) | Yes |
-| **Description** | Text describing the product. | Empty | Yes |
-| **Product URL** | The product's page on your store. Winner messages link here when the experience has no [hosted page](/guide/create/hosted-page). | Empty | Yes |
-| **Handle** | A web-address-friendly version of the name. | Made from the name | Yes |
-| **Stock management** | Who keeps the stock count. See [Manage stock](/guide/create/stock). | **Fanfare-managed** (Fanfare checkout); **Not managed** (external checkout) | No. Fixed when the product is created. |
-| **SKU** | The variant's identifier. Must be different for each variant of the product. | None (required) | Yes |
-| **Price** | What a customer pays for the variant. | None (required) | Yes, and the change reaches live experiences, except where a pre-authorised drop holds the price. |
-| **Opening stock** | Fanfare-managed only. The units you start with. See [Manage stock](/guide/create/stock). | 0 | No. See [Manage stock](/guide/create/stock). |
-| **Quantity** | Not managed only. A number for your reference. See [Manage stock](/guide/create/stock). | 0 | Yes |
-| **Inventory policy** | Not managed only: **Untracked (always available)**, **Deny when out of stock**, or **Continue selling (allow oversell)**. See [Manage stock](/guide/create/stock). | **Deny when out of stock** | Yes |
+| **Name** | Unique product name across your organization. | Required | Yes |
+| **Description** | Product copy shown to shoppers. | Empty | Yes |
+| **Product URL** | Link to the product on your store. Used in winner messages when an experience has no [hosted page](/guide/create/hosted-page). | Empty | Yes |
+| **Handle** | URL-friendly slug for the product. | Auto-generated from name | Yes |
+| **Stock management** | Who tracks inventory. See [Manage stock](/guide/create/stock). | **Fanfare-managed** (Fanfare checkout); **Not managed** (external checkout) | No—locked at creation |
+| **SKU** | Unique variant identifier within the product (case-sensitive). | Required | Yes |
+| **Price** | Amount a customer pays for the variant. | Required | Yes (reaches live drops), unless locked by a pre-authorized drop |
+| **Opening stock** | Starting inventory for **Fanfare-managed** variants. See [Manage stock](/guide/create/stock). | `0` | No—use **Adjust stock** instead |
+| **Quantity** | Reference count for **Not managed** variants. See [Manage stock](/guide/create/stock). | `0` | Yes |
+| **Inventory policy** | Reference policy for **Not managed** variants: **Untracked (always available)**, **Deny when out of stock**, or **Continue selling (allow oversell)**. | **Deny when out of stock** | Yes |
 
 ## Delete a product
 
-Select **Delete** on the product page, or **Delete** (**Delete product** in card view) in a product's menu on the list.
+Select **Delete** on the product page, or open a product's menu on the **Products** list and select **Delete** (**Delete product** in card view).
 
-Fanfare refuses while any experience that has not ended offers the product, draft experiences included, and lists those experiences. A sequence is one way in to an experience. Fanfare also refuses while a sequence that offers the product is still finishing, for example with customers still in line or in a payment window, and while a live sequence holds counted stock of the product. End the experiences, remove the product from them, or delete the ones you no longer need, then delete the product.
+You can't delete a product while any active, upcoming, or draft experience offers it—including while a sequence is finishing up (customers still in line or in a payment window) or holding counted stock. Fanfare lists the blocking experiences so you can end them, delete them, or remove the product from them first.
 
 <Note>
-  Deleting cannot be undone: the admin offers no way to restore a deleted product. Variants can be deleted one at a time only on **Not managed** products, and never the product's last variant.
+  Deleting a product can't be undone. You can delete individual variants only on **Not managed** products, and you can't delete a product's last remaining variant.
 </Note>
 
 ## On Shopify
 
-In the Fanfare app in Shopify, products come from your Shopify catalogue:
+In the Shopify app, products come directly from your Shopify catalog:
 
-- There is no **Create Product** button. Products come in through Shopify's product picker wherever Fanfare asks for a product, whole products only and up to 20 at a time.
-- The name, description, product URL, handle and variants of a Shopify product are read-only in Fanfare. Change them in Shopify admin, then select **Sync from Shopify** on the product page.
-- The product page has **Sync from Shopify** in place of **Delete**.
-- The **Variants** card is not shown for Shopify products.
+- There's no **Create Product** button. Instead, pick products through Shopify's product picker wherever Fanfare asks for one (whole products only, up to 20 at a time).
+- A Shopify product's name, description, URL, handle, and variants are read-only in Fanfare. Edit them in Shopify admin, then select **Sync from Shopify** on the product page.
+- **Sync from Shopify** replaces **Delete**, and the **Variants** card isn't shown.
 
 {/* image: products-shopify-product-detail */}
 
-For picking, re-syncing, image copies, **Source missing** and refused syncs, see [Products from Shopify](/guide/shopify/products). To start from a product in Shopify admin, see [Fanfare inside Shopify admin](/guide/shopify/in-shopify-admin).
+For importing, re-syncing, images, **Source missing**, and sync errors, see [Products from Shopify](/guide/shopify/products). To launch a drop directly from a product in Shopify admin, see [Fanfare inside Shopify admin](/guide/shopify/in-shopify-admin).
 
 ## Troubleshooting
 
 <AccordionGroup>
-  <Accordion title="The product won't delete">
-    An experience that has not ended still offers it, or a sequence that offers it is still finishing. See [Delete a product](#delete-a-product).
+  <Accordion title="I can't delete a product">
+    An active, upcoming, or draft experience still includes it, or a sequence is still finishing checkouts or holding stock. Remove the product from those experiences—or end or delete them—then try again. See [Delete a product](#delete-a-product).
   </Accordion>
-  <Accordion title="Autofill left the prices blank">
-    Either the store prices in a different currency from your organisation's, or the page did not give one price for each variant. Enter each variant's price before you select **Create**.
+  <Accordion title="Autofill left my prices blank">
+    The store either uses a different currency than your organization or didn't list an unambiguous price for each variant. Enter each variant's price before selecting **Create**.
   </Accordion>
-  <Accordion title="Create all N doesn't make my variants">
-    The **SKU format** leaves out one of the options you picked. Add every option to the format under **Edit options**, then try again.
+  <Accordion title="Create all N isn't generating variants">
+    Your **SKU format** is missing one of the options you selected. Open **Edit options**, include every selected option in the format, and try again.
   </Accordion>
-  <Accordion title="An option won't delete in Variant Options">
-    The message names the products that use it. On each one, select **Edit options** and clear the option under **Options**. You cannot clear an option that the product's variants use; for such a product, the only way to free the option is to [delete the product](#delete-a-product).
+  <Accordion title="I can't delete an option in Variant Options">
+    The error names the products still using it. Open each product, select **Edit options**, and remove the option under **Options**. If a product already has variants using that option, you can't clear it—you'll need to [delete that product](#delete-a-product) to free the option.
   </Accordion>
 </AccordionGroup>
 
 ## Related
 
 <CardGroup>
-  <Card title="Manage stock" href="/guide/create/stock">Choose who keeps the stock count, and record stock changes.</Card>
-  <Card title="Create an experience" href="/guide/create/experiences">Attach your product to a drop.</Card>
-  <Card title="Allocate stock to a drop" href="/guide/create/stock-allocation">Give an experience its units and split them across sequences.</Card>
-  <Card title="Products from Shopify" href="/guide/shopify/products">How Shopify products reach the Fanfare app in Shopify.</Card>
+  <Card title="Manage stock" href="/guide/create/stock">
+    Choose who keeps the stock count and record stock changes.
+  </Card>
+  <Card title="Create an experience" href="/guide/create/experiences">
+    Attach your product to a drop.
+  </Card>
+  <Card title="Allocate stock to a drop" href="/guide/create/stock-allocation">
+    Reserve units for an experience and split them across sequences.
+  </Card>
+  <Card title="Products from Shopify" href="/guide/shopify/products">
+    How Shopify products sync into the Fanfare app.
+  </Card>
 </CardGroup>

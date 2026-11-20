@@ -1,107 +1,115 @@
 ---
 title: Set up a timed release
-description: Put a product on sale for everyone at a set time, with no queue, draw or bids, and know what to set before it opens.
+description: Launch a first-come, first-served sale at a scheduled time—with no queue, draw, or bidding—and configure access before doors open.
 ---
 
-A timed release opens access to your product at a time you choose and closes it at another, first come, first served. There is no queue, no draw and no bidding. Choose a [queue](/guide/create/queue) instead when you want customers admitted in order at a steady rate. For how a timed release behaves once it is open, see [Timed release](/concepts/distributions/timed-release).
+A timed release opens your product for purchase on a schedule, first come, first served—no queue, no draw, and no bidding. If you want to pace traffic into checkout at a controlled rate instead, use a [queue](/guide/create/queue).
 
-A sequence is one way in to an experience. You can create a timed release with a new experience, or add one to a sequence of an experience you already have. Timed releases are available on every plan, and Fanfare's fee on timed-release orders is charged at a separate, lower rate: see [Plans and what they unlock](/guide/start/plans).
+Timed releases are available on every plan and carry Fanfare's lower timed-release per-order fee. See [Timed release](/concepts/distributions/timed-release) for how a timed release behaves once live, and [Plans and what they unlock](/guide/start/plans) for rates.
 
 ## Before you start
 
-- The products you want to sell exist in Fanfare. See [Add products](/guide/create/products).
-- You know the opening and closing times, and the time zone you want to set them in.
-- If you are adding to an existing experience, you know which sequence the timed release belongs to.
+- Have your products ready in Fanfare. See [Add products](/guide/create/products).
+- Decide your opening time, closing time, and time zone.
+- If you're adding to an existing experience, know which sequence the timed release belongs to.
 
 ## Create an experience with a timed release
 
-The experience wizard is covered step by step in [Create an experience](/guide/create/experiences), including how the opening time is filled in for you. For a timed release it runs **Experience type** → **Configure Experience** → **Stock** → **Access** → **Review & launch**. There is no configuration step and no **Payment** step.
+Shared wizard steps and schedule defaults are covered in [Create an experience](/guide/create/experiences). A timed release skips configuration and payment steps—it flows straight through **Experience type** → **Configure Experience** → **Stock** → **Access** → **Review & launch**.
 
-1. Go to **Experiences** and start a new experience.
-2. On **Experience type**, select the **Timed Release** card ("No queue, just time").
-3. On **Configure Experience**, pick your products, name the experience, and set the time zone, opening time and closing time.
-4. On **Stock**, set how many units this release can sell. See [Allocate stock to a drop](/guide/create/stock-allocation).
-5. On **Access**, choose who can enter:
-   - **Anyone, after signing in**: customers sign in with a one-time code sent to their email. This is selected unless you change it.
-   - **Anyone, as a guest**: no sign-in. Anyone with the link can enter.
-   - Under **Only members of an audience**, pick an audience card (or **Choose another audience**): customers sign in and Fanfare checks they are in that audience.
-6. On **Review & launch**, check each row, use **Edit** to go back to a step, then select **Create experience**.
+<Steps>
+  <Step title="Choose Timed Release">
+    Open **Experiences**, select **Create Experience**, and pick **Timed Release**.
+  </Step>
+  <Step title="Set products, dates, and stock">
+    On **Configure Experience**, pick your products, name the experience, and set your time zone, opening time, and closing time. Then set your units on **Stock** (see [Allocate stock to a drop](/guide/create/stock-allocation)).
+  </Step>
+  <Step title="Choose who can enter">
+    On **Access**, choose one of three options:
+    - **Anyone, after signing in** (default): Shoppers sign in with a one-time email code.
+    - **Anyone, as a guest**: No sign-in required—anyone with the link can enter.
+    - **Only members of an audience**: Pick an audience card (or select **Choose another audience**). Shoppers sign in and Fanfare verifies their membership.
+  </Step>
+  <Step title="Review and create">
+    Check each row on **Review & launch** (select **Edit** to adjust any step), then select **Create experience**.
+  </Step>
+</Steps>
 
-<Frame caption="Guest entry for a timed release created in the wizard is chosen on the Access step.">
+<Frame caption="In the wizard, guest access for a timed release is set on the Access step.">
   <img src="/images/guide/guide-create-timed-release-access.webp" alt="The Access step of the experience wizard for a timed release, with Anyone, as a guest selected next to Anyone, after signing in, the Only members of an audience cards below, and the Shared access code section." />
 </Frame>
 
-Choosing **Anyone, as a guest** turns on **Allow guest access** for the timed release. Choosing either of the other options leaves it off. Guests can only return from the same browser, and guest access brings more duplicate or throwaway entries than sign-in. Guest entry and sign-in across a whole sequence are explained in [Sequences and routing](/concepts/sequences).
+Choosing **Anyone, as a guest** enables **Allow guest access** on your timed release (the other two options leave it off). Keep in mind that guests can only return from the same browser, and guest access tends to attract more duplicate or throwaway entries than sign-in. See [Sequences and routing](/concepts/sequences).
 
-The wizard has no **Automatic entry** setting. A timed release created this way starts with it off; to turn it on, edit the timed release afterwards (see [Change a timed release](#change-a-timed-release)).
+The wizard has no **Automatic entry** setting—it starts off and can be turned on after creating the timed release (see [Edit a timed release](#edit-a-timed-release)).
 
 ## Add a timed release to a sequence
 
-Use this to add a timed release to an experience that already exists, for example a public release after an earlier window in the same sequence.
+Use this to add another drop window to an existing experience—for example, a public release following an early-access window in the same sequence.
 
-1. Open the experience, then the sequence.
+1. Open your experience, then open the sequence you want to add to.
 2. On the **Distributions** card, select **Add distribution**.
-3. On **Type**, enter a **Name** and select **Timed Release**.
-4. On **Schedule**, set **Opens**, **Closes** and **Time zone**. The panel below checks the window against the sequence's other distributions.
-5. On **Configure**, set **Allow guest access** and **Automatic entry**. Both are off unless you turn them on.
-6. On **Review**, check the details, then select **Create Distribution**.
+3. Enter a **Name**, select **Timed Release**, and click **Next**.
+4. On **Schedule**, set **Opens**, **Closes**, and **Time zone**. Fanfare checks for overlaps against other distributions in the same sequence.
+5. On **Configure**, turn on **Allow guest access** or **Automatic entry** if needed (both default to off).
+6. Check **Review** and select **Create Distribution**.
 
-There is no **Payment** step: customers always pay when they check out.
+There's no **Payment** step—shoppers always pay at checkout.
 
-<Frame>
+<Frame caption="Scheduled timed releases appear on the sequence's Distributions card with their opening time.">
   <img src="/images/guide/guide-create-timed-release-card.webp" alt="A distribution row for a timed release that has not opened yet, showing a Timed Release badge and its opening time." />
 </Frame>
 
-Distribution windows inside one sequence cannot overlap. To run a timed release at the same time as another distribution, put it in its own sequence: see [Distributions](/concepts/distributions/overview).
+Distribution windows in the same sequence can't overlap. To run a timed release alongside another distribution at the same time, place it in its own sequence—see [Distributions](/concepts/distributions/overview).
 
 ## Settings
 
-| Setting | What it does | Default | Can you change it once it is live? |
+| Setting | What it does | Default | Editable once live? |
 | --- | --- | --- | --- |
-| **Opens** | When the timed release opens. | Set by you. | Only to an earlier time. |
-| **Closes** | When the timed release closes. Must be after **Opens**. | Set by you. | Yes, until it closes. |
-| **Time zone** | The zone **Opens** and **Closes** are set in. Changing it keeps the same moments and shows them in the new zone's clock time. If you meant the same clock time in the new zone, pick the times again after you change it. | The experience's time zone. | Yes. Changing the zone never moves when the timed release opens or closes; it only changes how those times are shown. |
-| **Allow guest access** | Lets customers enter without signing in. | Off | Yes |
-| **Automatic entry** | On: everyone who reaches the timed release is entered, including visitors who leave straight away. Off: customers tap Enter themselves. | Off | Yes |
+| **Opens** | When the timed release opens for entry. | Set by you | Only earlier |
+| **Closes** | When the timed release closes (must be after **Opens**). | Set by you | Yes, until it closes |
+| **Time zone** | Zone used to display and enter times. Changing it keeps the exact same open/close moments in the new zone—re-pick the clock times if you meant to shift the schedule. | Experience's time zone | Yes |
+| **Allow guest access** | Lets shoppers enter without signing in. | Off | Yes (unless gated to an audience) |
+| **Automatic entry** | Automatically enters everyone who reaches the release, even visitors who leave immediately. When off, shoppers click to enter themselves. | Off | Yes |
 
 <Note>
-  Automatic entry is not offered to customers while this sequence counts a size that can run out, or while customers have to choose a product or size as they enter: they tap Enter themselves. The setting is kept as you set it.
+  **Automatic entry** is skipped for shoppers while a sequence tracks a size that can sell out, or while shoppers must pick a product or size on entry—they'll click to enter themselves instead, though Fanfare preserves your toggle setting.
 </Note>
 
-Times are saved to the whole minute. Nothing about a timed release locks when it opens beyond the opening-time rule above. Once it has closed, its opening and closing times can no longer be changed; create a new timed release instead.
+A few operational rules to keep in mind:
 
-A sequence with an audience requires sign-in, so its timed releases cannot admit guests; adding an audience to a sequence later turns **Allow guest access** off on its timed releases. See [Sequences and routing](/concepts/sequences).
+- **Locking:** Times save to the whole minute. Aside from **Opens** (which can only move earlier once live), nothing locks when a timed release opens. Once it closes, **Opens** and **Closes** lock permanently—create a new timed release for another window.
+- **Audience gating:** Audience-gated sequences require sign-in, so adding an audience to a sequence later automatically turns **Allow guest access** off. See [Sequences and routing](/concepts/sequences).
+- **No Mystery Box:** Timed releases can't share a sequence whose **Product Selection** is set to **Mystery Box**—Fanfare blocks combining them in either order.
 
-A timed release cannot share a sequence whose **Product Selection** is set to **Mystery Box**, whichever you set first. Adding a timed release to a Mystery Box sequence is refused when you select **Create Distribution**, with the message "Timed release can't be combined with Mystery Box products". Choosing **Mystery Box** for a sequence that already has a timed release is refused when you save the sequence's settings.
+## Edit a timed release
 
-## Change a timed release
+Select **Edit** on the timed release in your sequence's **Distributions** card to update **Schedule** (name, **Opens**, **Closes**, **Time Zone**) or **Configuration** (**Allow guest access**, **Automatic entry**). See [Change things mid-drop](/guide/drop/live-controls) for how live updates reach shoppers.
 
-On the sequence's **Distributions** card, select **Edit** on the timed release. **Schedule** holds the name, **Opens**, **Closes** and **Time Zone**, and **Configuration** holds **Allow guest access** and **Automatic entry**. What you can change during a drop, and when it reaches customers, is covered in [Change things mid-drop](/guide/drop/live-controls).
-
-To stop a timed release early, use **Deactivate**. It cannot be undone, and the timed release's original window still counts against the sequence until you delete the timed release, so a new distribution there cannot overlap it: see [Stop a drop](/guide/drop/deactivate).
+To end a timed release early, use **Deactivate**. Deactivation can't be undone, and the timed release's original schedule still blocks overlapping distributions in that sequence until you delete it. See [Stop a drop](/guide/drop/deactivate).
 
 ## Common patterns
 
 | Pattern | How to set it up |
 | --- | --- |
-| Flash sale | A short window between **Opens** and **Closes**, with **Allow guest access** on if you want customers to buy without signing in. |
-| Members first, then everyone | Two sequences: one with an audience for members, one open to everyone, each with its own timed release. Priority follows the order you create sequences and cannot be changed in the admin, so create the members' sequence first. See [Add and gate sequences](/guide/create/sequences) and [Sequences and routing](/concepts/sequences). |
-| Countdown launch | **Opens** set ahead of time. What customers see before it opens is covered in [What your customers see](/guide/drop/what-customers-see). |
+| **Flash sale** | Set a short window between **Opens** and **Closes**, and turn on **Allow guest access** if you want frictionless entry without sign-in. |
+| **Members first, then everyone** | Create two sequences—an audience-gated sequence for members, then an open sequence for everyone—each with its own timed release. Sequence routing follows creation order and can't be reordered in the admin, so always create the members' sequence first. See [Add and gate sequences](/guide/create/sequences) and [Sequences and routing](/concepts/sequences). |
+| **Countdown launch** | Schedule **Opens** in the future to build anticipation. See [What your customers see](/guide/drop/what-customers-see) for the pre-open countdown experience. |
 
 ## On Shopify
 
-When you have no experiences yet, the **Experiences** page in the Fanfare app in Shopify offers **Create Timed Release** as a starting point; the Fanfare admin offers **Create Appointment** there instead.
+Before you've created your first experience, the **Experiences** page in the Shopify app offers **Create Timed Release** as a quick start (the standalone Fanfare admin shows **Create Appointment** instead).
 
-Checkout protection must be on for your store so that customers cannot buy a protected product without going through your timed release: see [Storefront setup](/guide/shopify/storefront-setup).
+Make sure checkout protection is enabled on your store so shoppers can't buy protected products outside your timed release. See [Storefront setup](/guide/shopify/storefront-setup).
 
 ## Troubleshooting
 
 <AccordionGroup>
   <Accordion title="Schedule conflict">
-    The window you set overlaps another distribution in the same sequence, and **Next** stays disabled until you fix it. Move **Opens** or **Closes** so the windows do not overlap; back-to-back windows are fine. To run both at the same time, put the timed release in its own sequence.
+    Your window overlaps another distribution in the same sequence. Adjust **Opens** or **Closes** so they don't overlap (back-to-back windows are fine), or add the timed release to a separate sequence to run them concurrently.
   </Accordion>
   <Accordion title="This time has passed. Choose a time from now on.">
-    The opening time you set is already in the past. Fanfare allows an opening time up to five minutes ago when you create a timed release; anything earlier is refused. Choose a time from now on.
+    The opening time is too far in the past. When creating a timed release, Fanfare allows an opening time up to 5 minutes ago—pick a current or future time instead.
   </Accordion>
 </AccordionGroup>
 
@@ -109,15 +117,15 @@ Checkout protection must be on for your store so that customers cannot buy a pro
 
 <CardGroup>
   <Card title="Timed release" href="/concepts/distributions/timed-release">
-    How a timed release behaves and what customers see.
+    How a timed release behaves and what shoppers see.
   </Card>
   <Card title="Create an experience" href="/guide/create/experiences">
-    The experience wizard, settings and time zone.
+    Walk through the experience wizard, shared settings, and time zones.
   </Card>
   <Card title="Add and gate sequences" href="/guide/create/sequences">
-    Audiences, access codes and order limits for a sequence.
+    Configure audiences, access codes, and order limits on a sequence.
   </Card>
   <Card title="Stop a drop" href="/guide/drop/deactivate">
-    Deactivate a timed release, a sequence or an experience.
+    Deactivate a timed release, sequence, or experience.
   </Card>
 </CardGroup>

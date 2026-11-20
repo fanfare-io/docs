@@ -1,108 +1,110 @@
 ---
 title: The model in one page
-description: How experiences, sequences and distributions fit together, and the path a customer takes from arriving at your drop to paying.
+description: How experiences, sequences, and distributions fit together, and the journey customers take from landing on your drop to checking out.
 ---
 
-An experience is one drop: the products on offer and everything about how they are released. It holds one or more sequences, and a sequence is one way in to an experience; each sequence runs distributions (a queue, draw, auction, timed release or appointment), one window at a time. Every customer who arrives is placed in exactly one sequence, and goes through that sequence's gates and its open distribution to the right to buy.
+Every drop in Fanfare is built from three nested pieces: an **experience**, its **sequences**, and their **distributions**.
 
-<Frame caption="Each customer is placed in exactly one sequence, goes through that sequence's gate and open distribution, and gets an admission.">
+An **experience** is your drop—the products on offer, the schedule, and the customer-facing design. Inside it, you set up one or more **sequences** to create distinct entry paths (such as a VIP early-access wave followed by a public release). Each sequence runs one or more **distributions**—a queue, draw, auction, timed release, or appointment—one window at a time. When a customer arrives, Fanfare automatically routes them into a single sequence and guides them through its entry gates and active distribution to the right to buy.
+
+<Frame caption="Each customer is routed to one sequence, passes its gates and open distribution, and receives an admission to buy.">
   <img src="/images/guide/concepts-overview-model.webp" alt="A diagram of the experience &quot;Phantom Stitch Anorak Drop&quot; holding two sequences side by side. Inner Circle Early Access (P1) has an Inner Circle audience gate and then the queue &quot;Inner Circle Queue&quot;. Public Draw (P2) has no gate and then the draw &quot;Public Draw&quot;, which opens after the queue. Each sequence has its own waitlist attached to its side. A customer arrow enters from the top, is placed in Inner Circle Early Access only, passes its gate and queue, and ends at an admission: the right to buy, which is paid or lost when the payment window runs out." />
 </Frame>
 
 ## How the pieces nest
 
-| Layer | What it holds | Explained in |
+| Layer | What it holds | Learn more |
 | --- | --- | --- |
-| Organisation | Your plan, your checkout, products, customers, audiences, brand and templates, locations and loyalty programme. | The table below |
-| Experience | Up to 10 products, a time zone, its design and (on Growth and above) its hosted page, its announcements, and its sequences. | [Experiences](/concepts/experiences) |
-| Sequence | An optional audience and an optional access code, its own share of the stock, how products are assigned (**Customer Picks** or **Mystery Box**), order limits, a waitlist, and a priority. | [Sequences and routing](/concepts/sequences) |
-| Distribution | One of the five types, with an **Opens** and a **Closes** time. Windows inside one sequence run one after another. | [Distributions](/concepts/distributions/overview) |
+| **Organization** | Your plan, checkout processor, products, customer profiles, audiences, brand and templates, locations, and loyalty program. | Shared across drops (below) |
+| **Experience** | Up to 10 products, a time zone, branding and hosted page (Growth and above), announcements, and one or more sequences. | [Experiences](/concepts/experiences) |
+| **Sequence** | Optional audience and access-code gates, a dedicated share of stock, product assignment (**Customer Picks** or **Mystery Box**), order limits, a built-in waitlist, and a routing priority. | [Sequences and routing](/concepts/sequences) |
+| **Distribution** | One of Fanfare's five release formats with its own **Opens** and **Closes** schedule. Distributions inside the same sequence run back-to-back, never overlapping. | [Distributions](/concepts/distributions/overview) |
 
-The waitlist belongs to the sequence. It is not a distribution and sells nothing: see [Waitlists](/concepts/waitlists).
+Every sequence also comes with its own waitlist. A waitlist isn't a distribution and doesn't sell inventory—it captures early interest before a sequence opens. See [Waitlists](/concepts/waitlists).
 
-The **Create Experience** wizard builds an experience, one sequence and one distribution together. You add further sequences and distributions afterwards. See [Create an experience](/guide/create/experiences).
+When you run the **Create Experience** wizard, Fanfare sets up your experience, first sequence, and first distribution all at once. You can add more sequences and distributions afterward. See [Create an experience](/guide/create/experiences).
 
-## What sits beside the experience
+## Shared across your organization
 
-These belong to your organisation and are shared by all your experiences.
+These resources live at the organization level and can be reused across any number of experiences:
 
-| Thing | Where it is explained |
+| Resource | What it covers |
 | --- | --- |
-| Products, and who keeps their stock count | [Stock](/concepts/stock) |
-| Customers, and the difference between guests and signed-in customers | [Customers and identity](/concepts/customers) |
-| Audiences, the groups that can gate a sequence | [Audiences and access codes](/concepts/audiences) |
-| Brand and templates, for the hosted page, widget and emails | [Brand, templates and designs](/concepts/design) |
-| Locations, where appointments take place | [Locations and opening hours](/guide/create/locations) |
-| Loyalty, points and tiers | [Loyalty and Fanfair](/concepts/loyalty) |
-| Your checkout, which takes the payment | [Checkout options](/concepts/checkout-options) |
+| **Products and stock** | How your catalog is tracked and who owns inventory counts — [Stock](/concepts/stock) |
+| **Customers** | Customer profiles and how guests differ from signed-in shoppers — [Customers and identity](/concepts/customers) |
+| **Audiences** | Customer groups you can use to gate sequences and target announcements — [Audiences and access codes](/concepts/audiences) |
+| **Brand and templates** | Styling for hosted pages, embedded widgets, and emails — [Brand, templates and designs](/concepts/design) |
+| **Locations** | Physical stores and venues where in-person appointments take place — [Locations and opening hours](/guide/create/locations) |
+| **Loyalty** | Points, tiers, and Fanfair prioritization — [Loyalty and Fanfair](/concepts/loyalty) |
+| **Checkout** | How payments are collected — [Checkout options](/concepts/checkout-options) |
 
-Appointments, hosted pages, templates in **Design Studio**, and building or editing audiences need Growth and above, and loyalty needs Pro and above. Your brand and everything else on this page work on every plan: see [Plans and what they unlock](/guide/start/plans).
+Appointments, hosted pages, **Design Studio** templates, and creating or editing audiences require **Growth** or above, and Loyalty requires **Pro** or above. Core drop tools and brand settings work on every plan—see [Plans and what they unlock](/guide/start/plans).
 
-## A customer's path through it
+## How a customer moves through a drop
 
-This is the order a customer goes through. What each screen says is on [What your customers see](/guide/drop/what-customers-see).
+Here's the path a shopper takes from landing on your drop to completing an order (for exact screens and messaging, see [What your customers see](/guide/drop/what-customers-see)):
 
-1. Arrives. On your hosted page, on a page of your own site that carries the Fanfare widget, or on your Shopify product page (with the Fanfare app in Shopify). See [Brand, templates and designs](/concepts/design).
-2. Is placed in one sequence. Fanfare skips sequences the customer can never enter. Of the rest, it prefers what is open over what is scheduled, then a sequence they can enter now over one behind a gate, then the lowest priority number. See [Sequences and routing](/concepts/sequences).
-3. Meets that sequence's gates. Signing in (or continuing as a guest, where every open or scheduled distribution in the sequence allows guests and the sequence has no audience), entering an access code, and being in the audience. See [Sequences and routing](/concepts/sequences) and [Customers and identity](/concepts/customers).
-4. Can join the sequence's waitlist, if signed in, to hear when it opens. Sign-ups are taken only while nothing in the sequence is live and either a window is still to come or the sequence has no distributions yet. See [Waitlists](/concepts/waitlists).
-5. Takes part in the open distribution. They wait in a [queue](/concepts/distributions/queue), enter a [draw](/concepts/distributions/draw), bid in an [auction](/concepts/distributions/auction), get in at a [timed release](/concepts/distributions/timed-release), or book a slot at an [appointment](/concepts/distributions/appointment).
-6. Gets an admission. An admission is the right to buy, with a time limit to pay: the payment window. An appointment books a slot instead and sells nothing. See [Admission and the payment window](/concepts/admission-and-payment).
-7. Pays. They pay in the checkout your organisation uses: Fanfare checkout, your own store's checkout, or Shopify checkout. On Fanfare checkout, if a queue or draw held their card when they joined, Fanfare takes the payment and creates the order, so they do not check out. If the payment window runs out first, they lose the admission and in most cases their unit goes back on sale. See [Checkout options](/concepts/checkout-options) and [Admission and the payment window](/concepts/admission-and-payment).
+1. **Arrives** — Lands on your Fanfare-hosted page, a page on your own website with the Fanfare widget, or your Shopify product page. See [Brand, templates and designs](/concepts/design).
+2. **Gets routed to one sequence** — Fanfare skips any sequence the shopper can't enter, then prefers an open sequence over a scheduled one, an ungated sequence they can enter right away over a gated one, and lower priority numbers first. See [Sequences and routing](/concepts/sequences).
+3. **Passes the sequence's gates** — Signs in (or continues as a guest if the sequence has no audience and every open or scheduled distribution allows guests), enters an access code if required, and passes any audience check. See [Sequences and routing](/concepts/sequences) and [Customers and identity](/concepts/customers).
+4. **Joins the waitlist (if early)** — Signed-in customers can join the sequence's waitlist whenever no distribution in that sequence is live and either a window is upcoming or none is scheduled yet. See [Waitlists](/concepts/waitlists).
+5. **Participates in the open distribution** — Enters a [queue](/concepts/distributions/queue), [draw](/concepts/distributions/draw), [auction](/concepts/distributions/auction), [timed release](/concepts/distributions/timed-release), or books an [appointment](/concepts/distributions/appointment).
+6. **Receives an admission** — Earns the right to buy within a timed payment window (appointments book a time slot instead and don't charge). See [Admission and the payment window](/concepts/admission-and-payment).
+7. **Checks out** — Pays through Fanfare checkout, your store's checkout, or Shopify checkout. If a queue or draw on Fanfare checkout pre-authorized their card on entry, Fanfare captures the payment and creates the order automatically—no checkout step needed. If a payment window expires before they pay, they lose their spot and, in most cases, the unit returns to sale. See [Checkout options](/concepts/checkout-options) and [Admission and the payment window](/concepts/admission-and-payment).
 
 ## Status follows the clock
 
-There is no launch step. A distribution's status comes from its window and the clock: not yet open, open, closed, or deactivated before its end. A sequence takes its status from its distributions and the experience from its sequences, shown as **Draft** (no distributions yet), **Scheduled**, **Live**, **Ended early** or **Ended**, so one live distribution makes the whole experience **Live**. See [Experiences](/concepts/experiences).
+There's no separate "Launch" button in Fanfare. Each distribution's status updates automatically from its schedule—upcoming, live, ended, or deactivated early. A sequence rolls up its status from its distributions, and the experience rolls up from its sequences as **Draft** (no distributions yet), **Scheduled**, **Live**, **Ended early**, or **Ended**. Whenever at least one distribution is open, the entire experience shows **Live**. See [Experiences](/concepts/experiences).
 
-## Rules that surprise people
+## Key rules to keep in mind
 
-- Open beats scheduled, whatever the priority. Priority follows the order you create sequences in and cannot be changed in the admin. See [Sequences and routing](/concepts/sequences).
-- Windows inside one sequence cannot overlap. To run two things at the same time, use two sequences. See [Distributions](/concepts/distributions/overview).
-- A waitlist takes sign-ups only while nothing in its sequence is live and either a window is still to come or the sequence has no distributions yet, so customers cannot join it while a queue is running or after the last window ends. See [Waitlists](/concepts/waitlists).
-- A product's stock management is chosen when you create it and never changes. See [Stock](/concepts/stock).
-- A plan decides what you can create and change, never whether what you already built keeps running. See [Plans and what they unlock](/guide/start/plans).
-- Deactivate cannot be undone. See [What locks, and when](/concepts/what-locks-when).
+- **Open beats scheduled, regardless of priority.** Priority follows the order in which you create sequences and can't be reordered in the admin. See [Sequences and routing](/concepts/sequences).
+- **Distributions inside one sequence can't overlap.** To run two release formats simultaneously, place them in separate sequences. See [Distributions](/concepts/distributions/overview).
+- **Waitlists close the moment a sequence goes live.** Shoppers can only join while no distribution in the sequence is live and another window is still to come (or none has been added yet). See [Waitlists](/concepts/waitlists).
+- **Stock management is permanent.** You choose whether Fanfare, Shopify, or nothing manages a product's stock when you create it, and that setting can't be changed later. See [Stock](/concepts/stock).
+- **Plan changes never interrupt live drops.** Your plan governs what you can create and edit, not whether existing drops keep serving customers. See [Plans and what they unlock](/guide/start/plans).
+- **Deactivating is permanent.** Once you deactivate a drop, sequence, or distribution, you can't undo it. See [What locks, and when](/concepts/what-locks-when).
 
-## Worked example
+## Example: VIP early access followed by a public draw
 
-Northbound Supply Co. is the organisation. Its experience "Phantom Stitch Anorak Drop" sells the Phantom Stitch Anorak through two sequences:
+Suppose Northbound Supply Co. is launching the **Phantom Stitch Anorak Drop** with two sequences:
 
 | Sequence | Priority | Who can enter | Distribution |
 | --- | --- | --- | --- |
-| Inner Circle Early Access | P1 | Members of the "Inner Circle" audience | The queue "Inner Circle Queue" |
-| Public Draw | P2 | Everyone | The draw "Public Draw", which opens after the queue |
+| **Inner Circle Early Access** | `P1` | Members of the "Inner Circle" audience | **Inner Circle Queue** |
+| **Public Draw** | `P2` | Everyone | **Public Draw** (opens after the queue closes) |
 
-Each sequence has its own waitlist and its own share of the anorak's units.
+Each sequence has its own waitlist and its own dedicated share of stock.
 
-An Inner Circle member arrives while the queue is open. Inner Circle Early Access is open and comes first, so they are placed in it. They sign in, Fanfare finds them in the audience, and they join the queue. When they reach the front they get an admission and have their payment window to pay.
+- **An Inner Circle member visits while the queue is live:** Fanfare routes them to **Inner Circle Early Access** because it's open and highest priority. They sign in, pass the audience check, join the queue, and get a payment window once they reach the front.
+- **A signed-in non-member visits at the same time:** Fanfare skips **Inner Circle Early Access** silently and routes them straight to **Public Draw**. Since the draw hasn't opened yet, they can join its waitlist and come back to enter once it opens.
 
-A signed-in customer who is not in the audience arrives at the same time. Fanfare skips Inner Circle Early Access for them without asking for anything, and places them in Public Draw. The draw has not opened yet, so they can join Public Draw's waitlist. When the draw opens they enter it, and if they are selected as a winner they get an admission of their own.
-
-The full timeline of who is placed where, hour by hour, is on [Sequences and routing](/concepts/sequences).
+For an hour-by-hour breakdown of how routing handles signed-in, signed-out, and guest visitors, see [Sequences and routing](/concepts/sequences).
 
 ## On Shopify
 
-- The Fanfare app in Shopify never offers Appointment.
-- Products come from your Shopify catalogue. See [Products from Shopify](/guide/shopify/products).
-- Customers enter through the product widget on your product page and pay in Shopify checkout, and a checkout rule stops anyone buying a protected product without getting in. See [Checkout protection](/guide/shopify/checkout-protection).
-- The model itself is the same: experience, sequences, distributions, routing and admission.
+The underlying model—experiences, sequences, distributions, routing, and admissions—works the same on Shopify, with a few platform-specific differences:
+
+- **No Appointments:** The Fanfare app in Shopify doesn't offer appointments.
+- **Shopify catalog:** Products sync directly from your Shopify catalog. See [Products from Shopify](/guide/shopify/products).
+- **Protected Shopify checkout:** Shoppers enter through the Fanfare widget on your product page and pay in Shopify checkout, where a checkout rule prevents anyone from buying a protected product without an admission. See [Checkout protection](/guide/shopify/checkout-protection).
 
 ## Related
 
 <CardGroup>
   <Card title="Experiences" href="/concepts/experiences">
-    The container for one drop, its status chips, and why there is no launch button.
+    How experiences organize a drop, roll up status chips, and go live on schedule.
   </Card>
   <Card title="Sequences and routing" href="/concepts/sequences">
-    Ways in to an experience, and how Fanfare picks one for each customer.
+    How entry paths work and how Fanfare chooses a sequence for each visitor.
   </Card>
   <Card title="Distributions" href="/concepts/distributions/overview">
-    The five types compared, and how their windows work.
+    Compare all five distribution types and how their windows work.
   </Card>
   <Card title="Admission and the payment window" href="/concepts/admission-and-payment">
-    The right to buy, its time limit, and what happens when it runs out.
+    How the right to buy works, how long customers have to pay, and what happens on expiry.
   </Card>
   <Card title="Your first drop" href="/guide/start/your-first-drop">
-    Build and run a drop from start to finish.
+    Build and launch your first drop step by step.
   </Card>
 </CardGroup>

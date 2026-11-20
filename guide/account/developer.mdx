@@ -1,113 +1,112 @@
 ---
 title: API keys and embedding
-description: Find the keys your developer needs to put Fanfare on your site, rotate the secret key safely, and choose which sites may show your hosted pages in a frame.
+description: Find the credentials your developer needs to integrate Fanfare on your site, rotate your secret key safely, and control which domains can embed your hosted pages.
 ---
 
-The **Developer** group in **Settings** has two pages. **API Keys** holds the values a developer needs to put Fanfare on a site you own. **Embedding** decides which other sites may show your hosted Fanfare pages inside a frame on their own pages. You need these pages only if a developer is building Fanfare into your site, or your hosted pages must load inside another site such as your store. To run an experience on your own site, start with [Run it on your own site](/guide/create/your-own-site).
+Use **Settings → API Keys** and **Settings → Embedding** (under **Developer**) when a developer is adding Fanfare to your own site or when you want to embed hosted Fanfare pages inside another site, such as your storefront. For a step-by-step walkthrough of embedding Fanfare widgets on your own site, see [Run it on your own site](/guide/create/your-own-site).
 
 ## Before you start
 
-- You can sign in to the Fanfare admin.
-- To rotate the secret key or change the embedding list, you must be an organisation admin. See [Team members](/guide/account/team) for who is an admin.
+- Any team member can copy your **Organization ID**, **Publishable key**, and quick-start snippets.
+- Only organization admins can rotate your secret key or edit **Allowed embedding origins** ([Team members](/guide/account/team)).
 
-## What is on the API Keys page
+## Your API keys
 
-Open **Settings → API Keys**. The page has three cards.
+Open **Settings → API Keys** to find three cards:
 
-| Card | What it holds | Who may see it |
+| Card | What's inside | Who can use it |
 | --- | --- | --- |
-| **Quick start** | Three code snippets: an install command, a setup snippet filled in with your organisation ID and publishable key, and a widget snippet. Also a **Read the SDK docs** link. | Everyone |
-| **Your credentials** | Your **Organization ID** and **Publishable key**, each with a copy button. | Everyone |
-| **Server-side API access** | Your **Secret key**, shown masked, with an **Admin only** label. Admins also see **Rotate secret key**. | Everyone sees the card; only admins can rotate |
+| **Quick start** | Ready-to-copy install, setup (prefilled with your Organization ID and Publishable key), and widget snippets, plus **Read the SDK docs**. | Any team member |
+| **Your credentials** | Your **Organization ID** and **Publishable key** with copy buttons. | Any team member |
+| **Server-side API access** | Your masked **Secret key** and (for admins) **Rotate secret key**. | Everyone can view; admins only can rotate |
 
-The organisation ID and the publishable key are safe to use in a browser: they are what your site uses to load Fanfare. The secret key is for your developer's server only. Treat it like a password and never put it in code that runs in a browser.
+Your **Organization ID** and **Publishable key** are safe to include in browser code so your storefront can load Fanfare. Your **Secret key** is for server-to-server calls only—treat it like a password and never put it in frontend code.
 
-Your organisation has one publishable key and one secret key. You cannot create more keys, and the publishable key cannot be rotated.
+Each organization has one publishable key (which can't be rotated) and one secret key.
 
-<Frame caption="The secret key stays masked. Rotating it is the only way to see a key, and only once.">
-  <img src="/images/guide/guide-account-developer-api-keys.webp" alt="The API Keys page in Settings, showing the Quick start code snippets, the organisation ID and publishable key with copy buttons, and the masked secret key with a Rotate secret key button." />
+<Frame caption="Your secret key stays masked—rotating it generates a new key and displays it once.">
+  <img src="/images/guide/guide-account-developer-api-keys.webp" alt="The API Keys page in Settings showing Quick start code snippets, Organization ID and Publishable key with copy buttons, and the masked secret key with a Rotate secret key button." />
 </Frame>
 
-## Give your developer the credentials
+## Share credentials with your developer
 
 1. Open **Settings → API Keys**.
-2. Under **Your credentials**, copy the **Organization ID** and the **Publishable key**. Or copy the snippets under **Quick start**: the setup snippet already contains both.
-3. Send them to your developer, with the **Read the SDK docs** link.
+2. Under **Your credentials**, copy your **Organization ID** and **Publishable key** (or copy the prefilled snippets in **Quick start**).
+3. Send them to your developer along with the **Read the SDK docs** link.
 
-The last **Quick start** snippet shows the widget for one experience, and the experience ID in it is a placeholder. Your developer replaces it with the ID of the experience you want on the page.
+The widget snippet in **Quick start** uses a placeholder experience ID. To grab a real experience ID, open the experience in the admin and copy the ID from the end of your browser's URL (`/app/experiences/<experience-id>`).
 
-The Fanfare admin has no field that shows an experience's ID. To find it, open the experience from your list of experiences. The address in your browser then ends in `/app/experiences/` followed by the experience's ID. Copy that last part and send it to your developer.
+If your developer's backend server also calls the Fanfare API directly, follow the steps below to generate and share a secret key.
 
-If your developer's server also needs to call Fanfare, it needs the secret key. The next task is the only way to get it.
+## Rotate your secret key
 
-## Rotate the secret key
-
-Fanfare never shows your current secret key. Rotating creates a new key, shows it to you once, and retires the old one. Do this when you first need a secret key, or when you think the current one has been exposed.
-
-Only organisation admins can rotate. Other members have no rotate button. Under the masked key they see "Only organization admins can rotate the secret key. Contact an admin to get a new one."
+Fanfare never reveals your current secret key after it's generated. Rotating creates a new key, displays it once, and retires the previous key—use this when you first need a server-side key or anytime you suspect a key was exposed. Only organization admins can rotate the secret key.
 
 <Warning>
-  Rotation takes effect straight away and cannot be undone. The old key may keep working for a short time afterwards, but Fanfare offers no grace period you can rely on to switch over. The new key is shown once: if you leave the page before copying it, it is gone and you have to rotate again. Rotate only when your developer is ready to put the new key in place at once.
+  Rotation takes effect right away and can't be undone. Your previous secret key stops authenticating shortly afterward with no guaranteed grace period, and the new key is shown only once—if you leave the page before copying it, you'll have to rotate again. Coordinate with your developer so they're ready to update your server immediately.
 </Warning>
 
 1. Open **Settings → API Keys**.
 2. Under **Server-side API access**, select **Rotate secret key**.
-3. In the "Rotate secret key?" dialogue, select **Rotate key**.
-4. The new key appears in a highlighted row with the message "Copy it now. You won't be able to see it again." Select **Copy** and pass the key to your developer straight away, through a channel you trust.
+3. Confirm by selecting **Rotate key**.
+4. Select **Copy** right away and send the new key to your developer over a secure channel.
 
-<Frame caption="Confirming retires the current key. There is no undo.">
-  <img src="/images/guide/guide-account-developer-rotate-confirm.webp" alt="The Rotate secret key confirmation dialogue, explaining that the current key is retired and stops authenticating within a minute and that the new key is shown only once, with Cancel and Rotate key buttons." />
+<Frame caption="Confirming retires your current secret key immediately and shows the new key once.">
+  <img src="/images/guide/guide-account-developer-rotate-confirm.webp" alt="The Rotate secret key confirmation dialog explaining that the current key is retired and the new key is shown only once, with Cancel and Rotate key buttons." />
 </Frame>
 
-## Choose which sites may show your hosted pages
+## Control which sites can embed your hosted pages
 
-Your hosted pages can load inside a frame on another site, such as a page in your store. Fanfare allows that only for the sites you list. Only organisation admins can change the list. Other members see "Only organization admins can change the allowed embedding origins." and cannot edit the box.
+By default, other websites can't display your hosted pages inside an iframe. To allow specific sites—like your main store—add them in **Settings → Embedding** (admins only).
 
 1. Open **Settings → Embedding**.
-2. In **Allowed embedding origins**, enter each site on its own line as its full address, such as `https://shop.example.com`, with nothing after the domain.
-3. A bar appears at the bottom of the page once you change the list. Select **Save** in it. You see "Organization settings updated successfully".
+2. Under **Allowed embedding origins**, list one full origin per line, including `https://` and nothing after the domain—for example, `https://shop.example.com`.
+3. Select **Save** in the bottom bar.
 
-To stop a site showing your pages, delete its line and select **Save**. Shortly after you save, that site can no longer frame your hosted pages. The change is not instant.
+To revoke access for a site, remove its line and select **Save** (changes take effect shortly after saving). When the list is empty, only your hosted pages' own domain can frame them.
 
-With the list empty, only your hosted pages' own address can show them in a frame. No other site can.
-
-<Frame caption="List each site that may show your hosted pages, one per line.">
-  <img src="/images/guide/guide-account-developer-embedding.webp" alt="The Allowed embedding origins card with two sites listed one per line and help text saying the setting controls iframe embedding only, ringed." />
+<Frame caption="Add each origin allowed to frame your hosted pages, one per line.">
+  <img src="/images/guide/guide-account-developer-embedding.webp" alt="The Allowed embedding origins card with two origins listed one per line and helper text noting it controls iframe embedding." />
 </Frame>
 
 <Note>
-  For a store that does not use the Fanfare app in Shopify, this list controls only which sites may show your hosted pages in a frame. It does not limit where your site can use Fanfare's SDK or API. If your store uses the Fanfare app in Shopify, the same list can do more: see [On Shopify](#on-shopify).
+  For non-Shopify organizations, this list controls iframe embedding of your hosted pages only—it doesn't restrict where your site can call the Fanfare SDK or API. If you use the Fanfare Shopify app, this list also controls headless storefront API origins—see [On Shopify](#on-shopify).
 </Note>
 
-| Setting | What it does | Default | Can you change it once it is live? |
+| Setting | Format and behavior | Default | Editable once live? |
 | --- | --- | --- | --- |
-| **Allowed embedding origins** | The sites that may show your hosted pages in a frame. One per line, as a full address such as `https://shop.example.com`, with no path, and never `*`. | Empty: no other site can frame your pages | Yes, at any time. A change takes effect shortly after you save, not instantly. |
+| **Allowed embedding origins** | One full origin per line (`https://shop.example.com`), with no trailing path and no wildcard (`*`). | Empty (no external sites may embed) | Yes—updates propagate shortly after saving. |
 
 <Frame>
-  <img src="/images/guide/guide-account-developer-embedding-error.webp" alt="The Allowed embedding origins box outlined in red and marked Invalid, holding one https:// entry and one entry without https://." />
+  <img src="/images/guide/guide-account-developer-embedding-error.webp" alt="The Allowed embedding origins field outlined in red and marked Invalid because one entry is missing https://." />
 </Frame>
 
 ## On Shopify
 
-The **API Keys** page is the same in the Fanfare app in Shopify, with one difference: everyone who can open the app can rotate the secret key. The **Admin only** label still shows, but there is no admin role in the Shopify app, so the rotation Warning above applies to every member of your staff who uses it. See [Team members](/guide/account/team).
+Both developer pages work inside the Fanfare Shopify app with two key differences:
 
-**Embedding** is also open to everyone who can open the app, and the list does more there. Its help text reads: "One origin per line, including scheme (https://shop.example.com). Embedding: only the listed domains may place Fanfare experiences in an iframe. Browser API calls from a headless storefront: leave this empty to accept calls from any origin; once any domain is listed, storefront API calls are accepted only from the listed origins, this store's myshopify domain, and its primary domain."
+- **Permissions:** Every Shopify staff member who can open the Fanfare app can rotate the secret key and edit **Allowed embedding origins**—even where **Admin only** appears, Shopify manages app access through store staff permissions rather than Fanfare roles ([Team members](/guide/account/team)).
+- **Headless storefront API origins:** On Shopify, **Allowed embedding origins** controls both iframe embedding and browser API calls from headless storefronts:
+  - Leave the list empty to accept headless storefront API calls from any origin.
+  - Once you add any origin to the list, storefront API calls are accepted only from your listed origins, your `.myshopify.com` domain, and your store's primary domain.
 
-If you run a headless storefront and add a site to this list so it can frame your pages, list your storefront's own address too. Otherwise your storefront can no longer use Fanfare's responses, because once the list has any entry only the listed sites and your store's own domains are allowed.
+<Warning>
+  If you run a headless Shopify storefront and add another domain to **Allowed embedding origins** for iframe embedding, include your headless storefront's own origin too—otherwise its browser API calls will be blocked.
+</Warning>
 
-For connecting Fanfare to your store's theme and checkout, see [Storefront setup](/guide/shopify/storefront-setup).
+For connecting Fanfare to your Shopify theme and checkout, see [Storefront setup](/guide/shopify/storefront-setup).
 
 ## Troubleshooting
 
 <AccordionGroup>
-  <Accordion title="Saving the embedding list shows 'Invalid'">
-    One of the lines is not in the form Fanfare accepts. Point at **Invalid** in the corner of the box to read the message: "Enter each origin as https://example.com, with no path after the domain. * is not allowed: name each site that may embed your pages." Check that every line is a full address that includes https://, ends at the domain, and is not `*`. Then select **Save** again.
+  <Accordion title="Allowed embedding origins shows 'Invalid'">
+    Make sure every line includes `https://`, ends at the domain with no path (for example, `https://shop.example.com`), and doesn't use `*`. Fix the line and select **Save** again.
   </Accordion>
-  <Accordion title="My hosted page does not load inside my store">
-    The store's address is probably missing from **Allowed embedding origins**. Add the store's address, for example `https://shop.example.com`, and select **Save**.
+  <Accordion title="My hosted page won't load inside my storefront iframe">
+    Your storefront's origin is likely missing from **Allowed embedding origins**. Add your exact domain (such as `https://shop.example.com`), select **Save**, and wait a moment for the update to propagate.
   </Accordion>
-  <Accordion title="Our server stopped working with Fanfare after a rotation">
-    Rotating retired the old secret key shortly afterwards. Your developer must replace it with the new key everywhere the server uses it. If nobody copied the new key before leaving the page, an admin has to rotate again and copy the new one at once.
+  <Accordion title="Our server integration stopped authenticating after rotating the secret key">
+    Rotating retires the previous key shortly afterward. Have your developer deploy the new key everywhere your server calls Fanfare. If the new key wasn't copied before leaving the page, an admin will need to rotate again and copy it immediately.
   </Accordion>
 </AccordionGroup>
 
@@ -115,12 +114,12 @@ For connecting Fanfare to your store's theme and checkout, see [Storefront setup
 
 <CardGroup>
   <Card title="Run it on your own site" href="/guide/create/your-own-site">
-    Put an experience on a page you own, with links to the SDK docs.
+    Embed a drop experience on your own website with the Fanfare SDK.
   </Card>
   <Card title="Build and publish the hosted page" href="/guide/create/hosted-page">
-    Design the hosted page that other sites can frame.
+    Design and publish hosted drop pages that other sites can embed.
   </Card>
   <Card title="Team members" href="/guide/account/team">
-    Who is an organisation admin.
+    See which team members have admin permissions.
   </Card>
 </CardGroup>

@@ -1,206 +1,229 @@
 ---
 title: Announcements
-description: Schedule emails, texts and social posts around an experience, test them, and keep them from going out at the wrong time.
+description: Schedule email, SMS, and social announcements around your drop, test messages before launch, and manage timing changes safely.
 ---
 
-Announcements are the messages you write yourself to tell customers about a drop: an email, a text, or a post on your own social accounts. You schedule each one for a fixed time or a set time before or after something in the experience, such as a distribution opening. They live in the experience's **Marketing Hub**.
+Build anticipation before doors open and remind shoppers as a drop goes live or closes. From your experience's **Marketing Hub**, you can schedule emails, SMS texts, and social posts—either at an exact date and time or anchored to key moments like when a distribution opens.
 
 ## Before you start
 
-- For email: a postal address saved in **Settings → Email Sender**. Fanfare will not schedule an email announcement without it. See [Sender identity and sending domain](/guide/create/email-sender).
-- For SMS: your own Twilio number, connected in **Settings → Integrations**. Connecting Twilio needs the Growth plan.
-- For social posts: at least one connected Instagram, Facebook, Discord or Telegram account, also on Growth. See [Integrations](/guide/account/integrations) for both.
+- **Email:** Save a business postal address under **Settings → Email Sender** (required before scheduling any email announcement). See [Sender identity and sending domain](/guide/create/email-sender).
+- **SMS:** Connect your Twilio number under **Settings → Integrations** (Growth plan and above).
+- **Social posts:** Connect at least one Instagram, Facebook, Discord, or Telegram account under **Settings → Integrations** (Growth plan and above). See [Integrations](/guide/account/integrations) for both SMS and social setup.
 
-## Find your announcements
+## Find and track your announcements
 
-Open **Experiences**, choose the experience, and select **Marketing Hub** in its side menu. The experience's Overview page shows a shorter, read-only list with its own **Schedule** button.
+Go to **Experiences**, open your experience, and select **Marketing Hub** in the sidebar. (The experience's **Overview** page also shows a quick read-only preview with a **Schedule** button.)
 
-The list is grouped:
+Announcements are grouped by status:
 
-| Group | What is in it |
+| Group | What's inside |
 | --- | --- |
-| **Needs attention** | Social posts where at least one account failed, was skipped, or may have posted |
-| **Up next** | Everything still to go out, soonest first |
-| **Recently sent** | What has gone out |
-| **Won't send** | Sends that will not go out: a deactivated distribution, a turned-off invite, a send that failed (with the reason on the row), or a send whose time passed more than 24 hours ago |
-| **Cancelled** | Social posts you cancelled |
+| **Needs attention** | Social posts where at least one account failed, was skipped, or has an unconfirmed status. |
+| **Up next** | Scheduled messages waiting to go out, soonest first. |
+| **Recently sent** | Messages that have already gone out. |
+| **Won't send** | Messages that won't send—for example, a deactivated distribution, a paused invite, a failed send (with the reason shown on the row), or a relative send whose time passed more than 24 hours ago. |
+| **Cancelled** | Social posts you canceled. |
 
-A **Draft** badge does not mean unsaved: the send time cannot be worked out yet, because whatever the announcement is anchored to has no time.
+A **Draft** badge means the announcement is saved, but its send time can't be calculated yet because the event it's anchored to doesn't have a scheduled time yet.
 
-Each sequence also has an **Announcements** tab listing that sequence's announcements. You can schedule email and SMS there, but not social posts.
+You can also view and schedule sequence-specific emails and texts on a sequence's **Announcements** tab (social posts are always scheduled at the experience level).
 
-The Marketing Hub also lists each sequence's invite; the automatic waitlist message shows on the Overview instead. Both work differently: see [Invites, waitlist and access-code sends](/guide/create/invites-and-waitlist).
+The **Marketing Hub** also shows each sequence's automatic audience invite, while automatic waitlist notifications appear on the experience **Overview**. See [Invites, waitlist and access-code sends](/guide/create/invites-and-waitlist) for how those work.
 
-<Frame caption="The Marketing Hub lists the announcements for an experience, with the selected announcement's details beside it.">
-  <img src="/images/guide/guide-create-announcements-hub.webp" alt="The Marketing Hub announcements list on the left, with one email announcement selected and its details (channel, send time and audience) shown on the right; the Schedule button is ringed." />
+<Frame caption="Review all scheduled emails, texts, and social posts in the experience's Marketing Hub.">
+  <img src="/images/guide/guide-create-announcements-hub.webp" alt="The Marketing Hub announcements list on the left, with one email announcement selected and its details (channel, send time, and audience) shown on the right; the Schedule button is ringed." />
 </Frame>
 
 ## Schedule an email
 
-1. In the **Marketing Hub**, select **Schedule**. The **New announcement** dialogue opens on the **Channel** step.
-2. Choose **Email** and select **Next**.
+<Steps>
+  <Step title="Choose Email">
+    In the **Marketing Hub**, select **Schedule** to open **New announcement**, choose **Email**, and select **Next**.
 
-   <Note>
-     Social posts need the Growth plan. On Starter, choosing **Social** shows "Social posts come with Growth" and you cannot continue. Texts and posts already scheduled still go out after a move to a lower plan, while their accounts stay connected. On a lower plan, **Cancel and copy** cancels the post but the copy cannot be scheduled.
-   </Note>
+    <Note>
+      Social posts require the Growth plan or above. If you downgrade after scheduling texts or social posts, existing scheduled sends still go out while your accounts remain connected, though creating new social posts (or scheduling copies after **Cancel and copy**) requires Growth.
+    </Note>
 
-   <Note>
-     If no postal address is on file, the **Channel** step says so when you choose **Email**. You can keep writing, but **Create** stays unavailable on **Review** until you add one with **Add your postal address**, which opens **Settings → Email Sender** in a new tab. Until then the preview shows a stand-in address.
-   </Note>
+    <Note>
+      If you haven't saved a postal address yet, you can still draft your email, but **Create** won't unlock on **Review** until you select **Add your postal address** to save one in **Settings → Email Sender** (the preview shows a placeholder address until then).
+    </Note>
+  </Step>
+  <Step title="Write your message">
+    On the **Content** step, pick a layout and fill in the fields while watching the live preview update:
+    - **Simple:** **Headline** and **Body**.
+    - **Big CTA:** Adds a button with **Button label** and **Button link**.
+    - **Image-led:** Adds an **Image** (with required alt text) plus a button.
 
-3. On the **Content** step, choose a layout and fill in its fields. A live preview updates as you type.
-   - **Simple:** **Headline** and **Body**.
-   - **Big CTA:** adds a button, with **Button label** and **Button link**.
-   - **Image-led:** adds an **Image**, which needs a description for people who cannot see it, and a button.
+    Your **Headline** serves as the email subject line (up to 60 characters), and **Button label** supports up to 40 characters. Select **Next**.
+  </Step>
+  <Step title="Set the timing and recipients">
+    On the **Schedule** step, choose **When to send**:
+    - **A specific date and time** in your chosen time zone.
+    - **Relative to an event:** Under **Anchor to**, pick **The experience** or **A distribution**, then choose the trigger moment (such as **Experience starts** or **Distribution opens**) and how many minutes, hours, or days before or after.
 
-   The **Headline** becomes the email subject, up to 60 characters. A **Button label** can be up to 40.
+    Check the calculated send time card—times in the past can't be scheduled. Fanfare also flags any other messages under **Already scheduled near here** (calling out anything **Within the hour**) so you don't accidentally double-message customers.
 
-4. Select **Next**. On the **Schedule** step, under "When to send", choose one:
-   - **A specific date and time**, with a time zone.
-   - **Relative to an event**. Under **Anchor to**, choose **The experience** or **A distribution** (and which one). Pick the moment, such as **Experience starts** or **Distribution opens**, then the amount, the unit (minutes, hours or days), and before or after.
+    Under **Who receives this**, select **Audience**, **Waitlist**, or both:
+    - **Audience** reaches members of the experience's gated sequence audiences—whether or not they've entered yet (or just that sequence's audience if scheduled from a sequence's **Announcements** tab). If no sequence has an audience attached, no one matches.
+    - **Waitlist** reaches everyone on the waitlist.
 
-   A card under your answers shows the send time Fanfare has worked out. You cannot schedule a time that has already passed: the card says "This time has already passed" (or "Too far in the past to send" for a relative time more than 24 hours back), and **Next** stays unavailable until you pick a later time.
+    Customers in both groups receive only one copy. See [Audiences](/concepts/audiences) and [Waitlists](/concepts/waitlists). Select **Next**.
+  </Step>
+  <Step title="Review, test, and schedule">
+    Inspect your email across **Inbox**, **Desktop**, and **Mobile** previews on the **Review** step. Optionally [send yourself a test](#send-yourself-a-test), then select **Create**. Your announcement moves to **Up next**.
+  </Step>
+</Steps>
 
-   Below the card, "Already scheduled near here" lists other sends within a day of this one and flags any "Within the hour".
+### Schedule settings reference
 
-5. Under "Who receives this", tick **Audience**, **Waitlist**, or both (at least one). Despite its description, "Everyone signed up to this experience.", **Audience** reaches the members of the sequences' audiences, entered or not: every sequence in the experience, or only the one whose **Announcements** tab you scheduled from. If those sequences have no audience, it reaches no one. **Waitlist** reaches everyone on their waitlists. No one gets two copies. See [Audiences](/concepts/audiences) and [Waitlists](/concepts/waitlists).
-
-6. Select **Next**. On the **Review** step, check the message in the **Inbox**, **Desktop** and **Mobile** views, and the summary.
-7. Optionally, [send yourself a test](#send-yourself-a-test).
-8. Select **Create**. The announcement appears in **Up next** with its send time.
-
-### Schedule step settings
-
-| Setting | What it does | Default | Can you change it once it is live? |
+| Setting | What it controls | Default | Editable after creation? |
 | --- | --- | --- | --- |
-| **When to send** | A fixed time, or a time set against the experience or one of its distributions | **A specific date and time** | Until it sends. After that, saving any change needs a new send time in the future, and can send it again (see the warning under [Edit an announcement](#edit-an-announcement)) |
-| Time zone | The zone a fixed date and time is read in | The experience's time zone | Until it sends, as above |
-| **Anchor to** | **The experience** or **A distribution** | None | Until it sends, as above |
-| **Relative to** | The moment: **Experience starts** or **Experience ends**; for a distribution **Distribution opens**, **Distribution closes**, **Draw time** or **Auction settles** | None | Until it sends, as above |
-| Amount, unit, before or after | How far from that moment | Hours, before | Until it sends, as above |
-| **Who receives this** | Sends to the experience's **Audience**, its **Waitlist**, or both | **Audience** ticked | Until it sends, as above |
+| **When to send** | Exact date/time or relative to an experience/distribution event. | **A specific date and time** | Until sent. Editing afterward requires a new future send time (see [Edit an announcement](#edit-an-announcement)). |
+| Time zone | Time zone for a fixed send time. | The experience's time zone | Until sent (same rule as above). |
+| **Anchor to** | **The experience** or **A distribution**. | None | Until sent (same rule as above). |
+| **Relative to** | **Experience starts** or **Experience ends**; or for a distribution: **Distribution opens**, **Distribution closes**, **Draw time**, or **Auction settles**. | None | Until sent (same rule as above). |
+| Offset | Amount, unit (minutes/hours/days), and before or after. | Hours, before | Until sent (same rule as above). |
+| **Who receives this** | **Audience**, **Waitlist**, or both. | **Audience** checked | Until sent (same rule as above). |
 
-<Frame caption="The Headline becomes the email subject.">
-  <img src="/images/guide/guide-create-announcements-content-email.webp" alt="The Content step of an email announcement with the Image-led layout selected and ringed, the Headline, Body, Button label and Button link filled in, and a preview of the email beside them." />
+<Frame caption="Choose a layout and preview your email live—the Headline becomes the email subject line.">
+  <img src="/images/guide/guide-create-announcements-content-email.webp" alt="The Content step of an email announcement with the Image-led layout selected and ringed, the Headline, Body, Button label, and Button link filled in, and a preview of the email beside them." />
 </Frame>
 
-<Frame>
+<Frame caption="Anchor announcements to key drop moments and spot nearby sends before scheduling.">
   <img src="/images/guide/guide-create-announcements-schedule.webp" alt="The Schedule step with an email set to send one day before a draw opens, a Scheduled to send time, and two nearby announcements flagged as within the hour." />
 </Frame>
 
 ## Schedule a text message
 
-Follow the email steps, with these differences.
+Follow the same flow as scheduling an email, with two differences:
 
-- On the **Channel** step, choose **SMS**. When Twilio is connected, the card shows the number texts send from and "only to customers who agreed to your texts". If it cannot be chosen, see [Troubleshooting](#troubleshooting).
-- SMS has one layout, **Standard**, with one field, **Message**. Every text starts with your brand name, set in your Twilio connection (see [Integrations](/guide/account/integrations)), and ends with an opt-out line, so room for both is held back. The counter under the field shows how much room you have. A single emoji or curly quote anywhere in the message cuts that room by more than half.
+- On the **Channel** step, choose **SMS**. When Twilio is connected, the card shows your sending number and confirms that texts go only to opted-in shoppers. (If **SMS** is unavailable, see [Troubleshooting](#troubleshooting).)
+- SMS uses a single **Standard** layout with one **Message** field. Fanfare reserves characters automatically for your brand prefix (configured in your Twilio integration—see [Integrations](/guide/account/integrations)) and the required opt-out line. Keep an eye on the character counter: adding emojis or smart/curly quotes switches SMS encoding and cuts your remaining character limit by more than half.
 
-<Frame>
+<Frame caption="Choose Email or SMS—connected Twilio accounts display your sending number directly on the channel card.">
   <img src="/images/guide/guide-create-announcements-channel.webp" alt="The Channel step of a new announcement, offering Email and SMS, with the SMS card marked Connected and showing the number texts send from and that they go only to customers who agreed to texts." />
 </Frame>
 
 ## Schedule a social post
 
-A social post goes to the followers of each account you pick, so there is no audience to choose. You can schedule one only from the experience (the **Marketing Hub** or the Overview list), not from a sequence.
+Social posts publish directly to the followers of your connected accounts (no Fanfare audience selection required). Schedule them from the experience's **Marketing Hub** or **Overview** page.
 
-1. Select **Schedule**, choose **Social**, and under "Publishes to" tick each account and format, such as an Instagram **Feed post** or **Story**, a Facebook **Page post**, a Discord **Message** or a Telegram **Channel post**. Select **Next**.
-2. Choose a **Kit**: **Countdown card**, **Photo-led**, or one of your own kits made in Design Studio (see [Templates](/guide/create/templates)).
-3. Choose the **Moment** the post is about: **Announced**, **Reminder**, **Live**, **Closing** or **Closed**. A post that has not gone out by its moment's deadline is skipped, not posted late.
+<Steps>
+  <Step title="Pick your channels and formats">
+    Select **Schedule**, choose **Social**, and under **Publishes to**, select the connected accounts and formats you want—such as Instagram **Feed post** or **Story**, Facebook **Page post**, Discord **Message**, or Telegram **Channel post**. Select **Next**.
+  </Step>
+  <Step title="Choose a kit and moment">
+    Select a **Kit** (**Countdown card**, **Photo-led**, or a custom kit from [Templates and widget designs](/guide/create/templates)) and pick the **Moment** your post celebrates: **Announced**, **Reminder**, **Live**, **Closing**, or **Closed**.
 
-   | Moment | Skipped if not posted by |
-   | --- | --- |
-   | **Announced**, **Reminder** | the experience opening |
-   | **Live**, **Closing** | the experience closing |
-   | **Closed** | 24 hours after the experience closes |
+    To keep stale posts from going out late, Fanfare skips any post that hasn't published by its moment's deadline:
 
-   A moment whose open or close time is not set yet shows "Needs the experience's open or close time" and cannot post.
+    | Moment | Skipped if not posted by |
+    | --- | --- |
+    | **Announced**, **Reminder** | Experience open time |
+    | **Live**, **Closing** | Experience close time |
+    | **Closed** | 24 hours after the experience closes |
 
-   With **Countdown card** and **Photo-led**, **Reminder** and **Closing** leave out Instagram **Feed post** and Facebook **Page post**, even if ticked; those show "Not posted at" the moment.
+    Moments require the relevant experience open or close time to be set. With Fanfare's built-in **Countdown card** and **Photo-led** kits, **Reminder** and **Closing** posts skip Instagram **Feed post** and Facebook **Page post** formats automatically. Select **Next**.
+  </Step>
+  <Step title="Add your hook and photo">
+    Enter an optional **Hook**, upload a **Photo** (required for **Photo-led**, optional for **Countdown card**), and add **Alt text**. Select **Next**.
+  </Step>
+  <Step title="Schedule and review">
+    Set **A specific date and time** or **Relative to an event** (anchored to the experience, before the moment's deadline). Review each generated post preview carefully, then select **Schedule**.
 
-4. Select **Next**, then fill in the post: **Hook** (optional), and a **Photo** with its **Alt text**. Photo-led needs a photo; on Countdown card it is optional. Select **Next**.
-5. Set when it posts: **A specific date and time**, or **Relative to an event** (relative to the experience only). A time at or after the moment's deadline is refused.
-6. On **Review**, look through each post.
+    <Warning>
+      Social posts go live publicly and don't support test sends. You can only cancel a scheduled post until shortly before its publish time (shown under **Good to know**), and canceling can't be undone.
+    </Warning>
+  </Step>
+</Steps>
 
-   <Warning>
-     Social posts are public, and there is no test post. You can cancel a scheduled post only until shortly before its post time (the time is shown under "Good to know"), and a cancelled post cannot be restored.
-   </Warning>
-
-7. Select **Schedule**.
-
-<Frame caption="On Starter, social posts need an upgrade.">
+<Frame caption="Scheduling social posts requires the Growth plan or above.">
   <img src="/images/guide/guide-create-announcements-social-starter.webp" alt="The Channel step on the Starter plan with Social selected, showing that social posts come with the Growth plan and an Upgrade to Growth link." />
 </Frame>
 
 ## Send yourself a test
 
-On the **Review** step of an email, select **Send test** under "Send yourself a test". The test goes only to the email address you sign in with, shown beside "Goes to". After each test you wait 30 seconds before you can send another.
+On an email's **Review** step, select **Send test** under **Send yourself a test**. Fanfare sends a preview directly to your sign-in email address (shown beside **Goes to**), with a 30-second cooldown between test sends.
+
 ## Edit an announcement
 
-Select the row, then **Edit**. The wizard opens on **Review**. Select a step to change it, then select **Save**.
+Select any email or SMS row in **Marketing Hub**, then click **Edit** to jump into **Review**. Click any step to update it, then select **Save**.
 
-- An announcement keeps the channel it was created on. To switch channel, create a new one.
-- If you change the layout, fields the new layout also has (such as **Headline** and **Body**) keep what you wrote. Fields it does not have are cleared, and are empty if you switch back.
-- Social posts cannot be edited. Use **Cancel and copy** instead (below).
+- **Channels are fixed:** To switch between email and SMS, create a new announcement.
+- **Switching email layouts:** Shared fields like **Headline** and **Body** carry over; fields unique to the old layout are cleared.
+- **Social posts can't be edited directly:** Use **Cancel and copy** instead (see below).
 
 <Warning>
-  Once an announcement has gone out, you can save an edit to it (even a wording fix) only with a new send time in the future. A fixed-time announcement then sends again to everyone. A relative one sends again only if its new time is further from its last send time than the amount it is set before or after (for one set a day before, more than a day). Otherwise nothing more is sent.
+  After an email or SMS has already been sent, saving any edit—even a typo fix—requires setting a new future send time. Fixed-time announcements resend to everyone at that new time; relative announcements resend only if the new time shifts past their original offset (for example, shifting a "1 day before" email by more than a day).
 </Warning>
 
-A relative announcement follows what it is set against. If you move the distribution or the experience, the send time moves too. If you deactivate the distribution before the announcement has gone out, it moves to **Won't send** with "was deactivated".
+Relative announcements track the schedule of whatever they're anchored to—if you move an experience or distribution, the announcement moves with it. If you deactivate an anchored distribution before the message sends, the announcement moves to **Won't send**.
 
 <Warning>
-  Moving the experience or distribution earlier can put the send time in the past. If the new time is less than 24 hours ago, the announcement sends straight away; if it is 24 hours or more ago, it never sends and moves to **Won't send**. Once it has gone out, moving the experience or distribution by more than the announcement's own offset (for example, more than a day for one set to send a day before) sends it again to everyone.
+  Moving an experience or distribution earlier can push a relative announcement's send time into the past: if the new time is less than 24 hours ago, it sends right away; if it's 24 hours or more ago, it moves to **Won't send**. If an announcement has already sent and you move its anchor by more than its offset, it will resend to everyone.
 </Warning>
 
 ## Delete or cancel
 
-- Email or SMS: select the row, open the **More** menu and choose **Delete**. The confirmation reads "It won't be sent. This can't be undone." Invites cannot be deleted, but you can turn one off: see [Invites, waitlist and access-code sends](/guide/create/invites-and-waitlist).
-- Social post: select the row. **Copy to another moment**, on the detail card, opens a copy for a different moment; the original stays scheduled. To stop the post, open the **More** menu:
-  - **Cancel** stops every post in it. "None of its posts will go out. This can't be undone."
-  - **Cancel and copy** cancels it and opens a copy with the same settings for you to change. If you close the copy without scheduling it, the original stays cancelled.
+- **Email or SMS:** Select the announcement, open the **More** menu, and select **Delete** (can't be undone). Automatic audience invites can't be deleted—turn them off instead under [Invites, waitlist and access-code sends](/guide/create/invites-and-waitlist).
+- **Social post:** Select the post to see its options:
+  - **Copy to another moment:** Duplicates the post for another drop moment while keeping the original scheduled.
+  - **More → Cancel:** Stops every post in the bundle (can't be undone).
+  - **More → Cancel and copy:** Permanently cancels the original and opens an editable copy (closing without scheduling leaves the original canceled).
 
 ## Things to know before you go live
 
-- Text messages reach only customers who agreed to your marketing texts and have not opted out. Emails skip customers who unsubscribed from your marketing email. Anyone with no email address or phone number for that channel is skipped. See [What customers see](/guide/drop/what-customers-see).
-- Disconnecting a social account means its scheduled posts will not go out. See [Integrations](/guide/account/integrations).
+- **Opt-in and unsubscribe compliance:** SMS reaches only customers who opted into marketing texts and haven't opted out. Emails automatically skip customers who unsubscribed from marketing email, and anyone missing contact info for a channel is skipped. See [What your customers see](/guide/drop/what-customers-see).
+- **Keep social accounts connected:** Disconnecting a social account stops its scheduled posts from publishing. See [Integrations](/guide/account/integrations).
 
 ## On Shopify
 
-The Fanfare app in Shopify differs in two ways.
+Two details differ in the Fanfare app on Shopify:
 
-- Test emails go to your Shopify staff account's email address, and only if Shopify has verified it. If it has not, the **Review** step says "We do not have an address for you to send a test to." and **Send test** is unavailable.
-- Connecting Meta or Discord opens their consent screen in the full browser window, then returns you to Shopify admin. See [Integrations](/guide/account/integrations).
+- **Test emails:** **Send test** delivers to your Shopify staff account's email address—which must be verified in Shopify first.
+- **Connecting social accounts:** Authorizing Meta or Discord opens their consent flow in the full browser window before returning you to the Shopify admin. See [Integrations](/guide/account/integrations).
 
 ## Troubleshooting
 
 <AccordionGroup>
-  <Accordion title="A row shows a Didn't send line">
-    The line gives the reason. For an email or text you scheduled, fix it, then open the announcement, set a new send time in the future, and save it: it does not go out on its own once fixed.
-    - "your postal address isn't set in Settings → Email sender": add the address in **Settings → Email Sender**.
-    - "your Twilio number isn't connected or needs attention in Settings → Integrations": reconnect Twilio there.
+  <Accordion title="An announcement shows Didn't send">
+    Check the reason printed on the row, resolve it, then open the announcement, pick a new future send time, and save—scheduled announcements don't automatically retry after a failure.
+    - **Missing postal address:** Add your business postal address under **Settings → Email Sender**.
+    - **Twilio needs attention:** Reconnect your Twilio number under **Settings → Integrations**.
 
-    An invite works differently: once you fix the cause, it tries again by itself. See [Invites, waitlist and access-code sends](/guide/create/invites-and-waitlist).
+    Automatic audience invites behave differently—once you fix the cause, invites retry on their own. See [Invites, waitlist and access-code sends](/guide/create/invites-and-waitlist).
   </Accordion>
-  <Accordion title="There is no Social option">
-    Social is offered only when you create an announcement from the experience, not when you edit one or schedule from a sequence's **Announcements** tab. On Starter it needs an upgrade: see the note under [Schedule an email](#schedule-an-email).
+  <Accordion title="I don't see the Social option">
+    Social posts can only be scheduled from the experience's **Marketing Hub** or **Overview**—not from a sequence's **Announcements** tab or when editing an existing email/SMS. Social posts also require the Growth plan or above (see [Schedule an email](#schedule-an-email)).
   </Accordion>
-  <Accordion title="I can't choose SMS">
-    The SMS card cannot be chosen when no Twilio number is connected, when Twilio needs reconnecting, or when Fanfare could not check the connection. If the card says "You can write this now, but texts won't send until Twilio is reconnected.", you can still schedule the text. Reconnect Twilio before its send time, or it does not send and needs a new time.
+  <Accordion title="I can't select SMS">
+    SMS requires an active Twilio number in **Settings → Integrations**. If Twilio is disconnected and the card notes that texts won't send until reconnected, you can still draft and schedule—just reconnect Twilio before the send time so the message doesn't fail.
   </Accordion>
-  <Accordion title="The send time has already passed">
-    To send as soon as possible, choose a time a few minutes from now.
+  <Accordion title="Fanfare says the send time has already passed">
+    To send as soon as possible, pick a specific time a few minutes in the future.
   </Accordion>
   <Accordion title="A social post is under Needs attention">
-    Select the row to see each post. Use **Reconnect** if the account needs reconnecting, or **View post** to check what went out. For "May have posted", check the account before doing anything else.
+    Select the row to inspect each platform's status. Use **Reconnect** if an account lost authorization, or **View post** to verify what published. If a post says **May have posted**, check that social account directly before reposting.
   </Accordion>
 </AccordionGroup>
 
 ## Related
 
 <CardGroup>
-  <Card title="Invites, waitlist and access-code sends" href="/guide/create/invites-and-waitlist" />
-  <Card title="Sender identity and sending domain" href="/guide/create/email-sender" />
-  <Card title="Integrations" href="/guide/account/integrations" />
-  <Card title="What customers see" href="/guide/drop/what-customers-see" />
-  <Card title="Performance" href="/guide/learn/performance" />
+  <Card title="Invites, waitlist and access-code sends" href="/guide/create/invites-and-waitlist">
+    Manage automatic audience invites, waitlist alerts, and access-code blasts.
+  </Card>
+  <Card title="Sender identity and sending domain" href="/guide/create/email-sender">
+    Set your postal address, sender name, and custom sending domains.
+  </Card>
+  <Card title="Integrations" href="/guide/account/integrations">
+    Connect Twilio for SMS and Instagram, Facebook, Discord, or Telegram for social.
+  </Card>
+  <Card title="What your customers see" href="/guide/drop/what-customers-see">
+    See every notification and screen customers encounter during a drop.
+  </Card>
+  <Card title="Performance" href="/guide/learn/performance">
+    Track email delivery, engagement, and drop conversion after launch.
+  </Card>
 </CardGroup>

@@ -1,152 +1,154 @@
 ---
 title: Glossary
-description: The words the Fanfare admin and this guide use, what each one means, and what developers and the API call it.
+description: Definitions for the terms used across the Fanfare admin, Shopify app, and developer docs.
 ---
 
-This page lists the words you meet in the Fanfare admin, in the Fanfare app in Shopify, and in messages from Fanfare. Each row links to the page that explains the term in full. Where developers, the API or the SDK docs use a different word, the API term column gives it; a blank cell means they use the same word. Status values have their own page, [Status reference](/guide/reference/statuses). Settings that lock and actions that cannot be undone are on [Things that cannot be undone](/guide/reference/cannot-be-undone) and [What locks, and when](/concepts/what-locks-when). Numbers such as defaults and limits are on [Limits and defaults](/guide/reference/limits).
+Use this glossary to look up terms you'll encounter in the Fanfare admin, the Fanfare app in Shopify, and messages from Fanfare. Each entry links to the guide that explains it in detail. When the API or SDK docs use a different name, it's listed under **API term** (a blank cell means they use the same term).
+
+Looking for specific values or rules? See [Status reference](/guide/reference/statuses), [Limits and defaults](/guide/reference/limits), [What locks, and when](/concepts/what-locks-when), and [Things that cannot be undone](/guide/reference/cannot-be-undone).
 
 ## Drops
 
 | Term | Meaning | API term | Explained in |
 | --- | --- | --- | --- |
-| **Admit rate** | The most customers a queue lets in per minute: it sets the pace, not the total. | | [Queue](/concepts/distributions/queue) |
-| **Allocation Percentages** | In a **Mystery Box** sequence, each product's share of the random assignment; this has nothing to do with stock allocation. | allocation weights | [Add and gate sequences](/guide/create/sequences) |
-| **Appointment** | A distribution that hands out bookable time slots instead of products, and never takes payment. | | [Appointment](/concepts/distributions/appointment) |
-| **Auction** | A distribution where bidding sets the price: **English**, where the highest bid wins, or **Dutch**, where a falling price is bought by whoever accepts it. | | [Auction](/concepts/distributions/auction) |
-| **Automatic entry** | Enters customers who reach a queue, draw or timed release without them pressing a button; it is off by default, and does not apply when customers choose their product, when a card hold is placed as they join, or on a timed release whose stock Fanfare counts. | | [Admission and the payment window](/concepts/admission-and-payment) |
-| **Bias toward loyal consumers** | Lets loyalty points weight a draw's random order, or the order of a queue's early arrivals; this guide calls it Fanfair loyalty prioritisation. | | [Loyalty and Fanfair](/concepts/loyalty) |
-| **Customer Picks** | The product selection where each customer chooses their own product; it is the default. | | [Add and gate sequences](/guide/create/sequences) |
-| **Deactivate** | Ends a distribution, sequence or experience straight away and for good; it is not a pause and cannot be undone. | | [Stop a drop](/guide/drop/deactivate) |
-| **Delete** | Removes a distribution, sequence or experience from your admin once nothing in it is live, scheduled or still on hold; deactivate anything still live or scheduled first. | | [Stop a drop](/guide/drop/deactivate) |
-| Distribution | How a sequence releases its products during a time window: a queue, draw, auction, timed release or appointment. | mechanism (the type) | [Distributions](/concepts/distributions/overview) |
-| **Draw** | A distribution that picks winners at random from everyone who enters, so arriving first gives no advantage. | | [Draw](/concepts/distributions/draw) |
-| **Draw at** | When a draw's first selection of winners runs; the create wizard and the edit dialogue call it **Draw date**. | | [Draw](/concepts/distributions/draw) |
-| Drop | The occasion an experience exists for, not a separate object; the admin uses the word in places such as **By drop** on **Usage**. | | [Experiences](/concepts/experiences) |
-| **Ended early** | Shown on a distribution deactivated before its end, and on a sequence or experience that has stopped with such a distribution in it. | | [Experiences](/concepts/experiences) |
-| **Experience** | The container for one drop: its products, time zone, design, announcements and one or more sequences. | | [Experiences](/concepts/experiences) |
-| **Mystery Box** | The product selection where Fanfare assigns each customer a product at random by weight. | | [Add and gate sequences](/guide/create/sequences) |
-| **Opens** and **Closes** | The start and end of a distribution's window; an experience's own **Opens** and **Closes** are worked out from its distributions. | | [Distributions](/concepts/distributions/overview) |
-| **Pause queue** | Stops a live queue letting anyone through while customers keep their place; **Resume queue** starts it again. | | [Change things mid-drop](/guide/drop/live-controls) |
-| **Priority** | A sequence's place in the order customers are offered sequences, shown as P1, P2 and so on, lowest first, and set by creation order. | | [Sequences and routing](/concepts/sequences) |
-| **Queue** | A distribution that lets customers in at a steady rate: early arrivals are shuffled once, then it is first come, first served. | | [Queue](/concepts/distributions/queue) |
-| Sequence | A sequence is one way in to an experience, with its own gates, share of the stock, distributions and waitlist. | | [Sequences and routing](/concepts/sequences) |
-| **Settles** | When bidding is due to end, unless a late bid extends it (**Settle at** when you add the auction); the auction is settling from then until **Closes**. | | [Auction](/concepts/distributions/auction) |
-| Status chip | The label that shows where an experience, sequence, distribution, order or audience stands. | | [Status reference](/guide/reference/statuses) |
-| **Timed Release** | A distribution that opens the sale to everyone at a set time, with no line; customers see it headed "Flash Sale". | | [Timed release](/concepts/distributions/timed-release) |
-| Waiting room | The 5 minutes before a queue's **Opens**, when customers can join but nobody is let in. | | [Queue](/concepts/distributions/queue) |
-| **Waitlist** | Each sequence's list of customers to tell when it opens, not a distribution; it takes sign-ups while nothing in it is live and more is to come or nothing is scheduled. | | [Waitlists](/concepts/waitlists) |
-| **Winner count** | How many winners a draw aims for; where every size has a set number of units, it cannot be more than those units. | | [Draw](/concepts/distributions/draw) |
+| **Admit rate** | The maximum number of customers a queue lets in per minute. Sets the pace, not the total capacity. | | [Queue](/concepts/distributions/queue) |
+| **Allocation Percentages** | In a **Mystery Box** sequence, each product's share of random assignments. Separate from stock allocation. | allocation weights | [Add and gate sequences](/guide/create/sequences) |
+| **Appointment** | A distribution for booking time slots instead of buying products. Appointments don't collect payment. | | [Appointment](/concepts/distributions/appointment) |
+| **Auction** | A distribution where bidding sets the price—either **English** (highest bid wins) or **Dutch** (a falling price goes to whoever accepts it first). | | [Auction](/concepts/distributions/auction) |
+| **Automatic entry** | Enters customers into a queue, draw, or timed release as soon as they arrive, without clicking a button. Off by default, and doesn't apply when customers pick their product, when a card hold is placed on entry, or on a timed release with Fanfare-counted stock. | | [Admission and the payment window](/concepts/admission-and-payment) |
+| **Bias toward loyal consumers** | Weights a draw's random selection or a queue's early-arrival order using loyalty points. This guide calls it Fanfair loyalty prioritization. | | [Loyalty and Fanfair](/concepts/loyalty) |
+| **Customer Picks** | The default product selection mode, where each customer chooses their own product. | | [Add and gate sequences](/guide/create/sequences) |
+| **Deactivate** | Permanently ends a distribution, sequence, or experience right away. It's not a pause and can't be undone. | | [Stop a drop](/guide/drop/deactivate) |
+| **Delete** | Permanently removes a distribution, sequence, or experience from your admin once nothing in it is live, scheduled, or still winding down. Deactivate anything live or scheduled first. | | [Stop a drop](/guide/drop/deactivate) |
+| Distribution | How a sequence releases products during a time window—a queue, draw, auction, timed release, or appointment. | mechanism (the type) | [Distributions](/concepts/distributions/overview) |
+| **Draw** | A distribution that selects winners at random from all entrants, so arriving early gives no advantage. | | [Draw](/concepts/distributions/draw) |
+| **Draw at** | When a draw runs its first winner selection. Labeled **Draw date** in the experience wizard and edit dialog. | | [Draw](/concepts/distributions/draw) |
+| Drop | The launch event an experience powers—not a separate object. Appears in admin labels like **By drop** on **Usage**. | | [Experiences](/concepts/experiences) |
+| **Ended early** | Shown on a distribution deactivated before its scheduled close, and on a sequence or experience that stopped with a deactivated distribution inside it. | | [Experiences](/concepts/experiences) |
+| **Experience** | The container for a drop, holding its products, time zone, design, announcements, and one or more sequences. | | [Experiences](/concepts/experiences) |
+| **Mystery Box** | The product selection mode where Fanfare assigns each customer a product at random based on your configured weights. | | [Add and gate sequences](/guide/create/sequences) |
+| **Opens** and **Closes** | The start and end of a distribution's window. An experience's own **Opens** and **Closes** times are calculated from its distributions. | | [Distributions](/concepts/distributions/overview) |
+| **Pause queue** | Temporarily stops a live queue from admitting shoppers while everyone keeps their place. Select **Resume queue** to start admitting again. | | [Change things mid-drop](/guide/drop/live-controls) |
+| **Priority** | The order in which Fanfare offers sequences to customers (shown as P1, P2, and so on—lowest number first), set by creation order. | | [Sequences and routing](/concepts/sequences) |
+| **Queue** | A distribution that admits customers at a steady pace. Early arrivals are shuffled once at open, then entry is first come, first served. | | [Queue](/concepts/distributions/queue) |
+| Sequence | One entry path into an experience, with its own access gates, share of stock, distributions, and waitlist. | | [Sequences and routing](/concepts/sequences) |
+| **Settles** | When auction bidding is scheduled to end unless a late bid extends it (labeled **Settle at** when adding an auction). The auction settles from then until **Closes**. | | [Auction](/concepts/distributions/auction) |
+| Status chip | The badge showing the current state of an experience, sequence, distribution, order, or audience. | | [Status reference](/guide/reference/statuses) |
+| **Timed Release** | A distribution that opens sales to everyone at a set time with no line. Customers see it titled "Flash Sale". | | [Timed release](/concepts/distributions/timed-release) |
+| Waiting room | The 5-minute window before a queue's **Opens** time when customers can join, before anyone is admitted. | | [Queue](/concepts/distributions/queue) |
+| **Waitlist** | Each sequence's notification list for customers who want to know when it opens (not a distribution). Accepts sign-ups while nothing in the sequence is live and more is coming, or nothing is scheduled yet. | | [Waitlists](/concepts/waitlists) |
+| **Winner count** | How many winners a draw targets. When every variant has a fixed unit count, it can't exceed those total units. | | [Draw](/concepts/distributions/draw) |
 
 ## Admission and payment
 
 | Term | Meaning | API term | Explained in |
 | --- | --- | --- | --- |
-| Admission | The right to buy one unit for a limited time, given when a customer gets through a distribution; such a customer is admitted. | grant | [Admission and the payment window](/concepts/admission-and-payment) |
-| **Admission expiration** | A draw's payment window, set in seconds on the draw. | | [Admission and the payment window](/concepts/admission-and-payment) |
-| **Authorization amount** | The one amount held on each customer's card when a queue or draw pre-authorises; every product on offer must cost exactly that. | | [Admission and the payment window](/concepts/admission-and-payment) |
-| **Checkout processor** | Your organisation's choice of who takes payment: **Fanfare** for Fanfare checkout, or **External** for your own store's checkout or Shopify checkout. | | [Checkout options](/concepts/checkout-options) |
-| **Custom rate** | A Fanfare fee agreed with you in place of your plan's published rates; it stays when you change plan. | | [Payments and fees](/guide/account/payments) |
-| **Fanfare fee** | The fee Fanfare takes from each paid order, shown on the order's **Payment** card; a refund does not return it. | | [Payments and fees](/guide/account/payments) |
-| **Payment collection** | When a queue or draw takes the money: afterwards (**Pay when admitted**, **Pay after the win**) or as a card hold (**Pre-authorise on joining**, **Pre-authorise on entry**). | | [Admission and the payment window](/concepts/admission-and-payment) |
-| Payment window | The time an admitted customer has to pay before they lose the unit; on a draw it is set by **Admission expiration**. | access window | [Admission and the payment window](/concepts/admission-and-payment) |
-| Take rate | Fanfare's percentage fee on each paid order, set by your plan or custom rate and by the distribution type; a custom rate can differ by checkout. | | [Plans and what they unlock](/guide/start/plans) |
+| Admission | A time-limited right to buy one unit, granted when a customer gets through a distribution. | grant | [Admission and the payment window](/concepts/admission-and-payment) |
+| **Admission expiration** | A draw's payment window, configured in seconds on the draw. | | [Admission and the payment window](/concepts/admission-and-payment) |
+| **Authorization amount** | The single amount held on each customer's card when a queue or draw uses pre-authorization. Every product offered must match this exact price. | | [Admission and the payment window](/concepts/admission-and-payment) |
+| **Checkout processor** | Your organization's choice of who takes payment: **Fanfare** for Fanfare checkout, or **External** for your own store checkout or Shopify checkout. | | [Checkout options](/concepts/checkout-options) |
+| **Custom rate** | A negotiated Fanfare fee that replaces your plan's standard take rates and carries over if you change plans. | | [Payments and fees](/guide/account/payments) |
+| **Fanfare fee** | The fee Fanfare deducts from each paid order, shown on the order's **Payment** card. Refunding an order doesn't return this fee. | | [Payments and fees](/guide/account/payments) |
+| **Payment collection** | When a queue or draw collects payment—afterward (**Pay when admitted**, **Pay after the win**) or upfront as a card hold (**Pre-authorise on joining**, **Pre-authorise on entry**). | | [Admission and the payment window](/concepts/admission-and-payment) |
+| Payment window | How long an admitted customer has to pay before losing their unit. On a draw, this is set by **Admission expiration**. | access window | [Admission and the payment window](/concepts/admission-and-payment) |
+| Take rate | Fanfare's percentage fee on each paid order, determined by your plan (or custom rate) and the distribution type. Custom rates can vary by checkout. | | [Plans and what they unlock](/guide/start/plans) |
 
 ## Products and stock
 
 | Term | Meaning | API term | Explained in |
 | --- | --- | --- | --- |
-| **Adjustment**, **Receipt**, **Write-off** | The stock history entries for a count correction, new units arriving, and units lost, damaged or otherwise unsellable. | | [Manage stock](/guide/create/stock) |
-| **Allocated** | The units of a size that your experiences hold. | | [Stock](/concepts/stock) |
-| **At risk** | Units in live checkouts that **On hand** no longer covers; normally 0. | | [Stock](/concepts/stock) |
-| **Available** | **Supply** minus **Allocated**: what can still go into an experience, negative when the size is over-allocated. | | [Stock](/concepts/stock) |
-| Counting | Fanfare tracking a sequence's stock live, from about 10 minutes before it opens; from then a size can only go up. | | [Stock](/concepts/stock) |
-| **Held: stock** | A sequence that will not start selling because its size's supply fell below what is allocated, until the size fits again. | | [Stock](/concepts/stock) |
-| **In checkout** | Units held by customers who have the right to buy while they pay. | | [Stock](/concepts/stock) |
-| **Location** | A place where an appointment runs, with an address, a time zone and opening hours that its slots are cut from. | | [Locations and opening hours](/guide/create/locations) |
-| **Move units** | Moves units to another sequence of the same experience or back to **Unassigned**; the only way units leave a counting sequence. | | [Change things mid-drop](/guide/drop/live-controls) |
+| **Adjustment**, **Receipt**, **Write-off** | Stock history entries for count corrections, newly received units, and lost, damaged, or unsellable units. | | [Manage stock](/guide/create/stock) |
+| **Allocated** | Units of a variant reserved for your experiences. | | [Stock](/concepts/stock) |
+| **At risk** | Units in active checkouts that **On hand** inventory no longer covers (normally 0). | | [Stock](/concepts/stock) |
+| **Available** | **Supply** minus **Allocated**—units still free to assign to an experience (negative if over-allocated). | | [Stock](/concepts/stock) |
+| Counting | Live stock tracking for a sequence, starting about 10 minutes before it opens. Once counting starts, variant allocations can only increase. | | [Stock](/concepts/stock) |
+| **Held: stock** | A sequence paused from opening because a variant's supply fell below its allocation. Clears once supply covers the allocation again. | | [Stock](/concepts/stock) |
+| **In checkout** | Units temporarily held by admitted customers while they complete payment. | | [Stock](/concepts/stock) |
+| **Location** | A physical venue where an appointment runs, with an address, time zone, and opening hours used to generate bookable slots. | | [Locations and opening hours](/guide/create/locations) |
+| **Move units** | Moves units to another sequence in the same experience or back to **Unassigned**—the only way to take units out of a counting sequence. | | [Change things mid-drop](/guide/drop/live-controls) |
 | **On hand** | **Supply** minus **Sold**. | | [Stock](/concepts/stock) |
-| **Opens sold out** | Shown on a size that has no units in a sequence; customers cannot buy it until you give it units. | | [Stock](/concepts/stock) |
-| **Product** | Anything an experience sells or gives access to, added once and attached to as many experiences as you like. | | [Add products](/guide/create/products) |
-| **Released** | A sequence that has finished selling: its unsold units go back to the experience, and its stock can no longer change. | | [Stock](/concepts/stock) |
-| **Sold** | Units whose payment was captured; a refund does not reduce it. | | [Stock](/concepts/stock) |
-| **Stock management** | Who keeps a product's count, fixed when the product is created: **Fanfare-managed**, **Not managed**, or **Shopify-managed** for Shopify products when you do not use Fanfare checkout. | | [Stock](/concepts/stock) |
-| **Supply** | Opening stock plus every receipt, adjustment, write-off and return recorded since. | | [Stock](/concepts/stock) |
-| **Unassigned** | Units an experience holds that it has not given to any of its sequences. | | [Stock](/concepts/stock) |
-| **Variant** | One size, colour or other option of a product; stock screens call each one a size. | | [Add products](/guide/create/products) |
+| **Opens sold out** | Shown on a variant with no units assigned in a sequence. Customers can't buy it until you allocate units. | | [Stock](/concepts/stock) |
+| **Product** | Anything an experience sells or grants access to. Add a product once and attach it to as many experiences as you like. | | [Add products](/guide/create/products) |
+| **Released** | A sequence that has finished selling. Its unsold units return to the experience, and its stock can no longer change. | | [Stock](/concepts/stock) |
+| **Sold** | Units with captured payments. Refunding an order doesn't reduce this count. | | [Stock](/concepts/stock) |
+| **Stock management** | Who tracks a product's count, locked when the product is created: **Fanfare-managed**, **Not managed**, or **Shopify-managed** (for Shopify products when not using Fanfare checkout). | | [Stock](/concepts/stock) |
+| **Supply** | Opening stock plus every receipt, adjustment, write-off, and return recorded since. | | [Stock](/concepts/stock) |
+| **Unassigned** | Units allocated to an experience that haven't been assigned to any sequence yet. | | [Stock](/concepts/stock) |
+| **Variant** | One size, color, or other option of a product. Stock screens refer to each variant as a size. | | [Add products](/guide/create/products) |
 
 ## Customers and access
 
 | Term | Meaning | API term | Explained in |
 | --- | --- | --- | --- |
-| **Audience** | A named group of customers that decides who can enter a sequence and who gets its invite: **Dynamic**, **Static List** or **Imported**. | | [Audiences and access codes](/concepts/audiences) |
-| Build | Fanfare working out an audience's member list from scratch; while a drop it gates is open, a **Dynamic** audience is **Held**. | | [Audiences and access codes](/concepts/audiences) |
-| **Customer** | A person on record in your organisation; the API, the SDK docs and a few admin labels call them a consumer. | consumer | [Customers and identity](/concepts/customers) |
-| Guest and signed-in customer | A signed-in customer entered a one-time code; a guest chose "Continue as guest", gets no messages and can return only in the same browser. | | [Customers and identity](/concepts/customers) |
-| Invite | The email a sequence sends its audience's members, inviting them to enter. | | [Invites, waitlist and access-code sends](/guide/create/invites-and-waitlist) |
-| Loyalty points | Points a signed-in customer earns from purchases and taking part; they cannot be spent, and count through audiences and Fanfair. | | [Loyalty and Fanfair](/concepts/loyalty) |
+| **Audience** | A named customer group that controls who can enter a sequence and who receives its invite: **Dynamic**, **Static List**, or **Imported**. | | [Audiences and access codes](/concepts/audiences) |
+| Build | When Fanfare computes an audience's member list from scratch. While a drop it gates is open, a **Dynamic** audience stays **Held**. | | [Audiences and access codes](/concepts/audiences) |
+| **Customer** | A person with a profile in your organization. The API, SDK docs, and a few admin labels refer to them as a consumer. | consumer | [Customers and identity](/concepts/customers) |
+| Guest and signed-in customer | Signed-in customers verify with a one-time code. Guests choose "Continue as guest", receive no messages, and can only return from the same browser. | | [Customers and identity](/concepts/customers) |
+| Invite | The email a sequence sends to its audience members inviting them to enter. | | [Invites, waitlist and access-code sends](/guide/create/invites-and-waitlist) |
+| Loyalty points | Points a signed-in customer earns from purchases and drop participation. They can't be redeemed directly, and power loyalty audiences and Fanfair prioritization. | | [Loyalty and Fanfair](/concepts/loyalty) |
 | **Loyalty tiers** | A group of 2 to 10 rule-based audiences, each covering a range of one customer field such as lifetime points. | | [Loyalty and Fanfair](/concepts/loyalty) |
-| **Order limits** | The most one customer can buy, set on a sequence but counted across the whole experience. | purchase limits | [Add and gate sequences](/guide/create/sequences) |
-| Organisation admin and member | The two team roles; only an admin can manage payments, billing, the checkout processor, developer settings, the email sender and text messaging, publish pages, or deactivate. | | [Team members](/guide/account/team) |
-| **Shared access code** | One code you hand out that customers type to enter a sequence; access codes are not case-sensitive. | | [Sequences and routing](/concepts/sequences) |
-| **Wallet pass** | A loyalty pass for Apple Wallet or Google Wallet that shows a customer's points balance. | | [Loyalty and Fanfair](/concepts/loyalty) |
+| **Order limits** | The maximum quantity one customer can buy—set on a sequence, but counted across the whole experience. | purchase limits | [Add and gate sequences](/guide/create/sequences) |
+| Organization admin and member | The two team roles. Only an admin can manage payments, billing, the checkout processor, developer settings, email sender and SMS settings, publish pages, or deactivate drops. | | [Team members](/guide/account/team) |
+| **Shared access code** | A single code you distribute that customers type to unlock a sequence. Access codes aren't case-sensitive. | | [Sequences and routing](/concepts/sequences) |
+| **Wallet pass** | A loyalty pass for Apple Wallet or Google Wallet showing a customer's points balance. | | [Loyalty and Fanfair](/concepts/loyalty) |
 
 ## Orders
 
 | Term | Meaning | API term | Explained in |
 | --- | --- | --- | --- |
-| **Order** | A customer's purchase, listed under **Orders**; with Fanfare checkout it appears once the customer submits payment, or when a pre-authorised card hold is captured. | | [Orders and refunds](/guide/learn/orders) |
-| **Order status** | Where an order stands; the values are on the status reference. | | [Status reference](/guide/reference/statuses) |
-| **Payment status** | Where an order's payment stands, shown under the order status when it adds something. | | [Orders and refunds](/guide/learn/orders) |
-| **Refund** | Gives a customer money back on an order; it does not return the Fanfare fee or put units back in stock by itself. | | [Orders and refunds](/guide/learn/orders) |
-| **Return to stock** and **Keep out of stock** | Your choice, for each refunded item whose stock Fanfare manages, of whether its units go back into **Supply**. | | [Orders and refunds](/guide/learn/orders) |
-| Test order | An order placed with a test payment method, marked with a **Test** chip and left out of revenue, purchase limits and customer metrics. | | [Orders and refunds](/guide/learn/orders) |
+| **Order** | A customer's purchase, listed under **Orders**. With Fanfare checkout, an order appears once payment is submitted or a pre-authorized card hold is captured. | | [Orders and refunds](/guide/learn/orders) |
+| **Order status** | The current state of an order. See [Status reference](/guide/reference/statuses) for every value. | | [Status reference](/guide/reference/statuses) |
+| **Payment status** | The state of an order's payment, shown below the order status when it adds detail. | | [Orders and refunds](/guide/learn/orders) |
+| **Refund** | Returns money to a customer on a paid order. Refunds don't return the Fanfare fee or automatically return units to stock. | | [Orders and refunds](/guide/learn/orders) |
+| **Return to stock** and **Keep out of stock** | Your choice per refunded Fanfare-managed item on whether its units go back into **Supply**. | | [Orders and refunds](/guide/learn/orders) |
+| Test order | An order placed with a test payment method—badged **Test** and excluded from revenue, purchase limits, and customer metrics. | | [Orders and refunds](/guide/learn/orders) |
 
-## Pages, designs and messages
+## Pages, designs, and messages
 
 | Term | Meaning | API term | Explained in |
 | --- | --- | --- | --- |
-| **Announcement** | An email, text or social post you write and schedule for a drop, in the experience's **Marketing Hub**. | | [Announcements](/guide/create/announcements) |
-| **Brand** | Your logo, colours and fonts, one set per organisation, shown on every experience; edits reach live pages without publishing. | | [Brand, templates and designs](/concepts/design) |
-| **Design Studio** | Where you edit your brand and keep your templates and widget designs. | | [Templates and widget designs](/guide/create/templates) |
-| **Email Sender** | The settings for the name, reply address, postal address and sending domains on the email Fanfare sends for you. | | [Sender identity and sending domain](/guide/create/email-sender) |
-| **Hosted page** | An optional web page Fanfare serves for one experience, at an address you can share. | | [Build and publish the hosted page](/guide/create/hosted-page) |
-| "Opens soon" message | The message Fanfare sends a sequence's waitlist 5 minutes before each opening. | | [Invites, waitlist and access-code sends](/guide/create/invites-and-waitlist) |
-| Publish freeze | From 15 minutes before any distribution in the experience opens until it closes, republishing a published hosted page needs **Override freeze and publish**. | | [Brand, templates and designs](/concepts/design) |
-| **Template** | A reusable design kept in **Design Studio**, such as a page template, widget design, message template or wallet pass design. | | [Brand, templates and designs](/concepts/design) |
-| **Widget** | The part of the page where customers join, enter, bid, book or buy, on your own site or inside the hosted page. | | [Brand, templates and designs](/concepts/design) |
+| **Announcement** | An email, text message, or social post you write and schedule in an experience's **Marketing Hub**. | | [Announcements](/guide/create/announcements) |
+| **Brand** | Your organization's logo, colors, and fonts, applied across every experience. Edits reach live pages right away without republishing. | | [Brand, templates and designs](/concepts/design) |
+| **Design Studio** | Where you manage your brand and store reusable templates and widget designs. | | [Templates and widget designs](/guide/create/templates) |
+| **Email Sender** | Settings for the sender name, reply-to address, physical address, and sending domains on emails Fanfare sends for you. | | [Sender identity and sending domain](/guide/create/email-sender) |
+| **Hosted page** | An optional web page Fanfare hosts for an experience at a shareable URL. | | [Build and publish the hosted page](/guide/create/hosted-page) |
+| "Opens soon" message | The reminder Fanfare sends to a sequence's waitlist 5 minutes before each opening. | | [Invites, waitlist and access-code sends](/guide/create/invites-and-waitlist) |
+| Publish freeze | The window from 15 minutes before any distribution opens until it closes, when republishing a hosted page requires **Override freeze and publish**. | | [Brand, templates and designs](/concepts/design) |
+| **Template** | A reusable design stored in **Design Studio**, including page templates, widget designs, message templates, and wallet pass designs. | | [Brand, templates and designs](/concepts/design) |
+| **Widget** | The drop component where customers join, enter, bid, book, or buy—embedded on your own site or inside a hosted page. | | [Brand, templates and designs](/concepts/design) |
 
 ## Plans and billing
 
 | Term | Meaning | API term | Explained in |
 | --- | --- | --- | --- |
-| Billing period | The period **Usage** totals Fanfare's fees by. | | [Billing and usage](/guide/account/billing) |
-| **Past due** | Your last plan payment failed; you keep the plan's features, and **Update payment method** fixes it; when Shopify bills your plan, you fix it in Shopify. | | [Billing and usage](/guide/account/billing) |
-| **Starter**, **Growth**, **Pro**, **Enterprise** | The four plans, which decide what you can create and edit and your take rate, never whether existing things keep running. | | [Plans and what they unlock](/guide/start/plans) |
-| **Trial** | You are trialling a paid plan until the date shown beside "Trial ends". | | [Billing and usage](/guide/account/billing) |
-| **Usage** | The fees Fanfare took on your paid orders, totalled by billing period. | | [Billing and usage](/guide/account/billing) |
+| Billing period | The cycle **Usage** uses to total your Fanfare per-order fees. | | [Billing and usage](/guide/account/billing) |
+| **Past due** | Your last subscription payment failed. You keep your plan's features, and **Update payment method** resolves it (if Shopify bills your plan, update it in Shopify). | | [Billing and usage](/guide/account/billing) |
+| **Starter**, **Growth**, **Pro**, **Enterprise** | Fanfare's four plans, which determine your take rate and which features you can create or edit—never whether existing drops keep running. | | [Plans and what they unlock](/guide/start/plans) |
+| **Trial** | You're trialing a paid plan until the date shown beside "Trial ends". | | [Billing and usage](/guide/account/billing) |
+| **Usage** | The per-order fees Fanfare collected on your paid orders, totaled by billing period. | | [Billing and usage](/guide/account/billing) |
 
-## In the Fanfare app in Shopify
+## On Shopify
 
-The rest of the vocabulary is the same in both apps.
+All other terms work the same in both the standalone Fanfare admin and the Shopify app.
 
 | Term | Meaning | API term | Explained in |
 | --- | --- | --- | --- |
-| **Checkout protection** | A checkout rule on Shopify that refuses a protected product unless the customer got access through your experience. | | [Checkout protection](/guide/shopify/checkout-protection) |
-| **Manage in Shopify** | Shown, disabled, on every plan in the Fanfare admin when Shopify bills your plan: you change the plan in Shopify. | | [Billing and usage](/guide/account/billing) |
-| Shopify checkout | Customers pay in Shopify, which holds the order; you refund it in Shopify. | | [Checkout options](/concepts/checkout-options) |
-| **Shopify-managed** | Shopify keeps the product's stock count, and only Shopify checkout may sell it. | | [Products from Shopify](/guide/shopify/products) |
-| **Source missing** | A product deleted in Shopify; Fanfare keeps it but will not add it to an experience or sequence. | | [Products from Shopify](/guide/shopify/products) |
-| **Sync from Shopify** | Brings a product's changes in Shopify into Fanfare straight away. | | [Products from Shopify](/guide/shopify/products) |
+| **Checkout protection** | A Shopify checkout rule that blocks checkout for a protected product unless the customer gained access through your experience. | | [Checkout protection](/guide/shopify/checkout-protection) |
+| **Manage in Shopify** | Shown disabled on plans in the Fanfare admin when Shopify bills your subscription—change your plan in Shopify instead. | | [Billing and usage](/guide/account/billing) |
+| Shopify checkout | Customers pay directly in Shopify, which owns the order and handles refunds. | | [Checkout options](/concepts/checkout-options) |
+| **Shopify-managed** | Shopify tracks the product's stock count, and only Shopify checkout can sell it. | | [Products from Shopify](/guide/shopify/products) |
+| **Source missing** | Flags a product deleted in Shopify. Fanfare keeps the record, but you can't add it to an experience or sequence. | | [Products from Shopify](/guide/shopify/products) |
+| **Sync from Shopify** | Pulls a product's latest changes from Shopify into Fanfare immediately. | | [Products from Shopify](/guide/shopify/products) |
 
 ## Words you may see elsewhere
 
-These words appear in the admin's own text or in the developer docs. This guide uses the word in the last column.
+These terms appear in admin UI copy or developer docs. This guide uses the term in the last column.
 
-| Word | Where you see it | What the guide calls it |
+| Word | Where you see it | What this guide calls it |
 | --- | --- | --- |
-| access window | The API docs, for the time to pay after admission | [Payment window](/concepts/admission-and-payment) |
-| consumer | The API and SDK docs, and **Bias toward loyal consumers** in the admin | [Customer](/concepts/customers) |
+| access window | API docs, for the time to pay after admission | [Payment window](/concepts/admission-and-payment) |
+| consumer | API and SDK docs, and **Bias toward loyal consumers** in the admin | [Customer](/concepts/customers) |
 | drop | **By drop** on **Usage** | [Experience](/concepts/experiences) |
-| grant | The SDK docs, for an admitted customer's right to buy | [Admission](/concepts/admission-and-payment) |
-| mechanism | The SDK docs, for the type of a distribution | [Distribution](/concepts/distributions/overview) |
-| size | The stock screens, for each variant of a product | [Variant](/guide/create/products) |
+| grant | SDK docs, for an admitted customer's right to buy | [Admission](/concepts/admission-and-payment) |
+| mechanism | SDK docs, for the type of a distribution | [Distribution](/concepts/distributions/overview) |
+| size | Stock screens, for each variant of a product | [Variant](/guide/create/products) |
