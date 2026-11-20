@@ -63,7 +63,7 @@ For how these channels work in drops, see [Build audiences](/guide/create/audien
 5. Select **Save**.
 
 <Warning>
-  **Save** always adds a new connection rather than replacing an existing one. To rotate an API key, save the new key first and then disconnect the old connection ([Manage a connection](#manage-a-connection)). Keep in mind that disconnecting an account stops future syncing for any audience previously imported through it (existing members remain).
+  **Save** always adds a new connection rather than replacing an existing one. To rotate an API key, save the new key first and then disconnect the old connection ([Manage a connection](#manage-a-connection)). You can't re-import that list through the new connection, so audiences imported through the old one stop syncing for good (existing members remain). Weigh that before you disconnect a working connection (if you leave both connected, both stay live).
 </Warning>
 
 <Note>
@@ -88,7 +88,7 @@ Your organization can keep one active Google Analytics 4 connection.
 4. Select **Save**.
 
 <Warning>
-  Saving updates replaces your existing Google Analytics connection. If saving fails partway through, your connection may be left disconnected—verify that the card shows **Connected** after saving, and re-enter your Measurement ID if needed.
+  Saving a change replaces your existing Google Analytics connection. If saving fails partway through, your connection may be left disconnected—verify that the card shows **Connected** after saving. If it isn't, re-enter your Measurement ID and choose your events again (re-entering the connection resets every event to ticked).
 </Warning>
 
 ## Meta
@@ -144,7 +144,7 @@ Only organization admins can connect, edit, or disconnect Twilio.
 
 ### When Fanfare asks to take over replies
 
-Fanfare needs to receive replies to your Twilio number so customers who reply `STOP` are unsubscribed automatically. If replies currently route to another system, selecting **Replace and connect** updates the webhook to Fanfare (and the previous system stops receiving replies).
+Fanfare needs to receive replies to your Twilio number so customers who reply `STOP` are unsubscribed automatically. If replies currently route to another system, selecting **Replace and connect** updates where Twilio sends replies to Fanfare (and the previous system stops receiving replies).
 
 <Frame>
   <img src="/images/guide/guide-account-integrations-twilio-replies.webp" alt="The Replies step of the Connect Twilio dialog noting that replies currently go to another system, with a checkbox to send them to Fanfare instead." />
@@ -173,7 +173,7 @@ Open any integration card to see its **Connected accounts**, including status, *
 - **Twilio (admins only):** Open the **Twilio** card, select **Disconnect**, and confirm.
 
 <Warning>
-  Before disconnecting **Meta**, **Discord**, or **Telegram**, check whether any scheduled posts are listed on the row—disconnecting prevents those posts from publishing. Disconnecting **Twilio** stops marketing texts right away (upcoming SMS announcements won't send—see [Announcements](/guide/create/announcements)), and you'll need to re-point inbound reply webhooks in Twilio if you want another system to receive replies again.
+  Before disconnecting **Meta**, **Discord**, or **Telegram**, check whether any scheduled posts are listed on the row—disconnecting prevents those posts from publishing. Disconnecting **Twilio** stops marketing texts right away (upcoming SMS announcements won't send—see [Announcements](/guide/create/announcements)), and you'll need to update where Twilio sends replies if you want another system to receive replies again.
 </Warning>
 
 ## On Shopify
@@ -189,7 +189,7 @@ The **Integrations** page works the same in the Fanfare Shopify app, with four d
 
 <AccordionGroup>
   <Accordion title="The connection step expired">
-    OAuth authorizations expire if you take longer than 10 minutes in Facebook or Discord, or if you reuse an older link. Start the connection again from the integration card.
+    `"The connection attempt expired or was already used. Start again."` means Facebook or Discord sign-in took longer than 10 minutes, or you reused an older link. Start the connection again from the integration card.
   </Accordion>
   <Accordion title="I see 'Fanfare could not complete this step. Check that you are an organization admin.'">
     Only organization admins can finalize Meta, Discord, or Telegram connections (permissions are checked when saving the selection or verifying the channel). Ask an admin to complete the connection from the start.

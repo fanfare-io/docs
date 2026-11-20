@@ -30,7 +30,7 @@ While a product is protected:
 - On product pages with the widget installed, the widget replaces your standard buy buttons before, during, and after the drop.
 
 <Warning>
-  Checkout protection stays active after a drop ends—and **Deactivate** does not lift it. Shoppers can't buy the product normally until no experience includes it: remove the product from the experience or delete the experience (and repeat for any other experience containing it). Deactivate **Live** or **Scheduled** experiences before deleting them; deletion completes once active checkout holds wind down, and you can't remove a product while the experience still holds allocated units.
+  Checkout protection stays active after a drop ends—and **Deactivate** does not lift it. Shoppers can't buy the product normally until no experience includes it: remove the product from the experience or delete the experience (and repeat for any other experience containing it). For a **Live** or **Scheduled** experience, deactivate it first, then delete it once its wind-down wait ends (see [Stop a drop](/guide/drop/deactivate#when-delete-is-available)). **Delete** isn't available until then, and you can't remove a product while the experience still holds allocated units.
 </Warning>
 
 Buy buttons elsewhere in your theme—such as quick-add buttons on collection pages—bypass the widget, but checkout protection still blocks those carts at checkout. See [Storefront setup](/guide/shopify/storefront-setup).
@@ -67,8 +67,8 @@ Checkout protection only lets a protected product through when the cart matches 
 | `"These products can't be purchased together — please check out separately"` | The cart contains protected products from more than one experience. | Check out each product separately. |
 | `"You can buy at most [number] of [product] in this checkout."` | The cart exceeds the experience's per-checkout quantity limit. | Lower the quantity to the allowed maximum. |
 | `"You have reached the purchase limit for [product]."` | The shopper has already hit their total purchase limit. | No additional units can be purchased with this access. |
-| `"Unable to add [product] to the cart as its not currently available for purchase."` | The cart includes a protected product or variant not covered by the shopper's grant. | Remove the extra item and check out only what the widget added. |
-| `"Unable to add to cart as the product is not currently available for purchase"` | Checkout couldn't verify the shopper's access grant. | Return to the product page and check out from the widget again for a fresh grant. Contact Fanfare support if it persists. |
+| `"Unable to add [product] to the cart as its not currently available for purchase."` | The cart includes a protected product or variant not covered by the shopper's access. | Remove the extra item and check out only what the widget added. |
+| `"Unable to add to cart as the product is not currently available for purchase"` | Checkout couldn't verify the shopper's access. | Return to the product page and check out from the widget again for fresh access. Contact Fanfare support if it persists. |
 | `"Your reserved item must be checked out once, at quantity 1, at its reserved price and with no discount. Please return to the product page to complete your purchase"` | An auction winner's cart doesn't match the winning bid rules. See [Auctions on Shopify](#auctions-on-shopify). | Return to the product page and check out once at quantity 1 with no discounts applied. |
 | `"Your reserved item can only be bought in [currency]. Please check out in [currency] to complete your purchase"` | An auction winner is checking out in a different currency than the winning bid. | Switch to the named currency to complete checkout. |
 | `"Internal cart validation error"` or a message starting `"Invalid date format"` | An unexpected error occurred on Fanfare's side. | Contact Fanfare support. |
@@ -88,7 +88,7 @@ Auctions are available on Shopify only when your store's checkout can enforce an
 - **Checkout protection** is **On**.
 - Your store's currency still matches your Fanfare organization's currency.
 
-If your Fanfare plan includes Auctions but any requirement above is missing, the **Auction** option appears locked with `"Needs a checkout that charges the winning bid"`—upgrading your Fanfare plan won't unlock it. (If your plan doesn't include Auctions, you'll see a plan upgrade prompt instead; see [Plans and what they unlock](/guide/start/plans).)
+If any requirement above is missing, the **Auction** option appears locked with `"Needs a checkout that charges the winning bid"`—upgrading your Fanfare plan won't unlock it.
 
 <Warning>
   Auctions require **Shopify Plus** and **Checkout protection: On**. Turning off checkout protection or changing your store's currency after creating an auction stops Fanfare from charging winning bids and prevents winners from checking out. Keep both unchanged until every winner has paid.

@@ -49,7 +49,7 @@ Every change you make in the page editor saves to a draft—customers won't see 
    - Select **Sync from sources** to refresh all linked fields with the latest data, or **Unlink** to freeze a field's current value. Editing and saving a linked field also unlinks it.
 3. Select **Save**. If any field has a validation issue, hover over **Save** to see which fields need fixing.
 
-The live canvas updates to show your last saved draft.
+The preview beside the fields shows your last saved draft, not unsaved edits.
 
 ### Style
 
@@ -134,7 +134,7 @@ After publishing, the **Delivery status** card tracks rollout to Fanfare's edge 
 Once published, the **Page** card shows **Live at** with your URL, a copy button, and a button to open it in a new tab. The URL uses your organization's **Experience Subdomain** from [Organization settings](/guide/account/organization).
 
 <Warning>
-  Publish your hosted page before announcements or social posts go out so their links work—and check your sequence's **Invite email** settings first. If a gated sequence opens within about 2 days and your postal address is set, publishing the hosted page can trigger its audience invite automatically. See [Invites, waitlist and access-code sends](/guide/create/invites-and-waitlist) and [Announcements](/guide/create/announcements).
+  Publish your hosted page before announcements or social posts go out so their links work—and check your sequence's **Invite email** settings first. If a gated sequence opens within about 2 days and your postal address is set, its audience invite can go out shortly after you publish; turn off **Send this invite** first if you don't want that. See [Invites, waitlist and access-code sends](/guide/create/invites-and-waitlist) and [Announcements](/guide/create/announcements).
 </Warning>
 
 {/* image: guide-create-hosted-page-design-tab */}
@@ -160,11 +160,11 @@ Hosted pages don't have an unpublish button. To take a page offline while the ex
 
 ## When the drop ends
 
-Even after every distribution closes, your URL continues serving the published page until you archive it or end the experience. If you deactivate the experience (or any of its sequences or distributions) or delete the experience, visitors see a branded ended/canceled screen instead—including a link to the **Website** configured in your organization settings. See [Stop a drop](/guide/drop/deactivate) and [What your customers see](/guide/drop/what-customers-see).
+Even after every distribution closes, your URL continues serving the published page until you archive it, deactivate a distribution, or delete the experience. If you deactivate the experience—or even a single sequence or distribution—or delete the experience, visitors see a branded ended or canceled screen instead (including for anything else in the experience that's still running), with a link to the **Website** configured in your organization settings. See [Stop a drop](/guide/drop/deactivate) and [What your customers see](/guide/drop/what-customers-see).
 
 ## Things to know before you go live
 
-- **Some updates go live without publishing:** Linked fields (product details, experience name and times, organization details) refresh automatically after their source changes, sometimes after a brief delay. Brand updates, **Experience colors**, and widget design changes also update live pages right away. See [Set your brand](/guide/create/brand) and [Templates and widget designs](/guide/create/templates).
+- **Some updates go live without publishing:** Linked fields (product details, experience name and times, organization details) refresh automatically after their source changes, sometimes after a brief delay. Brand updates, **Experience colours**, and widget design changes also update live pages right away. See [Set your brand](/guide/create/brand) and [Templates and widget designs](/guide/create/templates).
 - **No third-party scripts:** Custom tracking tags and pixels can't run on Fanfare-hosted pages.
 - **Embedding in an iframe:** To display a hosted page inside an iframe on another website, add that domain under **Settings → Embedding**. See [API keys and embedding](/guide/account/developer).
 - **Downgrading to Starter:** Published pages continue serving customers. You can still preview, archive, and close or reopen live polls, while editing and republishing require Growth or above.

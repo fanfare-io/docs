@@ -34,7 +34,7 @@ When stock allows you to stay in the same experience, keeping it preserves your 
 | **Same experience, new sequence** | Letting a new group in on different terms or from its own stock | Forecast, comparisons, products, and hosted page | Unavailable for Fanfare-managed products once experience stock is released. New sequences rank after earlier ones—priority follows creation order and can't be reordered ([Sequences and routing](/concepts/sequences)). |
 | **New experience** | New products, fully deactivated experiences, or released Fanfare-managed stock | Organization-wide audiences, tiers, and customer profiles | Required if the old experience was fully deactivated ([Stop a drop](/guide/drop/deactivate)) or its Fanfare-managed stock was released. Starts without forecasts or comparisons, and needs its own hosted page ([Build and publish the hosted page](/guide/create/hosted-page)). |
 
-Fanfare doesn't copy an entire experience in one step—to repeat a drop in a new experience, create a fresh one (see [Create an experience](/guide/create/experiences)).
+There's no way to copy an experience—create a new one and set it up again (see [Create an experience](/guide/create/experiences)).
 
 ## Choose who gets in first
 
@@ -46,11 +46,11 @@ Gate an early-access sequence with an audience built from purchase or loyalty si
 
 Because audience rules don't filter by a specific past drop, use purchase rules below—or export that drop's waitlist in the next section—to reach the right shoppers.
 
-### Starter recipes
+### Audience recipes
 
 Create these from **Audiences → Create Audience**:
 
-- **Repeat buyers:** **Match consumers where** **AND** → **Total orders** **Greater Than or Equal** `2` + **Last order** **Greater Than** a date just before your last drop opened.
+- **Repeat buyers:** **Match consumers where** **AND**, with **Total orders** **Greater Than or Equal** `2` and **Last order** **Greater Than** a date just before your last drop opened.
 - **Top spenders:** **Lifetime value** **Greater Than or Equal** your target threshold.
 
 {/* image: guide-learn-next-drop-repeat-buyers */}
@@ -67,7 +67,7 @@ Keep three operational details in mind before opening a gated sequence:
   Exporting a waitlist works on every plan; importing it as a Static List audience requires **Growth** or above.
 </Info>
 
-A sequence's waitlist holds signed-in shoppers who asked to be notified when it opens (plus anyone you added manually). Because Fanfare doesn't export full entrant or buyer lists, exporting the waitlist and importing it as a Static List audience is the cleanest way to give waiting shoppers first access next time.
+A sequence's waitlist holds signed-in shoppers who asked to be notified when it opens (plus anyone you added manually)—it isn't everyone who entered. Because Fanfare doesn't export entrant, winner, or buyer lists (and **Customers** has no export), exporting the waitlist and importing it as a Static List audience is the cleanest way to give waiting shoppers first access next time.
 
 <Steps>
   <Step title="Export the waitlist">
@@ -88,7 +88,7 @@ A sequence's waitlist holds signed-in shoppers who asked to be notified when it 
 </Steps>
 
 <Warning>
-  Never import the raw waitlist export without removing extra columns. The export snapshots each customer's name, phone number, and lifetime points at export time—importing those columns overwrites existing customer profiles, and reverting a changed phone number clears SMS consent permanently. Keep only `email` (and `phone` if required).
+  Never import the raw waitlist export without removing extra columns. The export snapshots each customer's name, phone number, and lifetime points at export time. Importing those columns overwrites existing profiles and can't be undone; a phone number that changed since export is written back, which clears SMS consent. Keep only `email` (and `phone` if required).
 </Warning>
 
 {/* image: guide-learn-next-drop-waitlist-export */}
@@ -99,9 +99,9 @@ A **Static List** audience is created before the file uploads and can't have mor
 
 <Info>Available on **Pro** and above.</Info>
 
-- **Gate by loyalty tier:** Select one tier directly on your members' sequence. To admit multiple tiers together, build a rule-based audience instead (for example, **Lifetime points** **Greater Than or Equal** the lowest tier threshold, or **Between** two thresholds—which only requires **Growth**). See [Loyalty and Fanfair](/concepts/loyalty).
+- **Gate by loyalty tier:** Select one tier directly on your members' sequence. To admit multiple tiers together, build a rule-based audience instead; for tiers built on **Lifetime points**, use **Lifetime points** **Greater Than or Equal** the lowest tier threshold, or **Between** two thresholds. A plain rule audience like this only requires **Growth**. See [Loyalty and Fanfair](/concepts/loyalty).
 - **Bias toward loyal consumers:** Turn this toggle on in your next queue or draw to give higher-point customers better odds (requires the loyalty program to be active; improves odds without guaranteeing a win).
-- **Tune Event Points ahead of launch:** Raise **Purchase**, **Queue Events**, or **Draw Events** under **Loyalty → Event Points** before opening if you want the next drop to reward more points (browsing and cart cards don't award points, and slider changes apply immediately to future awards only). See [Run a loyalty program](/guide/learn/loyalty).
+- **Tune Event Points ahead of launch:** Raise **Purchase**, **Queue Events**, or **Draw Events** under **Loyalty → Event Points** before opening if you want the next drop to reward more points (browsing and cart cards don't award points, and slider changes apply within a few minutes to future awards only). See [Run a loyalty program](/guide/learn/loyalty).
 
 ## Put it together
 
@@ -110,7 +110,7 @@ A **Static List** audience is created before the file uploads and can't have mor
     Create your early-access (members') sequence before your public sequence—routing priority follows creation order and can't be reordered later ([Sequences and routing](/concepts/sequences)).
   </Step>
   <Step title="Gate and schedule the early window">
-    Attach your audience or loyalty tier to the members' sequence and give it the earlier opening window. An open sequence is always offered ahead of a scheduled one, regardless of priority ([Add and gate sequences](/guide/create/sequences)).
+    **Attaching an audience schedules an invite email—read Step 3 before you save.** Attach your audience or loyalty tier to the members' sequence and give it the earlier opening window. An open sequence is always offered ahead of a scheduled one, regardless of priority ([Add and gate sequences](/guide/create/sequences)).
   </Step>
   <Step title="Review the automatic invite email right away">
     As soon as a sequence has an audience and a scheduled distribution, Fanfare queues an invite email for 2 days before opening (or about 30 minutes after saving if it opens sooner), provided your hosted page is published and your postal address is saved. Check the **Invite email** card on the sequence's **Access** tab right away and toggle off **Send this invite** if you aren't ready. Each customer is invited once per sequence, so reusing an existing sequence won't re-invite earlier invitees ([Invites, waitlist and access-code sends](/guide/create/invites-and-waitlist)).

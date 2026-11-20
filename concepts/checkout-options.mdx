@@ -22,7 +22,7 @@ During sign-up, the **How will you sell?** step lets you choose **Fanfare checko
 | **Payment collection** | Customers pay inside the Fanfare widget or hosted page; funds go to your Stripe account. | Your store collects payment. Fanfare doesn't process payments. | Shopify collects payment. |
 | **Inventory tracking** | Fanfare can track stock (**Fanfare-managed** or **Not managed**). | Not tracked by Fanfare—products are **Not managed**. | Normally tracked by Shopify (**Shopify-managed**). |
 | **Order visibility** | Yes. | No. | Yes—Shopify orders sync into Fanfare's **Orders**. |
-| **Order limits** | Enforced by Fanfare. | Enforced by your store (Fanfare doesn't see external orders). | Enforced by Fanfare. |
+| **Order limits** | Enforced by Fanfare. | Not enforced by Fanfare; enforce in your store. | Enforced by Fanfare. |
 | **Multi-product choice** (**Customer Picks** or **Mystery Box**) | Yes. | No—each sequence offers one product and variant. | Yes, when every product and variant comes from Shopify. |
 | **Auctions** | Yes. | No. | Shopify Plus only (see [On Shopify](#on-shopify)). |
 | **Card pre-authorization on entry** | Available on queues and draws. | Not available. | Not available. |
@@ -87,7 +87,7 @@ If Northbound instead used its own non-Shopify checkout, it wouldn't be able to 
 
 - **Shopify checkout only:** Fanfare checkout isn't available in the Shopify app yet—keep **Checkout processor** set to **External** so shoppers pay in Shopify checkout.
 - **Checkout protection:** Complete storefront setup before launching so Shopify checkout enforces your drop rules. See [Checkout protection](/guide/shopify/checkout-protection).
-- **Auctions:** Require **Shopify Plus**, Fanfare checkout rules enabled, and a store currency matching your Fanfare organization's currency. Without all three, auctions remain unavailable regardless of your Fanfare plan. See [Checkout protection](/guide/shopify/checkout-protection).
+- **Auctions:** Require **Shopify Plus**, Fanfare checkout rules enabled, Fanfare's latest Shopify permissions approved, and a store currency matching your Fanfare organization's currency. Without all four, auctions remain unavailable regardless of your Fanfare plan. See [Checkout protection](/guide/shopify/checkout-protection).
 - **Take rates:** If your organization has separate agreed rates for Shopify checkout and Fanfare checkout, **Settings → Payments** lists both.
 
 ## Related

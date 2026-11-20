@@ -64,7 +64,7 @@ Don't rely on this prompt as a safety net—it may not appear if a freeze has ju
 | Setting | What it controls | Default | Updates live drops? |
 | --- | --- | --- | --- |
 | **Logo** | Header logo (200×80px). Accepts JPG, PNG, GIF, or WebP. | None | Yes |
-| **Header Image** | Stored with your brand; not currently shown on widgets, hosted pages, or emails. | None | Yes |
+| **Header Image** | Stored with your brand; not currently shown on widgets, hosted pages, or emails. | None | Not displayed |
 | **Primary** | Main color for buttons and accents, and the accent color on hosted pages. | From the design | Yes |
 | **Secondary** | Supporting color for secondary backgrounds. | From the design | Yes |
 | **Background** | Page and canvas background. | From the design | Yes |
@@ -97,19 +97,19 @@ Select any row to jump straight to that experience's **Design** tab. If no pages
 Give a collaboration, VIP launch, or seasonal release its own palette without changing your organization-wide brand or templates:
 
 1. Go to **Experiences**, open the experience, and select **Design**.
-2. On the **Experience colors** card, set any of the six color roles. Unset roles display **From the brand**.
+2. On the **Experience colours** card, set any of the six color roles. Unset roles display **From the brand**.
 3. To revert a role back to your brand, select **Reset to the brand**.
 
-The card badge tracks how many custom colors are active (such as **2 colors set** or **All colors follow the brand**). Experience colors override both your brand and your widget design on that drop's widget and hosted page—except where a hosted page sets its own page-level color, which takes top priority there. Emails, fonts, and your logo always follow your organization brand.
+The card badge tracks how many custom colors are active (such as **2 colours set** or **All colours follow the brand**). Experience colors override both your brand and your widget design on that drop's widget and hosted page—except where a hosted page sets its own page-level color, which takes top priority there. Emails, fonts, and your logo always follow your organization brand.
 
-If your experience's widget design sets its own colors, the card notes it—any color you set on **Experience colors** still takes precedence on the widget. See [Templates and widget designs](/guide/create/templates) for more on widget design colors.
+If your experience's widget design sets its own colors, the card notes it—any color you set on **Experience colours** still takes precedence on the widget. See [Templates and widget designs](/guide/create/templates) for more on widget design colors.
 
 <Warning>
   Experience colors go live as soon as you commit a change (leaving the field, pressing Enter, closing the color picker, or clicking reset), with no publish step. If the experience is inside its publish freeze, Fanfare prompts **Change this experience during its drop?**—select **Save anyway** to apply it immediately or **Cancel** to keep what customers currently see.
 </Warning>
 
-<Frame caption="Experience colors override your brand and widget design for a single drop, while logo, fonts, and emails stay on brand.">
-  <img src="/images/guide/guide-create-brand-experience-colours.webp" alt="The Experience colors card with a 2 colors set badge. Primary and Text have their own values with reset arrows; the other four show From the brand. A line at the bottom reads Fonts and logo follow the brand." />
+<Frame caption="Experience colours override your brand and widget design for a single drop, while logo, fonts, and emails stay on brand.">
+  <img src="/images/guide/guide-create-brand-experience-colours.webp" alt="The Experience colours card with a 2 colours set badge. Primary and Text have their own values with reset arrows; the other four show From the brand. A line at the bottom reads Fonts and logo follow the brand." />
 </Frame>
 
 ## Preview branded emails
@@ -118,7 +118,7 @@ On any experience's **Design** tab, the **Emails** card lets you preview the bui
 
 ## On Shopify
 
-The Brand editor and **Experience colors** card work the same way in the Fanfare app on Shopify. Configure your widget colors, fonts, and wording in **Design Studio** rather than the Shopify theme editor so every drop on your storefront stays consistent. If you leave your brand fonts unset, the embedded widget automatically inherits your Shopify theme's font. See [Storefront setup](/guide/shopify/storefront-setup).
+The Brand editor and **Experience colours** card work the same way in the Fanfare app on Shopify. Configure your widget colors, fonts, and wording in **Design Studio** rather than the Shopify theme editor so every drop on your storefront stays consistent. If you leave your brand fonts unset, the embedded widget automatically inherits your Shopify theme's font. See [Storefront setup](/guide/shopify/storefront-setup).
 
 ## Troubleshooting
 
@@ -127,7 +127,7 @@ The Brand editor and **Experience colors** card work the same way in the Fanfare
     Your last edit wasn't saved, so customers still see the previous settings. This also happens when you select **Cancel** on a publish-freeze prompt. Fanfare doesn't retry failed saves automatically—the next edit you make saves all current color and font values in the panel (if a logo upload failed, upload it again). Wait for **All changes saved** before leaving the page.
   </Accordion>
   <Accordion title="A brand color change isn't showing on one experience">
-    A closer layer is overriding that color—check **Experience colors** on the experience's **Design** tab (which also flags widget design overrides), then check **Where it's used** in the Brand editor for hosted-page overrides. On hosted pages, page-level style fields inherit only your brand's **Primary** color; fields set to **Template default** keep the template's color.
+    A closer layer is overriding that color—check **Experience colours** on the experience's **Design** tab (which also flags widget design overrides), then check **Where it's used** in the Brand editor for hosted-page overrides. On hosted pages, page-level style fields inherit only your brand's **Primary** color; fields set to **Template default** keep the template's color.
   </Accordion>
   <Accordion title="An unset color looks different across screens">
     Unset brand colors fall back to whatever layer renders them—the Brand editor previews the **Kinetic** palette, while your default widget design or a page template may use different defaults. Setting the color in your brand replaces the fallback everywhere that follows the brand (without overriding colors set explicitly on a widget design, experience, or hosted page).

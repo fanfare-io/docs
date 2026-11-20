@@ -38,7 +38,7 @@ Before deactivating, choose the smallest scope that solves your issue: deactivat
     Check **Who this affects right now** to see how many waiting customers, unpaid winners, bidders, or bookings will be removed immediately.
   </Step>
   <Step title="Type deactivate to confirm">
-    Enter `deactivate` in the confirmation box and select **Deactivate** (the button stays disabled until the impact counts finish loading and you type the confirmation word).
+    Enter `deactivate` in the confirmation box and select **Deactivate** (the button stays disabled until the impact counts finish loading and you type the confirmation word). If counts fail to load, Fanfare shows a notice and you can still deactivate.
   </Step>
 </Steps>
 
@@ -47,7 +47,7 @@ Before deactivating, choose the smallest scope that solves your issue: deactivat
 </Warning>
 
 <Warning>
-  **Deactivating any single distribution or sequence marks your entire hosted page as ended**—even when other sequences or distributions in the same experience are still live or scheduled. There's no way to deactivate one sequence while keeping the shared public page open for others.
+  **Deactivating any single distribution or sequence marks your entire hosted page as ended**—even when other sequences or distributions in the same experience are still live or scheduled. There's no way to deactivate one sequence while keeping the shared public page open for others. The dialog only warns about this when other sequences are still running, not about other distributions in the same sequence.
 </Warning>
 
 <Frame caption="When your hosted page is live and other sequences are still running, the dialog warns that the entire public page will show as ended.">
@@ -64,8 +64,8 @@ Deactivation takes effect within seconds. Customers **already inside checkout** 
 | **Draw** | Entries won't be drawn. Winners who haven't started paying lose their win. |
 | **Auction** | All bids are voided and no winner is selected—even if the leading bid met the reserve. Winning bidders who haven't started paying lose the win. |
 | **Appointment** | All upcoming bookings are canceled automatically and customers are notified. |
-| **Timed release** | Entry ends immediately, and admitted customers who haven't started paying lose their spot. |
-| **Waitlist** | Waitlisted customers are removed from opening alerts, and any pending "opens soon" emails won't send. |
+| **Timed release** | Entry ends immediately, and admitted customers who haven't started paying lose their spot (the dialog doesn't include these customers in its count). |
+| **Any sequence's waitlist** | The distribution won't open for them, and any pending "opens soon" emails won't send. |
 
 Anyone who visits the drop page afterward sees that it has ended. See [What your customers see](/guide/drop/what-customers-see).
 
@@ -75,7 +75,7 @@ Anyone who visits the drop page afterward sees that it has ended. See [What your
 
 ### Special rules for English auctions
 
-Unlike Dutch auctions, an **English auction** can block deactivation in two situations:
+Unlike Dutch auctions, an **English auction** can block deactivation most commonly in two situations:
 
 - **A winner is actively checking out:** Wait until they complete payment or their payment window expires, then deactivate again.
 - **The auction closed without settling:** If you're trying to deactivate its parent sequence or experience, deactivate that English auction individually first (from its card menu or **Deactivate auction**), then deactivate the sequence or experience. Deactivating an unsettled English auction withdraws it so no further winner is chosen, while letting any winner already in checkout keep their unit.
@@ -99,10 +99,11 @@ Unlike Dutch auctions, an **English auction** can block deactivation in two situ
 
 You can't delete anything while it's live, scheduled, or still releasing active payment windows:
 
-- **Live or scheduled items:** Deactivate first. **Delete** stays disabled in experience and sequence headers until everything inside is deactivated. (Selecting **Delete** on a live distribution—or on a sequence/experience with a live auction—opens the **Deactivate** dialog instead.)
-- **Wind-down wait period:** Even after a drop ends or is deactivated, **Delete** waits until all payment windows have finished winding down (about **payment window + 1 hour**):
+- **Live or scheduled items:** Deactivate first. **Delete** stays disabled in experience and sequence headers until everything inside is deactivated. Selecting **Delete** on a live or upcoming distribution opens the **Deactivate** dialog instead. Header **Delete** looks enabled on a sequence or experience (and on the auction itself) while an auction is running—selecting it opens the **Delete** confirmation first, and confirming opens the **Deactivate** dialog.
+- **Wind-down wait period:** Even after a drop ends or is deactivated, **Delete** waits until all payment windows have finished winding down (about **payment window + 1 hour**) and is refused during this period even though the button looks available:
   - **After Deactivate:** About 90 minutes with the default payment window, or about 2 hours for a draw.
-  - **After natural close (queue, draw, timed release):** Payment window + ~1 hour from close (about 90 minutes for timed releases; draws that redraw until claimed measure from the final selection).
+  - **After natural close (queue and timed release):** Payment window + ~1 hour from close (about 90 minutes for a timed release).
+  - **After natural close (draw):** About an hour longer, measured from the final selection if it keeps drawing until every unit is claimed.
   - **After natural close (auction):** About 90 minutes from close or settlement, whichever is later. An English auction that closed without settling stays on hold for about 30 days unless you deactivate it, which drops the wait to about 90 minutes.
 - **Appointments:** No wind-down wait, but you can't delete an appointment while any upcoming or in-progress booking stands. After deactivating, wait for all booking cancellations to complete, then delete. Past bookings don't block deletion.
 
@@ -118,7 +119,7 @@ See [Admission and the payment window](/concepts/admission-and-payment) for how 
     Confirm the scope. Deleting an experience or sequence also removes any remaining waitlist sign-ups and stops pending "opens soon" emails, while keeping all orders, entries, and customer records.
   </Step>
   <Step title="Confirm deletion">
-    Select **Delete**. There's no undo or restore—old links to the deleted experience point directly to **Orders**.
+    Select **Delete**. There's no undo or restore. Old links show that the experience was deleted and when; its orders stay in **Orders**.
   </Step>
 </Steps>
 

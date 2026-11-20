@@ -42,7 +42,7 @@ For **Fanfare-managed** products, Fanfare displays six stock figures per variant
 | Figure | What it means |
 | --- | --- |
 | **Supply** | Total units recorded: opening stock, receipts, adjustments, write-offs, and restocked returns. |
-| **Sold** | Units with captured payment. Refunds don't automatically reduce this count. |
+| **Sold** | Units with captured payment. Refunds never reduce this count. |
 | **On hand** | **Supply** minus **Sold**. |
 | **Allocated** | Units reserved across your experiences. |
 | **Available** | **Supply** minus **Allocated**—units you can still allocate to an experience. Below zero means the size is over-allocated. |
@@ -58,7 +58,7 @@ You'll see these numbers in three places on the product page:
   <img src="/images/guide/stock-by-sku.webp" alt="The Stock by SKU table for a Fanfare-managed product, showing each size's supply, sold, on-hand, allocated and available units, with the Available column ringed and US 9 expanded to show the Autumn, Spring and Summer experiences that hold it" />
 </Frame>
 
-Refunding an order doesn't automatically reduce **Sold** or add units back to **Supply**—you choose whether to restock them from the order page. See [Orders and refunds](/guide/learn/orders). Orders awaiting that decision appear under **Refunded, not returned to stock:** below the table.
+Refunding an order never reduces **Sold** and doesn't automatically add units back to **Supply**—you choose whether to restock them from the order page. See [Orders and refunds](/guide/learn/orders). Orders awaiting that decision appear under **Refunded, not returned to stock:** below the table.
 
 ## Record a stock change
 
@@ -166,7 +166,7 @@ Organizations installed through the Shopify app start on **External** checkout, 
 If an organization admin switches checkout to **Fanfare** in [Organization settings](/guide/account/organization), products imported from Shopify afterward become **Fanfare-managed**, and newly created products offer the standard stock management choice. Existing products keep their original stock mode.
 
 <Note>
-  Fanfare-managed products imported from Shopify don't sync stock counts back to Shopify. Enter only the units you've set aside for Fanfare drops and take those units off sale in Shopify so the same inventory can't sell twice.
+  Fanfare-managed products imported from Shopify don't sync stock counts with Shopify in either direction. Enter only the units you've set aside for Fanfare drops and take those units off sale in Shopify so the same inventory can't sell twice.
 </Note>
 
 See [Products from Shopify](/guide/shopify/products) for full sync details.

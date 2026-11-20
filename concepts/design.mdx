@@ -16,12 +16,12 @@ On Starter, selecting **Design Studio** opens the brand editor directly.
 | **Brand** | Your **Logo**, six color roles (**Primary**, **Secondary**, **Background**, **Surface**, **Text**, **Muted**), **Body Font**, and **Heading Font**. | **Design Studio → Edit brand** | One per organization; applies across all experiences. |
 | **Templates** | Reusable hosted-page templates, widget designs, announcement templates (email, SMS, social), and wallet pass designs. Each is **Draft** or **Live**. | **Design Studio** | Unlimited, with one **Default** per type (except social templates). |
 | **Experience hosted page** | The hosted web page for a single experience, created as a copy of a page template or Fanfare starter. | Experience **Design** tab → **Page** card | One hosted page per experience. |
-| **Experience colors** | Per-experience color overrides for that drop's widget and hosted page. | Experience **Design** tab | One set per experience. |
+| **Experience colours** | Per-experience color overrides for that drop's widget and hosted page. | Experience **Design** tab | One set per experience. |
 
 Customers interact with your entry widget and—if you publish one—your hosted page. Automated emails sent during the drop are listed under the experience's **Design → Emails** section and use built-in layouts styled with your brand.
 
 <Frame caption="Each experience's Design tab shows the design layers shaping what customers see.">
-  <img src="/images/guide/concepts-design-experience-tab.webp" alt="The Design tab of an experience, with cards for Experience colors, Page, Widget and Emails; the Widget card shows the widget design following the organization default." />
+  <img src="/images/guide/concepts-design-experience-tab.webp" alt="The Design tab of an experience, with cards for Experience colours, Page, Widget and Emails; the Widget card shows the widget design following the organization default." />
 </Frame>
 
 ## Hosted page vs. entry widget
@@ -37,11 +37,11 @@ Whether an edit updates a live drop depends on how that layer attaches to an exp
 - **Linked live** — Your brand, widget designs, and wallet pass designs. Every experience or pass referencing them reflects the latest saved version automatically.
 
 <Warning>
-  Editing a **Live** widget design updates every experience using it—including drops running right now—just like editing your brand. Editing a **Live** wallet pass design also rebuilds existing passes that use it. To restyle a single drop without touching others, use **Experience colors** or assign a separate widget design to that experience.
+  Editing a **Live** widget design updates every experience using it—including drops running right now—just like editing your brand. Editing a **Live** wallet pass design also rebuilds existing passes that use it. To restyle a single drop without touching others, use **Experience colours** or assign a separate widget design to that experience.
 </Warning>
 
 <Frame caption="Linked layers update every experience on save; copied layers apply only to pages and announcements created afterward.">
-  <img src="/images/guide/concepts-design-layers.webp" alt="A diagram showing the brand and widget designs linked live to every experience, page and announcement templates copied into each experience, and Experience colors applying to one experience's widget and hosted page only." />
+  <img src="/images/guide/concepts-design-layers.webp" alt="A diagram showing the brand and widget designs linked live to every experience, page and announcement templates copied into each experience, and Experience colours applying to one experience's widget and hosted page only." />
 </Frame>
 
 ## How Fanfare chooses a widget design
@@ -61,23 +61,23 @@ On the **entry widget**, colors cascade from lowest to highest priority:
 1. Built-in widget style defaults
 2. **Brand** colors
 3. Widget design colors
-4. **Experience colors**
+4. **Experience colours**
 
 If you embed the widget on your own website, theme settings passed by your developer sit above all four. A widget's structural styling—corners, borders, depth, and motion—always comes from the widget design rather than your brand.
 
-On a **hosted page**, page templates inherit only your brand's **Primary** color as an accent (while the embedded entry widget on that page inherits your full brand). Colors set directly on the page override **Experience colors**, which override **Brand**. Unset colors fall back to your brand or the template's default.
+On a **hosted page**, page templates inherit only your brand's **Primary** color as an accent (while the embedded entry widget on that page inherits your full brand). Colors set directly on the page override **Experience colours**, which override **Brand**. Unset colors fall back to your brand or the template's default.
 
-**Automated emails** always use your **Brand** and ignore **Experience colors**.
+**Automated emails** always use your **Brand** and ignore **Experience colours**.
 
-**Fonts and logo:** Widget fonts and logos always come from **Brand**—neither widget designs nor **Experience colors** change them. On your own site, brand fonts display when loaded by your page or configured to load through the widget (see [Run it on your own site](/guide/create/your-own-site)). Hosted page templates use their own fonts rather than your brand fonts.
+**Fonts and logo:** Widget fonts and logos always come from **Brand**—neither widget designs nor **Experience colours** change them. On your own site, brand fonts display when loaded by your page or configured to load through the widget (see [Run it on your own site](/guide/create/your-own-site)). Hosted page templates use their own fonts rather than your brand fonts.
 
 ## Changes that go live without publishing
 
 Hosted page layout and copy changes stay in draft until you publish, with four exceptions that update live experiences as soon as they're saved:
 
 - **Brand edits** — Brand settings auto-save as you edit. Hosted pages update within about a minute, and widgets and future emails pick up changes automatically (emails already sent aren't affected). See [Set your brand](/guide/create/brand).
-- **Experience colors** — Apply immediately to that experience's widget and hosted page. See [Set your brand](/guide/create/brand).
-- **Widget design updates** — Saving a **Live** widget design, clicking **Change design** or **Reset to org default**, or changing/clearing the organization default immediately restyles every affected widget on both hosted pages and embedded sites. See [Templates and widget designs](/guide/create/templates).
+- **Experience colours** — Apply immediately to that experience's widget and hosted page. See [Set your brand](/guide/create/brand).
+- **Widget design updates** — Saving a **Live** widget design, selecting **Change design** or **Reset to org default**, or changing/clearing the organization default immediately restyles every affected widget on both hosted pages and embedded sites. See [Templates and widget designs](/guide/create/templates).
 - **Linked fields on published pages** — Fields bound to source data (product name, description, and image; experience name and schedule; organization name, logo, address, and support email) sync automatically when the source updates, sometimes after a brief delay. See [Build and publish the hosted page](/guide/create/hosted-page).
 
 ## The publish freeze
@@ -91,7 +91,7 @@ To prevent accidental page edits while shoppers are entering, Fanfare freezes pu
 
 If you need to push an urgent update to a published page during a freeze, an organization admin can confirm **Override freeze and publish**.
 
-The freeze doesn't block brand edits, widget design edits, or **Experience colors**—instead, Fanfare asks you to confirm before saving (and saving a **Live** widget design always confirms how many experiences will update, including any in a freeze). See [Build and publish the hosted page](/guide/create/hosted-page) for override details.
+The freeze doesn't block brand edits, widget design edits, or **Experience colours**—instead, Fanfare asks you to confirm before saving (and saving a **Live** widget design always confirms how many experiences will update, including any in a freeze). See [Build and publish the hosted page](/guide/create/hosted-page) for override details.
 
 ## Draft, Live, and Default templates
 
@@ -114,7 +114,7 @@ Suppose Northbound Supply Co.'s "Phantom Stitch Anorak Drop" has a published hos
 | Update **Brand → Primary** color | Fanfare prompts to confirm; after **Save anyway**, the hosted page restyles within about a minute and widgets and future emails follow. Every other experience updates too. |
 | Edit the original page template | Nothing changes on this drop—the hosted page is an independent copy. Only new pages created from the template later pick up the edit. |
 | Edit the hosted page itself | Your draft saves, but publishing is paused during the freeze unless an admin confirms **Override freeze and publish**. |
-| Update **Experience colors** | After confirming **Save anyway**, this drop's widget and hosted page update immediately. Emails keep your brand colors, and no other experience changes. |
+| Update **Experience colours** | After confirming **Save anyway**, this drop's widget and hosted page update immediately. Emails keep your brand colors, and no other experience changes. |
 
 ## On Shopify
 

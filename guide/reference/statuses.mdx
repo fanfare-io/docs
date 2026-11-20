@@ -17,7 +17,7 @@ A sequence is one entry path into an experience. Each experience and sequence di
 | **Ended** | Every distribution ran to its scheduled end. |
 | **Draft** | No distribution has been added yet (doesn't mean unpublished). |
 
-Status rolls up in the order above, so one **Live** sequence makes the entire experience **Live**. Customers never see these internal chips—see [What your customers see](/guide/drop/what-customers-see). On a published hosted page, deactivating any distribution or sequence marks the entire experience as ended for shoppers, even if the admin chip still reads **Live** (see [What locks, and when](/concepts/what-locks-when)).
+The first status in this list that any child has wins, so one **Live** sequence makes the entire experience **Live**. Customers never see these internal chips—see [What your customers see](/guide/drop/what-customers-see). On a published hosted page, deactivating any distribution or sequence marks the entire experience as ended for shoppers, even if the admin chip still reads **Live** (see [What locks, and when](/concepts/what-locks-when)).
 
 <Frame caption="Every experience displays one status chip, calculated from its distributions.">
   <img src="/images/guide/guide-reference-statuses-experiences-list.webp" alt="The Experiences list with a status chip on each row: Ended, Live, and Scheduled (with a Held: stock chip)." />
@@ -55,7 +55,7 @@ See [Distributions](/concepts/distributions/overview) for how windows work by ty
 | **Partially refunded** | Part of the payment has been refunded. |
 | **Refunded** | The full payment has been refunded. |
 | **Payment failed** | Payment didn't go through. |
-| **Canceled** | The order was canceled. |
+| **Cancelled** | The order was canceled. |
 
 All order and payment statuses are covered in [Orders and refunds](/guide/learn/orders), including these details:
 
@@ -88,12 +88,12 @@ A new audience admits no one until its first build reaches **Live** ([Audiences 
 | Sequence waitlist members | **Waitlisted**, **Converted**, **Left**, **Removed** (filters: **On the list**, **Left**, **All**) | [Waitlists](/concepts/waitlists) |
 | Variants on a sequence's **Stock** card | **Not counting yet**, **Preparing**, **Ready**, **Selling**, **Opens sold out**, **Held: stock** or `"Over-allocated by N"`, **Paused**, **Ended**, **Released**, `"Sold out right now"`, `"Last N in checkout"`, and `"N at risk"` (units in checkout not covered by stock on hand) | [Stock](/concepts/stock) |
 | Live **Sizes** tiles | **Selling**, **Last call**, **Gone** | [Watch a live drop](/guide/drop/watch-live) |
-| Appointment attendees | **Confirmed**, **Checked In**, **Canceled**, **Completed** | [Set up appointments](/guide/create/appointment) |
-| Plan badge on **Billing** | **Trial**, **Active**, **Past due**, **Ends** + date (or **Canceling**), **Canceled**, **Inactive**, **Pending**, **No subscription** | [Billing and usage](/guide/account/billing) |
+| Appointment attendees | **Confirmed**, **Checked In**, **Cancelled**, **Completed** | [Set up appointments](/guide/create/appointment) |
+| Plan badge on **Billing** | **Trial**, **Active**, **Past due**, **Ends** + date (or **Cancelling**), **Cancelled**, **Inactive**, **Pending**, **No subscription** | [Billing and usage](/guide/account/billing) |
 | Stripe account | `"Setup not finished"`, `"Action needed"`, `"Active"` | [Payments and fees](/guide/account/payments) |
 | Sending domains | **Waiting for DNS**, **Verified**, **Needs attention**, **Failed**, **Removing**, **Unknown** | [Sender identity and sending domain](/guide/create/email-sender) |
 | Designs and templates | **Draft**, **Live** | [Templates and widget designs](/guide/create/templates) |
-| Announcements agenda | **Needs attention**, **Up next**, **Recently sent**, **Won't send**, **Canceled** | [Announcements](/guide/create/announcements) |
+| Announcements agenda | **Needs attention**, **Up next**, **Recently sent**, **Won't send**, **Cancelled** | [Announcements](/guide/create/announcements) |
 
 ## On Shopify
 

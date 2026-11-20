@@ -87,7 +87,7 @@ For **By drop** tables, insight cards, and post-drop metrics, see [Read your res
 
 When a sequence has multiple distributions, a switcher at the top lets you choose a specific distribution or **Whole sequence** for combined totals (it opens on the most recently opened live distribution, and the selection stays in the URL so you can share the link).
 
-Use the **Watch** / **Run** toggle at the top to switch between live monitoring and quick access to settings.
+Use the **Watch** / **Run** toggle at the top to switch between live monitoring and quick access to settings (the toggle isn't kept in the URL and resets to **Watch** on reload).
 
 <Warning>
   Only queues have a dedicated live layout. Draws, auctions, timed releases, and appointments share the queue layout, so **Waiting in queue** (in **Watch**) and **In queue** (in **Run**) always read `0` for them—and for appointments, **Awaiting checkout** and admitted counts also read `0`. For those types, focus on **Entrants**, **Units sold**, and **Revenue**, and use the dedicated auction or appointment panels on the sequence's **Overview**.
@@ -162,7 +162,7 @@ Below the cards, an event stream logs live bids and milestones such as anti-snip
 
 When a sequence runs an appointment distribution, a dedicated panel appears below the **Distributions** card showing the appointment name, location, a day strip with booking counts against capacity, and the time slots for the selected day (days outside the window read `not in window`; closed days read `closed`).
 
-Select any time slot to inspect **Slot Attendees** and their status (**Confirmed**, **Checked In**, **Canceled**, or **Completed**). All slot times appear in the appointment's time zone. To cancel a booking, see [Change things mid-drop](/guide/drop/live-controls#cancel-a-booking).
+Select any time slot to inspect **Slot Attendees** and their status (**Confirmed**, **Checked In**, **Cancelled**, or **Completed**). All slot times appear in the appointment's time zone, though the view doesn't name the time zone. To cancel a booking, see [Change things mid-drop](/guide/drop/live-controls#cancel-a-booking).
 
 ## On Shopify
 

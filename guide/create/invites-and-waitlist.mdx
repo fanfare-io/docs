@@ -44,10 +44,10 @@ If the sequence also has a **Shared access code**, the invite includes it automa
 By default, Fanfare sends the first wave **2 days before** the sequence's earliest opening. Until that first wave goes out, adding an earlier distribution automatically shifts the invite earlier to match.
 
 <Warning>
-  If your sequence opens in less than about 2 days (or is already open) when the invite becomes ready—including right when you publish your hosted page—Fanfare automatically sends the invite to the entire audience about 30 minutes later. Review the **Invite email** card or turn off **Send this invite** before publishing if you don't want it to go out right away.
+  If your sequence opens in less than about 2 days (or is already open) when you set up the invite, Fanfare sends it to the entire audience about 30 minutes after you save unless you turn it off first. If the invite was only waiting on a hosted page, it can go out shortly after you publish; turn off **Send this invite** first if you don't want that.
 </Warning>
 
-After the initial send, Fanfare checks the audience every 15 minutes and emails any newly added members until the sequence's last distribution ends (or indefinitely if a distribution has no close time). If you swap the sequence's audience, subsequent checks invite members of the new audience.
+After the initial send, Fanfare checks the audience every 15 minutes and emails any newly added members until the sequence's last distribution ends (or for as long as that distribution is live if it has no close time). If you swap the sequence's audience, subsequent checks invite members of the new audience.
 
 <Frame caption="Check invite wording, timing, audience coverage, and delivery progress on the sequence's Access tab.">
   <img src="/images/guide/guide-create-invites-and-waitlist-invite-card.webp" alt="The Access tab of a sequence, showing the Invite email card marked Scheduled with its template, timing, and audience rows, and the invite progress figures below it." />
@@ -93,7 +93,7 @@ The **Access** tab breaks down invite progress across **Invited**, **Didn't arri
 Every sequence (except appointment-only sequences) includes a waitlist automatically—see [Waitlists](/concepts/waitlists) for how customers join. Five minutes before each distribution in the sequence opens, Fanfare automatically notifies everyone on the waitlist. This alert can't be edited or turned off.
 
 - **Channel:** Each customer receives one message—email or SMS—based on your **Default Messaging Channel** (**Settings → Organization → Messaging**), automatically falling back to the other channel if they're unreachable on the default.
-- **Content:** The email subject reads *"[Distribution name] opens soon"* followed by *"You're on the waitlist — don't miss it."*
+- **Content:** The email subject reads *"[Distribution name] opens soon"*. The body repeats that line, followed by *"You're on the waitlist — don't miss it."*
 - **Exceptions:** Not sent for appointments, distributions already open at creation, or deactivated/deleted distributions ([Stop a drop](/guide/drop/deactivate)).
 - **Where it appears:** Listed on the sequence's **Announcements** tab and shown as a **Waitlist email** milestone under **What happens next** on the experience **Overview** (not in **Marketing Hub**).
 
@@ -110,11 +110,12 @@ Every sequence (except appointment-only sequences) includes a waitlist automatic
 Open a sequence's **Waitlist** tab to see everyone signed up along with their **Status** and **Joined** date. Filter by **On the list** (default), **Left**, or **All**, or search by name, email, or phone. (The experience-level **Waitlist** page shows a read-only roll-up across all sequences—manage members from each sequence's own **Waitlist** tab.)
 
 - **Add someone:** Select **Add person**, enter their **Email** (Fanfare creates a customer record if needed), and click **Add to waitlist**. Anyone who has already reached the experience's order limit can't be added.
-  <Note>
-    Customers added manually via **Add person** receive a waitlist confirmation via your default messaging channel. Customers who join the waitlist themselves don't receive a confirmation email or text—keep that in mind when writing your drop copy. See [Waitlists](/concepts/waitlists).
-  </Note>
 - **Remove someone:** Select **Remove** on their row and confirm. They aren't notified, and the list updates after a moment.
 - **Export as CSV:** Select **Exports → New export**. Fanfare generates CSV files in the background—you can navigate away and come back to **Download** them when ready.
+
+<Note>
+  Customers added manually via **Add person** receive a waitlist confirmation via your default messaging channel. Customers who join the waitlist themselves don't receive a confirmation email or text—keep that in mind when writing your drop copy. See [Waitlists](/concepts/waitlists).
+</Note>
 
 <Frame caption="Search, filter, export, or manually add people to a sequence's waitlist by email.">
   <img src="/images/guide/guide-create-invites-and-waitlist-waitlist-tab.webp" alt="The Waitlist tab listing people on the waitlist with Person, Joined, and Status columns and the On the list filter, with the Add a person to the waitlist dialog open over it." />

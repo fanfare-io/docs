@@ -10,7 +10,7 @@ Not sure if a queue is the right format for your drop? Read [Queue](/concepts/di
 ## Before you start
 
 - Have at least one product ready in Fanfare. See [Add products](/guide/create/products).
-- To use **Pre-authorize on joining**, you need **Fanfare checkout** and a connected Stripe account. See [Payments and fees](/guide/account/payments).
+- To use **Pre-authorise on joining**, you need **Fanfare checkout** and a connected Stripe account. See [Payments and fees](/guide/account/payments).
 - To use **Bias toward loyal consumers**, turn on your loyalty program first (Pro and above). See [Run a loyalty program](/guide/learn/loyalty).
 
 Queues are available on every plan, including Starter.
@@ -30,7 +30,7 @@ The experience wizard builds your experience, its first sequence, and the queue 
     On **Queue Configuration**, under **Flow Control**, set your **Admit rate** (how many shoppers enter per minute). Check the **Throughput** estimate below it to see your hourly pace, then optionally turn on **Bias toward loyal consumers** or **Automatic entry**.
   </Step>
   <Step title="Choose how customers pay">
-    On **Payment**, choose **Pay when admitted** or **Pre-authorize on joining** under **Payment collection**. Review [Payment collection](#payment-collection) before deciding.
+    On **Payment**, choose **Pay when admitted** or **Pre-authorise on joining** under **Payment collection**. Review [Payment collection](#payment-collection) before deciding.
   </Step>
   <Step title="Set guest access and launch">
     On **Access**, select **Anyone, as a guest** under **Open to everyone** if you want shoppers to join without signing in. Review your setup on **Review & launch**, then select **Create experience**.
@@ -77,8 +77,8 @@ You can also reuse an existing queue's setup by selecting **Duplicate** from its
 | **Bias toward loyal consumers** | Weights line order before opening so shoppers with more loyalty points have better odds of an earlier spot. Doesn't affect anyone who joins after **Opens**. | Off | Yes, but changing it after open won't reorder anyone—it only affects whether waiting shoppers see their exact spot in line. |
 | **Allow guest access** (**Anyone, as a guest** in the wizard) | Lets shoppers join without signing in. | Off | Yes, unless the sequence is gated to an audience (audience sequences require sign-in). |
 | **Automatic entry** | Automatically enters everyone who lands on the queue, including visitors who leave right away. | Off | Yes |
-| **Payment collection** | Whether shoppers pay at checkout (**Pay when admitted**) or place a card hold up front (**Pre-authorize on joining**). | **Pay when admitted** | No—locks about 5.5 minutes before **Opens**. |
-| **Authorization amount** | Card hold amount when using **Pre-authorize on joining**. | None | No—locks with **Payment collection**. |
+| **Payment collection** | Whether shoppers pay at checkout (**Pay when admitted**) or place a card hold up front (**Pre-authorise on joining**). | **Pay when admitted** | No—locks about 5.5 minutes before **Opens**. |
+| **Authorization amount** | Card hold amount when using **Pre-authorise on joining**. | None | No—locks with **Payment collection**. |
 | **Opens** | When the queue begins admitting shoppers. | Wizard: next minute; **Add distribution**: none | Until about 5.5 minutes before **Opens**; after that, only earlier. |
 | **Closes** | When the queue stops admitting shoppers. | Wizard: 7 days after **Opens At**; **Add distribution**: none | Yes, until the queue closes. |
 | **Name** | Internal name in the admin. | Wizard: experience name; **Add distribution**: none | Yes, until the queue closes. |
@@ -86,20 +86,20 @@ You can also reuse an existing queue's setup by selecting **Duplicate** from its
 
 A few details worth knowing as you configure your queue:
 
-- **Admit rate floor:** The wizard requires an admit rate of at least `1`. In **Add distribution** or **Edit**, you can set `0` to hold admissions without pausing the drop.
+- **Admit rate floor:** The wizard requires an admit rate of at least `1`. **Add distribution** and **Edit** accept `0`, but an admit rate of `0` lets nobody in—use **Pause queue** if you need to pause admissions during a live drop.
 - **Loyalty bias:** Requires your loyalty program to be active—otherwise the toggle stays disabled. See [Loyalty and Fanfair](/concepts/loyalty) for how points affect queue order.
 - **Guest access trade-offs:** Guests can only return to their spot from the same browser, and open guest access tends to attract more duplicate or throwaway entries than email sign-in. See [Customers and identity](/concepts/customers) and [Sequences and routing](/concepts/sequences).
-- **Payment window and line size:** Every admitted shopper gets a fixed **30-minute payment window** (not configurable for queues), and there's no cap on how many shoppers can wait in line. See [Admission and the payment window](/concepts/admission-and-payment).
+- **Payment window and line size:** Every admitted shopper gets a fixed **30-minute payment window** (not configurable for queues), and the admin has no setting to cap queue length. See [Admission and the payment window](/concepts/admission-and-payment).
 
 ### Payment collection
 
 - **Pay when admitted:** Shoppers complete checkout within their 30-minute payment window after being admitted.
-- **Pre-authorize on joining:** Fanfare places a hold for the **Authorization amount** (in your organization's currency) when a shopper joins. The hold is captured automatically if they're admitted and released if they aren't. The authorization amount must exactly match the product's price, and because card holds expire after about 7 days, keep your queue window well under a week. See [Admission and the payment window](/concepts/admission-and-payment).
+- **Pre-authorise on joining:** Fanfare places a hold for the **Authorization amount** (in your organization's currency) when a shopper joins. The hold is captured automatically if they're admitted and released if they aren't. The authorization amount must exactly match the product's price, and because card holds expire after about 7 days, keep your queue window well under a week. See [Admission and the payment window](/concepts/admission-and-payment).
 
 Pre-authorization requires **Fanfare checkout** and a connected Stripe account. If you use external checkout, shoppers pay in your own store and Fanfare skips payment collection entirely. See [Checkout options](/concepts/checkout-options).
 
 <Note>
-  **Pre-authorize on joining** isn't available when shoppers in the sequence still have to choose between multiple products or variants. To pre-authorize a multi-option drop, run it as a [draw](/guide/create/draw) or limit the sequence to a single product and variant.
+  **Pre-authorise on joining** isn't available when shoppers in the sequence still have to choose between multiple products or variants. To pre-authorize a multi-option drop, run it as a [draw](/guide/create/draw) or limit the sequence to a single product and variant.
 </Note>
 
 <Warning>
@@ -126,7 +126,7 @@ For how line order works under the hood, see [Queue](/concepts/distributions/que
 
 ## On Shopify
 
-Queues work the same way in the Shopify app, with one difference: shoppers pay in Shopify's checkout, so **Pre-authorize on joining** isn't available.
+Queues work the same way in the Shopify app, with one difference: shoppers pay in Shopify's checkout, so **Pre-authorise on joining** isn't available.
 
 Make sure checkout protection is enabled and the Fanfare product widget is published on your theme before doors open—otherwise shoppers can bypass the queue. See [Storefront setup](/guide/shopify/storefront-setup).
 

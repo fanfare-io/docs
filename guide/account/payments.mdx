@@ -32,10 +32,10 @@ Compare every plan's take rates in [Plans and what they unlock](/guide/start/pla
 ### How fees work
 
 - **Automatic deduction:** Fanfare's fee is deducted directly in Stripe when payment is captured (including when a pre-authorized hold is captured). You're never invoiced for it separately.
-- **Minimum fee cap:** If your custom rate has a minimum fee per order, Fanfare takes the percentage or the minimum—whichever is higher—never exceeding the order total itself.
+- **Minimum fee:** If your custom rate has a minimum fee per order, Fanfare takes the percentage or the minimum—whichever is higher—never exceeding the order total itself.
 - **Rate locked at payment:** Each order keeps the rate active when it was paid. Changing plans mid-period doesn't re-rate earlier orders.
 - **Custom rates stay put:** A custom rate overrides standard plan rates across every tier, so changing plans won't alter it.
-- **Other fees and exceptions:** Unpaid appointments carry no fee. Stripe's own processing fees are billed separately to your Stripe account.
+- **Other fees and exceptions:** Appointments never take payment, so they carry no fee. Stripe's own processing fees are billed separately to your Stripe account.
 - **Order details and refunds:** After payment is captured, the fee appears as **Fanfare fee** on the order's **Payment** card (and in each distribution's payment settings—see [Admission and the payment window](/concepts/admission-and-payment)). Refunding an order doesn't return the Fanfare fee ([Orders and refunds](/guide/learn/orders)).
 
 ## Choose how to connect Stripe
@@ -47,10 +47,10 @@ You can either create a Stripe account through Fanfare or link an existing Strip
 | **How to connect** | Select **Set up payments** and complete Stripe onboarding | Select **Connect an existing Stripe account** and authorize Fanfare in Stripe |
 | **Finish setup** | Select **Continue setup** on this page | Open your Stripe Dashboard (**Open Stripe Dashboard**) |
 | **Manage payouts, bank details, and disputes** | Directly on this page under **Account and bank details**, **Payouts**, and **Payments and disputes** | In your Stripe Dashboard |
-| **After disconnecting** | The account remains tied to your organization, though payout and bank sections are hidden while disconnected. Select **Set up payments** to reconnect the same account. | You can reconnect only the same Stripe account via **Connect an existing Stripe account**—Fanfare can't create a new one. |
+| **After disconnecting** | The account remains tied to your organization, and payout, balance, bank details, and disputes are hidden while disconnected—Fanfare-created Stripe accounts have no Stripe Dashboard of their own, so disconnecting leaves nowhere to view payouts, balance, or disputes. Select **Set up payments** to reconnect the same account. | You can reconnect only the same Stripe account via **Connect an existing Stripe account**—Fanfare can't create a new one. |
 
 <Warning>
-  Selecting **Create account**—or connecting an existing Stripe account—immediately locks your organization's country and currency and permanently ties your workspace to that Stripe account, even if you never finish onboarding or disconnect it later. You can't swap in a different Stripe account afterward, so decide which connection path you want before continuing.
+  Selecting **Create account**—or connecting an existing Stripe account—immediately locks your organization's country and currency and permanently ties your organization to that Stripe account, even if you never finish onboarding or disconnect it later. You can't swap in a different Stripe account afterward, so decide which connection path you want before continuing.
 </Warning>
 
 <Frame>
@@ -120,7 +120,7 @@ If you revoked Fanfare's access from your own Stripe Dashboard, the badge return
   Disconnecting immediately stops Fanfare checkout from taking new payments—even during live or scheduled drops. Customers who have been admitted but haven't paid yet won't be able to finish checkout, and new shoppers won't be able to enter distributions that pre-authorize payment. Disconnecting also doesn't free up your organization to connect a different Stripe account or unlock your country and currency—you can only reconnect the same Stripe account later.
 </Warning>
 
-To reconnect an account you originally created through Fanfare, select **Set up payments** again. Rather than creating a new account, Fanfare reopens Stripe onboarding for your existing linked account so you can confirm its details.
+To reconnect an account you originally created through Fanfare, select **Set up payments** again. The dialog still says "Create your Stripe account", even though no new account is created—Fanfare reopens Stripe onboarding for your existing linked account so you can confirm its details.
 
 ## What members see
 
@@ -151,7 +151,7 @@ In the Shopify app, **Settings → Payments** displays your **Fanfare checkout p
     Both lock permanently as soon as you create or connect a Stripe account, including after disconnecting. Currency can also be temporarily locked by active or undeleted auctions—see [Organization settings](/guide/account/organization).
   </Accordion>
   <Accordion title="Account management sections are temporarily unavailable">
-    If Fanfare can't load your embedded Stripe payout or bank sections, wait a moment and refresh the page. Contact [support@fanfare.io](mailto:support@fanfare.io) if the issue persists.
+    `"Account management is unavailable right now. Please try again later."` appears when Fanfare can't load your embedded Stripe payout or bank sections. Wait a moment and refresh the page, and contact [support@fanfare.io](mailto:support@fanfare.io) if the issue persists.
   </Accordion>
 </AccordionGroup>
 

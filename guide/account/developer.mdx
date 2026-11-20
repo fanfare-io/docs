@@ -3,7 +3,7 @@ title: API keys and embedding
 description: Find the credentials your developer needs to integrate Fanfare on your site, rotate your secret key safely, and control which domains can embed your hosted pages.
 ---
 
-Use **Settings → API Keys** and **Settings → Embedding** (under **Developer**) when a developer is adding Fanfare to your own site or when you want to embed hosted Fanfare drop pages inside another site, such as your storefront. For a step-by-step walkthrough of embedding Fanfare widgets on your own site, see [Run it on your own site](/guide/create/your-own-site).
+Use **Settings → API Keys** and **Settings → Embedding** (under **Developer**) when a developer is adding Fanfare to your own site or when you want to embed hosted Fanfare pages inside another site, such as your storefront. For a step-by-step walkthrough of embedding Fanfare widgets on your own site, see [Run it on your own site](/guide/create/your-own-site).
 
 ## Before you start
 
@@ -57,7 +57,7 @@ Fanfare never reveals your current secret key after it's generated. Rotating cre
 
 ## Control which sites can embed your hosted pages
 
-By default, other websites can't display your hosted drop pages inside an iframe. To allow specific sites—like your main store—add them in **Settings → Embedding** (admins only).
+By default, other websites can't display your hosted pages inside an iframe. To allow specific sites—like your main store—add them in **Settings → Embedding** (admins only).
 
 1. Open **Settings → Embedding**.
 2. Under **Allowed embedding origins**, list one full origin per line, including `https://` and nothing after the domain—for example, `https://shop.example.com`.
@@ -100,7 +100,7 @@ For connecting Fanfare to your Shopify theme and checkout, see [Storefront setup
 
 <AccordionGroup>
   <Accordion title="Allowed embedding origins shows 'Invalid'">
-    Make sure every line includes `https://`, ends at the domain with no path or trailing slash (for example, `https://shop.example.com`), and doesn't use `*`. Fix the line and select **Save** again.
+    Make sure every line includes `https://`, ends at the domain with no path (for example, `https://shop.example.com`), and doesn't use `*`. Fix the line and select **Save** again.
   </Accordion>
   <Accordion title="My hosted page won't load inside my storefront iframe">
     Your storefront's origin is likely missing from **Allowed embedding origins**. Add your exact domain (such as `https://shop.example.com`), select **Save**, and wait a moment for the update to propagate.

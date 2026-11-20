@@ -43,7 +43,7 @@ Use this guide when something looks off while your drop is **Live**. Most edits 
   </Accordion>
   <Accordion title="Customers see 'Entry is paused. Your place in line is saved.'">
     This means the queue has no free units to admit right now—not that you paused it manually. Either every remaining unit is currently held in active checkouts, or stock isn't ready yet. Check the sequence's **Stock** card:
-    - If all units are **In checkout**, the line will move automatically when checkouts expire or when you add inventory with **Move units** (once everything sells, customers see `"Everything claimed"`).
+    - If all units are **In checkout**, the line will move automatically when checkouts expire or when you add inventory with **Move units** (once everything sells, customers see "Everything claimed").
     - If the **Stock** card shows **Not counting yet**, **Counting is paused**, or **Held: stock**, follow the on-card prompt (such as **Resolve** for an over-allocated size). Sequences exceeding 256 size combinations also block admissions (see below). If the card shows no issue, contact support. See [Stock](/concepts/stock) and [Change things mid-drop](/guide/drop/live-controls).
   </Accordion>
 </AccordionGroup>
@@ -54,7 +54,7 @@ Use this guide when something looks off while your drop is **Live**. Most edits 
   <Accordion title="A size shows sold out at or right after opening">
     Any Fanfare-managed size left without an allocation starts at `0` and opens sold out. While live, add inventory with **Move units** (from **Unassigned** or another sequence) or increase it in **Edit allocations** using unassigned stock.
 
-    Also check for `"More than 256 size combinations: new shoppers are refused"`—sequences with more than 256 size combinations block new entries, and product selection can't be edited while a distribution is open, settling, or holding entrants. See [Allocate stock to a drop](/guide/create/stock-allocation) and [Change things mid-drop](/guide/drop/live-controls).
+    Also check for "More than 256 size combinations: new shoppers are refused"—sequences with more than 256 size combinations block new entries. To fix it, reduce the number of products or sizes in the sequence (product selection can't be edited while a distribution is open, settling, or holding entrants). See [Allocate stock to a drop](/guide/create/stock-allocation) and [Change things mid-drop](/guide/drop/live-controls).
   </Accordion>
   <Accordion title="A draw's winner count changed on its own">
     While a draw is still selecting winners, moving units into its sequence raises **Winner count** and moving units out lowers it automatically. See [Change things mid-drop](/guide/drop/live-controls).
@@ -89,7 +89,7 @@ Use this guide when something looks off while your drop is **Live**. Most edits 
 
 <AccordionGroup>
   <Accordion title="Live now is much larger than the queue, or Waiting in queue reads 0 for a draw">
-    **Live now** combines *current* people waiting in live queues with *cumulative* entrants across every other live distribution type. In addition, only queues have a dedicated live layout—draws, auctions, timed releases, and appointments share it, so **Waiting in queue** always reads `0` for them. Read **Entrants** on the individual cards instead. See [Watch a live drop](/guide/drop/watch-live).
+    **Live now** combines *current* people waiting in live queues with *cumulative* entrants across every other live distribution type. In addition, only queues have their own live screen; draws, auctions, timed releases, and appointments use the queue's screen, so **Waiting in queue** always reads `0` for them. Read **Entrants** on the individual cards instead. See [Watch a live drop](/guide/drop/watch-live).
   </Accordion>
   <Accordion title="Entries on Home doesn't match Entrants, or Paid orders includes refunds">
     **Entries** on **Home** (titled **Dashboard**) counts every individual entry—one shopper entering three distributions counts three times—while **Entrants** in **Performance** counts unique customers. **Paid orders** also includes orders that were later fully refunded. See [Read your results](/guide/learn/performance).
@@ -122,7 +122,7 @@ Use this guide when something looks off while your drop is **Live**. Most edits 
   <Accordion title="Deactivation didn't reach every page, or Delete is refused afterward">
     If Fanfare warns that deactivation hasn't reached every live page yet, run **Deactivate** again to finish propagating it.
 
-    After deactivating, **Delete** is refused while active payment windows wind down (about 90 minutes with the default window, or about 2 hours for a draw). Wait for the wind-down period to finish, then delete. See [Stop a drop](/guide/drop/deactivate).
+    After deactivating, **Delete** is refused while active payment windows wind down (about 90 minutes with the default window, or about 2 hours for a draw), even though the button looks available. Wait for the wind-down period to finish, then delete. See [Stop a drop](/guide/drop/deactivate).
   </Accordion>
 </AccordionGroup>
 

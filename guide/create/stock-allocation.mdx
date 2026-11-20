@@ -36,7 +36,7 @@ How unit numbers behave depends on your drop format:
 
 | Distribution | How unit limits work |
 | --- | --- |
-| **Queue** | Caps units sold per size. Admission speed is controlled by **Admit rate** on **Queue Configuration** (there's no cap on how many shoppers can wait). |
+| **Queue** | Caps units sold per size. Admission speed is controlled by **Admit rate** on **Queue Configuration** (the admin has no setting to cap queue length). |
 | **Draw** | Caps units sold per size. The first sequence receives all units, and the winner count follows the total (unless a size is set to **No limit**; see [Set up a draw](/guide/create/draw)). |
 | **Timed release** | Setting a number on any size disables automatic entry (shoppers click Enter to join). Leaving every size at **No limit** keeps automatic entry available. |
 | **Dutch auction** | Every size requires a number. The auction sells the total across all sizes. |
@@ -85,11 +85,11 @@ What each column shows:
 
 If a row blocks **Save**, check the reason:
 
-| Blocker | How to fix it |
+| Message | How to fix it |
 | --- | --- |
-| **Below units already sold** | A size can never be set lower than what it has already sold. |
-| **Stock is counting** | Counting has started, so you can't lower a quantity here. Select the **Move** button beside the row (for example, **Move M**) to transfer units out via **Move units**. |
-| **No more unassigned units** | Before the drop goes live, raise the experience's allocation (recording a receipt first if needed). Once live, experience totals lock—transfer stock in from another sequence with **Move units**. |
+| *"Can't go below 3: 3 already sold"* | A size can never be set lower than what it has already sold. |
+| *"Stock is counting, so this size can only go up here. Use Move units to take units out."* | Counting has started, so you can't lower a quantity here. Select the **Move** button beside the row (for example, **Move M**) to transfer units out via **Move units**. |
+| *"At most 40: the experience has no more unassigned units of this size"* | Before the drop goes live, raise the experience's allocation (recording a receipt first if needed). Once live, experience totals lock—transfer stock in from another sequence with **Move units**. |
 
 If a teammate updates stock while you're editing, Fanfare reloads the grid, preserves your non-conflicting changes, and lets you review and save again.
 
@@ -138,7 +138,7 @@ Sequences without Fanfare-managed units don't release; their stock grid stays op
 
 | Setting | What it does | Default | Editable while live? |
 | --- | --- | --- | --- |
-| **Units** (wizard **Stock** step) | Starting units per size for the experience and its first sequence. | `0` for Fanfare-managed sizes and Dutch auctions; Shopify's count for Shopify-managed sizes; **No limit** for timed releases, external checkout, or 256+ size combinations | Creation only—adjust later on the experience's **Stock** card |
+| **Units** (wizard **Stock** step) | Starting units per size for the experience and its first sequence. | `0` for Fanfare-managed sizes. Non-Fanfare-managed sizes start at `0` (always `0` in a Dutch auction), Shopify's count for Shopify-managed sizes, or **No limit** for timed releases, external checkout, or more than 256 size combinations | Creation only—adjust later on the experience's **Stock** card |
 | **Experience units** (Experience Settings → **Stock**) | Experience-level pool for Fanfare-managed sizes, or one shared limit across sequences for other products. | Set by the wizard | No—locks while the drop is live |
 | **Quantity** (sequence grid) | Units this sequence can sell. | Same defaults as above | Upward only once counting starts; move units out with [Move units](/guide/drop/live-controls) |
 | **No limit** (sequence grid) | Never caps sales or marks the size sold out. | Off, except the cases above | Yes—once counting starts, a **No limit** size can't be switched to a fixed number |

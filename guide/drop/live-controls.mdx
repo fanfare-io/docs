@@ -21,7 +21,7 @@ All live controls—settings, stock transfers, and booking cancellations—live 
   </Step>
 </Steps>
 
-On a live queue or draw's Performance screen, the shortcuts under **Change a setting** in **Run** mode jump directly to this same editor. See [Watch a live drop](/guide/drop/watch-live).
+On a live queue or draw's Performance screen, the shortcuts under **Change a setting** in **Run** mode open this same editor without focusing a specific field. See [Watch a live drop](/guide/drop/watch-live).
 
 <Warning>
   **Changes go live immediately when you select Save**—there's no confirmation dialog. Double-check values like **Admit rate**, **Closes**, **Allow guest access**, or **Automatic entry** before saving.
@@ -67,7 +67,7 @@ For the full lock timeline, see [What locks, and when](/concepts/what-locks-when
 | English auction **Auto Extend Seconds** | **Yes.** |
 | Timed release settings | **Yes.** Only the schedule rules above lock. |
 | **Payment collection** and **Authorization amount** (queue, draw) | **No.** You must deactivate and recreate the distribution. Note that deactivating marks your entire public page as ended, and if every distribution in the sequence or experience is deactivated, you'll need a new sequence or experience. See [Stop a drop](/guide/drop/deactivate). |
-| Draw **Continue selecting until completed** | **No**, once the draw has opened. |
+| Draw **Continue selecting until completed** | **No**, once the draw has opened (the toggle can still be flipped, but **Save** is refused). |
 | Auction prices and quantity | **No**, once the auction has opened. (**Auction Type** locks at creation.) |
 | Appointment **Slot duration**, **Buffer**, **Max capacity per slot**, location, window, and time zone | **No**, while any booking stands. See [Cancel a booking](#cancel-a-booking). |
 | Sequence product selection and **Mystery Box Products** | **No**, while a distribution in the sequence is open, settling, or has entrants. See [Add and gate sequences](/guide/create/sequences). |
@@ -95,11 +95,11 @@ While paused, customers already waiting keep their place in line and new custome
 
 ## Move units during a drop
 
-Stock counting starts about 10 minutes before a sequence opens. Once counting begins, quantities in **Edit allocations** can only increase—to take units out of a sequence or rebalance sizes mid-drop, use **Move units**. (For pre-drop setup, see [Allocate stock to a drop](/guide/create/stock-allocation).)
+Stock counting starts about 10 minutes before a sequence opens. Once counting begins, quantities in **Edit allocations** can only increase—to take units out of a sequence or move stock between sequences mid-drop, use **Move units**. (For pre-drop setup, see [Allocate stock to a drop](/guide/create/stock-allocation).)
 
 <Steps>
   <Step title="Open Move units">
-    On the sequence's **Overview** tab, select **Move units** in the **Stock** card. (If a size sells out, the sold-out banner also shows **Move units in**, or a one-click shortcut to pull units from **Unassigned**.)
+    On the sequence's **Overview** tab, select **Move units** in the **Stock** card. (If a size sells out, the sold-out banner also shows **Move units in**, and—when exactly one size is sold out and the experience has unassigned units of that size—a one-click shortcut to pull units from **Unassigned**.)
   </Step>
   <Step title="Pick source and destination">
     Select **From** and **To**—either another sequence in the same experience or **Unassigned**.
@@ -124,7 +124,7 @@ Stock counting starts about 10 minutes before a sequence opens. Once counting be
   **Moving units changes a draw's winner count.** While a draw is still selecting winners, moving units *into* its sequence raises **Winner count** by the same amount, and moving units *out* lowers it (never below winners already chosen and never to `0` once open). Once winner selection finishes, moves into that draw are refused.
 </Warning>
 
-Fanfare also refuses a move if the source doesn't have enough available units, if the move would drop a sequence below its sold count, or if the destination can't accept stock (a finished draw, an ended Dutch auction, or a decided English auction).
+Fanfare also refuses a move if the source doesn't have enough available units, if the move would drop a sequence below its sold count, or if the destination can't accept stock (a finished draw, an ended Dutch auction, or a decided English auction). Nothing is moved, and the dialog says why.
 
 <Frame caption="Once stock counting starts, move inventory between sequences or Unassigned with Move units.">
   <img src="/images/guide/guide-drop-live-controls-move-units.webp" alt="The Move units dialog, with a size, From and To sequences, the number of units to move, the remaining, in checkout, and maximum counts, and the Move button." />

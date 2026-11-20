@@ -151,8 +151,8 @@ To deactivate or delete a sequence, see [Stop a drop](/guide/drop/deactivate). T
 | **Name** | Identifies the sequence in the admin. | Required | Yes |
 | **Sequence Color** | Visual color tag on cards and timelines. | Auto-picked by priority | Yes |
 | **Priority** (`P1`, `P2`…) | Order in which Fanfare routes shoppers to sequences. | Next number in creation order | No—cannot be changed in the admin |
-| **Product Selection** | **Customer Picks** or **Mystery Box** (2+ products, non-appointment). | **Customer Picks** | No while a distribution is open, counting stock, has entrants, or has open checkouts |
-| **Mystery Box weights / Allocation Percentages** | Relative odds for each product (must be > 0%). | Even split at creation | No while a distribution is open, counting stock, has entrants, or has open checkouts |
+| **Product Selection** | **Customer Picks** or **Mystery Box** (2+ products, non-appointment). | **Customer Picks** | Not while a distribution is open, counting stock, has entrants, or has open checkouts |
+| **Mystery Box weights / Allocation Percentages** | Relative odds for each product (must be > 0%). | Even split at creation | Not while a distribution is open, counting stock, has entrants, or has open checkouts |
 | **Audience** | Restricts entry to signed-in audience members and turns off guest entry. | None | Yes—takes effect immediately |
 | **Shared access code** | Requires a code (up to 32 characters) to enter. | None | Yes—takes effect immediately |
 | **Order limits** | Caps units per customer across the experience. | None | Add or delete anytime (takes effect immediately) |
@@ -174,7 +174,7 @@ In the Shopify app, **Appointment** isn't available under **Add Distribution**. 
     A distribution in the sequence is already counting stock, open, has entrants, or still has active checkouts. Wait until all distributions finish, or launch a new drop.
   </Accordion>
   <Accordion title="The audience invite email isn't sending">
-    Fanfare requires a business postal address before sending emails. Add yours under **Settings → Email Sender**—see [Sender identity and sending domain](/guide/create/email-sender).
+    Fanfare requires a business postal address before sending marketing emails. Add yours under **Settings → Email Sender**—see [Sender identity and sending domain](/guide/create/email-sender).
   </Accordion>
 </AccordionGroup>
 

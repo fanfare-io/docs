@@ -26,7 +26,7 @@ The **Current plan** card at the top of **Billing** displays your active plan, s
 | **Past due** | Your most recent payment failed; paid features remain active while you resolve it. | Select **Update payment method**. |
 | **Ends [date]** | You scheduled a cancellation; you keep your paid plan until that date. | Select **Keep subscription** to undo cancellation. |
 | **Starter** (after a paid plan ended) | Your paid plan has ended and your organization is on Starter. | Select **Reactivate** or choose a plan from the table below (Shopify-billed stores manage plans in Shopify). |
-| **Canceled** (Shopify-billed only) | Your Shopify subscription has ended. | Choose a plan inside the Fanfare app in Shopify. |
+| **Cancelled** (Shopify-billed only) | Your Shopify subscription has ended. | Choose a plan inside the Fanfare app in Shopify. |
 | **Inactive** | Your subscription is inactive. | Contact support to restore it. |
 | **Pending** | Your subscription is finishing setup. | Refresh the page in a moment. |
 
@@ -101,7 +101,7 @@ Once a paid plan has ended, you can restart it in two ways:
 - Select any plan in **Plans and take rates** and confirm in **Reactivate Subscription**.
 
 <Warning>
-  Reactivating after a subscription has ended charges your payment method immediately with no free trial—keep this in mind whether you restart from the **Current plan** card or from the plans table.
+  Reactivating after a subscription has ended charges your payment method immediately with no free trial. The **Reactivate** dialog opened from the **Current plan** card doesn't mention the immediate charge—only the dialog opened from the plans table does.
 </Warning>
 
 If you don't have a valid card on file, you'll be prompted to add one via **Update Payment Method** in Stripe first. If your previous plan price is no longer offered, choose an active plan in **Plans and take rates** instead. If your card is declined, you aren't charged and stay on Starter—update your card under **Payment & invoices** and try again.
@@ -130,7 +130,7 @@ When your subscription needs attention, Fanfare shows one banner at a time acros
 | Banner | When it appears | Action | Dismissible? |
 | --- | --- | --- | --- |
 | **Payment Failed** | Subscription is past due | **Update Payment** (opens Stripe for admins) | No |
-| **Subscription Canceled** | Paid subscription has ended | **Choose a Plan** (opens **Billing**) | No |
+| **Subscription Cancelled** | Paid subscription has ended | **Choose a Plan** (opens **Billing**) | No |
 | **Trial Ending Soon** | Within three days of trial expiration | **Add Payment Method** (opens **Billing**) | Yes (for the current tab) |
 | **Cancellation Scheduled** | Cancellation scheduled for period end | **Keep Subscription** (opens **Billing**) | Yes (for the current tab) |
 
@@ -176,7 +176,7 @@ Organizations billed through Shopify manage their subscription directly in Shopi
     You'll need a valid card on file before switching plans during a trial—especially if cancellation is scheduled. Select **Add payment method**, add your card in Stripe, and choose your new plan again.
   </Accordion>
   <Accordion title="My bank requires additional approval during a plan change">
-    Some cards require interactive bank verification that mid-cycle plan changes can't prompt for. Add a different payment method in the billing portal and try again, or contact [support@fanfare.io](mailto:support@fanfare.io).
+    `"Your bank needs to approve this payment, which a plan change can't ask for."` means your card requires interactive bank verification that mid-cycle plan changes can't prompt for. Add a different payment method in the billing portal and try again, or contact [support@fanfare.io](mailto:support@fanfare.io).
   </Accordion>
   <Accordion title="Another plan change is in progress or didn't complete">
     Refresh **Billing** and check your **Current plan** card before trying again. If the message persists, contact [support@fanfare.io](mailto:support@fanfare.io).

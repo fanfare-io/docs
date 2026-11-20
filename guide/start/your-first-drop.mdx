@@ -27,7 +27,7 @@ This walkthrough takes you from creating your Fanfare account to launching a dro
 </Frame>
 
 <Note>
-  If self-serve sign-up is temporarily closed, you'll see **Join the Fanfare waitlist** instead. Enter your work email and we'll notify you as soon as your invite is ready.
+  If self-serve sign-up is temporarily closed, you'll see **Join the Fanfare waitlist** instead. Enter your work email and Fanfare will email you as soon as your invite is ready.
 </Note>
 
 ## Step 2: Set up your organization
@@ -37,7 +37,7 @@ Your organization is your workspace in Fanfare—it holds your team, products, b
 ### Name your organization
 
 1. Enter your **Organization name**.
-2. Review your **Subdomain**. It fills in automatically from your organization name, and you can edit it to whatever fits your brand best. This subdomain powers your Fanfare admin URL (`fanfare.io`) and your hosted drop pages (`fanfaredrops.com`).
+2. Review your **Subdomain** and edit it to whatever fits your brand best. The line below previews your customer-facing addresses. The subdomain fills in from your organization name the first time only, so recheck it if you rename your organization.
 3. Wait for the green checkmark confirming your subdomain is available—or pick one of the suggestions if it's already taken—then select **Continue**.
 
 For full subdomain guidelines and how to update it later, see [Organization settings](/guide/account/organization).
@@ -96,10 +96,10 @@ With your organization ready, work through these steps in order to take your fir
     Open **Products** and select **Create Product** (or use **Create Product** in Quick Actions on **Home**). Before saving, choose your **Stock management** option carefully—it can't be changed after a product is created. See [Manage stock](/guide/create/stock) and [Add products](/guide/create/products).
   </Step>
   <Step title="Create your experience">
-    Open **Experiences** and select **Create Experience**. Pick a drop type—a [queue](/guide/create/queue) is the simplest place to start—then select your product, enter an **Experience Name**, and set your **Time Zone**, **Opens At**, and **Closes At** times.
+    Open **Experiences** and select **Create Experience**. Pick a drop type—a [queue](/guide/create/queue) is the simplest place to start—then select your product, enter an **Experience Name**, and set your **Time Zone**, **Opens At**, and **Closes At** times. **Auction** requires a checkout that can charge the winning bid, and **Appointment** requires Growth or above.
 
     <Note>
-      **Opens At** defaults to the next minute, and there is no separate publish step—queues, draws, auctions, and timed releases open automatically at their scheduled time. Set **Opens At** before finishing so your drop doesn't go live immediately.
+      **Opens At** defaults to the next minute, and there is no separate publish step—queues, draws, auctions, and timed releases open automatically at their scheduled time. Set **Opens At** before finishing so your drop doesn't go live immediately. Appointments accept bookings as soon as your page is live, regardless of **First bookable slot**.
     </Note>
 
     Work through the remaining wizard steps and select **Create experience**. See [Create an experience](/guide/create/experiences) for details on every type, including [draws](/guide/create/draw), [auctions](/guide/create/auction), [timed releases](/guide/create/timed-release), and [appointments](/guide/create/appointment).
@@ -111,7 +111,7 @@ With your organization ready, work through these steps in order to take your fir
     - **Your own site:** Share your embed credentials with your developer to add the Fanfare widget. See [Run it on your own site](/guide/create/your-own-site).
 
     <Warning>
-      If your sequence targets a specific audience and opens within about 2 days, publishing your hosted page can trigger its invite email right away once your postal address is set. Review the **Invite email** card on the sequence's **Access** tab—or turn off **Send this invite**—before you publish. See [Invites, waitlist and access-code sends](/guide/create/invites-and-waitlist).
+      If your sequence targets a specific audience, Fanfare turns **Send this invite** on by default and sends it to the whole audience—2 days before opening, or right after you publish if the sequence opens within about 2 days and your postal address is set. Review the **Invite email** card on the sequence's **Access** tab—or turn off **Send this invite**—before you publish. See [Invites, waitlist and access-code sends](/guide/create/invites-and-waitlist).
     </Warning>
 
     Make sure your drop page is published before any announcement linking to it goes out.
@@ -119,7 +119,7 @@ With your organization ready, work through these steps in order to take your fir
   <Step title="Build hype">
     - **Waitlists:** Every sequence (except appointment-only ones) automatically includes a waitlist where customers can sign up before the drop opens. See [Waitlists](/concepts/waitlists).
     - **Announcements:** Schedule email or social announcements to let customers know when doors open. See [Announcements](/guide/create/announcements).
-    - **Audience invites:** If you gated a sequence to a specific audience, Fanfare can invite eligible members automatically. See [Invites, waitlist and access-code sends](/guide/create/invites-and-waitlist).
+    - **Audience invites:** If you gated a sequence to a specific audience, Fanfare invites eligible members automatically (on by default). See [Invites, waitlist and access-code sends](/guide/create/invites-and-waitlist).
   </Step>
   <Step title="Run a pre-launch check">
     Preview the customer flow in [What your customers see](/guide/drop/what-customers-see) and walk through the final checklist in [Before doors open](/guide/drop/preflight).
@@ -132,20 +132,24 @@ With your organization ready, work through these steps in order to take your fir
   </Step>
 </Steps>
 
+## On Shopify
+
+If you use Shopify, skip account setup here and follow [Your first drop on Shopify](/guide/start/your-first-drop-on-shopify)—installing the Fanfare app creates your organization automatically.
+
 ## Troubleshooting
 
 <AccordionGroup>
-  <Accordion title="I received an error when creating my organization">
-    Your organization may still have been created. Because each account can create only one organization, avoid retrying from scratch—email us at [support@fanfare.io](mailto:support@fanfare.io) and we'll help you get in.
+  <Accordion title="Selecting Create shows 'Internal server error'">
+    Your organization may still have been created. Because each account can create only one organization, avoid retrying from scratch—contact Fanfare support at [support@fanfare.io](mailto:support@fanfare.io) for help getting in.
   </Accordion>
   <Accordion title="Fanfare checkout is disabled during setup">
     Fanfare checkout currently supports US organizations selling in US dollars. Go back to **Region** to check your country and currency, or select **External checkout** to sell through your own store. See [Checkout options](/concepts/checkout-options).
   </Accordion>
   <Accordion title="My preferred subdomain isn't available">
-    Another organization may already be using it, or it may be reserved by Fanfare. Pick one of the suggested alternatives or try another name that fits your brand.
+    Another organization may already be using it, or it may be reserved by Fanfare. Pick one of the suggested alternatives or try another name that fits your brand. If a subdomain-taken error appears on the final step, use the back arrow twice to return to Step 1 and pick another subdomain.
   </Accordion>
   <Accordion title="I see 'Join the Fanfare waitlist' instead of the sign-up form">
-    Self-serve sign-up is currently paused. Enter your work email to join the waitlist, and we'll email you when your invitation is ready.
+    Self-serve sign-up is currently paused. Enter your work email to join the waitlist, and Fanfare will email you when your invitation is ready.
   </Accordion>
 </AccordionGroup>
 

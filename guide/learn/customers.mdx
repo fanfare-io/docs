@@ -70,7 +70,7 @@ Open a profile from **Customers** or by selecting a customer's name on an order 
 
 {/* image: guide-learn-customers-profile */}
 
-The header displays the customer's name, **Active** or **Inactive** badge, verified contact details, and an **Archive** button (hidden for customers synced from Klaviyo or Mailchimp, including manually added profiles that later match a synced list).
+The header displays the customer's name, **Active** or **Inactive** badge, contact details (with a verified checkmark once confirmed via sign-in code), and an **Archive** button (hidden for customers synced from Klaviyo or Mailchimp, including manually added profiles that later match a synced list).
 
 ### Metric cards
 
@@ -93,8 +93,8 @@ When an audience-gated sequence has an invite for this customer, the **Invites**
 
 You can trigger an individual email from the card when needed:
 
-- **Send invite now** — Sends the invite to a customer who is in the audience and hasn't been invited yet. (Requires an email address on the profile.)
-- **Resend invite** — Re-sends an invite that was already delivered.
+- **Send invite now** — Sends the invite to a customer who is in the audience and hasn't been invited yet. The button also appears for customers skipped for having no email address, but the send fails until they have one, and you can't add an email to a customer in the admin.
+- **Resend invite** — Re-sends an invite that was already sent (including invites that bounced).
 
 Send actions are unavailable if the customer left the audience, opted out of marketing email, or if the sequence's invite is turned off. Sends are rate-limited if triggered repeatedly in a short window. See [Invites, waitlist and access-code sends](/guide/create/invites-and-waitlist) to configure invites.
 
@@ -110,7 +110,7 @@ The **Drops** timeline lists every experience the customer participated in, newe
 - Auction bids
 - Messages sent for that experience
 - **Open sequence** to jump straight to that sequence
-- **Orders for this experience** (when any entry converted)
+- **Orders for this experience** (when any entry converted)—opens *all* orders for that experience, not just this customer's
 
 Below the experiences list, **Other messages** and **Sign-in and account messages** group remaining notifications and sign-in codes. Timed releases and standalone orders don't appear in the **Drops** timeline.
 
@@ -120,7 +120,7 @@ Below the experiences list, **Other messages** and **Sign-in and account message
 | **Draw** | Completed; Won; Entered; Withdrew; Not entered; Not selected; Won, time ran out; Sold out; Draw closed; Order limit reached; Entry refused; Not completed |
 | **Auction** | Won; Lost; Winning; Bidding; Outbid; Watching |
 | **Waitlist** | Converted; On waitlist; Notified; Expired; Left the waitlist; Not joined |
-| **Appointment** | Completed; Booked; Checked in; No-show; Canceled; Not booked |
+| **Appointment** | Completed; Booked; Checked in; No-show; Cancelled; Not booked |
 
 To see how these stages appear on the storefront, read [What your customers see](/guide/drop/what-customers-see).
 
@@ -156,8 +156,8 @@ The **Customers** directory, profiles, and **Add Customer** form work the same i
   <Accordion title="There's no Archive button on a profile">
     The customer is synced from a Klaviyo or Mailchimp list (either originally or after appearing on a synced list). Synced customers can't be archived in Fanfare.
   </Accordion>
-  <Accordion title="Creating a customer fails">
-    Another profile—including an archived customer—already uses that email address or phone number. Search active profiles for the email; archived emails and phone numbers can't be reused.
+  <Accordion title="Creating a customer shows 'Failed to create customer'">
+    When you see "Failed to create customer", another profile—including an archived customer—already uses that email address or phone number. Search active profiles for the email; archived emails and phone numbers can't be reused.
   </Accordion>
   <Accordion title="The Drops timeline is completely blank">
     A customer with no drop entries shows **"No drops yet"**. If the section is blank instead, reload the page to retry loading their activity.

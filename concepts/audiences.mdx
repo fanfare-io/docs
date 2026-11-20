@@ -83,7 +83,7 @@ Two exceptions apply:
 
 **Static List** and **Imported** audiences are never held. Selecting **Sync Now** on an imported audience during an active drop applies the updated list as soon as the sync completes.
 
-## Edits take effect immediately
+## There is no draft step
 
 <Warning>
   There's no draft or publish step for **Dynamic** audiences. Saving a rule change immediately updates who can enter every sequence using that audience—and who receives its invite emails. If you want to test different rules safely, create a new audience instead of editing one attached to active or upcoming drops.
@@ -91,7 +91,7 @@ Two exceptions apply:
 
 ## Imported audiences
 
-Imported audiences from Klaviyo or Mailchimp are created through your connected integration rather than the **Create Audience** menu. On an existing imported audience, **Sync Now** replaces the member list with a fresh one-way copy from Klaviyo or Mailchimp—see [Build audiences](/guide/create/audiences) for how syncing handles existing members.
+The **Create Audience** menu doesn't offer Klaviyo or Mailchimp lists, even with a connected account; if you want to bring in a list from another tool, export it as a CSV and use **Import CSV** (note the column header and profile overwrite rules in [Build audiences](/guide/create/audiences)). On an existing imported audience, **Sync Now** replaces the member list with a fresh one-way copy from Klaviyo or Mailchimp.
 
 Fanfare doesn't re-sync imported lists automatically. While a sync is running—or if a sync fails—Fanfare continues using the member list from the last successful sync.
 

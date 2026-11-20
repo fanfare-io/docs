@@ -16,9 +16,9 @@ Your plan never interrupts a live drop. If you downgrade, everything you've alre
 | **Pro** | $799 | 2.25% | 1.00% |
 | **Enterprise** | Custom | Custom | Custom |
 
-- **When take rates apply:** Fanfare charges a percentage fee on orders paid through Fanfare checkout or Shopify checkout. Orders completed on your own external store checkout carry no Fanfare per-order fee, and unpaid appointments carry no fee on any plan.
-- **Enterprise plans:** Select **Contact sales** on the **Billing** page to discuss custom pricing and rates for your organization.
-- **Custom checkout rates:** If you have a negotiated rate with Fanfare, it overrides the standard plan take rate across every plan.
+- **When take rates apply:** Fanfare charges a percentage fee on orders paid through Fanfare checkout or Shopify checkout. Orders completed on your own external store checkout carry no Fanfare per-order fee, and appointments never take payment, so they carry no fee on any plan.
+- **Enterprise plans:** Select **Contact sales** on the **Billing** page to discuss custom pricing and rates for your organization. Enterprise organizations pay Pro's rates until agreed rates are recorded.
+- **Custom checkout rates:** If you have a negotiated rate with Fanfare, it overrides the standard plan take rate across every plan and stays in place across plan changes (so upgrading doesn't lower a custom rate).
 
 For details on how fees are deducted and where to check your current rate, see [Payments and fees](/guide/account/payments).
 
@@ -70,9 +70,9 @@ You can always clean up or wind down on any plan:
 - **Edit, pause, or deactivate** live distributions.
 - **Disconnect integrations** and **turn off Loyalty** (turning Loyalty back on requires Pro).
 
-<Tip>
-  If you plan to downgrade from Growth to Starter and want to unpublish or delete custom Design Studio templates, do that before downgrading—the template editor locks on Starter.
-</Tip>
+<Warning>
+  If you plan to downgrade to Starter and want to unpublish or delete custom Design Studio templates, do that before downgrading—the template editor locks on Starter.
+</Warning>
 
 <Frame caption="After a downgrade, live experiences keep serving customers while creating and editing higher-tier features is locked.">
   <img src="/images/guide/guide-start-plans-what-a-downgrade-keeps.webp" alt="A grid with one row each for an audience, a hosted page and an appointment. After a downgrade, the audience still gates its sequences, the hosted page stays published and the appointment keeps running. Creating new ones, editing an audience's rules or editing a hosted page is blocked. On any plan you can still delete the audience once it gates no experience that has not ended, archive the page, and edit or Deactivate the appointment." />
@@ -84,7 +84,7 @@ You can always clean up or wind down on any plan:
 | --- | --- |
 | **Active** (including free trial) | Your paid plan |
 | **Past due** | Your paid plan, until payment is resolved or the subscription ends |
-| **Canceled**, **Pending**, or **Inactive** | **Starter** |
+| **Cancelled**, **Pending**, or **Inactive** | **Starter** |
 
 If you schedule cancellation for the end of your billing period, you keep your paid plan until that date.
 
@@ -96,7 +96,7 @@ If you schedule cancellation for the end of your billing period, you keep your p
 
 - **Upgrade prompts:** Features outside your plan display an **"Available on [Plan]"** badge with a direct link to the **Billing** page.
 - **Experience wizard:** Higher-tier drop types appear disabled in the wizard with an upgrade link when hovered.
-- **Disabled forms:** On Starter, forms for higher-tier features like audiences, Loyalty, and marketing integrations remain visible for reference, with saving disabled until you upgrade.
+- **Disabled forms:** On a plan that doesn't include them, forms for higher-tier features like audiences, Loyalty, and marketing integrations remain visible for reference, with saving disabled until you upgrade.
 
 <Note>
   If **Auction** shows **"Needs a checkout that charges the winning bid"**, that restriction comes from your checkout configuration rather than your plan—upgrading won't unlock it. See [Checkout options](/concepts/checkout-options).

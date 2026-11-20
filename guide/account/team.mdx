@@ -46,7 +46,7 @@ Fanfare uses two roles: **Admin** and **Member**. Whoever creates the organizati
 | Edit email sender or manage sending domains (**Settings → Email Sender**) | ✓ | Read-only |
 | Connect, edit, or disconnect Twilio | ✓ |  |
 | Finish connecting Meta, Discord, or Telegram | ✓ |  |
-| Create, edit templates, save, publish, or archive a hosted experience page | ✓ | Read-only |
+| Create a hosted page, change or reset its template, save, publish, or archive it | ✓ | Read-only |
 | **Deactivate** an experience, sequence, or distribution | ✓ |  |
 | Edit company name, website, subdomain, country, currency, time zone, language, and default messaging channel | ✓ | ✓ |
 | Connect Klaviyo, Mailchimp, or Google Analytics; disconnect any integration except Twilio | ✓ | ✓ |
@@ -68,12 +68,12 @@ Open the user menu at the bottom of the sidebar and select **Account** to update
 Open the link in your invitation email to join your team's organization.
 
 <Warning>
-  Each Fanfare account belongs to one organization at a time—there's no workspace switcher. If you already run your own Fanfare organization, ask your teammate to invite you using a different email address so you don't lose access to your existing workspace.
+  The Fanfare admin works with one organization at a time and has no organization switcher. You can't create a second organization, and joining a second one through an invite with the same email can leave you unable to choose which organization opens when you sign in—so if you already run your own Fanfare organization, ask your teammate to invite you using a different email address.
 </Warning>
 
 ### If you're new to Fanfare
 
-1. Open the link in your invitation email. Your invited email address is prefilled automatically (Google sign-up isn't used for invite links).
+1. Open the link in your invitation email. The form uses the email address the invitation was sent to; there's no email field (Google sign-up isn't used for invite links).
 2. Enter your **First name**, **Last name**, and a **Password** (at least 8 characters).
 3. Select **Create account**.
 
@@ -118,7 +118,7 @@ If two-step verification is enabled, enter the 6-digit code from your authentica
 
 ### Update your profile or sign out
 
-Manage your password and sign-in methods under **Profile** in the user menu, or choose **Sign Out** to end your session. If you're creating a brand-new workspace instead of joining a team, see [Your first drop](/guide/start/your-first-drop).
+Manage your password and sign-in methods under **Profile** in the user menu, or choose **Sign Out** to end your session. If you're creating a brand-new organization instead of joining a team, see [Your first drop](/guide/start/your-first-drop).
 
 ## On Shopify
 
@@ -141,7 +141,7 @@ Inside the Fanfare Shopify app, there are no invitations, Fanfare roles, or **Ac
   <Accordion title="I see 'This invitation can't be used'">
     The invitation link has expired or been revoked. Ask an admin in the organization to send you a fresh invite.
   </Accordion>
-  <Accordion title="I was signed out while opening my workspace">
+  <Accordion title="I was signed out while opening my organization">
     Fanfare couldn't load your organization session and signed you out automatically. Sign in again to continue, and contact [support@fanfare.io](mailto:support@fanfare.io) if it keeps happening.
   </Accordion>
 </AccordionGroup>

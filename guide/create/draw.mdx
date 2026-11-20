@@ -1,16 +1,16 @@
 ---
 title: Set up a draw
-description: Run a raffle-style draw that selects winners at random from everyone who enters, and know which settings lock before entry opens.
+description: Run a draw that selects winners at random from everyone who enters, and know which settings lock before entry opens.
 ---
 
-A draw collects entries during a window you set, picks winners at random, and gives each winner a timed window to complete checkout. Use a draw when you want every shopper who enters in time to have an equal shot—whether they arrive in the first second or the last minute.
+A draw collects entries during a window you set, picks winners at random, and gives each winner a timed window to complete checkout. Use a draw when you want every shopper who enters in time to have a chance to win—whether they arrive in the first second or the last minute.
 
 For how winner selection and replacement draws work under the hood, read [Draw](/concepts/distributions/draw).
 
 ## Before you start
 
 - Have at least one product ready in Fanfare. See [Add products](/guide/create/products).
-- To use **Pre-authorize on entry**, you need **Fanfare checkout** and a connected Stripe account (not available in the Shopify app). See [Payments and fees](/guide/account/payments).
+- To use **Pre-authorise on entry**, you need **Fanfare checkout** and a connected Stripe account (not available in the Shopify app). See [Payments and fees](/guide/account/payments).
 - To use **Bias toward loyal consumers**, turn on your loyalty program first (Pro and Enterprise). See [Run a loyalty program](/guide/learn/loyalty).
 
 Draws are available on every plan, including Starter.
@@ -33,7 +33,7 @@ The experience wizard creates your experience, its first sequence, and the draw 
     On **Draw Configuration**, set **Winner count**, **Admission expiration**, and any optional switches. See [Draw settings](#draw-settings) below.
   </Step>
   <Step title="Choose payment and access">
-    On **Payment**, choose **Pay after the win** or **Pre-authorize on entry** under **Payment collection** (review [Payment collection](#payment-collection) first). Then on **Access**, choose **Who can enter**—pick **Anyone, as a guest** to allow entry without signing in, or **Anyone, after signing in** to require it.
+    On **Payment**, choose **Pay after the win** or **Pre-authorise on entry** under **Payment collection** (review [Payment collection](#payment-collection) first). Then on **Access**, choose **Who can enter**—pick **Anyone, as a guest** to allow entry without signing in, or **Anyone, after signing in** to require it.
   </Step>
   <Step title="Review and create">
     Check every row on **Review & launch** (use **Edit** to jump back to any step), then select **Create experience**.
@@ -72,9 +72,9 @@ There's no separate launch step—your draw opens automatically at the **Opens A
 | **Continue selecting until completed** | Keeps picking replacement winners if someone doesn't check out, until the winner count is met. | On | No—locks about 30 seconds before **Opens**. |
 | **Bias toward loyal consumers** | Weights the randomized entry order using loyalty points (selection isn't guaranteed). | Off | Yes, though each entrant's weight is recorded when they enter, so changes only affect later entries. |
 | **Allow guest access** (**Anyone, as a guest** in wizard) | Lets shoppers enter without an account. | Off | Yes |
-| **Automatic entry** | Enters everyone who lands on the draw, including visitors who leave right away. With **Pre-authorize on entry**, shoppers are still prompted for a card first. | Off | Yes |
-| **Payment collection** | Whether winners pay at checkout (**Pay after the win**) or place a card hold on entry (**Pre-authorize on entry**). | **Pay after the win** | No—locks about 30 seconds before **Opens**. |
-| **Authorization amount** | Card hold amount per entrant with **Pre-authorize on entry**. | None | No—locks with **Payment collection**. |
+| **Automatic entry** | Enters everyone who lands on the draw, including visitors who leave right away. With **Pre-authorise on entry**, shoppers are still prompted for a card first. | Off | Yes |
+| **Payment collection** | Whether winners pay at checkout (**Pay after the win**) or place a card hold on entry (**Pre-authorise on entry**). | **Pay after the win** | No—locks about 30 seconds before **Opens**. |
+| **Authorization amount** | Card hold amount per entrant with **Pre-authorise on entry**. | None | No—locks with **Payment collection**. |
 | **Name** | Internal name in the admin. | None | Yes |
 | **Time zone** (**Time Zone** in wizard and **Edit**) | Zone used to display and enter times. Changing it doesn't shift the actual open, draw, or close moments. | Experience's time zone | Yes |
 
@@ -99,7 +99,7 @@ Enter the checkout window in **seconds**, or leave it blank when creating the dr
 ### Payment collection
 
 - **Pay after the win:** Winners receive a notification and pay at checkout within their payment window.
-- **Pre-authorize on entry:** Fanfare places a hold on each entrant's card when they enter and captures it automatically if they win (or releases it if they don't). Because the hold is a single **Authorization amount**, every product and variant in the draw must cost exactly that amount.
+- **Pre-authorise on entry:** Fanfare places a hold on each entrant's card when they enter and captures it automatically if they win (or releases it if they don't). Because the hold is a single **Authorization amount**, every product and variant in the draw must cost exactly that amount.
 
 Pre-authorization requires **Fanfare checkout** and a connected Stripe account. If you use external checkout, shoppers pay in your store and Fanfare skips payment collection. See [Checkout options](/concepts/checkout-options).
 
@@ -111,8 +111,8 @@ Pre-authorization requires **Fanfare checkout** and a connected Stripe account. 
   **Keep pre-authorized draw schedules under 6 days.** Card holds expire after about 7 days. If **Draw at** plus the payment window plus one day extends beyond ~7 days from **Opens**, Fanfare blocks the schedule. Shorter overlaps trigger a warning, and early entrants' holds can expire before selection runs. To stay safe, keep the span from **Opens** to the later of **Draw at** and **Closes**, plus the payment window, under about 6 days. In **Edit** (or when revisiting **Schedule** in **Add distribution**), Fanfare shows which entry dates will still hold a live authorization at selection. See [Admission and the payment window](/concepts/admission-and-payment).
 </Warning>
 
-<Frame caption="With Pre-authorize on entry, Fanfare holds the authorization amount on each entrant's card until selection.">
-  <img src="/images/guide/guide-create-draw-payment-preauth.webp" alt="The Payment collection choice for a draw with Pre-authorize on entry selected and an authorization amount of 120.00 entered." />
+<Frame caption="With Pre-authorise on entry, Fanfare holds the authorization amount on each entrant's card until selection.">
+  <img src="/images/guide/guide-create-draw-payment-preauth.webp" alt="The Payment collection choice for a draw with Pre-authorise on entry selected and an authorization amount of 120.00 entered." />
 </Frame>
 
 ## Edit a draw
@@ -135,7 +135,7 @@ For the shopper experience before, during, and after selection—including winne
 
 Draws work the same way in the Shopify app, with two differences:
 
-- **No card pre-authorization:** Shoppers pay in Shopify's checkout, so **Pre-authorize on entry** isn't available.
+- **No card pre-authorization:** Shoppers pay in Shopify's checkout, so **Pre-authorise on entry** isn't available.
 - **Automatic winner count for blank Shopify sizes:** If you leave any Shopify size's units blank on **Stock**, the wizard omits **Winner count** and sets it automatically from the total (including Shopify's inventory count) when the draw is created.
 
 Make sure checkout protection is enabled and the product widget is on your theme so shoppers can't bypass the draw. See [Storefront setup](/guide/shopify/storefront-setup).

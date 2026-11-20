@@ -143,7 +143,7 @@ In the Shopify app, **Auction** stays locked with **"Needs a checkout that charg
     Your extension would push settlement past **Closes**. Move **Settles** (or **Settle at**) earlier, push **Closes** later, or shorten the extension length.
   </Accordion>
   <Accordion title="The price fields are grayed out when editing">
-    Pricing locks 30 seconds before the auction opens. If pricing must change, deactivate the auction and create a new one.
+    Pricing changes are refused starting 30 seconds before **Opens**, and the price fields become disabled once the auction opens. If pricing must change, deactivate the auction and create a new one.
   </Accordion>
   <Accordion title="I can't get past the Dutch auction settings">
     Your stock allocation is missing units. In the wizard, select **Go to Stock** and enter units for each size. In **Add distribution** on a stock-tracked sequence, give every size a unit count on the sequence's **Stock** card so the total is above zero.

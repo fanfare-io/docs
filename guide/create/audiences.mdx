@@ -3,7 +3,7 @@ title: Build audiences
 description: Build customer audiences from rules, a CSV import, or loyalty tiers so you can gate sequences to specific shoppers.
 ---
 
-An audience is a named group of customers you use to gate a sequence—like giving repeat buyers early access, rewarding top loyalty members, or running a private guest-list drop.
+An audience is a named group of customers you use to gate a sequence—like giving repeat buyers early access, rewarding top loyalty members, or running an invite-only drop.
 
 <Info>
   Available on Growth and above. **Loyalty tiers** require Pro. On Starter, creating and importing audiences is locked, while any audiences you already have keep gating sequences and can still be deleted.
@@ -61,7 +61,7 @@ For how audiences are built, refreshed, and evaluated during a drop, see [Audien
 3. Select **Save** in the action bar.
 
 <Warning>
-  Rule edits apply live with no draft step. Once the rebuild finishes, your updated rules immediately change who can enter every sequence this audience gates and who receives its invite email. While the rebuild runs, previous members can still enter, though any customer re-checked in the meantime is evaluated against the new rules right away. See [Audiences and access codes](/concepts/audiences). (Note: the audience page doesn't list which sequences use it, so check before editing.)
+  Rule edits apply live with no draft step. Once the rebuild finishes, your updated rules immediately change who can enter every sequence this audience gates and who receives its invite email. While the rebuild runs, previous members can still enter, though any customer re-checked in the meantime is evaluated against the new rules right away. The audience page doesn't list which sequences use it, so check your experiences before editing. See [Audiences and access codes](/concepts/audiences).
 </Warning>
 
 ### Refresh now
@@ -106,7 +106,7 @@ Open the imported audience and select **Details** to see how many rows succeeded
 
 ## Klaviyo and Mailchimp lists
 
-Klaviyo and Mailchimp lists can't be imported directly from **Audiences**, even if you've connected those integrations. Export your list as a CSV from your email platform and upload it with **Import CSV** instead.
+Klaviyo and Mailchimp lists can't be imported directly from **Audiences**, even if you've connected those integrations. If you export a CSV from your email platform and upload it with [Import CSV](#import-a-csv-file), rename the email column header to lowercase `email`, and keep in mind that importing overwrites existing customer details and can clear SMS consent if a phone number changes.
 
 ## Create loyalty tiers
 
@@ -132,7 +132,7 @@ The **Consumer Attribute** locks at creation—to segment on a different attribu
 Open the tier group, select **Settings → Details**, update tier names, boundaries, or count, and select **Save**.
 
 <Warning>
-  Tiers map to their underlying audiences by list position, not by name. If you delete a middle tier, the remaining tiers shift down a slot and the top tier's audience is deleted—which can silently change which shoppers a gated sequence admits (or block saving if the deleted top audience gates an active or upcoming sequence). To reorganize tiers safely, adjust boundaries instead of deleting tiers, or create a new tier group.
+  Tiers map to their underlying audiences by list position, not by name. If you delete a middle tier, the tier below takes over the removed range and the top tier's audience is deleted—which can silently change which shoppers a gated sequence admits (or block saving if the deleted top audience gates an active or upcoming sequence). To reorganize tiers safely, adjust boundaries instead of deleting tiers, or create a new tier group.
 </Warning>
 
 ## RFM segments
@@ -160,13 +160,13 @@ You can't delete an audience—or a tier group containing one—while it gates a
 
 ## On Shopify
 
-Audience tools work the same in the Shopify app. Shopify customer segments and lists can't be imported directly—export them as a CSV from Shopify and upload them with **Import CSV**.
+Audience tools work the same in the Shopify app. Shopify customer segments and lists can't be imported directly—if you export a CSV from Shopify and upload it with [Import CSV](#import-a-csv-file), rename the email column header to lowercase `email`, and keep in mind that importing overwrites existing customer details and can clear SMS consent if a phone number changes.
 
 ## Troubleshooting
 
 <AccordionGroup>
   <Accordion title="I don't see Klaviyo or Mailchimp in the Create Audience menu">
-    Klaviyo and Mailchimp lists can't be imported from **Audiences**, even when those integrations are connected. Export a CSV from your email platform and use **Import CSV** instead.
+    Klaviyo and Mailchimp lists can't be imported from **Audiences**, even when those integrations are connected. If you export a CSV and upload it with [Import CSV](#import-a-csv-file), rename the email column header to lowercase `email`, and keep in mind that importing overwrites existing customer details and can clear SMS consent if a phone number changes.
   </Accordion>
   <Accordion title="My CSV file was rejected">
     Make sure the file is a `.csv` under 100 MB, includes a header row with a lowercase `email` or `phone` column, and has at least one customer row beneath the header.

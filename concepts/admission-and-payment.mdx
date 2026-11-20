@@ -66,8 +66,8 @@ For queues and draws using **Fanfare checkout**, you choose when to collect paym
 
 | Distribution | Pay after admission (default) | Pre-authorize on entry |
 | --- | --- | --- |
-| **Queue** | **Pay when admitted** | **Pre-authorize on joining** |
-| **Draw** | **Pay after the win** | **Pre-authorize on entry** |
+| **Queue** | **Pay when admitted** | **Pre-authorise on joining** |
+| **Draw** | **Pay after the win** | **Pre-authorise on entry** |
 
 Auctions and timed releases always collect payment after winning or entering, and appointments never charge.
 
@@ -75,13 +75,13 @@ Auctions and timed releases always collect payment after winning or entering, an
 - **Pre-authorize:** Fanfare places a hold on the shopper's card when they join the queue or enter the draw. If they're admitted or selected as a winner, Fanfare captures the hold and creates their order automatically—no checkout step required. If they aren't selected, the hold is released automatically.
 
 <Frame caption="Pre-authorization is available only with Fanfare checkout and a connected payment provider.">
-  <img src="/images/guide/concepts-admission-payment-collection.webp" alt="The Payment section of a draw's settings dialog, showing the choice between Pay after the win and Pre-authorize on entry, and the Fanfare fee notice beneath it." />
+  <img src="/images/guide/concepts-admission-payment-collection.webp" alt="The Payment section of a draw's settings dialog, showing the choice between Pay after the win and Pre-authorise on entry, and the Fanfare fee notice beneath it." />
 </Frame>
 
 Pre-authorization requires **Fanfare checkout** and a connected Stripe account. If your organization uses your own external checkout, customers pay directly in your store and Fanfare collects no payment—so **Payment collection** isn't shown. When Stripe is connected on Fanfare checkout, the Payment section also displays your plan's Fanfare fee for that distribution. See [Checkout options](/concepts/checkout-options) and [Payments and fees](/guide/account/payments).
 
 <Warning>
-  **Payment collection** and **Authorization amount** lock shortly before customers can join (about 5 minutes before a queue opens, and right before a draw opens) and can't be changed afterward. See [What locks, and when](/concepts/what-locks-when).
+  **Payment collection** and **Authorization amount** lock shortly before customers can join (about five and a half minutes before a queue opens, and right before a draw opens) and can't be changed afterward. See [What locks, and when](/concepts/what-locks-when).
 </Warning>
 
 ## Pre-authorization rules and limits
@@ -103,7 +103,7 @@ Because pre-authorization places a real card hold up front, three constraints ap
 
 ## Automatic entry
 
-By default, visitors click a button to join a queue, draw, or timed release. Turning on **Automatic entry** (off by default) automatically enters every eligible visitor who reaches the distribution—even if they leave right away.
+By default, visitors select a button to join a queue, draw, or timed release. Turning on **Automatic entry** (off by default) automatically enters every eligible visitor who reaches the distribution—even if they leave right away.
 
 A few distribution-specific rules still apply when **Automatic entry** is on:
 

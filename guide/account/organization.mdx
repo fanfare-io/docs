@@ -3,7 +3,7 @@ title: Organization settings
 description: Manage your company details, drop-page subdomain, regional defaults, checkout processor, and default messaging channel.
 ---
 
-Your **Organization** page holds the account-wide defaults every experience inherits: your company name and website, your drop-page subdomain, your region and currency, who handles checkout, and your default messaging channel. You set most of these when you first created your workspace ([Your first drop](/guide/start/your-first-drop)), and you can update them here anytime—keep an eye on the locks below, since a few settings can't change while drops are running or once Stripe is connected.
+Your **Organization** page holds the account-wide defaults every experience inherits: your company name and website, your drop-page subdomain, your region and currency, who handles checkout, and your default messaging channel. You set most of these when you first created your organization ([Your first drop](/guide/start/your-first-drop)), and you can update them here anytime—keep an eye on the locks below, since a few settings can't change while drops are running or once Stripe is connected.
 
 ## Before you start
 
@@ -93,7 +93,7 @@ Only organization admins can change the checkout processor—non-admin members s
 Switching from **Fanfare** to **External** also requires that you have no:
 
 - **Fanfare-managed products** still in your catalog, even if their drops have ended. Remove them from any active or draft experiences (or end/deactivate those experiences), then delete the products before switching. See [Add products](/guide/create/products).
-- **Multi-product sequences** that let customers choose between products—reduce them to a single product and variant first.
+- **Sequences offering a choice of product or variant**—reduce any sequence that offers customers a choice of product or variant to a single product and variant first.
 - **Auctions** that rely on Fanfare checkout to charge the winning bid.
 
 <Frame caption="Non-admin members can view the checkout processor but can't change it.">
@@ -142,7 +142,7 @@ The **Organization** page works the same in the Fanfare Shopify app, with a few 
     A red X next to **Experience Subdomain** means the name is already taken, is a reserved word, or doesn't meet the formatting rules above. Fix any validation message shown on the field and try another name until the green checkmark appears, or select **Discard** to keep your current subdomain.
   </Accordion>
   <Accordion title="My checkout processor change was refused when I saved">
-    Check every experience—including drafts—for upcoming or live distributions, ended distributions whose winners are still in their payment window, distributions without a close time, or draws without recorded results. If switching to **External**, also make sure no Fanfare-managed products, multi-product sequences, or Fanfare-checkout auctions remain. Wait for payment windows to close or delete what's holding the lock, then save again. (Deactivating also releases the lock, but review [Stop a drop](/guide/drop/deactivate) first—**Deactivate** can't be undone.) If you also edited other fields, revert **Checkout processor** to its previous value and select **Save** to keep your other edits.
+    Check every experience—including drafts—for upcoming or live distributions, ended distributions whose winners are still in their payment window, distributions without a close time, or draws without recorded results. If switching to **External**, also make sure no Fanfare-managed products, sequences offering a choice of product or variant, or Fanfare-checkout auctions remain. Wait for payment windows to close or delete what's holding the lock, then save again. (Deactivating also releases the lock, but review [Stop a drop](/guide/drop/deactivate) first—**Deactivate** can't be undone.) If you also edited other fields, revert **Checkout processor** to its previous value and select **Save** to keep your other edits.
   </Accordion>
   <Accordion title="My currency change was refused when I saved">
     Either your organization already has a Stripe account (which permanently locks currency), or you have an active/undeleted auction or an ended auction whose winner is still within their payment window. For auctions, wait for the hold to end, delete the auction, and try again. To save your other edits in the meantime, set **Currency** back to its previous value and select **Save**.

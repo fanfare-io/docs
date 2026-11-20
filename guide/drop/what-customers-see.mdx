@@ -13,7 +13,7 @@ Your customers interact with Fanfare through a single widget—whether on your h
 
 On hosted pages and Shopify, the widget starts automatically. On custom embeds, customers see a **Welcome** screen with **Get started** unless your developer initializes the widget automatically.
 
-The widget updates in real time without page refreshes. If a customer's connection drops, a status bar shows `"Live updates paused — reconnecting…"` until the connection returns.
+The widget updates in real time without page refreshes. If a customer's connection drops, a status bar shows "Live updates paused — reconnecting…" until the connection returns.
 
 When **Automatic entry** is enabled on a distribution, the widget enters the customer automatically—unless they first need to authorize a card hold, pick a product/size, or enter a Flash Sale with counted stock.
 
@@ -28,9 +28,9 @@ Before Fanfare places a customer into a drop, they may pass through one or more 
 
 ### When a customer can't get in
 
-- **Access unavailable:** Shown when an audience excludes the signed-in customer (`"This experience is for members of a specific group."`) or when no sequence accepts them (`"This experience isn't available to you."`).
+- **Access unavailable:** Shown when an audience excludes the signed-in customer ("This experience is for members of a specific group.") or when no sequence accepts them ("This experience isn't available to you.").
 - **No current access window:** Shown when their assigned sequence has no open or upcoming distribution.
-- **After close (signed out):** Visitors who aren't signed in see `"Entered? Sign in to see your result."`
+- **After close (signed out):** Visitors who aren't signed in see "Entered? Sign in to see your result."
 
 ## Before doors open
 
@@ -48,13 +48,13 @@ Note that customers see timed releases labeled as **Flash Sale**.
 
 | Type | Entering | Waiting | Admitted or selected | Checkout |
 | --- | --- | --- | --- | --- |
-| **Queue** | **Queue Open** with countdown and **Enter queue** | **You're in the Queue** with **Estimated wait**, a progress band (`Up next`, `Almost there`, `Near the front`, `A few people ahead`, or `In the line`), and **Leave queue** | **You're in** | Fanfare payment form, or **Continue to checkout** for external checkout |
+| **Queue** | **Queue Open** with countdown and **Enter queue** | **You're in the Queue** with **Estimated wait**, a progress band ("Up next", "Almost there", "Near the front", "A few people ahead", or "In the line"), and **Leave queue** | **You're in** | Fanfare payment form, or **Continue to checkout** for external checkout |
 | **Draw** | **Enter the Draw** with countdown and **Enter draw** | **You've Entered** with countdown and **Withdraw entry**; switches to **Drawing results** at draw time | **You won** or **Not selected** | Fanfare payment form, or **Continue to checkout** for external checkout |
-| **Auction** | English: live bid ledger (highest bid, minimum next bid, reserve, time left) and **Place bid**. Dutch: falling price and **Buy now — [amount]**. | Outbid banner (`Outbid — the highest bid is now [amount]`) when outbid; **Auction settling** after bidding closes | **Won at [amount]** (English) or **Bought at [amount]** (Dutch) | Payment |
+| **Auction** | English: live bid ledger (highest bid, minimum next bid, reserve, time left) and **Place bid**. Dutch: falling price and **Buy now — [amount]**. | Outbid banner ("Outbid — the highest bid is now [amount]") when outbid; **Auction settling** after bidding closes | **Won at [amount]** (English) or **Bought at [amount]** (Dutch) | Payment |
 | **Flash Sale** | **Flash Sale** with countdown and **Enter sale** | — | **You're in** with a **Complete purchase in** countdown and **Exit sale** | **Complete purchase** |
 | **Appointment** | **Book an Appointment** with day tabs and time slots | — | **Appointment Booked** with **Reschedule** and **Cancel** | — |
 
-When a sequence uses **Customer Picks**, customers see **Choose your item** either on entry or once admitted. With **Mystery Box**, admitted customers see `"You got [product name]!"`
+When a sequence uses **Customer Picks**, customers see **Choose your item** either on entry or once admitted. With **Mystery Box**, admitted customers see "You got [product name]!"
 
 <Frame caption="Queued shoppers see an estimated wait and a relative band rather than a raw position number.">
   <img src="/images/guide/guide-drop-what-customers-see-in-queue.webp" alt="The widget showing You're in the Queue with an estimated wait of about 5 minutes, a band reading A few people ahead, and a Leave queue button." />
@@ -65,7 +65,7 @@ When a sequence uses **Customer Picks**, customers see **Choose your item** eith
 Every admitted customer or winner gets a limited **payment window** to complete their purchase (see [Admission and the payment window](/concepts/admission-and-payment)):
 
 - **Fanfare checkout:** Shows **Complete your purchase** with a **Your checkout time** countdown. If the customer's bank requires confirmation (such as 3DS), the countdown pauses while they verify. Completed purchases display a **Purchased** receipt.
-- **Pre-authorization:** On queues with **Pre-authorize on joining** or draws with **Pre-authorize on entry**, customers authorize a card hold before entering (`"Only charged if you get a spot"`).
+- **Pre-authorization:** On queues with **Pre-authorise on joining** or draws with **Pre-authorise on entry**, customers authorize a card hold before entering ("Only charged if you get a spot").
 - **External checkout:** The widget keeps the **Your checkout time** countdown visible and hands customers off via **Continue to checkout**. If time runs out before payment finishes, the widget shows the expired screen below.
 
 ## How it ends
@@ -78,15 +78,15 @@ Every admitted customer or winner gets a limited **payment window** to complete 
 | **Payment window expired (Auction)** | Payment window closed | Their winning bid wasn't paid in time and the admission was released. | **No** |
 | **Not selected in a draw** | Not selected | They weren't selected this time. | **No** |
 | **Sold out** | Sold out | All items are claimed or no longer available. | **No** |
-| **Sold out, more may free up** (Pay-when-admitted queue or Pay-after-win draw) | Sold out right now | Everything is claimed for now; check back soon. | **Yes** (**Try again**) while open. |
+| **Sold out, more may free up** (queues on **Pay when admitted** or draws on **Pay after the win**) | Sold out right now | Everything is claimed for now; check back soon. | **Yes** (**Try again**) while open. |
 | **Outbid at close** | Outbid | They were outbid. | **No** |
 | **Dutch auction reached floor** | Unsold | Floor price reached before all units were claimed. | **No** |
 | **Reserve not met** | Ended | Standard ended screen (customers aren't told the reserve wasn't met). | **No** |
-| **Purchased** | Purchased / Purchase complete | Order receipt or purchase confirmation. | **No** |
-| **Canceled** | Canceled | The event was canceled. | **No** |
-| **Left voluntarily** | You've left | They're no longer participating. | **Yes** (**Rejoin queue** / **Re-enter draw**) only on pay-later queues and draws while open. |
+| **Purchased** | **Purchased** when Fanfare took the payment; **Purchase complete** otherwise | Order receipt or purchase confirmation. | **No** |
+| **Cancelled** | Cancelled | The event was canceled. | **No** |
+| **Left voluntarily** | You've left | They're no longer participating. | **Yes** (**Rejoin queue** / **Re-enter draw**) only on queues on **Pay when admitted** or draws on **Pay after the win** while open. |
 
-Customers who cancel their own appointment see **Booking canceled** and can pick a new slot if rebooking is enabled.
+Customers who cancel their own appointment see **Booking cancelled** and can pick a new slot when rebooking is offered.
 
 <Warning>
   **Heads up on expired-window notifications:** The automated email and text sent when a payment window expires tells customers they can enter again while the experience is open—even for draws, auctions, and Flash Sales that don't allow re-entry. The widget always shows the true state, so keep this in mind if customers reach out to support.
@@ -96,15 +96,15 @@ Customers who cancel their own appointment see **Booking canceled** and can pick
 
 See [Change things mid-drop](/guide/drop/live-controls) and [Stop a drop](/guide/drop/deactivate) for the admin side of these states:
 
-- **Paused queue:** Shoppers keep their place in line (with no wait estimate until you resume), and new shoppers can still join. Note that `"Entry is paused. Your place in line is saved."` means the queue is waiting on held stock—not that you manually paused it (see [Troubleshooting a live drop](/guide/drop/troubleshooting)).
-- **Queue sells out while people wait:** Shows `"Everything claimed"` (`"Right now · you keep your place"`). If stock frees up or you move units in, the line resumes automatically.
-- **Deactivated drop:** Trying to interact with a deactivated distribution shows `"This has been ended early and is no longer available."` Deactivating anything in an experience marks the entire hosted page as canceled (before close) or ended (after close). Shoppers still waiting in a deactivated queue or pre-draw on a custom embed are removed and see **Not selected**; booked appointment customers see **Canceled**.
+- **Paused queue:** Shoppers keep their place in line (with no wait estimate until you resume), and new shoppers can still join. Note that "Entry is paused. Your place in line is saved." means the queue is waiting on held stock or stock that isn't ready yet—not that you manually paused it (see [Troubleshooting a live drop](/guide/drop/troubleshooting)).
+- **Queue sells out while people wait:** Shows "Everything claimed" ("Right now · you keep your place"). If stock frees up or you move units in, the line resumes automatically.
+- **Deactivated drop:** Trying to interact with a deactivated distribution shows "This has been ended early and is no longer available." Deactivating anything in an experience marks the entire hosted page as canceled (before close) or ended (after close). Customers still waiting in a deactivated queue, or entered in a deactivated draw that hadn't run yet, are removed; on your own site the widget shows them **Not selected**. Booked appointment customers see **Cancelled**.
 - **Deleted experience:** Custom embeds show **Ended**, and hosted pages display the ended page.
 
 ## Other prompts customers may see
 
-- **Access code upgrade:** Customers placed in an open sequence see `"Have an access code?"` if a higher-priority open sequence is gated by a code. Entering an invalid code keeps them in their current sequence.
-- **Loyalty fairness badge:** `"Fairness provided by Fanfair"` appears whenever **Bias toward loyal consumers** is enabled and entry is open. (In queues, loyalty weighting only orders people who joined before **Opens**; see [Loyalty and Fanfair](/concepts/loyalty).)
+- **Access code upgrade:** Customers placed in an open sequence see "Have an access code?" if a higher-priority open sequence is gated by a code. Entering an invalid code keeps them in their current sequence.
+- **Loyalty fairness badge:** "Fairness provided by Fanfair" appears whenever **Bias toward loyal consumers** is enabled and entry is open. (In queues, loyalty weighting only orders people who joined before **Opens**; see [Loyalty and Fanfair](/concepts/loyalty).)
 
 ## Automated messages Fanfare sends
 
@@ -113,19 +113,19 @@ Each notification sends over one channel—your organization's default (email or
 | Message | Trigger | Recipients |
 | --- | --- | --- |
 | **Login code** | Customer requests a sign-in code | Anyone signing in, via the channel they entered (SMS comes from Fanfare; email names your organization) |
-| **Draw win** (`"You won [product name]"` or `"You won: choose your item"`) | Draw selects them | Draw winners |
-| **Draw result** (`"Draw results for [product name]"`) | Draw finishes without selecting them | Unselected draw entrants |
+| **Draw win** ("You won [product name]" or "You won: choose your item") | Draw selects them | Draw winners |
+| **Draw result** ("Draw results for [product name]") | Draw finishes without selecting them | Unselected draw entrants |
 | **Auction updates** (outbid, won, lost) | Outbid or auction settles | Auction bidders |
-| **Admitted** (`"You're through: complete your purchase"`) | Customer is admitted | Queue and Flash Sale customers (draw and auction winners get win messages instead) |
-| **Window expired** (`"Your window for [experience name] has closed"`) | Payment window lapses | All distribution types |
-| **Flash Sale pick reserved** (`"Your pick is reserved: [product name]"`) | Item is reserved in a Flash Sale | Signed-in Flash Sale customers |
-| **Opens soon** (`"[distribution name] opens soon"`) | 5 minutes before each distribution opens (unless edited or removed) | Sequence waitlist (not appointments) |
+| **Admitted** ("You're through: complete your purchase") | Customer is admitted | Queue and Flash Sale customers (draw and auction winners get win messages instead) |
+| **Window expired** ("Your window for [experience name] has closed") | Payment window lapses | All distribution types |
+| **Flash Sale pick reserved** ("Your pick is reserved: [product name]") | Item is reserved in a Flash Sale | Signed-in Flash Sale customers |
+| **Opens soon** ("[distribution name] opens soon") | 5 minutes before each distribution opens (unless edited or removed) | Sequence waitlist (not appointments) |
 | **Access code** | You trigger **Send code** | Sequence waitlist |
 | **Appointment updates** | Booking confirmed, canceled, or rescheduled | Appointment customers (Fanfare doesn't send appointment reminders) |
 | **SMS opt-in confirmation** | Customer opts in to marketing texts | That customer, once |
-| **Waitlist added** (`"You're on the waitlist for [experience name]"`) | You add someone to a waitlist in the admin | Admin-added waitlist members only |
+| **Waitlist added** ("You're on the waitlist for [experience name]") | You add someone to a waitlist in the admin | Admin-added waitlist members only |
 
-The `"opens soon"` alert uses your distribution name verbatim—give distributions clean, customer-facing names ([Invites, waitlist and access-code sends](/guide/create/invites-and-waitlist)).
+The "opens soon" alert uses your distribution name verbatim—give distributions clean, customer-facing names ([Invites, waitlist and access-code sends](/guide/create/invites-and-waitlist)).
 
 <Warning>
   **Guests receive no emails or texts**—no admission alerts, no win notifications, and no expiration notices. A guest only sees that they're in if they keep the page open. Leave **Allow guest access** off unless you expect customers to stay on the page.
@@ -145,8 +145,8 @@ Here's what three different visitors experience:
 
 | Visitor | What they see in the widget | Messages they receive |
 | --- | --- | --- |
-| **Signed-in Inner Circle member** | **Queue Open**, then **You're in the Queue** with an estimated wait | `"You're through: complete your purchase"` when admitted, and `"Your window… has closed"` if they miss checkout |
-| **Signed-in non-member** | **Coming Soon** for Public Draw with **Get notified when entry opens**, then **You're on the waitlist** after joining | No sign-up confirmation; receives any scheduled waitlist announcements, `"Public Draw opens soon"` 5 minutes before open, then win/loss results if they enter |
+| **Signed-in Inner Circle member** | **Queue Open**, then **You're in the Queue** with an estimated wait | "You're through: complete your purchase" when admitted, and "Your window… has closed" if they miss checkout |
+| **Signed-in non-member** | **Coming Soon** for Public Draw with **Get notified when entry opens**, then **You're on the waitlist** after joining | No sign-up confirmation; receives any scheduled waitlist announcements, "Public Draw opens soon" 5 minutes before open, then win/loss results if they enter |
 | **Signed-out visitor** | **Sign In** (no **Continue as guest**) because the live members-only sequence takes priority | Nothing until they sign in—then routed to the queue if they're a member, or the Public Draw countdown if not |
 
 ## On Shopify

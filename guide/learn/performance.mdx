@@ -15,7 +15,7 @@ Once a drop wraps up—or while it's still running—you want to know how many p
 | --- | --- | --- |
 | **Home** metrics panel | **Home** in the sidebar (titled **Dashboard**) | All experiences over a rolling time window |
 | Experience **Performance** tab | Open an experience → **Performance** | Every sequence in that experience, all time |
-| Sequence **Performance** tab | Open a sequence → **Performance**, select **View performance** on a sequence card or Performance card, or follow the results link on a finished sequence in the experience **Overview** | One sequence—either combined or one distribution at a time |
+| Sequence **Performance** tab | Open a sequence → **Performance**, select **View performance** on a sequence card or Performance card, or follow "Orders and revenue are on the Performance tab" on a finished sequence in the experience **Overview** | One sequence—either combined or one distribution at a time |
 | Sequence **Performance** card | Top of every tab on a sequence page | One sequence over the time window last selected on **Home** |
 
 Every distribution on the **Performance** tabs shows a phase: **Upcoming**, **Live**, **Settling**, or **Closed** (sequences without a distribution show **Draft**). **Settling** means entry has closed, but final numbers can still move—a draw hasn't been picked yet, an auction hasn't closed, or admitted customers are still inside their payment window. These phases are separate from the status badges on your experiences list; see [Experiences](/concepts/experiences).
@@ -24,7 +24,7 @@ Every distribution on the **Performance** tabs shows a phase: **Upcoming**, **Li
 
 <Steps>
   <Step title="Pick a rolling time window">
-    Open **Home** and select **Last 24 hours**, **7 days** (default), **30 days**, or **90 days**. Fanfare remembers your choice in this browser. Periods are rolling—**7 days** means the last 7 × 24 hours, not the current calendar week.
+    Open **Home** and select **Last 24 hours**, **7 days**, **30 days**, or **90 days**. Fanfare remembers your choice in this browser. Periods are rolling—**7 days** means the last 7 × 24 hours, not the current calendar week.
   </Step>
   <Step title="Review the five headline cards">
     Check **Views**, **Entries**, **Wins**, **Paid orders**, and **Net revenue**. Each card includes a breakdown underneath:
@@ -44,16 +44,16 @@ Metrics refresh automatically every 30 seconds while the tab is open. Toggle **A
 <Warning>
   **Paid orders** includes fully refunded orders. Because refunds reduce **Net revenue** to zero for those orders without removing them from the order count, a refund lowers revenue while keeping **Paid orders** unchanged.
 
-  The **Paid orders** card and the **Paid orders** chart can also differ slightly: the card groups orders by order date, while the chart plots payment capture time (or external store order time for synced orders) and doesn't reflect refunds or cancellations.
+  The **Paid orders** card and the **Paid orders** chart can also disagree: the card groups orders by order date, while the chart plots payment capture time (or external store order time for synced orders) and doesn't reflect refunds or cancellations.
 </Warning>
 
 ## Read an experience's Performance tab
 
 What appears on an experience's **Performance** tab depends on its sequences:
 
-- **No sequences:** Shows an empty state until you add a drop.
+- **No sequences:** Shows "No drops yet" until you add a drop.
 - **One sequence:** Opens that sequence's own Performance view directly (see [Read a sequence's Performance tab](#read-a-sequences-performance-tab)).
-- **Two or more sequences (all drafts):** Lists links to each draft until a distribution is added.
+- **Two or more sequences (all drafts):** Shows "Nothing to measure yet" with links to each draft until a distribution is added.
 - **Two or more sequences (at least one with a distribution):** Opens the experience overview below. Any draft sequences appear below the table and aren't included in totals.
 
 ### Launch so far
@@ -189,8 +189,8 @@ Every tab inside a sequence includes a compact **Performance** card tracking **E
 | **Entrants** | Performance tabs | Distinct customers who entered | Summed per distribution in **Whole sequence**; deduplicated across sequences in **All drops** |
 | **Admitted** | Sequence **Performance** tab | Distinct customers granted permission to buy (admitted from a queue, picked in a draw, won an auction, or entered a timed release) | Always 0 for appointments |
 | **Wins** | Home | Customers admitted from a queue, picked in a draw, or winning an auction | Excludes timed releases and appointments; a queue win means permission to buy, not a completed purchase |
-| **Paid orders** | Everywhere | Orders with captured payment, including partial or full refunds; excludes canceled and test orders | Still includes refunded orders; purchases completed on an external checkout aren't tracked (see [Checkout options](/concepts/checkout-options)) |
-| **Net revenue** / **Revenue** | Everywhere | Order totals minus refunds recorded in Fanfare (fully refunded orders contribute $0) | **Revenue** on the experience overview is net; gross revenue appears beneath net revenue on Home and distribution results, and on the sequence **Performance** card when refunds differ |
+| **Paid orders** | Everywhere | Orders with captured payment, including partial or full refunds; excludes canceled and test orders | Still includes refunded orders; purchases made in your own checkout aren't tracked (see [Checkout options](/concepts/checkout-options)) |
+| **Net revenue** / **Revenue** | Everywhere | Order totals minus refunds recorded in Fanfare (fully refunded orders add nothing) | **Revenue** on the experience overview is net; gross revenue appears beneath net revenue on Home and distribution results, and on the sequence **Performance** card when refunds make gross and net differ |
 | **Units sold** | Performance tabs | Total units across paid orders | |
 | **Units offered** ("of N offered") | Performance tabs | Draw: winner count. English auction: 1. Dutch auction: quantity. Appointment: places per slot × number of slots | Omitted for queues, timed releases, and appointments missing an open or close time; appointment slots depend on [location hours](/guide/create/locations) |
 | **Allocated** | **Sizes** table on distribution results | Stock allocated to the sequence per size | Shown only when the sequence has one distribution |
@@ -214,7 +214,7 @@ If you delete a distribution, its individual screen disappears, but its paid ord
 
 ## On Shopify
 
-**Home** and both **Performance** tabs work the same inside the Fanfare Shopify app. Until storefront setup is complete, **Home** displays a **Finish setting up Fanfare** card above the metrics panel—see [Storefront setup](/guide/shopify/storefront-setup).
+**Home** and both **Performance** tabs work the same inside the Fanfare Shopify app. Until checkout protection is on and the product widget is on your theme, **Home** displays a **Finish setting up Fanfare** card above the metrics panel—see [Storefront setup](/guide/shopify/storefront-setup).
 
 <Note>
   Refunds and cancellations processed in Shopify don't sync back to Fanfare, so **Paid orders** and **Net revenue** continue counting those orders in full. See [Orders with Shopify checkout](/guide/shopify/orders).
@@ -226,8 +226,8 @@ If you delete a distribution, its individual screen disappears, but its paid ord
   <Accordion title="Home metrics stopped refreshing automatically">
     Auto-refresh turns itself off after a network or loading error. Select **Auto-refresh Off** to turn it back on, or select **Refresh** to reload immediately.
   </Accordion>
-  <Accordion title="The experience Performance tab failed to load">
-    Select **Try again** to reload the overview. If the error persists, refresh the page to confirm the experience is still active.
+  <Accordion title="The experience Performance tab says 'Unable to load performance data for this experience.'">
+    If you see "Unable to load performance data for this experience.", select **Try again** to reload the overview. If the error persists, refresh the page to check whether the experience was deleted.
   </Accordion>
 </AccordionGroup>
 
